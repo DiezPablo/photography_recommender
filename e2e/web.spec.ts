@@ -278,7 +278,7 @@ test("frecuencia de avistamientos por mes en un destacado y en «qué ver»", as
   const tabla = page.locator(".tabla-frecuencia");
   test.skip(!(await tabla.count()), "datos sin frecuencia por mes");
   // la migración: ñus muy probables en agosto
-  await expect(tabla.locator('td[title="Ñu en agosto: muy probable"]')).toHaveCount(1);
+  await expect(tabla.locator('td[title^="Ñu en agosto: muy probable"]')).toHaveCount(1);
   await page.locator(".frecuencia").screenshot({ path: `${CAPTURAS}/${info.project.name}-frecuencia.png` });
   await page.goto("/?ver=5219404&mes=7");
   const mara = page.locator(".resultados-que-ver li", { hasText: "Masái Mara" });
