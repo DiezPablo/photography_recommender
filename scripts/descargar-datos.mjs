@@ -10,7 +10,7 @@ import path from "node:path";
 
 // Release «datos» de este repositorio; mientras no tenga datos propios, los de Rasante (donde nació el proyecto)
 const REPOS = [process.env.DATOS_REPO ?? "DiezPablo/safari_recommender", "DiezPablo/photo_recommender"];
-const FICHEROS = ["safaris.json", "safaris_recientes.json", "safaris_mundo.json", "safaris_indice.json"];
+const FICHEROS = ["safaris.json", "safaris_recientes.json", "safaris_mundo.json", "safaris_indice.json", "espana.json"];
 // el único que se pide desde el navegador (fetch en ExploradorSafaris)
 const PUBLICOS = ["safaris_indice.json"];
 const COMPRIMIDOS = path.join(process.cwd(), "datos");

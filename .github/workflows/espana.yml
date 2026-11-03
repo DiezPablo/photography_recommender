@@ -1,0 +1,70 @@
+# Fauna en España: una descarga SQL de GBIF (recuentos por celda de 10 km, especie, año y mes) → espana.json y el
+# informe de viabilidad (docs/espana-viabilidad.md). A mano mientras se prueba; necesita los secretos
+# GBIF_USUARIO y GBIF_CLAVE (sin ellos no hace nada). La descarga se guarda en la caché para no repetirla.
+name: España
+
+on:
+  workflow_dispatch:
+    inputs:
+      nueva_descarga:
+        description: "Pedir otra descarga a GBIF aunque haya una en la caché"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: espana
+  cancel-in-progress: false
+
+jobs:
+  espana:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GBIF_USUARIO: ${{ secrets.GBIF_USUARIO }}
+      GBIF_CLAVE: ${{ secrets.GBIF_CLAVE }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: pip install -e .
+
+      - uses: actions/cache/restore@v6
+        with:
+          path: cache
+          key: espana-v1-${{ github.run_id }}
+          restore-keys: espana-v1-
+
+      - name: Descarga nueva
+        if: ${{ inputs.nueva_descarga }}
+        run: rm -f cache/espana_filas.json.gz
+
+      - name: GBIF y estacionalidad
+        run: python -m safari --espana
+
+      - uses: actions/cache/save@v6
+        if: always()
+        with:
+          path: cache
+          key: espana-v1-${{ github.run_id }}
+
+      - name: Informe de viabilidad
+        run: |
+          [ -s docs/espana-viabilidad.md ] || { echo "Sin informe (¿faltan los secretos de GBIF?)"; exit 0; }
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add docs/espana-viabilidad.md
+          git diff --cached --quiet || { git commit -m "Viabilidad de España ($(date -u +%Y-%m-%d))"; git pull -q --rebase origin main; git push; }
+
+      - name: Publicar
+        run: |
+          [ -s public/datos/espana.json ] || { echo "Nada que publicar"; exit 0; }
+          .github/scripts/publicar_release.sh "España ($(date -u +%Y-%m-%d))" public/datos/espana.json

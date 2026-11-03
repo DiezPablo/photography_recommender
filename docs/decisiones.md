@@ -490,3 +490,16 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
 - Se ve en la ficha («Qué pasa a lo largo del año», resaltado si es este mes), en «Safari en septiembre» («Qué
   pasa en…»), en la página de cada especie («Momentos especiales») y dentro del calendario `.ics` del parque. La
   revisión anual lo incluye (`REVISADO_EVENTOS`).
+
+## 03-11-2026 · Motor de España (sin credenciales todavía)
+
+- `safari/espana/`: `rejilla` (celda de la cuadrícula EEA de 10 km, EPSG:3035, fórmulas de Snyder; comprobada
+  contra pyproj a < 1 m; también en `src/lib/rejilla.ts` para el navegador), `zonas` (Doñana, Gredos, Picos,
+  Gallocanta, con su mes de prueba), `gbif_descarga` (descarga SQL: recuentos por celda, clase, especie, año y mes
+  de aves, mamíferos, reptiles y anfibios desde 2005, con `GBIF_EEARGCode(10000, …)`), `ebird` (recientes y
+  hotspots), `nombres` (nombre en español de GBIF, con caché), `estacionalidad` (‰ de su clase con los meses
+  vecinos, muestra, confianza, ranking y backtest top-20) y `cli` (`python -m safari --espana`).
+- Sin `GBIF_USUARIO`/`GBIF_CLAVE` o `EBIRD_CLAVE` no se pide nada y la web sigue igual. Workflow `espana.yml`, a
+  mano: descarga (guardada en la caché para no repetirla), `espana.json` a la release y el informe
+  `docs/espana-viabilidad.md` (observaciones por mes, top 20 del mes de prueba con confianza y backtest del último
+  año completo en las cuatro zonas).
