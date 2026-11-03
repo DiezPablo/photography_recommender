@@ -534,3 +534,19 @@ test("fauna en España: luz, tiempo y especies (o aviso sin datos)", async ({ pa
   const especies = page.locator("section", { hasText: "Qué es probable ver en noviembre" });
   await expect(especies.locator(".lista-especies-espana li, .nota-pie").first()).toBeVisible({ timeout: 15000 });
 });
+
+test("fauna en España al revés: dónde veo una especie (o aviso sin datos)", async ({ page, request }) => {
+  await page.goto("/espana?modo=donde");
+  await expect(page.getByRole("link", { name: "¿Dónde veo…?" })).toHaveAttribute("aria-current", "page");
+  const lista = (await (await request.get("/espana/especies.json")).json()) as { especies: { k: string; n: string }[] };
+  if (!lista.especies.length) {
+    await expect(page.getByText("Aún no hay datos de especies para España")).toBeVisible();
+    return;
+  }
+  await page.getByLabel("Especie").fill(lista.especies[0].n.slice(0, 4));
+  await page.locator(".opciones-especie button").first().click();
+  await expect(page).toHaveURL(/k=\d+/);
+  await page.getByLabel("Cuándo").selectOption("todo");
+  await expect(page.locator(".lista-lugares li").first()).toBeVisible();
+  await expect(page.locator(".lista-lugares li").first().getByRole("link")).toHaveAttribute("href", /\/espana\?lat=/);
+});

@@ -1,18 +1,24 @@
-// Fauna en España: un lugar y un día → luz, tiempo, mejores franjas y especies probables (docs/especificacion-fauna.md).
+// Fauna en España (docs/especificacion-fauna.md), en dos sentidos: «¿Qué veo aquí?» (un lugar y un día → luz,
+// tiempo, mejores franjas y especies probables) y «¿Dónde veo…?» (una especie → dónde y cuándo).
 import type { Metadata } from "next";
 import Link from "next/link";
 import PlanificadorEspana from "@/features/espana/PlanificadorEspana";
+import DondeVerEspecie from "@/features/espana/DondeVerEspecie";
 import { fechaLocal } from "@/lib/sol";
 
 export const metadata: Metadata = {
-  title: "Fauna en España: luz, tiempo y especies",
+  title: "Fauna en España: qué ver, dónde y cuándo",
   description:
-    "Para un lugar y un día: horas dorada y azul, previsión con nubes por capas (o climatología) y qué especies es probable ver ese mes.",
+    "Qué especies es probable ver en un lugar y un día, con la luz y el tiempo, o dónde y cuándo ver una especie en España.",
 };
 
 export const dynamic = "force-dynamic";
 
-export default function PaginaEspana() {
+type Props = { searchParams: Promise<{ modo?: string }> };
+
+export default async function PaginaEspana({ searchParams }: Props) {
+  const donde = (await searchParams).modo === "donde";
+  const hoy = fechaLocal(new Date());
   return (
     <main className="calendario safaris espana">
       <header className="titular">
@@ -21,11 +27,19 @@ export default function PaginaEspana() {
         </p>
         <h1>Fauna en España</h1>
         <p className="entradilla">
-          Un lugar y un día: la luz para fotografiar, el tiempo por horas con las nubes por capas y qué especies es
-          probable ver ese mes, con dos notas (verla y fotografiarla) y de dónde sale cada una.
+          Qué es probable ver en un lugar y un día, con la luz y el tiempo para fotografiar; o, al revés, dónde y cuándo
+          ver una especie.
         </p>
       </header>
-      <PlanificadorEspana hoy={fechaLocal(new Date())} />
+      <nav className="pestanas-espana" aria-label="Modo">
+        <Link href="/espana" aria-current={donde ? undefined : "page"}>
+          ¿Qué veo aquí?
+        </Link>
+        <Link href="/espana?modo=donde" aria-current={donde ? "page" : undefined}>
+          ¿Dónde veo…?
+        </Link>
+      </nav>
+      {donde ? <DondeVerEspecie hoy={hoy} /> : <PlanificadorEspana hoy={hoy} />}
       <p className="nota-pie">
         Luz: posición del sol calculada aquí. Tiempo: Open-Meteo (previsión hasta 16 días; más allá, el archivo ERA5 de
         los diez últimos años). Especies: GBIF por cuadrícula europea de 10 km, como frecuencia relativa en su grupo (no

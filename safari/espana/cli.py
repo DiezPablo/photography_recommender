@@ -117,13 +117,14 @@ def main(salida: Path = Path("public/datos/espana.json"), descargar: bool = True
     print(f"España: {len(filas)} filas", flush=True)
     celdas_ = por_celda(filas)
     claves = sorted({int(k) for c in celdas_.values() for k in c["e"]})
+    clase_de = {f["especie"]: CLASE_NOMBRE.get(f["clase"], str(f["clase"])) for f in filas}
     especies = {}
     for k in claves:
         try:
-            especies[str(k)] = nombres.especie(k)
+            especies[str(k)] = {**nombres.especie(k), "clase": clase_de.get(k)}
         except Exception as e:
             print(f"  sin nombre para {k}: {e}", flush=True)
-            especies[str(k)] = {"c": None, "n": None}
+            especies[str(k)] = {"c": None, "n": None, "clase": clase_de.get(k)}
 
     def nombre_de(k: int) -> str:
         e = especies.get(str(k)) or nombres.especie(k)

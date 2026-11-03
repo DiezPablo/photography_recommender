@@ -59,3 +59,32 @@ export function bloque(codigo: string): string {
   const [e, n] = codigo.split("E")[1].split("N").map(Number);
   return `100kmE${Math.floor(e / 10)}N${Math.floor(n / 10)}`;
 }
+
+/** Inversa (Snyder, p. 189): de [este, norte] de EPSG:3035 a [lat, lon]. */
+export function laeaInversa(este: number, norte: number): [number, number] {
+  const x = este - FE;
+  const y = norte - FN;
+  const rho = Math.hypot(x / D, D * y);
+  if (rho < 1e-9) return [52, 10];
+  const c = 2 * Math.asin(rho / (2 * RQ));
+  const qv = QP * (Math.cos(c) * Math.sin(B0) + (D * y * Math.sin(c) * Math.cos(B0)) / rho);
+  const lon =
+    LON0 + Math.atan2(x * Math.sin(c), D * rho * Math.cos(B0) * Math.cos(c) - D * D * y * Math.sin(B0) * Math.sin(c));
+  const beta = Math.asin(qv / QP);
+  const e4 = E2 * E2;
+  const e6 = e4 * E2;
+  const lat =
+    beta +
+    (E2 / 3 + (31 * e4) / 180 + (517 * e6) / 5040) * Math.sin(2 * beta) +
+    ((23 * e4) / 360 + (251 * e6) / 3780) * Math.sin(4 * beta) +
+    ((761 * e6) / 45360) * Math.sin(6 * beta);
+  return [(lat * 180) / Math.PI, (lon * 180) / Math.PI];
+}
+
+/** Centro de una celda («10kmE315N202») en [lat, lon]. */
+export function centroCelda(codigo: string): [number, number] {
+  const m = codigo.match(/^(\d+)(km|m)E(\d+)N(\d+)$/);
+  if (!m) throw new Error(`Celda no válida: ${codigo}`);
+  const metros = Number(m[1]) * (m[2] === "km" ? 1000 : 1);
+  return laeaInversa((Number(m[3]) + 0.5) * metros, (Number(m[4]) + 0.5) * metros);
+}

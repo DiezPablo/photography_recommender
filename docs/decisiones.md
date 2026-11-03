@@ -520,3 +520,16 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   recientes 0,5; actividad 0,3. Solo la frecuencia 0 anula. Actividad por clase mientras no haya tabla por especie
   (aves de día, mamíferos crepusculares). Desglose plegado en cada especie.
 - Probado con un `espana.json` sintético en local (no se publica).
+
+## 03-11-2026 · «¿Dónde veo…?» en España, menú y environment
+
+- `/espana?modo=donde`: buscas una especie (lista de `/espana/especies.json`, sin tildes) y un mes (o «en su mejor
+  mes») → `/espana/especie/[clave]` devuelve sus cuadrículas de más a menos frecuentes, agrupadas por el espacio
+  protegido de España más cercano (a < 15 km, del catálogo mundial; si no hay, sus coordenadas), con la curva del
+  año, la muestra y cuántas cuadrículas tiene cada lugar. Mapa, mejor época (≥ 20 ‰), confianza y enlace a «¿Qué
+  veo aquí?» en ese punto. Centro de cada celda con la inversa de LAEA (`laeaInversa`, ida y vuelta < 1e-6°).
+- `espana.json` guarda la clase de cada especie (para la muestra de su grupo).
+- Menú: «Cuándo ir» (`/safari-en`, con la migración y la temporada verde) y «España» entran arriba y en la barra
+  del móvil (cinco botones); antes solo estaban en el pie y no se encontraban.
+- Los secretos de GBIF y eBird están en el environment de GitHub `EBIRD_CLAVE`: `espana.yml` lo declara
+  (`environment: EBIRD_CLAVE`); sin eso el trabajo no los ve.

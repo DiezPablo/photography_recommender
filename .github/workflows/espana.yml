@@ -22,6 +22,8 @@ jobs:
   espana:
     runs-on: ubuntu-24.04
     timeout-minutes: 300
+    # los secretos (GBIF_USUARIO, GBIF_CLAVE, EBIRD_CLAVE) están en este environment de GitHub
+    environment: EBIRD_CLAVE
     env:
       GH_TOKEN: ${{ github.token }}
       GBIF_USUARIO: ${{ secrets.GBIF_USUARIO }}

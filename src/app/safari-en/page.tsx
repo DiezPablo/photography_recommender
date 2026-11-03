@@ -18,11 +18,16 @@ export default function IndiceRespuestas() {
         <p className="rotulo">
           <Link href="/">Safaris</Link> · Cuándo y adónde
         </p>
-        <h1>Safari por meses y por países</h1>
+        <h1>Cuándo ir</h1>
         <p className="entradilla">
-          Cada mes, los parques que están en su mejor época; cada país, sus parques y cuándo ir a cada uno.
+          Cada mes, los parques que están en su mejor época; cada país, sus parques y cuándo ir a cada uno; y la
+          migración y la temporada verde.
         </p>
       </header>
+      <p className="enlaces">
+        <Link href="/migracion">La gran migración, mes a mes →</Link>
+        <Link href="/temporada-verde">Temporada verde: cuánto se ahorra →</Link>
+      </p>
       <section className="seccion">
         <h2 className="rotulo">Por meses</h2>
         <ul className="lista-respuesta compacta columnas-respuesta">

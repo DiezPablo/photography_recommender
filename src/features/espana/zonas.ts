@@ -17,6 +17,6 @@ export const ZONAS_ESPANA: ZonaEspana[] = [
 /** Lo que devuelve /espana/datos/[bloque]: las celdas de un bloque de 100 km y los nombres de sus especies. */
 export interface BloqueEspana {
   celdas: Record<string, { m: Record<string, number[]>; e: Record<string, (number | null)[]> }>;
-  especies: Record<string, { c: string | null; n: string | null; clase?: string }>;
+  especies: Record<string, { c: string | null; n: string | null; clase?: string | null }>;
   cita: string | null;
 }
