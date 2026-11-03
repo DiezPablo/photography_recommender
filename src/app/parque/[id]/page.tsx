@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suscribir } from "@/ui/Suscribir";
 import { Frescura } from "@/ui/Frescura";
 import AvisoCierre from "@/features/safaris/componentes/AvisoCierre";
+import Fenomenos from "@/features/safaris/componentes/Fenomenos";
 import TemporadaVerde from "@/features/safaris/componentes/TemporadaVerde";
 import { CONSULTADO as TARIFAS_CONSULTADAS, TARIFAS as TARIFAS_LODGES } from "@/features/safaris/temporadaVerde";
 import { TASAS } from "@/features/safaris/tasas";
@@ -242,6 +243,7 @@ export default async function PaginaParque({ params }: Props) {
           <h2 className="rotulo">Cuándo ir</h2>
           <AnoSafari p={p} mesActual={mesHoy} />
           <AvisoCierre id={p.id} mesHoy={mesHoy} />
+          <Fenomenos parque={p.id} mesHoy={mesHoy} />
           <TemporadaVerde p={p} mesActual={mesHoy} />
           <p className="nota-pie">
             Temporada: la recomendada para ver fauna. Mamíferos vistos: observaciones de iNaturalist por mes (reflejan

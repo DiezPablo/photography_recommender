@@ -21,6 +21,7 @@ QUE = {
     "paises.ts": "Visado, fiebre amarilla, malaria y dinero por país: web oficial del visado y Exteriores.",
     "cierres.ts": "Cierres estacionales (tigres en el monzón, Kaziranga, Yala…): fechas del año en las fuentes.",
     "familias.ts": "Edades mínimas (gorilas, chimpancés) y parques sin malaria.",
+    "eventos.ts": "Calendario de fenómenos (desoves, ballenas, osos, crecidas…): meses en las fuentes.",
 }
 FECHA = re.compile(r'(?:REVISADO\w*|CONSULTADO)\s*=\s*"(\d{2}-\d{2}-\d{4})"|revisado:\s*"(\d{2}-\d{2}-\d{4})"')
 

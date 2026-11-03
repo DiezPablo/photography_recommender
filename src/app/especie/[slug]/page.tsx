@@ -14,6 +14,8 @@ import {
   slugEspecie,
 } from "@/features/safaris/datos";
 import { fechaLocal } from "@/lib/sol";
+import { eventosDeEspecie } from "@/features/safaris/eventos";
+import { EnlaceFuente, textoMeses } from "@/features/safaris/componentes/Fenomenos";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -71,6 +73,19 @@ export default async function PaginaEspecieSafari({ params }: Props) {
         </div>
       </header>
       <div className="ficha-grid">
+        {eventosDeEspecie(e.cientifico).length > 0 && (
+          <section className="seccion">
+            <h2 className="rotulo">Momentos especiales</h2>
+            <ul className="lista-respuesta compacta">
+              {eventosDeEspecie(e.cientifico).map((ev) => (
+                <li key={ev.id}>
+                  <Link href={`/parque/${ev.parque}`}>{getParque(ev.parque)?.nombre ?? ev.parque}</Link>:{" "}
+                  <b>{ev.titulo}</b> ({textoMeses(ev)}). {ev.descripcion} <EnlaceFuente e={ev} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
         <section className="seccion">
           <h2 className="rotulo">Mejores parques</h2>
           <ol className="zonas-especie">

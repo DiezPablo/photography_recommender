@@ -20,6 +20,8 @@ import {
 } from "@/features/safaris/datos";
 import { MIGRACION } from "@/features/safaris/migracion";
 import { CIERRES, cierreEn, type Cierre } from "@/features/safaris/cierres";
+import { eventosEn } from "@/features/safaris/eventos";
+import { EnlaceFuente } from "@/features/safaris/componentes/Fenomenos";
 import { practicoDe } from "@/features/safaris/paises";
 import { SIN_MALARIA } from "@/features/safaris/familias";
 import { ItemsPais } from "@/features/safaris/componentes/PracticoPais";
@@ -83,6 +85,8 @@ function PaginaMes({ mes }: { mes: number }) {
     .sort((a, b) => puntuacionAhora(b, mes) - puntuacionAhora(a, mes));
   const fuera = parques.filter((p) => !enTemporada(p, mes) && p.continente === "África");
   const migracion = MIGRACION.find((z) => z.mes === mes + 1);
+  // la migración ya tiene su apartado arriba
+  const eventosMes = eventosEn(mes + 1).filter((e) => !e.id.startsWith("migracion-"));
   const cerrados = Object.keys(CIERRES)
     .map((id) => ({ id, nombre: getParque(id)?.nombre ?? getParqueMundo(id)?.nombre, c: cierreEn(id, mes + 1) }))
     .filter((x): x is { id: string; nombre: string; c: Cierre } => !!x.nombre && !!x.c);
@@ -140,6 +144,20 @@ function PaginaMes({ mes }: { mes: number }) {
           </section>
         );
       })}
+
+      {eventosMes.length > 0 && (
+        <section className="seccion">
+          <h2 className="rotulo">Qué pasa en {nombreMes}</h2>
+          <ul className="lista-respuesta compacta">
+            {eventosMes.map((e) => (
+              <li key={e.id}>
+                <Link href={`/parque/${e.parque}`}>{getParque(e.parque)?.nombre ?? e.parque}</Link>: <b>{e.titulo}</b>
+                {e.pico?.includes(mes + 1) ? " (su mejor momento)" : ""}. {e.descripcion} <EnlaceFuente e={e} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {cerrados.length > 0 && (
         <section className="seccion">

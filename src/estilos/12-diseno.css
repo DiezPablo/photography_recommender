@@ -1298,3 +1298,42 @@ body {
   color: var(--texto-2);
   margin: 0.3rem 0 0;
 }
+
+/* ---- Calendario de fenómenos */
+.fenomenos {
+  margin-top: 1.4rem;
+}
+.fenomenos h3 {
+  font-family: var(--f-titulo);
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem;
+}
+.fenomenos ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+.fenomenos li {
+  padding-left: 0.8rem;
+  border-left: 2px solid var(--borde);
+}
+.fenomenos li.ahora {
+  border-left-color: var(--acento);
+}
+.fenomenos li small {
+  color: var(--texto-2);
+  margin-left: 0.3rem;
+}
+.fenomenos li p {
+  margin: 0.2rem 0 0;
+  font-size: 0.92rem;
+  max-width: 68ch;
+}
+.etiqueta-ahora {
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--acento);
+}

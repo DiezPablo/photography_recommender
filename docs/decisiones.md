@@ -479,3 +479,14 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
 - Tamaño de muestra: el catálogo guarda `muestra` (fotos del grupo con los meses vecinos, por taxón y mes). La
   ficha marca con rayado los niveles de confianza baja (30-99 fotos), añade la fila «Fotos del grupo» y la
   confianza del mes; el comparador pone «(pocos datos)». Umbrales: alta ≥ 300, media ≥ 100, baja ≥ 30.
+
+## 03-11-2026 · Calendario de fenómenos
+
+- `src/features/safaris/eventos.ts` (el `event` de la especificación): nueve fenómenos escritos a mano con fuente
+  (reunión de elefantes de Minneriya, desove de tortuga verde en Tortuguero, ballenas francas de Valdés, osos
+  polares de Churchill, crecida del Okavango, ñus de Liuwa, osos y salmón de Katmai, jaguares del Pantanal,
+  elefantes del Chobe) y los partos y cruces de la migración, sacados de `migracion.ts`. Meses, pico si se conoce,
+  especie (nombre científico) y fuente.
+- Se ve en la ficha («Qué pasa a lo largo del año», resaltado si es este mes), en «Safari en septiembre» («Qué
+  pasa en…»), en la página de cada especie («Momentos especiales») y dentro del calendario `.ics` del parque. La
+  revisión anual lo incluye (`REVISADO_EVENTOS`).

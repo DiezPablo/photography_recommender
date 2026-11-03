@@ -513,3 +513,15 @@ test("cierres: los parques de tigres en el monzón no se proponen y lo dicen", a
   await page.goto("/safari-en/agosto");
   await expect(page.locator("section", { hasText: "Cerrados en agosto" })).toContainText("Kaziranga");
 });
+
+test("calendario de fenómenos: ficha, página del mes, especie y .ics", async ({ page, request }) => {
+  await page.goto("/parque/minneriya");
+  await expect(page.locator(".fenomenos")).toContainText("La «reunión» de elefantes");
+  await page.goto("/safari-en/septiembre");
+  await expect(page.locator("section", { hasText: "Qué pasa en septiembre" })).toContainText("Minneriya");
+  // los partos (Ndutu) son en el área del Ngorongoro
+  await page.goto("/parque/ngorongoro");
+  await expect(page.locator(".fenomenos")).toContainText("Partos de los ñus");
+  const ics = await (await request.get("/parque/valdes/calendario.ics")).text();
+  expect(ics).toContain("Ballenas francas australes");
+});
