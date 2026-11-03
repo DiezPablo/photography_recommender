@@ -14,8 +14,11 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
     de NASA POWER, época, OSM por tandas, operadores de la ciudad de acceso), `mundo_cli` → `safaris_mundo.json` y
     `safaris_indice.json`. Incremental: `--minutos` fija el tiempo de peticiones nuevas; después solo caché.
   - `comun` (caché `CacheJson`, sesión HTTP, `escribir_json` sin NaN), `commons` (Wikimedia Commons), `gbif`.
+  - `espana` (`--espana`): cuadrícula EEA, descarga SQL de GBIF y eBird (credenciales opcionales en `.env.example`),
+    estacionalidad con confianza y backtest; workflow `espana.yml` a mano.
 - Web Next.js 16 (App Router) en `src/`: `app/` (`/`, `/parque/[id]`, `/especies`, `/especie/[slug]`, `/guia`, `/comparar`, `/migracion`,
-  `/planificar`, `/presupuesto`, `/viaje`, `/safari-en/[mes|país]`; `.ics` por parque y `/migracion.ics`,
+  `/planificar`, `/presupuesto`, `/viaje`, `/safari-en/[mes|país]`, `/espana` (luz, tiempo y especies por
+  cuadrícula de 10 km); `.ics` por parque y `/migracion.ics`,
   `/recientes.xml`, `sitemap.xml`),
   `features/safaris` (componentes, modelo, `datos.ts` solo servidor), `ui/` (mapa Leaflet, iconos, `Navegacion.tsx`, `FotoGrande.tsx`), `lib/`
   (`datos.ts`: lee `datos/*.gz`; `almacen.ts`; `fechas.ts`), `estilos/` (01-11 heredados de Rasante; el aspecto
@@ -39,7 +42,8 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
 
 ## Convenciones
 - Python 3.12; código, comentarios y textos de la web en español. ruff y Prettier deciden el formato.
-- Secretos solo por variables de entorno (ahora no hace falta ninguno); nunca en código ni commits.
+- Secretos solo por variables de entorno (opcionales: `GBIF_USUARIO`, `GBIF_CLAVE`, `EBIRD_CLAVE`); nunca en código ni
+  commits.
 - JSON publicados sin NaN (`safari.comun.ficheros.escribir_json`).
 - Respetar límites: caché en `cache/` (no cambiar el formato de `CacheJson`), ≤ 1 petición/s a iNaturalist,
   `Retry-After`, espejos de Overpass, User-Agent descriptivo.

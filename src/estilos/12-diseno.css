@@ -1337,3 +1337,74 @@ body {
   font-weight: 600;
   color: var(--acento);
 }
+
+/* ---- Fauna en España */
+.luz-dia {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: 0.6rem 1.2rem;
+  margin: 0;
+}
+.luz-dia dt {
+  font-size: 0.8rem;
+  color: var(--texto-2);
+}
+.luz-dia dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.etiqueta-tiempo {
+  font: 600 0.75rem var(--f-cuerpo);
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--acento-suave);
+  color: var(--acento);
+  vertical-align: middle;
+}
+.etiqueta-tiempo.climatologia {
+  background: var(--ocre-suave);
+  color: var(--ocre);
+}
+.tabla-tiempo td,
+.tabla-tiempo th {
+  font-variant-numeric: tabular-nums;
+}
+.tabla-tiempo tr.momento-dorada th {
+  color: var(--ocre);
+}
+.lista-especies-espana {
+  padding-left: 1.4rem;
+  display: grid;
+  gap: 0.4rem;
+}
+.lista-especies-espana summary {
+  cursor: pointer;
+}
+.lista-especies-espana i {
+  color: var(--texto-2);
+  margin-right: 0.4rem;
+}
+.notas-especie {
+  margin-left: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--texto-2);
+}
+.desglose {
+  font-size: 0.88rem;
+  margin: 0.3rem 0 0.4rem;
+}
+.desglose {
+  list-style: disc;
+  padding-left: 1.2rem;
+}
+.desglose li {
+  display: list-item;
+  border: 0;
+  padding: 0.1rem 0;
+}
+.desglose li small {
+  display: inline;
+  float: none;
+  color: var(--texto-2);
+}

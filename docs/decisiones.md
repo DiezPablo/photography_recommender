@@ -503,3 +503,20 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   mano: descarga (guardada en la caché para no repetirla), `espana.json` a la release y el informe
   `docs/espana-viabilidad.md` (observaciones por mes, top 20 del mes de prueba con confianza y backtest del último
   año completo en las cuatro zonas).
+
+## 03-11-2026 · Página «Fauna en España» (luz, tiempo, puntuación)
+
+- `/espana`: un lugar (cuatro zonas de prueba o «mi ubicación»), un radio y un día →
+  - luz (`src/lib/luz.ts`): horas azul (sol entre -6° y -4°) y dorada (entre -4° y 6°), salida y puesta;
+  - tiempo (`src/lib/tiempo.ts`, en el navegador, sin clave): previsión de Open-Meteo por horas con nubes bajas,
+    medias y altas, lluvia y rachas si faltan menos de 16 días; si no, climatología del archivo (±7 días de esa
+    fecha en los diez últimos años). La etiqueta dice siempre cuál es;
+  - mejores franjas: luz × nubes bajas × lluvia y viento;
+  - especies del mes: celdas de 10 km del radio (cuadrícula EEA calculada en el navegador), pedidas por bloques de
+    100 km a `/espana/datos/[bloque]`, que lee `espana.json` (404 mientras no haya descarga de GBIF: la página lo
+    dice y la luz y el tiempo funcionan igual). La frecuencia de varias celdas se une ponderando por la muestra.
+- Puntuación (`src/features/espana/puntuacion.ts`): verla = frecuencia · presencia reciente · actividad;
+  fotografiarla = luz · tiempo; total, media geométrica con pesos (frecuencia ×3). Suelos: sin avistamientos
+  recientes 0,5; actividad 0,3. Solo la frecuencia 0 anula. Actividad por clase mientras no haya tabla por especie
+  (aves de día, mamíferos crepusculares). Desglose plegado en cada especie.
+- Probado con un `espana.json` sintético en local (no se publica).

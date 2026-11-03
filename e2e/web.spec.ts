@@ -525,3 +525,12 @@ test("calendario de fenómenos: ficha, página del mes, especie y .ics", async (
   const ics = await (await request.get("/parque/valdes/calendario.ics")).text();
   expect(ics).toContain("Ballenas francas australes");
 });
+
+test("fauna en España: luz, tiempo y especies (o aviso sin datos)", async ({ page }) => {
+  await page.goto("/espana?zona=gallocanta&fecha=2026-11-08");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Fauna en España");
+  await expect(page.locator(".luz-dia")).toContainText("Hora dorada");
+  await expect(page.locator(".luz-dia")).toContainText(/\d{2}:\d{2}/);
+  const especies = page.locator("section", { hasText: "Qué es probable ver en noviembre" });
+  await expect(especies.locator(".lista-especies-espana li, .nota-pie").first()).toBeVisible({ timeout: 15000 });
+});

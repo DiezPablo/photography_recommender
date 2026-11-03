@@ -11,6 +11,7 @@ const config: NextConfig = {
     "/parque/[id]": ["./datos/safaris.json.gz", "./datos/safaris_mundo.json.gz", "./datos/safaris_recientes.json.gz"],
     "/parque/[id]/calendario.ics": ["./datos/safaris.json.gz", "./datos/safaris_mundo.json.gz"],
     "/viaje.ics": ["./datos/safaris.json.gz", "./datos/safaris_mundo.json.gz"],
+    "/espana/datos/[bloque]": ["./datos/espana.json.gz"],
     "/comparar": ["./datos/safaris.json.gz", "./datos/safaris_mundo.json.gz"],
   },
 };

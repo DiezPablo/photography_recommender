@@ -60,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/migracion">La gran migración</Link>
               <Link href="/safari-en">Por meses y países</Link>
               <Link href="/temporada-verde">Temporada verde</Link>
+              <Link href="/espana">Fauna en España</Link>
               <a href="/recientes.xml">Lo visto, por RSS</a>
             </nav>
             <nav aria-label="Organizar">
