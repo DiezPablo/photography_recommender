@@ -44,13 +44,18 @@ MESES_ES = [
 def cargar_filas(descargar: bool) -> tuple[list[dict], dict] | None:
     if FILAS.exists():
         d = json.loads(gzip.decompress(FILAS.read_bytes()))
-        return d["filas"], d["meta"]
+        if d["filas"]:
+            return d["filas"], d["meta"]
+        FILAS.unlink()  # una descarga vacía no se reutiliza
     if not descargar:
         return None
     r = gbif_descarga.descargar()
     if r is None:
         return None
     filas, meta = r
+    if not filas:
+        print(f"GBIF: la descarga {meta.get('clave')} salió vacía (0 filas); no se guarda", flush=True)
+        return None
     FILAS.parent.mkdir(parents=True, exist_ok=True)
     FILAS.write_bytes(gzip.compress(json.dumps({"filas": filas, "meta": meta}).encode()))
     return filas, meta

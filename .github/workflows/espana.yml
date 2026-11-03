@@ -10,6 +10,10 @@ on:
         description: "Pedir otra descarga a GBIF aunque haya una en la caché"
         type: boolean
         default: false
+      diagnostico:
+        description: "Solo consultas de prueba pequeñas (Gallocanta) para ver qué filtro vacía la descarga"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -49,7 +53,12 @@ jobs:
         if: ${{ inputs.nueva_descarga }}
         run: rm -f cache/espana_filas.json.gz
 
+      - name: Diagnóstico
+        if: ${{ inputs.diagnostico }}
+        run: python -m safari --espana-diagnostico
+
       - name: GBIF y estacionalidad
+        if: ${{ !inputs.diagnostico }}
         run: python -m safari --espana
 
       - uses: actions/cache/save@v6

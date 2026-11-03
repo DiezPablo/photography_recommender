@@ -162,7 +162,13 @@ def main(argv: list[str] | None = None) -> None:
         "--sondeo-precios", action="store_true", help="sondeo de webs de operadores (docs/sondeo-precios.md)"
     )
     ap.add_argument("--espana", action="store_true", help="fauna en España con GBIF (necesita GBIF_USUARIO/CLAVE)")
+    ap.add_argument("--espana-diagnostico", action="store_true", help="consultas SQL de prueba a GBIF (Gallocanta)")
     a = ap.parse_args(argv)
+    if a.espana_diagnostico:
+        from safari.espana import diagnostico
+
+        diagnostico.main()
+        return
     if a.espana:
         from safari.espana import cli as espana
 
