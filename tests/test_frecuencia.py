@@ -24,3 +24,13 @@ def test_raros_y_meses_vecinos():
 
 def test_sin_datos_suficientes():
     assert frecuencia([1] * 12, [5] * 12) == [None] * 12
+
+
+def test_muestra_con_los_meses_vecinos():
+    from safari.frecuencia import muestra
+
+    base = [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5]
+    m = muestra(base)
+    assert m[0] == 15  # diciembre + enero + febrero
+    assert m[11] == 15
+    assert m[5] == 0

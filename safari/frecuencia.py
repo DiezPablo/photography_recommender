@@ -13,6 +13,11 @@ from __future__ import annotations
 MIN_BASE = 30
 
 
+def muestra(base: list[int]) -> list[int]:
+    """Tamaño de muestra de cada mes: observaciones del grupo con los meses vecinos (la base de frecuencia)."""
+    return [sum(base[i] for i in ((m - 1) % 12, m, (m + 1) % 12)) for m in range(12)]
+
+
 def frecuencia(especie: list[int], base: list[int]) -> list[int | None]:
     """‰ de las observaciones del grupo que son de la especie, mes a mes (enero a diciembre)."""
     salida: list[int | None] = []

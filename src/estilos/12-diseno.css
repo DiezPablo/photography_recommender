@@ -1276,3 +1276,25 @@ body {
 .aviso-cierre.ahora {
   margin: 1rem 0;
 }
+
+/* ---- Confianza de la frecuencia */
+.tabla-frecuencia td.confianza-baja,
+.leyenda-frecuencia i.confianza-baja {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0 3px,
+    color-mix(in srgb, var(--fondo) 70%, transparent) 3px 6px
+  );
+}
+.tabla-frecuencia .fila-muestra td,
+.tabla-frecuencia .fila-muestra th {
+  font: 500 0.7rem var(--f-datos, inherit);
+  color: var(--texto-3);
+  text-align: center;
+  background: none;
+}
+.confianza-hoy {
+  font-size: 0.9rem;
+  color: var(--texto-2);
+  margin: 0.3rem 0 0;
+}

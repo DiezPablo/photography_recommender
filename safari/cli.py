@@ -18,7 +18,7 @@ import requests
 from safari import entorno, inat, practico
 from safari.catalogo import cargar
 from safari.comun.ficheros import escribir_json
-from safari.frecuencia import frecuencia
+from safari.frecuencia import frecuencia, muestra
 
 DIAS_RECIENTES = 30
 MIN_OBS_ESPECIE = 3  # con una o dos observaciones puede ser un animal de paso o un error: no cuenta como «se ve aquí»
@@ -51,16 +51,18 @@ def taxones_estrella(parques: list[dict]) -> dict[str, dict]:
     return salida
 
 
-def frecuencias(p: dict, taxones: list[dict]) -> dict[str, list[int | None]]:
-    """Frecuencia de avistamientos por mes de cada especie estrella frente a las de su grupo (safari.frecuencia)."""
+def frecuencias(p: dict, taxones: list[dict]) -> tuple[dict[str, list[int | None]], dict[str, list[int]]]:
+    """Frecuencia de avistamientos por mes de cada especie estrella frente a las de su grupo (safari.frecuencia) y
+    el tamaño de muestra de cada mes (observaciones del grupo), para decir con qué confianza."""
     bases: dict[str, list[int]] = {}
-    salida = {}
+    salida, muestras = {}, {}
     for t in taxones:
         grupo = t.get("grupo") or "Mammalia"
         if grupo not in bases:
             bases[grupo] = inat.por_mes(p, grupo)
         salida[str(t["taxon"])] = frecuencia(inat.por_mes(p, taxon=t["taxon"]), bases[grupo])
-    return salida
+        muestras[str(t["taxon"])] = muestra(bases[grupo])
+    return salida, muestras
 
 
 def calcular(parques: list[dict], con_clima: bool = True, con_alojamientos: bool = True) -> dict:
@@ -90,7 +92,7 @@ def calcular(parques: list[dict], con_clima: bool = True, con_alojamientos: bool
                 por_especie[k].append({"id": p["id"], "n": v})
             x["meses_mamiferos"] = meses_relativos(inat.por_mes(p, "Mammalia"))
             x["observaciones"] = sum(inat.por_mes(p))
-            x["frecuencia"] = frecuencias(p, [estrella[c] for c in p["estrella"] if c in estrella])
+            x["frecuencia"], x["muestra"] = frecuencias(p, [estrella[c] for c in p["estrella"] if c in estrella])
         except _ERRORES as e:
             print(f"  {p['nombre']}: sin iNaturalist ({e})", flush=True)
         try:

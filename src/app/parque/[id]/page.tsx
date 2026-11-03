@@ -233,6 +233,7 @@ export default async function PaginaParque({ params }: Props) {
             nombre: nombreTaxon(e),
             href: `/especie/${slugEspecie(e)}`,
             meses: p.frecuencia![String(e.taxon)],
+            muestra: p.muestra?.[String(e.taxon)],
           }))}
       />
 

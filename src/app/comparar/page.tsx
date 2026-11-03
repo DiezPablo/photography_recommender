@@ -11,6 +11,7 @@ import {
   cargarSafaris,
   getParque,
   getParqueMundo,
+  confianza,
   nivelFrecuencia,
   nombreEstrella,
   slugEspecie,
@@ -63,6 +64,11 @@ export default async function PaginaComparar({ searchParams }: Props) {
     const t = mundo ? taxon.get(mundo.estrella[k]) : undefined;
     const f = t !== undefined ? getParque(p.id)?.frecuencia?.[String(t)] : undefined;
     return f ? f[mes] : undefined;
+  };
+  // fotos del grupo detrás de ese nivel (tamaño de muestra)
+  const muestraDe = (p: ParqueMundo, k: string) => {
+    const t = mundo ? taxon.get(mundo.estrella[k]) : undefined;
+    return t !== undefined ? getParque(p.id)?.muestra?.[String(t)]?.[mes] : undefined;
   };
   const internacional = (p: ParqueMundo) => p.llegar.aeropuertos.find((x) => x.internacional);
   const tasa = (p: ParqueMundo) => (TASAS[p.id] ? tasaPorPersona(TASAS[p.id], 1, mes + 1) : null);
@@ -268,7 +274,16 @@ export default async function PaginaComparar({ searchParams }: Props) {
                         return (
                           <td key={p.id}>
                             {nivel && nivel.clave !== "sin-datos" ? (
-                              <span className={`f-texto-${nivel.clave}`}>{nivel.texto}</span>
+                              <span
+                                className={`f-texto-${nivel.clave}`}
+                                title={(() => {
+                                  const c = confianza(muestraDe(p, k));
+                                  return c ? `${c.texto} (${muestraDe(p, k)} fotos del grupo)` : undefined;
+                                })()}
+                              >
+                                {nivel.texto}
+                                {confianza(muestraDe(p, k))?.clave === "baja" ? " (pocos datos)" : ""}
+                              </span>
                             ) : (
                               <span className="barra-comparar" title={`${n.toLocaleString("es-ES")} observaciones`}>
                                 <i style={{ width: `${Math.max(6, Math.sqrt(n / max) * 100)}%` }} />

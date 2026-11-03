@@ -469,3 +469,13 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   `CONSULTADO` y el `revisado` de cada país) y el workflow `revision.yml` (el día 1 de cada mes) abre o
   actualiza una incidencia «Revisión anual de los datos escritos a mano» si algo tiene más de un año, con la
   lista y qué mirar en cada caso. Al revisar, se cambia la fecha en el fichero.
+
+## 03-11-2026 · Especificación de fauna y confianza de la frecuencia
+
+- La especificación del usuario (planificador de fauna en España y safaris) está en `docs/especificacion-fauna.md`,
+  revisada contra lo que ya hace la app: web pública, alojamientos y presupuesto se quedan; mensual suavizado
+  antes que semanal; dos notas (verla / fotografiarla); JSON troceados por provincia. Credenciales opcionales en
+  `.env.example` (GBIF y eBird), que aún no existen.
+- Tamaño de muestra: el catálogo guarda `muestra` (fotos del grupo con los meses vecinos, por taxón y mes). La
+  ficha marca con rayado los niveles de confianza baja (30-99 fotos), añade la fila «Fotos del grupo» y la
+  confianza del mes; el comparador pone «(pocos datos)». Umbrales: alta ≥ 300, media ≥ 100, baja ≥ 30.

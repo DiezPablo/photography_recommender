@@ -52,6 +52,8 @@ export interface Parque {
   conteo_estrella?: Record<string, number>;
   /** frecuencia de avistamientos por mes (‰ de las observaciones de su grupo; safari/frecuencia.py), por taxón */
   frecuencia?: Record<string, (number | null)[]>;
+  /** tamaño de muestra de cada mes (fotos de su grupo, con los meses vecinos), por taxón */
+  muestra?: Record<string, number[]>;
   /** observaciones de mamíferos por mes, 0-100 (null si hay muy pocas) */
   meses_mamiferos?: number[] | null;
   observaciones?: number;
@@ -362,4 +364,19 @@ export function slugTexto(t: string): string {
 /** Países de un parque del catálogo («Sudáfrica y Botsuana» → los dos). */
 export function paisesDe(p: Pick<Parque, "pais">): string[] {
   return p.pais.split(" y ");
+}
+
+// ---- Confianza: cuántas fotos del grupo hay detrás de cada nivel
+
+export interface Confianza {
+  clave: "alta" | "media" | "baja";
+  texto: string;
+}
+
+/** Con menos de 30 fotos del grupo no se da nivel (safari/frecuencia.py); de 30 a 99, confianza baja. */
+export function confianza(n: number | null | undefined): Confianza | null {
+  if (n === null || n === undefined || n < 30) return null;
+  if (n >= 300) return { clave: "alta", texto: "confianza alta" };
+  if (n >= 100) return { clave: "media", texto: "confianza media" };
+  return { clave: "baja", texto: "confianza baja" };
 }
