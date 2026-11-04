@@ -264,3 +264,21 @@ En qué parte de las listas de eBird de cada cuadrícula y mes sale cada especie
 - Sierra de Gredos (mes 5): 20 de 20 entre 102 vistas (precisión 1.0; 1544 listas de entreno).
 - Picos de Europa (mes 10): 20 de 20 entre 79 vistas (precisión 1.0; 463 listas de entreno).
 - Laguna de Gallocanta (mes 11): 20 de 20 entre 79 vistas (precisión 1.0; 651 listas de entreno).
+
+Calibración en toda España: cuando dice «X % de las listas» (2015-2024), qué % se vio en 2025 (celdas y meses con al menos 10 listas en los dos periodos):
+
+| Previsto | Casos | % previsto (media) | % visto en 2025 |
+|---|---|---|---|
+| 0-5 % | 308297 | 1.4 | 2.2 |
+| 5-10 % | 143123 | 6.8 | 7.4 |
+| 10-20 % | 169965 | 14.0 | 14.2 |
+| 20-40 % | 146372 | 27.7 | 27.1 |
+| 40-60 % | 42583 | 47.2 | 45.0 |
+| 60-100 % | 8482 | 66.5 | 61.4 |
+
+Orden de las aves en cada zona frente a la detección vista en 2025 (correlación de rangos de Spearman; 1 = mismo orden): detección de eBird frente al ‰ de su grupo en GBIF.
+
+- Doñana (mes 1, 152 especies): eBird 0.92, GBIF ‰ 0.89.
+- Sierra de Gredos (mes 5, 130 especies): eBird 0.93, GBIF ‰ 0.93.
+- Picos de Europa (mes 10, 110 especies): eBird 0.86, GBIF ‰ 0.75.
+- Laguna de Gallocanta (mes 11, 114 especies): eBird 0.82, GBIF ‰ 0.84.
