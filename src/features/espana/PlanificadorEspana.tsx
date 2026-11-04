@@ -7,7 +7,8 @@ import { useEffect, useState } from "react";
 import { useParametrosUrl } from "@/lib/almacen";
 import { MESES, distanciaKm } from "@/lib/fechas";
 import { calidadLuz, luzDia, type Franja, type LuzDia } from "@/lib/luz";
-import { horaLocal } from "@/lib/sol";
+import { horaLocal, rumbo } from "@/lib/sol";
+import { luna } from "@/lib/luna";
 import { bloque, celdasEnRadio } from "@/lib/rejilla";
 import {
   factorNubes,
@@ -132,6 +133,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
       ? (guardada.nombre ?? `Tu punto (${lat.toFixed(2)}, ${lon.toFixed(2)})`)
       : zona.nombre;
   const mes = Number(fecha.slice(5, 7)) - 1;
+  const fasesLuna = luna(fecha);
   const luz = luzDia(fecha, lat, lon);
 
   // cada resultado va con la clave de su consulta: si no coincide con la actual, está cargando
@@ -307,6 +309,15 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
           Luz
         </h2>
         <LuzYMar lat={lat} lon={lon} fecha={fecha} />
+        <p className="nota-pie">
+          Luna: {fasesLuna.nombre}, {Math.round(fasesLuna.iluminada * 100)} % iluminada
+          {fasesLuna.iluminada < 0.2
+            ? " · noche oscura: buena para fotografía nocturna y mamíferos que evitan la luz"
+            : fasesLuna.iluminada > 0.85
+              ? " · noche clara: siluetas y paisaje nocturno con luz de luna"
+              : ""}
+          .
+        </p>
         <dl className="luz-dia">
           <div>
             <dt>Hora azul</dt>
@@ -373,7 +384,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                     <th scope="col">Medias</th>
                     <th scope="col">Altas</th>
                     <th scope="col">Lluvia</th>
-                    <th scope="col">Rachas</th>
+                    <th scope="col">Viento</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -388,12 +399,21 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                         <td>{h.nubesMedias} %</td>
                         <td>{h.nubesAltas} %</td>
                         <td>{h.probLluvia ?? "–"} %</td>
-                        <td>{Math.round(h.rachas)} km/h</td>
+                        <td>
+                          {h.direccion !== null && h.direccion !== undefined ? `${rumbo(h.direccion)} ` : ""}
+                          {Math.round(h.rachas)} km/h
+                        </td>
                       </tr>
                     ))}
                 </tbody>
               </table>
             </div>
+            {mejor?.direccion !== null && mejor?.direccion !== undefined && (
+              <p className="nota-pie">
+                En la mejor franja el viento viene del {rumbo(mejor.direccion)}: con mamíferos, acércate de cara al
+                viento (desde el {rumbo(mejor.direccion)}) para que no te huelan.
+              </p>
+            )}
           </>
         )}
       </section>

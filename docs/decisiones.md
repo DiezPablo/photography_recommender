@@ -662,3 +662,15 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
 - Explorador en mapa (`/espana/mapa`): lugares del encuadre (`/espana/lugares-mapa`, como mucho 500; con el mapa
   alejado, solo los puntos de eBird de 100 especies o más), hides y salidas, fenómenos del mes y el mapa de calor
   de una especie (sus cuadrículas de 10 km coloreadas por el ‰ del mes; `?celdas=1`).
+- Tanda 4 (fotógrafo en España):
+  - «Este finde» propone un plan por día: mañana en el mejor sitio para la mañana y tarde en el mejor de los
+    demás a menos de 60 km (sin cruzar media España), con la hora dorada de cada uno, alojamientos de OSM a 15 km
+    solo si se pulsa (Overpass desde el navegador), calendario `.ics` y «Guardar sin conexión».
+  - Sin conexión: `public/sw.js` (navegación de red primero y, sin cobertura, la copia; estáticos de la copia);
+    se registra solo en producción.
+  - Viento: dirección (`wind_direction_10m`) en la tabla y aviso de acercarse de cara al viento a los mamíferos.
+    Luna: fase e iluminación calculadas (noche oscura u clara).
+  - Diario de salidas (`/espana/diario`): solo en el navegador, con resumen, CSV y copia en JSON para cambiar de
+    dispositivo.
+  - Normas (`/espana/normas`): arts. 54.5 y 57.1.b de la Ley 42/2007 citados del BOE, drones (AESA, ENAIRE) y la
+    página oficial de los 17 parques nacionales; código ético. Entra en la revisión anual.

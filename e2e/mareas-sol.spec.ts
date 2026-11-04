@@ -2,6 +2,7 @@
 import { expect, test } from "@playwright/test";
 import { azimutSol, rumbo } from "../src/lib/sol";
 import { leerMareas } from "../src/lib/mareas";
+import { luna } from "../src/lib/luna";
 
 test("rumbo del sol: en Madrid sale por el ENE en junio y por el ESE en diciembre", () => {
   const junio = azimutSol("2026-06-21", 40.42, -3.7, -0.833, true)!;
@@ -43,4 +44,11 @@ test("mareas: Mediterráneo (casi sin marea) y punto de interior", () => {
   expect(med.limicolas).toEqual([]);
   // la celda de mar queda a más de 15 km: es interior
   expect(leerMareas({ ...serie(1), latitude: 43.47, longitude: -3.8 }, "2026-11-07", 40.42, -3.7)).toBeNull();
+});
+
+test("fase de la luna", () => {
+  // 3-1-2026 fue luna llena; 18-1-2026, luna nueva
+  expect(luna("2026-01-03").nombre).toBe("luna llena");
+  expect(luna("2026-01-03").iluminada).toBeGreaterThan(0.95);
+  expect(luna("2026-01-18").iluminada).toBeLessThan(0.05);
 });

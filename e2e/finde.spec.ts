@@ -1,6 +1,14 @@
 // «Este finde»: días, mejor franja del tiempo y nota (funciones puras, sin navegador).
 import { expect, test } from "@playwright/test";
-import { diasFinde, leerPrevisionVarios, puntuarFinde, tiempoDia } from "../src/features/espana/finde";
+import {
+  diasFinde,
+  icsPlan,
+  leerPrevisionVarios,
+  planDia,
+  puntuarFinde,
+  tiempoDia,
+  tiempoFranja,
+} from "../src/features/espana/finde";
 import type { HoraTiempo } from "../src/lib/tiempo";
 
 test("días del fin de semana", () => {
@@ -58,4 +66,43 @@ test("Open-Meteo: un punto (objeto) o varios (lista)", () => {
   };
   expect(leerPrevisionVarios(uno)).toHaveLength(1);
   expect(leerPrevisionVarios([uno, uno])).toHaveLength(2);
+});
+
+test("plan del día: mañana y tarde en sitios distintos y cercanos", () => {
+  const lugares = [
+    { lat: 40.0, lon: -3.0 },
+    { lat: 40.1, lon: -3.0 }, // a ~11 km
+    { lat: 43.0, lon: -8.0 }, // lejísimos
+  ];
+  const plan = planDia(
+    lugares,
+    (i) => [0.9, 0.5, 0.1][i],
+    (i) => [0.9, 0.6, 1][i],
+  )!;
+  expect(plan.manana).toBe(0);
+  expect(plan.tarde).toBe(1); // el 2 es mejor de tarde pero está a cientos de km
+  expect(plan.km).toBe(11);
+});
+
+test("calendario del plan (.ics)", () => {
+  const ics = icsPlan([
+    {
+      titulo: "Fauna: Gallocanta, mañana",
+      inicio: new Date("2026-11-07T06:30:00Z"),
+      fin: new Date("2026-11-07T09:00:00Z"),
+      lugar: "Laguna de Gallocanta",
+      lat: 40.97,
+      lon: -1.5,
+      nota: "grullas",
+    },
+  ]);
+  expect(ics).toContain("BEGIN:VCALENDAR");
+  expect(ics).toContain("DTSTART:20261107T063000Z");
+  expect(ics).toContain("SUMMARY:Fauna: Gallocanta\\, mañana");
+});
+
+test("tiempo de una franja concreta", () => {
+  const horas = [hora("2026-11-07T08:00", 80, 10), hora("2026-11-07T17:00", 0, 10)];
+  expect(tiempoFranja(horas, "2026-11-07", "mañana")?.probLluvia).toBe(80);
+  expect(tiempoFranja(horas, "2026-11-07", "tarde")?.valor).toBe(1);
 });

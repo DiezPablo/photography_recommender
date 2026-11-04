@@ -44,6 +44,9 @@ export default function PaginaHides() {
             Pregunta por la orientación (luz de mañana o de tarde), la distancia al sujeto y si el cristal es espía.
           </li>
           <li>Con lobo, oso o lince: siempre a distancia y con guía; nunca se dan puntos exactos.</li>
+          <li>
+            Lo que dice la ley y el código ético: <Link href="/espana/normas">normas para fotografiar fauna</Link>.
+          </li>
         </ul>
         <p>
           ¿Falta alguno o hay un dato mal? <a href={PROPONER}>Propón un hide o una salida</a> (se revisa a mano).

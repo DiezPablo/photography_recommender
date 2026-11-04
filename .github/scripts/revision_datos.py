@@ -26,6 +26,7 @@ QUE = {
     "fenomenos.ts": "Fenómenos de fauna en España (berrea, grullas, Estrecho…): meses en las fuentes.",
     "hides.ts": "Hides y salidas guiadas en España: que la web siga activa, temporadas y precios.",
     "fotografia.ts": "Dificultad y consejos de fotografía por especie en España.",
+    "normas.ts": "Normas de fotografía de fauna: enlaces oficiales (BOE, AESA, ENAIRE, parques nacionales).",
 }
 FECHA = re.compile(r'(?:REVISADO\w*|CONSULTADO)\s*=\s*"(\d{2}-\d{2}-\d{4})"|revisado:\s*"(\d{2}-\d{2}-\d{4})"')
 

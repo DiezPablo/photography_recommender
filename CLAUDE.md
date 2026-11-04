@@ -30,7 +30,9 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
   en el navegador), `/espana/hides` (hides y salidas guiadas escritos a mano en `features/espana/hides.ts`;
   propuestas con la plantilla de incidencia `propon-hide.yml`), `/espana/rarezas` (notables de eBird),
   `/espana/especie/[clave]` (ficha de especie, ISR; consejos y dificultad de fotografía en
-  `features/espana/fotografia.ts`), `/espana/mapa` (explorador con capas y mapa de calor por especie); `.ics` por parque y `/migracion.ics`,
+  `features/espana/fotografia.ts`), `/espana/mapa` (explorador con capas y mapa de calor por especie), `/espana/diario` (salidas, en el
+  navegador), `/espana/normas` (ley citada, drones y parques nacionales; `features/espana/normas.ts`). Sin conexión:
+  `public/sw.js` (páginas de red y, sin cobertura, la copia; «Guardar sin conexión»); `.ics` por parque y `/migracion.ics`,
   `/recientes.xml`, `sitemap.xml`),
   `features/safaris` (componentes, modelo, `datos.ts` solo servidor), `ui/` (mapa Leaflet, iconos, `Navegacion.tsx`, `FotoGrande.tsx`), `lib/`
   (`datos.ts`: lee `datos/*.gz`; `almacen.ts`; `fechas.ts`), `estilos/` (01-11 heredados de Rasante; el aspecto

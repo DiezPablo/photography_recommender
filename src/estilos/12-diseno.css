@@ -1658,3 +1658,32 @@ body {
   display: inline-flex;
   align-items: center;
 }
+
+/* España: plan del fin de semana */
+.plan-dia {
+  margin: 8px 0 16px;
+}
+.plan-dia h3 {
+  margin: 0 0 4px;
+}
+.plan-dia ol {
+  padding-left: 1.2rem;
+}
+.guardado {
+  color: var(--suma);
+}
+.campo-ancho {
+  grid-column: 1 / -1;
+}
+.campo textarea {
+  width: 100%;
+  font: inherit;
+}
+.columnas {
+  columns: 2 14rem;
+}
+blockquote {
+  border-left: 3px solid var(--borde);
+  margin: 8px 0;
+  padding: 2px 12px;
+}

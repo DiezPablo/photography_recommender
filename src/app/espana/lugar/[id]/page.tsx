@@ -7,6 +7,7 @@ import MapaEventos from "@/ui/mapa/MapaEventos";
 import FrecuenciaAvistamientos from "@/features/safaris/componentes/FrecuenciaAvistamientos";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
 import ListaRarezas from "@/features/espana/ListaRarezas";
+import GuardarSinConexion from "@/features/espana/GuardarSinConexion";
 import TarjetaHide from "@/features/espana/TarjetaHide";
 import { hidesCerca } from "@/features/espana/hides";
 import LuzYMar from "@/features/espana/LuzYMar";
@@ -99,7 +100,8 @@ export default async function PaginaLugar({ params }: Props) {
           </Link>{" "}
           <a href={`https://www.openstreetmap.org/directions?to=${l.lat}%2C${l.lon}`} target="_blank" rel="noopener">
             Cómo llegar ↗
-          </a>
+          </a>{" "}
+          <GuardarSinConexion />
           {enlace && (
             <>
               {" · "}

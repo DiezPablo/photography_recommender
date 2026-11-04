@@ -8,8 +8,15 @@ import { MESES } from "@/lib/fechas";
 import ElegirLugar from "@/features/espana/ElegirLugar";
 import { useUbicacionGuardada } from "@/features/espana/ubicacion";
 import { fenomenosCerca } from "@/features/espana/fenomenos";
+import Alojamientos from "@/features/espana/Alojamientos";
+import GuardarSinConexion from "@/features/espana/GuardarSinConexion";
+import { luzDia } from "@/lib/luz";
+import { horaLocal } from "@/lib/sol";
 import {
   diasFinde,
+  icsPlan,
+  planDia,
+  tiempoFranja,
   leerPrevisionVarios,
   puntuarFinde,
   tiempoDia,
@@ -94,6 +101,68 @@ export default function FindeEspana({ hoy }: { hoy: string }) {
       .slice(0, 8),
   }));
 
+  // el plan de cada día: mañana en el mejor sitio para la mañana; tarde, en otro a menos de 60 km
+  const lugaresD = datos?.lugares ?? [];
+  const planes = dias.map((dia) => {
+    const nota = (i: number, franja: "mañana" | "tarde") => {
+      const l = lugaresD[i];
+      const f = fenomenosCerca(l.lat, l.lon, l.r, mes + 1)[0];
+      const t = datos?.horas?.[i] ? tiempoFranja(datos.horas[i], dia, franja) : null;
+      return puntuarFinde({
+        especies: l.especies,
+        maxEspecies,
+        km: l.km,
+        maxKm: km,
+        tiempo: t,
+        fenomeno: f?.titulo ?? null,
+      }).total;
+    };
+    const plan = planDia(
+      lugaresD,
+      (i) => nota(i, "mañana"),
+      (i) => nota(i, "tarde"),
+    );
+    const salidas = plan
+      ? [
+          { i: plan.manana, titulo: "Mañana", franja: "mañana" as const },
+          ...(plan.tarde !== null ? [{ i: plan.tarde, titulo: "Tarde", franja: "tarde" as const }] : []),
+        ].map(({ i, titulo, franja }) => {
+          const l = lugaresD[i];
+          const luz = luzDia(dia, l.lat, l.lon);
+          const f = franja === "mañana" ? luz.doradaManana : luz.doradaTarde;
+          const inicio = f
+            ? new Date(f.desde.getTime() - (franja === "mañana" ? 30 : 60) * 60000)
+            : new Date(`${dia}T08:00:00Z`);
+          const fin = f
+            ? new Date(f.hasta.getTime() + (franja === "mañana" ? 90 : 15) * 60000)
+            : new Date(`${dia}T11:00:00Z`);
+          const t = datos?.horas?.[i] ? tiempoFranja(datos.horas[i], dia, franja) : null;
+          return {
+            titulo,
+            id: l.id,
+            lugar: l.n,
+            lat: l.lat,
+            lon: l.lon,
+            inicio,
+            fin,
+            nota: `${horaLocal(inicio, l.lon)}–${horaLocal(fin, l.lon)}${t ? ` · ${t.probLluvia} % lluvia, rachas ${t.rachas} km/h` : ""} · ${l.especies} especies este mes${l.destacadas.length ? ` (${l.destacadas.slice(0, 3).join(", ")})` : ""}`,
+          };
+        })
+      : [];
+    return { dia, plan, salidas };
+  });
+  const descargarIcs = () => {
+    const texto = icsPlan(
+      planes.flatMap((x) => x.salidas.map((y) => ({ ...y, titulo: `Fauna: ${y.lugar} (${y.titulo.toLowerCase()})` }))),
+    );
+    const url = URL.createObjectURL(new Blob([texto], { type: "text/calendar" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "fin-de-semana-fauna.ics";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <>
       <section className="seccion formulario-plan">
@@ -125,6 +194,40 @@ export default function FindeEspana({ hoy }: { hoy: string }) {
         <p className="nota-pie">
           No se pudo consultar la previsión de Open-Meteo: el orden es solo por fauna y distancia.
         </p>
+      )}
+      {datos && datos.lugares.length > 0 && planes.some((x) => x.plan) && (
+        <section className="seccion plan-finde" aria-labelledby="plan-titulo">
+          <h2 className="rotulo" id="plan-titulo">
+            Plan propuesto
+          </h2>
+          {planes.map(({ dia, plan, salidas }) =>
+            plan ? (
+              <div key={dia} className="plan-dia">
+                <h3>{nombreDia(dia)}</h3>
+                <ol>
+                  {salidas.map((x) => (
+                    <li key={x.titulo}>
+                      <b>{x.titulo}</b>: <Link href={`/espana/lugar/${encodeURIComponent(x.id)}`}>{x.lugar}</Link>{" "}
+                      <small>{x.nota}</small>
+                    </li>
+                  ))}
+                </ol>
+                {plan.km !== null && (
+                  <p className="nota-pie">Entre los dos sitios, unos {plan.km} km en línea recta.</p>
+                )}
+                <Alojamientos {...salidas[salidas.length - 1]} nombre={salidas[salidas.length - 1].lugar} />
+              </div>
+            ) : null,
+          )}
+          <p>
+            <button type="button" className="boton" onClick={descargarIcs}>
+              Añadir al calendario (.ics)
+            </button>{" "}
+            <GuardarSinConexion
+              urls={planes.flatMap((x) => x.salidas.map((y) => `/espana/lugar/${encodeURIComponent(y.id)}`))}
+            />
+          </p>
+        </section>
       )}
       {datos &&
         datos.lugares.length > 0 &&

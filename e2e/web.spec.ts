@@ -645,3 +645,22 @@ test("fauna en España: mapa explorador", async ({ page }) => {
   await expect(page.locator(".mapa-explorador[data-listo=si]")).toBeVisible({ timeout: 15000 });
   await expect(page.getByLabel("Hides y salidas")).toBeChecked();
 });
+
+test("fauna en España: diario de salidas (añadir y borrar)", async ({ page }) => {
+  await page.goto("/espana/diario");
+  await page.getByLabel("Lugar").fill("Laguna de prueba");
+  await page.getByLabel("Especies (separadas por comas)").fill("grulla, avefría");
+  await page.getByRole("button", { name: "Añadir salida" }).click();
+  await expect(page.locator(".tarjeta-hide").first()).toContainText("Laguna de prueba");
+  await expect(page.getByText(/1 salidas/)).toBeVisible();
+  page.once("dialog", (d) => d.accept());
+  await page.getByRole("button", { name: "borrar" }).first().click();
+  await expect(page.getByText("Aún no hay salidas")).toBeVisible();
+});
+
+test("fauna en España: normas y código ético", async ({ page }) => {
+  await page.goto("/espana/normas");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Normas y código ético");
+  await expect(page.locator("blockquote").first()).toContainText("molestar o inquietar");
+  expect(await page.locator("a[href*='miteco.gob.es']").count()).toBe(17);
+});

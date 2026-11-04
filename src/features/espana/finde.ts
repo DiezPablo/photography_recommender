@@ -44,6 +44,76 @@ const FRANJAS: [TiempoDia["franja"], number, number][] = [
   ["tarde", 16, 20],
 ];
 
+/** El tiempo de una franja concreta del día (para el itinerario: mañana en un sitio, tarde en otro). */
+export function tiempoFranja(horas: HoraTiempo[], fecha: string, franja: TiempoDia["franja"]): TiempoDia | null {
+  const [, desde, hasta] = FRANJAS.find(([f]) => f === franja)!;
+  const hs = horas.filter((h) => {
+    const hora = Number(h.hora.slice(11, 13));
+    return h.hora.startsWith(fecha) && hora >= desde && hora <= hasta;
+  });
+  if (!hs.length) return null;
+  const probLluvia = Math.max(...hs.map((h) => h.probLluvia ?? (h.lluvia > 0.2 ? 80 : 0)));
+  const rachas = Math.max(...hs.map((h) => h.rachas));
+  const valor = (1 - (0.7 * probLluvia) / 100) * (rachas > 50 ? 0.6 : rachas > 35 ? 0.8 : 1);
+  return { valor, franja, probLluvia, rachas: Math.round(rachas) };
+}
+
+/** Un día del itinerario: el mejor sitio de mañana y, para la tarde, el mejor de los demás a menos de `maxKm` del
+ * de la mañana (para no cruzar media España); cada uno con su nota. `notas[i]` es la nota de cada lugar para
+ * la franja dada. */
+export function planDia<T extends { lat: number; lon: number }>(
+  lugares: T[],
+  notaManana: (i: number) => number,
+  notaTarde: (i: number) => number,
+  maxKm = 60,
+): { manana: number; tarde: number | null; km: number | null } | null {
+  if (!lugares.length) return null;
+  const idx = lugares.map((_, i) => i);
+  const manana = idx.reduce((a, b) => (notaManana(b) > notaManana(a) ? b : a));
+  const candidatos = idx.filter((i) => i !== manana && kmEntre(lugares[i], lugares[manana]) <= maxKm);
+  const tarde = candidatos.length ? candidatos.reduce((a, b) => (notaTarde(b) > notaTarde(a) ? b : a)) : null;
+  return { manana, tarde, km: tarde === null ? null : Math.round(kmEntre(lugares[manana], lugares[tarde])) };
+}
+
+function kmEntre(a: { lat: number; lon: number }, b: { lat: number; lon: number }): number {
+  const r = Math.PI / 180;
+  const x =
+    Math.sin(((b.lat - a.lat) * r) / 2) ** 2 +
+    Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(((b.lon - a.lon) * r) / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(x));
+}
+
+/** Calendario (.ics) del plan: un evento por salida, con la hora dorada y el lugar. */
+export function icsPlan(
+  salidas: { titulo: string; inicio: Date; fin: Date; lugar: string; lat: number; lon: number; nota: string }[],
+): string {
+  const f = (d: Date) =>
+    d
+      .toISOString()
+      .replace(/[-:]/g, "")
+      .replace(/\.\d{3}/, "");
+  const esc = (t: string) => t.replace(/[\\;,]/g, (c) => `\\${c}`).replace(/\n/g, "\\n");
+  const ahora = f(new Date());
+  return [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Safaris//Fauna en España//ES",
+    ...salidas.flatMap((s, i) => [
+      "BEGIN:VEVENT",
+      `UID:finde-${f(s.inicio)}-${i}@safarirecommender.vercel.app`,
+      `DTSTAMP:${ahora}`,
+      `DTSTART:${f(s.inicio)}`,
+      `DTEND:${f(s.fin)}`,
+      `SUMMARY:${esc(s.titulo)}`,
+      `LOCATION:${esc(s.lugar)}`,
+      `GEO:${s.lat};${s.lon}`,
+      `DESCRIPTION:${esc(s.nota)}`,
+      "END:VEVENT",
+    ]),
+    "END:VCALENDAR",
+  ].join("\r\n");
+}
+
 /** La mejor franja del día (mañana 7-11 o tarde 16-20, cuando más se mueve la fauna) por lluvia y rachas. */
 export function tiempoDia(horas: HoraTiempo[], fecha: string): TiempoDia | null {
   let mejor: TiempoDia | null = null;

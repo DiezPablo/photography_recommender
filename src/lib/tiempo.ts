@@ -14,6 +14,8 @@ export interface HoraTiempo {
   lluvia: number;
   viento: number;
   rachas: number;
+  /** de dónde viene el viento, en grados (0 = norte); null si no hay dato */
+  direccion?: number | null;
 }
 
 export interface Prevision {
@@ -45,7 +47,7 @@ export function urlPrevision(lat: number, lon: number, fecha: string): string {
     latitude: lat.toFixed(3),
     longitude: lon.toFixed(3),
     hourly:
-      "cloud_cover_low,cloud_cover_mid,cloud_cover_high,precipitation_probability,precipitation,wind_speed_10m,wind_gusts_10m",
+      "cloud_cover_low,cloud_cover_mid,cloud_cover_high,precipitation_probability,precipitation,wind_speed_10m,wind_gusts_10m,wind_direction_10m",
     timezone: "auto",
     start_date: fecha,
     end_date: fecha,
@@ -71,6 +73,10 @@ export function leerPrevision(d: {
       lluvia: Number(h.precipitation[i] ?? 0),
       viento: Number(h.wind_speed_10m[i] ?? 0),
       rachas: Number(h.wind_gusts_10m[i] ?? 0),
+      direccion:
+        h.wind_direction_10m?.[i] === null || h.wind_direction_10m?.[i] === undefined
+          ? null
+          : Number(h.wind_direction_10m[i]),
     })),
   };
 }
