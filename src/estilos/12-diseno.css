@@ -1638,3 +1638,23 @@ body {
 .especies-hide {
   margin: 4px 0;
 }
+
+/* España: explorador en mapa */
+.mapa-explorador {
+  height: min(70vh, 640px);
+}
+.capas-mapa {
+  border: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+.capas-mapa input[type="checkbox"] {
+  width: auto;
+  margin-right: 4px;
+}
+.capas-mapa label {
+  display: inline-flex;
+  align-items: center;
+}

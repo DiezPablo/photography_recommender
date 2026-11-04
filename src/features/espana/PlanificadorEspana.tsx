@@ -2,6 +2,7 @@
 // Fauna en España para un lugar y un día: luz (horas dorada y azul), tiempo (previsión o climatología, diciendo
 // cuál), las mejores franjas y, cuando haya datos de GBIF, las especies probables ese mes con dos notas (verla y
 // fotografiarla) y su desglose. Todo en el navegador: Open-Meteo sin clave y los datos de la cuadrícula por bloques.
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParametrosUrl } from "@/lib/almacen";
 import { MESES, distanciaKm } from "@/lib/fechas";
@@ -22,6 +23,7 @@ import ElegirLugar from "@/features/espana/ElegirLugar";
 import LuzYMar from "@/features/espana/LuzYMar";
 import BotonVista from "@/features/espana/BotonVista";
 import { useVistas } from "@/features/espana/vistas";
+import { factorFotografia } from "@/features/espana/fotografia";
 import { useUbicacionGuardada } from "@/features/espana/ubicacion";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
 import { fenomenosCerca } from "@/features/espana/fenomenos";
@@ -222,6 +224,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
             diasDesdeUltimo: dias,
             actividad: actividadPorDefecto(s.clase),
             perfil: nombres[k]?.h ?? null,
+            facilidad: factorFotografia(nombres[k]?.c, s.clase),
             momento: mejor?.momento ?? "dorada",
             luz: mejor?.luz ?? 1,
             tiempo: mejor?.tiempo ?? 1,
@@ -472,6 +475,11 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                           </li>
                         )}
                         {e.aviso && <li>Ojo: {e.aviso}.</li>}
+                        <li>
+                          <Link href={`/espana/especie/${e.clave}`}>
+                            Ficha de la especie: cuándo, dónde y cómo fotografiarla →
+                          </Link>
+                        </li>
                         <li>
                           Muestra: {e.muestra.toLocaleString("es-ES")} observaciones de su grupo
                           {c ? ` (${c.texto})` : ""}

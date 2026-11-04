@@ -28,7 +28,9 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
   cuadrícula de 10 km; buscador de lugares y «Cerca de aquí»), `/espana/lugar/[id]` (ficha de cada lugar,
   ISR; fenómenos escritos a mano en `features/espana/fenomenos.ts`), `/espana/mis-especies` (lista de vistas, solo
   en el navegador), `/espana/hides` (hides y salidas guiadas escritos a mano en `features/espana/hides.ts`;
-  propuestas con la plantilla de incidencia `propon-hide.yml`), `/espana/rarezas` (notables de eBird); `.ics` por parque y `/migracion.ics`,
+  propuestas con la plantilla de incidencia `propon-hide.yml`), `/espana/rarezas` (notables de eBird),
+  `/espana/especie/[clave]` (ficha de especie, ISR; consejos y dificultad de fotografía en
+  `features/espana/fotografia.ts`), `/espana/mapa` (explorador con capas y mapa de calor por especie); `.ics` por parque y `/migracion.ics`,
   `/recientes.xml`, `sitemap.xml`),
   `features/safaris` (componentes, modelo, `datos.ts` solo servidor), `ui/` (mapa Leaflet, iconos, `Navegacion.tsx`, `FotoGrande.tsx`), `lib/`
   (`datos.ts`: lee `datos/*.gz`; `almacen.ts`; `fechas.ts`), `estilos/` (01-11 heredados de Rasante; el aspecto

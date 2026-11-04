@@ -5,7 +5,7 @@ import { MESES } from "@/lib/fechas";
 import { SITIO } from "@/lib/sitio";
 import { PAREJAS, clavePareja } from "@/features/safaris/respuestas";
 import { cargarMundo, cargarSafaris, paisesDestacados, slugEspecie } from "@/features/safaris/datos";
-import { cargarLugares } from "@/features/espana/datos";
+import { cargarEspana, cargarLugares } from "@/features/espana/datos";
 
 export const dynamic = "force-static";
 
@@ -32,6 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       .filter((p) => !destacados.has(p.id) && p.nivel !== "C")
       .map((p) => url(`/parque/${p.id}`, 0.4)),
     url("/espana", 0.8),
+    ...Object.keys(cargarEspana()?.especies ?? {}).map((k) => url(`/espana/especie/${k}`, 0.5)),
     // fichas de lugares de España: espacios protegidos, observatorios y los puntos de eBird con 100 especies o más
     ...cargarLugares()
       .filter((l) => !l.id.startsWith("eb-") || (l.e ?? 0) >= 100)

@@ -22,7 +22,7 @@ export default function ListaRarezas({
         const k = claves[o.c];
         return (
           <li key={`${o.c}-${o.sub ?? o.f}-${o.lat}`}>
-            <b>{k ? <Link href={`/espana?modo=donde&k=${k}`}>{o.n ?? o.c}</Link> : (o.n ?? o.c)}</b> <i>{o.c}</i>
+            <b>{k ? <Link href={`/espana/especie/${k}`}>{o.n ?? o.c}</Link> : (o.n ?? o.c)}</b> <i>{o.c}</i>
             {o.k ? ` · ${o.k} ej.` : ""}
             <br />
             <small>

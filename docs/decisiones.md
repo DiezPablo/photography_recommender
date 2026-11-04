@@ -653,3 +653,12 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
 - Observatorios: si Overpass no responde (tres intentos con pausa), se reutilizan los ya publicados por este
   proyecto (ids `osm-node-…`); los que vinieron de Rasante no se reutilizan, y si no hay propios se publica sin
   observatorios ese día.
+- Ficha de especie en España (`/espana/especie/[clave]`, ISR diario; el JSON de «¿Dónde veo…?» pasa a
+  `/espana/especie-datos/[clave]`): curva del año en toda España (‰ ponderado por la muestra de cada
+  cuadrícula), mejores lugares, momentos especiales, actividad medida, consejo de fotografía, hides y lo visto
+  estos días (nada reciente de las especies sensibles). En el mapa del sitio, las ~855 especies.
+- «Fotografiarla» incluye lo fotografiable de la especie (`fotografia.ts`, a mano para ~70 de las más buscadas:
+  tamaño, dificultad 1-3 y consejo; el resto, un valor por grupo): 1 / 0,8 / 0,6.
+- Explorador en mapa (`/espana/mapa`): lugares del encuadre (`/espana/lugares-mapa`, como mucho 500; con el mapa
+  alejado, solo los puntos de eBird de 100 especies o más), hides y salidas, fenómenos del mes y el mapa de calor
+  de una especie (sus cuadrículas de 10 km coloreadas por el ‰ del mes; `?celdas=1`).

@@ -153,7 +153,7 @@ export default async function PaginaLugar({ params }: Props) {
               unidad="observaciones"
               filas={fs.map((f) => ({
                 nombre: f.nombre,
-                href: `/espana?modo=donde&k=${f.clave}`,
+                href: `/espana/especie/${f.clave}`,
                 meses: f.meses,
                 muestra: f.muestra,
               }))}

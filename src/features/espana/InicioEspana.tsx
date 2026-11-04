@@ -67,7 +67,7 @@ export default function InicioEspana({ hoy }: { hoy: string }) {
       </div>
 
       <p className="enlaces-inicio">
-        <Link href="/espana/hides">Hides y salidas guiadas →</Link> ·{" "}
+        <Link href="/espana/mapa">Mapa de fauna →</Link> · <Link href="/espana/hides">Hides y salidas guiadas →</Link> ·{" "}
         <Link href="/espana/rarezas">Rarezas de esta semana →</Link> ·{" "}
         <Link href="/espana/mis-especies">Mis especies vistas →</Link>
       </p>

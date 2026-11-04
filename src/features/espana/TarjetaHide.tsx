@@ -32,7 +32,7 @@ export default function TarjetaHide({
             return (
               <span key={e.c}>
                 {i > 0 ? ", " : ""}
-                {k ? <Link href={`/espana?modo=donde&k=${k}`}>{e.n}</Link> : e.n}
+                {k ? <Link href={`/espana/especie/${k}`}>{e.n}</Link> : e.n}
               </span>
             );
           })}

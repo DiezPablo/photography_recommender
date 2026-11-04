@@ -67,7 +67,7 @@ export default function DondeVerEspecie({ hoy }: { hoy: string }) {
   useEffect(() => {
     if (!clave) return;
     let vivo = true;
-    fetch(`/espana/especie/${clave}${mes === null ? "" : `?mes=${mes}`}`)
+    fetch(`/espana/especie-datos/${clave}${mes === null ? "" : `?mes=${mes}`}`)
       .then((r) => (r.ok ? r.json() : { lugares: null, cita: null }))
       .then(
         (d: { lugares: Lugar[] | null; cita: string | null }) =>
@@ -161,6 +161,7 @@ export default function DondeVerEspecie({ hoy }: { hoy: string }) {
           </h2>
           {elegida && (
             <p>
+              <Link href={`/espana/especie/${elegida.k}`}>Ficha de la especie →</Link>{" "}
               <BotonVista clave={elegida.k} especie={{ n: nombre(elegida), c: elegida.c, clase: elegida.clase }} />
             </p>
           )}

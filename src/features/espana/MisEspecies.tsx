@@ -55,7 +55,7 @@ export default function MisEspecies() {
             <ul className="lista-vistas">
               {xs.map(([k, v]) => (
                 <li key={k}>
-                  <Link href={`/espana?modo=donde&k=${k}`}>{v.n}</Link> <i>{v.c}</i> <small>{v.f}</small>{" "}
+                  <Link href={`/espana/especie/${k}`}>{v.n}</Link> <i>{v.c}</i> <small>{v.f}</small>{" "}
                   <button type="button" className="quitar" onClick={() => alternar(k, v)}>
                     quitar
                   </button>

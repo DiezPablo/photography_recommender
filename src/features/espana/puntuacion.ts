@@ -14,9 +14,10 @@ export interface Pesos {
   actividad: number;
   luz: number;
   tiempo: number;
+  facilidad: number;
 }
 
-export const PESOS: Pesos = { frecuencia: 3, presencia: 1, actividad: 1, luz: 1, tiempo: 1 };
+export const PESOS: Pesos = { frecuencia: 3, presencia: 1, actividad: 1, luz: 1, tiempo: 1, facilidad: 1 };
 
 export interface Factor {
   clave: keyof Pesos;
@@ -94,6 +95,8 @@ export function puntuar(
     momento: "noche" | "azul" | "dorada" | "dia";
     luz: number;
     tiempo: number;
+    /** lo fotografiable que es la especie (features/espana/fotografia.ts); sin él no entra */
+    facilidad?: { valor: number; detalle: string } | null;
   },
   pesos: Pesos = PESOS,
 ): Puntuacion {
@@ -132,6 +135,16 @@ export function puntuar(
       valor: entrada.tiempo,
       detalle: entrada.tiempo < 1 ? "lluvia o viento" : "bueno",
     },
+    ...(entrada.facilidad
+      ? [
+          {
+            clave: "facilidad" as const,
+            nombre: "Fotografiable",
+            valor: entrada.facilidad.valor,
+            detalle: entrada.facilidad.detalle,
+          },
+        ]
+      : []),
   ];
   // sin frecuencia no hay nada que ver: es el único factor que puede anular
   const verla = ver[0].valor === 0 ? 0 : geometrica(ver, pesos);

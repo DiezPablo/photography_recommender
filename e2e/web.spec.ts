@@ -626,3 +626,22 @@ test("fauna en España: hides y salidas guiadas, con filtros", async ({ page }) 
   expect(await page.locator(".tarjeta-hide").count()).toBeLessThan(todos);
   await expect(page.getByRole("link", { name: "Propón un hide o una salida" })).toHaveAttribute("href", /issues\/new/);
 });
+
+test("fauna en España: ficha de una especie", async ({ page, request }) => {
+  const { especies } = (await (await request.get("/espana/especies.json")).json()) as {
+    especies: { k: string; c: string | null }[];
+  };
+  const grulla = especies.find((e) => e.c === "Grus grus");
+  if (!grulla) return; // sin datos de especies
+  await page.goto(`/espana/especie/${grulla.k}`);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(/[Gg]rulla/);
+  await expect(page.locator(".tabla-frecuencia")).toBeVisible();
+  await expect(page.locator(".fenomenos")).toContainText("Gallocanta");
+  await expect(page.locator("section", { hasText: "Para fotografiarla" })).toContainText("cm");
+});
+
+test("fauna en España: mapa explorador", async ({ page }) => {
+  await page.goto("/espana/mapa");
+  await expect(page.locator(".mapa-explorador[data-listo=si]")).toBeVisible({ timeout: 15000 });
+  await expect(page.getByLabel("Hides y salidas")).toBeChecked();
+});

@@ -431,3 +431,59 @@ export function claveDe(cientifico: string): string | null {
   clavePorCientifico ??= new Map(Object.entries(cargarEspana()?.especies ?? {}).map(([k, e]) => [e.c ?? "", k]));
   return clavePorCientifico.get(cientifico.split(" ").slice(0, 2).join(" ")) ?? null;
 }
+
+/** Las cuadrículas donde se registra la especie con su ‰ del mes (0-11) o del mejor mes: para el mapa de calor. */
+export function celdasDeEspecie(clave: string, mes: number | null): [string, number, number, number][] {
+  const e = cargarEspana();
+  if (!e) return [];
+  const salida: [string, number, number, number][] = [];
+  for (const [c, d] of Object.entries(e.celdas)) {
+    const meses = d.e[clave];
+    if (!meses || !/^10kmE\d+N\d+$/.test(c)) continue;
+    const v = mes === null ? Math.max(0, ...meses.map((x) => x ?? 0)) : (meses[mes] ?? 0);
+    if (v <= 0) continue;
+    const [lat, lon] = centroCelda(c);
+    salida.push([c, Math.round(lat * 1000) / 1000, Math.round(lon * 1000) / 1000, v]);
+  }
+  return salida;
+}
+
+/** La curva del año en toda España: ‰ de su grupo cada mes (media ponderada por la muestra de cada cuadrícula),
+ * en cuántas cuadrículas aparece y la muestra de su grupo detrás. */
+export function curvaEspecie(clave: string): { meses: (number | null)[]; celdas: number; muestra: number[] } {
+  const e = cargarEspana();
+  const p = Array(12).fill(0);
+  const m = Array(12).fill(0);
+  let n = 0;
+  if (!e) return { meses: Array(12).fill(null), celdas: 0, muestra: m };
+  const clase = e.especies[clave]?.clase ?? "Aves";
+  for (const d of Object.values(e.celdas)) {
+    const meses = d.e[clave];
+    if (!meses) continue;
+    n++;
+    const muestra = d.m[clase] ?? [];
+    meses.forEach((v, i) => {
+      if (v === null) return;
+      p[i] += v * (muestra[i] ?? 0);
+      m[i] += muestra[i] ?? 0;
+    });
+  }
+  return { meses: p.map((x, i) => (m[i] ? Math.round(x / m[i]) : null)), celdas: n, muestra: m };
+}
+
+let actividadEspana: { especies: Record<string, { f: [number, number, number]; n: number }> } | null | undefined;
+/** Perfil de actividad medido (noche, crepúsculo, día) de una especie, si lo hay. */
+export function actividadDe(cientifico: string | null | undefined): { f: [number, number, number]; n: number } | null {
+  if (!cientifico) return null;
+  if (actividadEspana === undefined) actividadEspana = leerDatos("espana_actividad.json");
+  return actividadEspana?.especies[cientifico] ?? null;
+}
+
+/** Lo visto de una especie en 30 días (eBird o iNaturalist), más reciente antes. */
+export function recientesDe(cientifico: string | null | undefined): ObsReciente[] {
+  if (!cientifico) return [];
+  if (recientes === undefined) recientes = leerDatos<{ generado: string; obs: ObsReciente[] }>("espana_recientes.json");
+  return (recientes?.obs ?? [])
+    .filter((o) => o.c.split(" ").slice(0, 2).join(" ") === cientifico)
+    .sort((a, b) => b.f.localeCompare(a.f));
+}
