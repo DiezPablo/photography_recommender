@@ -4,7 +4,7 @@
   vistas allí; necesita EBIRD_CLAVE (una petición);
 - espacios protegidos de Wikidata (Natura 2000, parques y reservas naturales, monumentos naturales, parques
   periurbanos…), con su superficie para el radio;
-- observatorios de aves de OpenStreetMap, ya agrupados en Rasante (su release `datos`, fauna.json).
+- observatorios de aves de OpenStreetMap (leisure=bird_hide), agrupados por laguna o paraje.
 
 → espana_lugares.json: [{id, n, t, lat, lon, r, e, z}] (t: tipo; r: radio en km; e: especies vistas en eBird; z:
 código Natura 2000, si lo tiene).
@@ -12,8 +12,6 @@ código Natura 2000, si lo tiene).
 
 from __future__ import annotations
 
-import gzip
-import json
 import math
 import re
 import time
@@ -24,7 +22,6 @@ from safari.comun.red import sesion
 from safari.espana import ebird
 
 WIKIDATA = "https://query.wikidata.org/sparql"
-RASANTE_FAUNA = "https://github.com/DiezPablo/photo_recommender/releases/download/datos/fauna.json.gz"
 MIN_ESPECIES_HOTSPOT = 30  # por debajo suelen ser puntos de una sola visita
 # tipos de «área protegida» que no son de naturaleza (conjuntos históricos, yacimientos, lugares geológicos)
 NO_NATURALES = {"Q3317612", "Q9096832", "Q28748126", "Q56528396", "Q107989230"}
@@ -134,23 +131,61 @@ def hotspots(s: requests.Session | None = None) -> list[dict]:
     ]
 
 
+CONSULTA_OBSERVATORIOS = """
+[out:json][timeout:240];
+area["ISO3166-1"="ES"][admin_level=2]->.es;
+nwr["leisure"="bird_hide"](area.es);
+out center tags;
+"""
+AGRUPAR_M = 400  # varios observatorios de una misma laguna, un lugar
+
+
+def _centro(e: dict) -> tuple[float, float] | None:
+    if "lat" in e:
+        return e["lat"], e["lon"]
+    c = e.get("center")
+    return (c["lat"], c["lon"]) if c else None
+
+
 def observatorios(s: requests.Session | None = None) -> list[dict]:
-    s = s or sesion()
-    r = s.get(RASANTE_FAUNA, timeout=60)
-    r.raise_for_status()
+    """Observatorios de aves de OpenStreetMap (leisure=bird_hide) en España, agrupados a menos de 400 m; sin las
+    exhibiciones de cetrería ni los de acceso privado. Los que no tienen nombre se nombran al final (`todos`)."""
+    from safari.practico import overpass
+
+    d = overpass(CONSULTA_OBSERVATORIOS, timeout=300)
+    if not d:
+        raise requests.ConnectionError("Overpass no respondió (observatorios)")
+    grupos: list[dict] = []
+    for e in d.get("elements", []):
+        t = e.get("tags", {})
+        c = _centro(e)
+        nombre = t.get("name") or t.get("name:es")
+        if not c or t.get("access") in ("private", "no") or (nombre and NO_OBSERVATORIO.search(nombre)):
+            continue
+        cerca = next(
+            (g for g in grupos if math.dist((g["lat"], g["lon"] * 0.8), (c[0], c[1] * 0.8)) * 111_000 < AGRUPAR_M),
+            None,
+        )
+        if cerca:
+            cerca["k"] += 1
+            cerca["n"] = cerca["n"] or nombre
+            continue
+        grupos.append({"lat": c[0], "lon": c[1], "n": nombre, "k": 1, "osm": f"{e['type']}/{e['id']}"})
     return [
         {
-            "id": f"osm-{x['id']}",
-            "n": x["nombre"],
+            "id": f"osm-{g['osm'].replace('/', '-')}",
+            "n": g["n"],
             "t": "Observatorio de aves",
-            "lat": round(x["lat"], 4),
-            "lon": round(x["lon"], 4),
+            "lat": round(g["lat"], 4),
+            "lon": round(g["lon"], 4),
             "r": 2,
+            **({"k": g["k"]} if g["k"] > 1 else {}),
         }
-        for x in json.loads(gzip.decompress(r.content))["lugares"]
-        if not NO_OBSERVATORIO.search(x["nombre"])
+        for g in grupos
     ]
 
+
+PREFIJOS = {"eBird": "eb-", "Wikidata": "wd-", "OpenStreetMap": "osm-"}
 
 # observatorios de OSM que en realidad son exhibiciones de cetrería
 NO_OBSERVATORIO = re.compile(r"espect[aá]culo|exhibici[oó]n|exibici[oó]n|cetrer[ií]a|vuelo de rapaces", re.I)
@@ -181,9 +216,18 @@ def todos(s: requests.Session | None = None) -> tuple[list[dict], dict[str, int]
         except (requests.RequestException, KeyError, ValueError) as e:
             print(f"  lugares {nombre}: {e}", flush=True)
             xs = []
-        xs = sin_repetir(xs)
         cuenta[nombre] = len(xs)
         salida += xs
+    # observatorios sin nombre: «Observatorio de aves junto a <el lugar con nombre más cercano a menos de 5 km>»
+    con_nombre = [x for x in salida if x.get("n")]
+    for x in salida:
+        if x.get("n"):
+            continue
+        cerca = min(con_nombre, key=lambda y: math.dist((x["lat"], x["lon"]), (y["lat"], y["lon"])), default=None)
+        km = math.dist((x["lat"], x["lon"] * 0.8), (cerca["lat"], cerca["lon"] * 0.8)) * 111 if cerca else 99
+        x["n"] = f"Observatorio de aves junto a {cerca['n']}" if cerca and km < 5 else "Observatorio de aves"
+    salida = sin_repetir(salida)
+    cuenta = {f: sum(1 for x in salida if x["id"].startswith(p)) for f, p in PREFIJOS.items()}
     return salida, cuenta
 
 
@@ -214,47 +258,57 @@ def main(salida) -> None:
     print(f"{salida}: {len(xs)} lugares {cuenta}", flush=True)
 
 
-RASANTE = "https://github.com/DiezPablo/photo_recommender/releases/download/datos/"
+CONSULTA_RUTAS = """
+[out:json][timeout:300];
+area["ISO3166-1"="ES"][admin_level=2]->.es;
+rel["route"="hiking"](area.es);
+out center tags;
+"""
 
 
-def rasante(salida, s: requests.Session | None = None) -> None:
-    """espana_rasante.json: los spots de fotografía y las rutas de senderismo de Rasante (la web hermana), en
-    ligero (nombre, punto y lo justo para la lista), para «Fotografía y rutas cerca» en la ficha de cada lugar."""
-    from safari.comun.ficheros import escribir_json
-
-    s = s or sesion()
+def km_ruta(texto: str | None) -> float | None:
+    """La etiqueta distance de OSM («12.5», «12,5 km», «8 mi») en km."""
+    if not texto:
+        return None
+    m = re.match(r"\s*([\d.,]+)\s*(km|mi|m)?", texto)
+    if not m:
+        return None
     try:
-        spots = json.loads(gzip.decompress(s.get(RASANTE + "spots.geojson.gz", timeout=120).content))["features"]
-        rutas = json.loads(gzip.decompress(s.get(RASANTE + "rutas.json.gz", timeout=300).content))["rutas"]
-    except (requests.RequestException, KeyError, ValueError, OSError) as e:
-        print(f"  Rasante: {e}; no se escribe nada", flush=True)
+        v = float(m.group(1).replace(",", "."))
+    except ValueError:
+        return None
+    return round(v * 1.609 if m.group(2) == "mi" else v / 1000 if m.group(2) == "m" else v, 1)
+
+
+def rutas(salida, s: requests.Session | None = None) -> None:
+    """espana_rutas.json: rutas de senderismo de OpenStreetMap (relaciones route=hiking) con su centro, nombre,
+    código (GR, PR, SL…) y longitud, para «Rutas de senderismo cerca» en la ficha de cada lugar."""
+    from safari.comun.ficheros import escribir_json
+    from safari.practico import overpass
+
+    d = overpass(CONSULTA_RUTAS, timeout=330)
+    if not d:
+        print("  Rutas: Overpass no respondió; no se escribe nada", flush=True)
         return
-    escribir_json(
-        salida,
-        {
-            "spots": [
-                {
-                    "id": f["properties"]["id"],
-                    "n": f["properties"]["nombre"],
-                    "lat": round(f["geometry"]["coordinates"][1], 4),
-                    "lon": round(f["geometry"]["coordinates"][0], 4),
-                    "p": f["properties"].get("puntuacion"),
-                }
-                for f in spots
-            ],
-            "rutas": [
-                {
-                    "id": r["id"],
-                    "n": r["nombre"],
-                    "lat": round(r["inicio"][0], 4),
-                    "lon": round(r["inicio"][1], 4),
-                    "km": r.get("km"),
-                    "d": r.get("dificultad"),
-                    "c": bool(r.get("circular")),
-                }
-                for r in rutas
-                if r.get("inicio")
-            ],
-        },
-    )
-    print(f"{salida}: {len(spots)} spots y {len(rutas)} rutas de Rasante", flush=True)
+    xs = []
+    for e in d.get("elements", []):
+        t = e.get("tags", {})
+        c = _centro(e)
+        nombre = t.get("name:es") or t.get("name") or t.get("ref")
+        if not c or not nombre:
+            continue
+        xs.append(
+            {
+                "id": e["id"],
+                "n": nombre,
+                "ref": t.get("ref"),
+                "lat": round(c[0], 4),
+                "lon": round(c[1], 4),
+                "km": km_ruta(t.get("distance")),
+            }
+        )
+    if not xs:
+        print("  Rutas: ninguna; no se escribe nada", flush=True)
+        return
+    escribir_json(salida, {"fuente": "OpenStreetMap (ODbL)", "rutas": xs})
+    print(f"{salida}: {len(xs)} rutas de senderismo", flush=True)

@@ -17,9 +17,9 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
   - `espana` (`--espana`): cuadrícula EEA, descarga SQL de GBIF y eBird (credenciales opcionales en `.env.example`),
     estacionalidad con confianza y backtest; workflow `espana.yml` a mano. `--espana-recientes`: la última ave vista
     de cada especie por provincia en 30 días (eBird) → `espana_recientes.json`; `--espana-lugares`: puntos de eBird,
-    espacios protegidos de Wikidata y observatorios de OSM (de Rasante) → `espana_lugares.json`; los dos en el
+    espacios protegidos de Wikidata y observatorios de OSM (Overpass) → `espana_lugares.json`; los dos en el
     workflow `espana_recientes.yml`, diario, que también escribe `espana_natura.json` (límites Natura 2000 de la
-    EEA y sus cuadrículas, `natura`) y `espana_rasante.json` (spots y rutas de Rasante); `espana_recientes.json`
+    EEA y sus cuadrículas, `natura`) y `espana_rutas.json` (rutas de senderismo de OSM); `espana_recientes.json`
     lleva además mamíferos, reptiles y anfibios de iNaturalist (`inat_espana`). `--espana-actividad espana.json`:
     hora de actividad por especie (altura del sol en cada observación de iNaturalist) → `espana_actividad.json`,
     workflow `espana_actividad.yml`, semanal.
@@ -38,8 +38,7 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
   `revision.yml` (mensual: incidencia si algún dato escrito a mano tiene más de un año).
   Los datos no van en git: se suben a la release `datos` (`.github/scripts/publicar_release.sh`, que no publica
   si nada cambió) y solo se hace commit de `public/datos/version.json`, que redespliega Vercel. El prebuild los
-  descarga comprimidos a `datos/*.gz` (fuera de `public/`; si la release de este repo aún no los tiene, los de
-  Rasante). En `public/datos` solo va `safaris_indice.json`. Vercel guarda 30 días de despliegues: cuidado con
+  descarga comprimidos a `datos/*.gz` (fuera de `public/`), solo de la release de este repo. En `public/datos` solo va `safaris_indice.json`. Vercel guarda 30 días de despliegues: cuidado con
   su tamaño y número.
 
 ## Probar
@@ -59,3 +58,5 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
 - Ética: nunca ubicaciones exactas ni recientes de especies amenazadas (rinocerontes): las observaciones de
   lince, oso o rinoceronte ya llegan generalizadas y la web solo muestra zonas.
 - `git pull` antes de push: Actions hace commits de `public/datos/version.json`.
+- Independiente de Rasante (decisión del usuario, 04-11-2026): no se leen datos, código ni enlaces de su repo ni
+  de su web; lo que haga falta se calcula aquí.

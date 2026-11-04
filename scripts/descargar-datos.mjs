@@ -8,8 +8,8 @@ import { mkdir, readFile, writeFile, stat } from "node:fs/promises";
 import { gunzipSync } from "node:zlib";
 import path from "node:path";
 
-// Release «datos» de este repositorio; mientras no tenga datos propios, los de Rasante (donde nació el proyecto)
-const REPOS = [process.env.DATOS_REPO ?? "DiezPablo/safari_recommender", "DiezPablo/photo_recommender"];
+// Release «datos» de este repositorio (solo la suya: no se mezclan datos con otros proyectos)
+const REPOS = [process.env.DATOS_REPO ?? "DiezPablo/safari_recommender"];
 const FICHEROS = [
   "safaris.json",
   "safaris_recientes.json",
@@ -18,8 +18,8 @@ const FICHEROS = [
   "espana.json",
   "espana_recientes.json",
   "espana_lugares.json",
-  "espana_rasante.json",
   "espana_actividad.json",
+  "espana_rutas.json",
   "espana_natura.json",
 ];
 // el único que se pide desde el navegador (fetch en ExploradorSafaris)

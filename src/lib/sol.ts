@@ -67,3 +67,25 @@ export function horaLocal(d: Date, lon = -3.7): string {
 export function fechaLocal(d: Date, dias = 0, lon = -3.7): string {
   return new Date(d.getTime() + dias * 864e5).toLocaleDateString("sv-SE", { timeZone: zonaHoraria(lon) });
 }
+
+/**
+ * Rumbo del sol (azimut, ° desde el norte en el sentido de las agujas) cuando pasa por `altura` la mañana o la
+ * tarde de `fecha`: por dónde sale (altura −0,833) o por dónde da la luz dorada (altura 6). null si no ocurre.
+ */
+export function azimutSol(fecha: string, lat: number, lon: number, altura: number, manana: boolean): number | null {
+  const cuando = horaSol(fecha, lat, lon, altura, manana);
+  if (!cuando) return null;
+  const t = (cuando.getTime() / 864e5 + 2440587.5 - 2451545) / 36525;
+  const { dec } = solEn(t);
+  const cosA =
+    (Math.sin(dec * RAD) - Math.sin(altura * RAD) * Math.sin(lat * RAD)) /
+    (Math.cos(altura * RAD) * Math.cos(lat * RAD));
+  const a = Math.acos(Math.max(-1, Math.min(1, cosA))) / RAD;
+  return Math.round(manana ? a : 360 - a);
+}
+
+const RUMBOS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSO", "SO", "OSO", "O", "ONO", "NO", "NNO"];
+/** 112 → «ESE». */
+export function rumbo(grados: number): string {
+  return RUMBOS[Math.round((((grados % 360) + 360) % 360) / 22.5) % 16];
+}

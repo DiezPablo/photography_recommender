@@ -6,6 +6,8 @@ import { notFound } from "next/navigation";
 import MapaEventos from "@/ui/mapa/MapaEventos";
 import FrecuenciaAvistamientos from "@/features/safaris/componentes/FrecuenciaAvistamientos";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
+import LuzYMar, { direccionesSol } from "@/features/espana/LuzYMar";
+import { rumbo } from "@/lib/sol";
 import { fenomenosCerca } from "@/features/espana/fenomenos";
 import {
   calendarioLugar,
@@ -13,7 +15,7 @@ import {
   contornoDe,
   lugarPorId,
   lugaresCerca,
-  rasanteCerca,
+  rutasCerca,
   recientesLugar,
 } from "@/features/espana/datos";
 import { MESES } from "@/lib/fechas";
@@ -22,7 +24,8 @@ import { fechaLocal } from "@/lib/sol";
 type Props = { params: Promise<{ id: string }> };
 
 export const dynamicParams = true;
-export const revalidate = false;
+// una vez al día: «hoy» (luz, mareas, mes actual) y lo visto estos días cambian
+export const revalidate = 86400;
 
 export function generateStaticParams() {
   return [];
@@ -44,7 +47,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const RASANTE = "https://photo-recommender.vercel.app";
 const fechaCorta = (f: string) => `${Number(f.slice(8, 10))} ${MESES[Number(f.slice(5, 7)) - 1].slice(0, 3)}`;
 
 export default async function PaginaLugar({ params }: Props) {
@@ -59,7 +61,8 @@ export default async function PaginaLugar({ params }: Props) {
   const cerca = lugaresCerca(l.lat, l.lon, mesHoy, 9)
     .filter((x) => x.id !== l.id)
     .slice(0, 8);
-  const { spots, rutas } = rasanteCerca(l);
+  const rutas = rutasCerca(l);
+  const sol = direccionesSol(hoy, l.lat, l.lon);
   const espana = cargarEspana();
   const cita = espana?.fuente?.cita;
   const nombreEs = new Map(Object.values(espana?.especies ?? {}).map((x) => [x.c, x.n]));
@@ -115,7 +118,20 @@ export default async function PaginaLugar({ params }: Props) {
             forma: contornoDe(l),
           },
         ]}
+        rumbos={[
+          ...(sol.sale !== null
+            ? [{ grados: sol.sale, etiqueta: `Sale el sol (${rumbo(sol.sale)})`, color: "#e3a020" }]
+            : []),
+          ...(sol.pone !== null
+            ? [{ grados: sol.pone, etiqueta: `Se pone el sol (${rumbo(sol.pone)})`, color: "#b0533c" }]
+            : []),
+        ]}
       />
+
+      <section className="seccion">
+        <h2 className="rotulo">Hoy, para fotografiar</h2>
+        <LuzYMar lat={l.lat} lon={l.lon} fecha={hoy} />
+      </section>
 
       <FenomenosEspana fenomenos={fenomenos} mesHoy={mesHoy} />
 
@@ -166,47 +182,22 @@ export default async function PaginaLugar({ params }: Props) {
         </section>
       )}
 
-      {(spots.length > 0 || rutas.length > 0) && (
+      {rutas.length > 0 && (
         <section className="seccion">
-          <h2 className="rotulo">Fotografía y senderismo cerca</h2>
-          {spots.length > 0 && (
-            <>
-              <h3>Spots de fotografía</h3>
-              <ul className="lista-lugares">
-                {spots.map((x) => (
-                  <li key={x.id}>
-                    <a href={`${RASANTE}/spot/${x.id}`} target="_blank" rel="noopener">
-                      {x.n}
-                    </a>{" "}
-                    <small>a {x.km.toLocaleString("es-ES")} km</small>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-          {rutas.length > 0 && (
-            <>
-              <h3>Rutas de senderismo</h3>
-              <ul className="lista-lugares">
-                {rutas.map((x) => (
-                  <li key={x.id}>
-                    <a href={`${RASANTE}/ruta/${encodeURIComponent(x.id)}`} target="_blank" rel="noopener">
-                      {x.n}
-                    </a>{" "}
-                    <small>
-                      sale a {x.km.toLocaleString("es-ES")} km
-                      {x.d ? ` · ${x.d}` : ""}
-                      {x.c ? " · circular" : ""}
-                    </small>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-          <p className="nota-pie">
-            De <a href={RASANTE}>Rasante</a>, la web hermana de previsión para fotografía de paisaje: luz de cada día y
-            rutas de OpenStreetMap, FEDME y Caminos Naturales.
-          </p>
+          <h2 className="rotulo">Rutas de senderismo cerca</h2>
+          <ul className="lista-lugares">
+            {rutas.map((x) => (
+              <li key={x.id}>
+                <a href={`https://www.openstreetmap.org/relation/${x.id}`} target="_blank" rel="noopener">
+                  {x.ref && !x.n.includes(x.ref) ? `${x.ref} · ${x.n}` : x.n}
+                </a>{" "}
+                <small>
+                  {x.km ? `${x.km.toLocaleString("es-ES")} km · ` : ""}su centro a {x.a.toLocaleString("es-ES")} km
+                </small>
+              </li>
+            ))}
+          </ul>
+          <p className="nota-pie">Rutas señalizadas de OpenStreetMap (ODbL).</p>
         </section>
       )}
 

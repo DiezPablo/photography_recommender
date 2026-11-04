@@ -620,3 +620,15 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   como lugares `n2k-…`. La ficha usa las cuadrículas del contorno en vez del círculo, «Cerca de aquí» pone 0 km si
   estás dentro y en «¿Dónde veo…?» la cuadrícula toma el nombre del espacio más grande que la contiene. Lo de las
   cuadrículas de la frontera con Portugal queda igual (su centro puede caer fuera; no afecta a los datos).
+- Independencia de Rasante (decisión del usuario, 04-11-2026): Safaris no lee nada de Rasante. Los observatorios
+  de aves salen de Overpass (leisure=bird_hide en España, agrupados a 400 m, sin cetrería ni acceso privado; los
+  sin nombre, «Observatorio de aves junto a …» el lugar más cercano a 5 km); los spots de fotografía de paisaje
+  se quitan (son de Rasante) y las rutas de senderismo salen de OSM (relaciones route=hiking, centro, código y
+  longitud → `espana_rutas.json`, enlace a OSM). El prebuild y `no_empeora.py` solo miran la release de este
+  repo, y `safaris_mundo.yml`, si el cálculo del día sale peor, refina el ya publicado aquí (antes, el de
+  Rasante).
+- Luz y mar para fotografiar: rumbo del sol al salir y ponerse (líneas en el mapa de la ficha) y hacia dónde
+  mirar para tenerlo a la espalda en la hora dorada; en la costa, pleamares y bajamares de Open-Meteo Marine
+  (celda de mar a menos de 15 km; si no, es interior) y la ventana para limícolas (de 2 h antes de la pleamar a
+  media hora después), si el rango pasa de 0,4 m. La ficha se regenera una vez al día (revalidate 86400) para que
+  «hoy» no se quede fijo.

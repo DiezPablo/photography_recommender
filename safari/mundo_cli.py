@@ -343,7 +343,7 @@ def main(
 def refinar_fichero(
     entrada: Path, salida: Path, indice_salida: Path, minutos: float | None = None, con_operadores: bool = True
 ) -> None:
-    """Niveles y especies estrella de un safaris_mundo.json ya calculado (p. ej. el de Rasante mientras la caché
+    """Niveles y especies estrella de un safaris_mundo.json ya calculado (p. ej. el ya publicado mientras la caché
     de este repo se llena) y, si hay tiempo, los operadores de la ciudad de acceso de los parques A y B."""
     crudo = entrada.read_bytes()
     datos = json.loads(gzip.decompress(crudo) if crudo[:2] == b"\x1f\x8b" else crudo)

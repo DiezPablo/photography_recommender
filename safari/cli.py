@@ -178,7 +178,7 @@ def main(argv: list[str] | None = None) -> None:
 
         destino = a.salida if a.salida != ap.get_default("salida") else Path("public/datos/espana_lugares.json")
         lugares.main(destino)
-        lugares.rasante(destino.parent / "espana_rasante.json")
+        lugares.rutas(destino.parent / "espana_rutas.json")
         from safari.espana import natura
 
         natura.main(destino.parent / "espana_natura.json")

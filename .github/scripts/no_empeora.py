@@ -1,5 +1,5 @@
 """Sale con 1 si safaris_mundo.json nuevo no tiene los nombres de las especies o tiene bastantes menos parques que el publicado (el de la release de
-este repo o, si aún no hay, el de Rasante). Con la caché vacía, las primeras ejecuciones solo llegan a parte de
+este repo). Con la caché vacía, las primeras ejecuciones solo llegan a parte de
 los parques: publicarlas dejaría la web con menos que antes. Uso: no_empeora.py salida/safaris_mundo.json"""
 
 import gzip
@@ -8,7 +8,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-REPOS = ["DiezPablo/safari_recommender", "DiezPablo/photo_recommender"]
+REPOS = ["DiezPablo/safari_recommender"]
 MARGEN = 0.95
 
 

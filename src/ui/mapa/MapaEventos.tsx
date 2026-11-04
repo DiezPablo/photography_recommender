@@ -33,6 +33,7 @@ export default function MapaEventos({
   etiqueta = "Mapa de eventos",
   enlace = "/evento",
   mundo = false,
+  rumbos = [],
 }: {
   eventos: PuntoEvento[];
   spots?: PuntoSimple[];
@@ -42,6 +43,8 @@ export default function MapaEventos({
   enlace?: string;
   /** puntos de todo el mundo: se encuadran todos (sin el recorte a la península) */
   mundo?: boolean;
+  /** líneas desde el centro del primer evento (p. ej. por dónde sale y se pone el sol), en grados desde el norte */
+  rumbos?: { grados: number; etiqueta: string; color: string }[];
 }) {
   const { caja, mapa, leaflet, listo, tema, nuevaCapa } = useMapaBase({ scrollWheelZoom: false });
   const capa = useRef<LayerGroup | null>(null);
@@ -83,6 +86,19 @@ export default function MapaEventos({
       const dLon = dLat / Math.cos((e.lat * Math.PI) / 180);
       limites.push([e.lat - dLat, e.lon - dLon], [e.lat + dLat, e.lon + dLon]);
     }
+    const centro0 = eventos[0];
+    if (centro0)
+      for (const r of rumbos) {
+        const km = Math.max(centro0.radio_km, 2) * 1.4;
+        const fin: [number, number] = [
+          centro0.lat + (km / 111) * Math.cos((r.grados * Math.PI) / 180),
+          centro0.lon + (km / (111 * Math.cos((centro0.lat * Math.PI) / 180))) * Math.sin((r.grados * Math.PI) / 180),
+        ];
+        L.polyline([[centro0.lat, centro0.lon], fin], { color: r.color, weight: 3, dashArray: "6 6" })
+          .bindTooltip(r.etiqueta)
+          .addTo(g);
+        limites.push(fin);
+      }
     for (const s of spots) {
       L.circleMarker([s.lat, s.lon], {
         radius: 5,
@@ -111,7 +127,7 @@ export default function MapaEventos({
       mapa.current.fitBounds(L.latLngBounds(encuadre), { padding: [24, 24], maxZoom: 11, animate: false });
     else mapa.current.setView([40.2, -3.7], 5, { animate: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listo, eventos, spots, rutas, tema, enlace, mundo]);
+  }, [listo, eventos, spots, rutas, tema, enlace, mundo, rumbos]);
 
   return (
     <div ref={caja} className="mapa-caja" role="region" aria-label={etiqueta} data-listo={listo ? "si" : "no"}>

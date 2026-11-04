@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       solo_refinar:
-        description: "Sin calcular: solo refinar y publicar el de Rasante"
+        description: "Sin calcular: solo refinar y volver a publicar el ya publicado"
         type: boolean
         default: false
   push:
@@ -66,16 +66,15 @@ jobs:
         run: |
           if python .github/scripts/no_empeora.py salida/safaris_mundo.json; then echo "publicar=si" >> "$GITHUB_OUTPUT"; fi
 
-      # mientras la caché de este repo se llena (días), el de Rasante con los niveles y las especies refinados
-      - name: Si no, el de Rasante refinado
-        id: rasante
+      # si el cálculo de hoy sale peor (caché a medias), el ya publicado en este repo, refinado
+      - name: Si no, el publicado refinado
+        id: publicado
         if: steps.control.outputs.publicar != 'si'
         timeout-minutes: 170
         run: |
-          curl -fsSL -o rasante.json.gz \
-            https://github.com/DiezPablo/photo_recommender/releases/download/datos/safaris_mundo.json.gz
+          gh release download datos -p safaris_mundo.json.gz -O publicado.json.gz --clobber
           # y los operadores de las ciudades de acceso que quepan en el tiempo (quedan en la caché 80 días)
-          python -m safari --refinar rasante.json.gz --minutos ${{ inputs.solo_refinar && 150 || 10 }} \
+          python -m safari --refinar publicado.json.gz --minutos ${{ inputs.solo_refinar && 150 || 10 }} \
             --salida salida/safaris_mundo.json --indice salida/safaris_indice.json
           if python .github/scripts/no_empeora.py salida/safaris_mundo.json; then echo "publicar=si" >> "$GITHUB_OUTPUT"; fi
 
@@ -86,7 +85,7 @@ jobs:
           key: safaris-mundo-v1-${{ github.run_id }}
 
       - name: Publicar
-        if: steps.control.outputs.publicar == 'si' || steps.rasante.outputs.publicar == 'si'
+        if: steps.control.outputs.publicar == 'si' || steps.publicado.outputs.publicar == 'si'
         run: |
           .github/scripts/publicar_release.sh "Safaris del mundo ($(date -u +%Y-%m-%d))" \
             salida/safaris_mundo.json salida/safaris_indice.json

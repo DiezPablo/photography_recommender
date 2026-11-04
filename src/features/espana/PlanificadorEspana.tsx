@@ -19,6 +19,7 @@ import {
 import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
 import { actividadPorDefecto, puntuar, type Puntuacion } from "@/features/espana/puntuacion";
 import ElegirLugar from "@/features/espana/ElegirLugar";
+import LuzYMar from "@/features/espana/LuzYMar";
 import BotonVista from "@/features/espana/BotonVista";
 import { useVistas } from "@/features/espana/vistas";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
@@ -296,6 +297,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
         <h2 className="rotulo" id="luz-titulo">
           Luz
         </h2>
+        <LuzYMar lat={lat} lon={lon} fecha={fecha} />
         <dl className="luz-dia">
           <div>
             <dt>Hora azul</dt>

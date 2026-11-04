@@ -50,3 +50,27 @@ def test_estados_especies():
     assert e["Felis catus"]["estado"] == "domestica"
     assert e["Trachemys scripta"]["estado"] == "invasora"
     assert e["Canis lupus"]["nota"]
+
+
+def test_km_ruta():
+    assert lugares.km_ruta("12.5") == 12.5
+    assert lugares.km_ruta("12,5 km") == 12.5
+    assert lugares.km_ruta("8 mi") == 12.9
+    assert lugares.km_ruta("3500 m") == 3.5
+    assert lugares.km_ruta(None) is None
+    assert lugares.km_ruta("variable") is None
+
+
+def test_observatorios_agrupa_y_filtra(monkeypatch):
+    from safari import practico
+
+    elementos = [
+        {"type": "node", "id": 1, "lat": 40.970, "lon": -1.520, "tags": {"leisure": "bird_hide", "name": "La Reguera"}},
+        {"type": "node", "id": 2, "lat": 40.971, "lon": -1.521, "tags": {"leisure": "bird_hide"}},  # mismo sitio
+        {"type": "way", "id": 3, "center": {"lat": 41.5, "lon": -2.0}, "tags": {"leisure": "bird_hide"}},
+        {"type": "node", "id": 4, "lat": 42.0, "lon": -3.0, "tags": {"name": "Exhibición de aves rapaces"}},
+        {"type": "node", "id": 5, "lat": 43.0, "lon": -4.0, "tags": {"access": "private"}},
+    ]
+    monkeypatch.setattr(practico, "overpass", lambda consulta, timeout=0: {"elements": elementos})
+    xs = lugares.observatorios()
+    assert [(x["id"], x["n"], x.get("k")) for x in xs] == [("osm-node-1", "La Reguera", 2), ("osm-way-3", None, None)]

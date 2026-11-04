@@ -30,7 +30,7 @@ const config: NextConfig = {
     ],
     "/espana/lugar/[id]": [
       "./datos/espana.json.gz",
-      "./datos/espana_rasante.json.gz",
+      "./datos/espana_rutas.json.gz",
       "./datos/espana_lugares.json.gz",
       "./datos/espana_natura.json.gz",
       "./datos/espana_recientes.json.gz",

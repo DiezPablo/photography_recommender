@@ -376,35 +376,22 @@ export function recientesLugar(l: LugarFauna, margenKm = 5): ObsReciente[] {
     .sort((a, b) => b.f.localeCompare(a.f));
 }
 
-interface SpotRasante {
-  id: string;
+interface Ruta {
+  id: number;
   n: string;
-  lat: number;
-  lon: number;
-  p?: number | null;
-}
-interface RutaRasante {
-  id: string;
-  n: string;
+  ref?: string | null;
   lat: number;
   lon: number;
   km?: number | null;
-  d?: string | null;
-  c?: boolean;
 }
-let rasante: { spots: SpotRasante[]; rutas: RutaRasante[] } | null | undefined;
+let rutas: { rutas: Ruta[] } | null | undefined;
 
-/** Spots de fotografía y salidas de rutas de Rasante cerca del lugar (hasta `maxKm` del borde aproximado). */
-export function rasanteCerca(
-  l: LugarFauna,
-  maxKm = 10,
-): { spots: (SpotRasante & { km: number })[]; rutas: (RutaRasante & { km: number })[] } {
-  if (rasante === undefined) rasante = leerDatos("espana_rasante.json");
-  const cerca = <T extends { lat: number; lon: number }>(xs: T[], max: number) =>
-    xs
-      .map((x) => ({ ...x, km: Math.round(distanciaKm(l, x) * 10) / 10 }))
-      .filter((x) => x.km <= l.r + maxKm)
-      .sort((a, b) => a.km - b.km)
-      .slice(0, max);
-  return { spots: cerca(rasante?.spots ?? [], 5), rutas: cerca(rasante?.rutas ?? [], 6) };
+/** Rutas de senderismo de OpenStreetMap que pasan cerca del lugar (por su centro, hasta `maxKm` del borde). */
+export function rutasCerca(l: LugarFauna, maxKm = 10, max = 6): (Ruta & { a: number })[] {
+  if (rutas === undefined) rutas = leerDatos("espana_rutas.json");
+  return (rutas?.rutas ?? [])
+    .map((x) => ({ ...x, a: Math.round(distanciaKm(l, x) * 10) / 10 }))
+    .filter((x) => x.a <= l.r + maxKm)
+    .sort((a, b) => a.a - b.a)
+    .slice(0, max);
 }
