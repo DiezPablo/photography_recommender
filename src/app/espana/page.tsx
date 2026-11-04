@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PlanificadorEspana from "@/features/espana/PlanificadorEspana";
 import DondeVerEspecie from "@/features/espana/DondeVerEspecie";
+import FindeEspana from "@/features/espana/FindeEspana";
 import { fechaLocal } from "@/lib/sol";
 
 export const metadata: Metadata = {
@@ -17,7 +18,9 @@ export const dynamic = "force-dynamic";
 type Props = { searchParams: Promise<{ modo?: string }> };
 
 export default async function PaginaEspana({ searchParams }: Props) {
-  const donde = (await searchParams).modo === "donde";
+  const modo = (await searchParams).modo;
+  const donde = modo === "donde";
+  const finde = modo === "finde";
   const hoy = fechaLocal(new Date());
   return (
     <main className="calendario safaris espana">
@@ -32,14 +35,17 @@ export default async function PaginaEspana({ searchParams }: Props) {
         </p>
       </header>
       <nav className="pestanas-espana" aria-label="Modo">
-        <Link href="/espana" aria-current={donde ? undefined : "page"}>
+        <Link href="/espana" aria-current={donde || finde ? undefined : "page"}>
           ¿Qué veo aquí?
+        </Link>
+        <Link href="/espana?modo=finde" aria-current={finde ? "page" : undefined}>
+          Este finde
         </Link>
         <Link href="/espana?modo=donde" aria-current={donde ? "page" : undefined}>
           ¿Dónde veo…?
         </Link>
       </nav>
-      {donde ? <DondeVerEspecie hoy={hoy} /> : <PlanificadorEspana hoy={hoy} />}
+      {donde ? <DondeVerEspecie hoy={hoy} /> : finde ? <FindeEspana hoy={hoy} /> : <PlanificadorEspana hoy={hoy} />}
       <p className="nota-pie">
         Luz: posición del sol calculada aquí. Tiempo: Open-Meteo (previsión hasta 16 días; más allá, el archivo ERA5 de
         los diez últimos años). Especies: GBIF por cuadrícula europea de 10 km, como frecuencia relativa en su grupo (no

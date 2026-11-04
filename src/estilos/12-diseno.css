@@ -1543,3 +1543,14 @@ body {
 .enlace-ficha {
   font-size: 0.85em;
 }
+
+/* España: «Este finde» */
+.lista-finde {
+  display: grid;
+  gap: 10px;
+  padding-left: 1.4rem;
+}
+.nota-finde {
+  font-weight: 700;
+  color: var(--acento);
+}

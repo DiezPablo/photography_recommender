@@ -1,0 +1,167 @@
+"use client";
+// «Este finde»: desde tu ubicación (o un lugar), los lugares de fauna cercanos ordenados para el sábado y el
+// domingo por fauna del mes, tiempo y distancia, con el desglose (features/espana/finde.ts).
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useParametrosUrl } from "@/lib/almacen";
+import { MESES } from "@/lib/fechas";
+import ElegirLugar from "@/features/espana/ElegirLugar";
+import { fenomenosCerca } from "@/features/espana/fenomenos";
+import {
+  diasFinde,
+  leerPrevisionVarios,
+  puntuarFinde,
+  tiempoDia,
+  urlPrevisionVarios,
+  type Factor,
+} from "@/features/espana/finde";
+import type { HoraTiempo } from "@/lib/tiempo";
+import type { LugarFauna } from "@/features/espana/zonas";
+
+interface LugarCerca extends LugarFauna {
+  km: number;
+  especies: number;
+  destacadas: string[];
+}
+
+const DISTANCIAS = [25, 50, 100];
+const MADRID = { lat: 40.417, lon: -3.704 };
+const DIAS_SEMANA = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+const nombreDia = (f: string) =>
+  `${DIAS_SEMANA[new Date(`${f}T12:00:00Z`).getUTCDay()]} ${Number(f.slice(8, 10))} de ${MESES[Number(f.slice(5, 7)) - 1]}`;
+
+export default function FindeEspana({ hoy }: { hoy: string }) {
+  const [parametros, actualizar] = useParametrosUrl();
+  const lat = Number(parametros.get("lat") ?? MADRID.lat);
+  const lon = Number(parametros.get("lon") ?? MADRID.lon);
+  const km = Number(parametros.get("km") ?? 50);
+  const nombre = parametros.get("lugar") ?? (parametros.has("lat") ? "Tu punto" : "Madrid (cámbialo arriba)");
+  const dias = diasFinde(hoy);
+  const mes = Number(dias[0].slice(5, 7)) - 1;
+
+  const clave = `${lat.toFixed(3)},${lon.toFixed(3)},${km},${dias.join(",")}`;
+  const [res, setRes] = useState<{ clave: string; lugares: LugarCerca[]; horas: HoraTiempo[][] | null }>();
+  useEffect(() => {
+    let vivo = true;
+    fetch(`/espana/cerca?lat=${lat}&lon=${lon}&mes=${mes}&max=20&km=${km}`)
+      .then((r) => (r.ok ? r.json() : { lugares: [] }))
+      .then(async (d: { lugares: LugarCerca[] }) => {
+        let horas: HoraTiempo[][] | null = null;
+        if (d.lugares.length) {
+          try {
+            const r = await fetch(urlPrevisionVarios(d.lugares, dias[0], dias[dias.length - 1]));
+            if (r.ok) horas = leerPrevisionVarios(await r.json());
+          } catch {
+            horas = null;
+          }
+        }
+        if (vivo) setRes({ clave, lugares: d.lugares, horas });
+      })
+      .catch(() => vivo && setRes({ clave, lugares: [], horas: null }));
+    return () => {
+      vivo = false;
+    };
+    // dias sale de hoy y clave ya lo incluye
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clave]);
+  const datos = res?.clave === clave ? res : undefined;
+
+  const maxEspecies = Math.max(1, ...(datos?.lugares ?? []).map((l) => l.especies));
+  const porDia = dias.map((dia) => ({
+    dia,
+    lista: (datos?.lugares ?? [])
+      .map((l, i) => {
+        const f = fenomenosCerca(l.lat, l.lon, l.r, mes + 1)[0];
+        const tiempo = datos?.horas?.[i] ? tiempoDia(datos.horas[i], dia) : null;
+        return {
+          l,
+          nota: puntuarFinde({
+            especies: l.especies,
+            maxEspecies,
+            km: l.km,
+            maxKm: km,
+            tiempo,
+            fenomeno: f?.titulo ?? null,
+          }),
+        };
+      })
+      .sort((a, b) => b.nota.total - a.nota.total)
+      .slice(0, 8),
+  }));
+
+  return (
+    <>
+      <section className="seccion formulario-plan">
+        <ElegirLugar
+          lat={lat}
+          lon={lon}
+          mes={mes}
+          nombre={nombre}
+          conCerca={false}
+          elegir={(e) => actualizar({ lat: e.lat.toFixed(3), lon: e.lon.toFixed(3), lugar: e.nombre })}
+        />
+        <label className="campo">
+          <span className="rotulo">Hasta</span>
+          <select value={km} onChange={(e) => actualizar({ km: e.target.value })}>
+            {DISTANCIAS.map((d) => (
+              <option key={d} value={d}>
+                {d} km
+              </option>
+            ))}
+          </select>
+        </label>
+      </section>
+
+      {!datos && <p className="nota-pie">Buscando lugares y previsión…</p>}
+      {datos && !datos.lugares.length && (
+        <p className="nota-pie">No hay lugares de fauna a menos de {km} km. Prueba con más distancia.</p>
+      )}
+      {datos && datos.lugares.length > 0 && !datos.horas && (
+        <p className="nota-pie">
+          No se pudo consultar la previsión de Open-Meteo: el orden es solo por fauna y distancia.
+        </p>
+      )}
+      {datos &&
+        datos.lugares.length > 0 &&
+        porDia.map(({ dia, lista }) => (
+          <section key={dia} className="seccion" aria-label={nombreDia(dia)}>
+            <h2 className="rotulo">{nombreDia(dia)}</h2>
+            <ol className="lista-finde">
+              {lista.map(({ l, nota }) => (
+                <li key={l.id}>
+                  <details>
+                    <summary>
+                      <b>{l.n}</b> <small>{l.t}</small>{" "}
+                      <span className="nota-finde">{Math.round(nota.total * 10)}/10</span>
+                      <br />
+                      <small>{nota.factores.map((f) => f.detalle).join(" · ")}</small>
+                    </summary>
+                    <ul className="desglose">
+                      {nota.factores.map((f: Factor) => (
+                        <li key={f.nombre}>
+                          {f.nombre}: {Math.round(f.valor * 100)} % <small>({f.detalle})</small>
+                        </li>
+                      ))}
+                      {l.destacadas.length > 0 && <li>Destacadas este mes: {l.destacadas.join(", ")}</li>}
+                    </ul>
+                    <p>
+                      <Link
+                        href={`/espana?lat=${l.lat}&lon=${l.lon}&radio=5&fecha=${dia}&lugar=${encodeURIComponent(l.n)}`}
+                      >
+                        Especies, luz y franjas ese día →
+                      </Link>{" "}
+                      · <Link href={`/espana/lugar/${encodeURIComponent(l.id)}`}>Ficha del lugar</Link>
+                    </p>
+                  </details>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))}
+      <p className="nota-pie">
+        Nota = fauna del mes en sus cuadrículas (comparada con el mejor de la lista) × tiempo en la mejor franja (mañana
+        7-11 o tarde 16-20: lluvia y rachas, de Open-Meteo) × distancia; un fenómeno de temporada cerca suma un 15 %.
+      </p>
+    </>
+  );
+}

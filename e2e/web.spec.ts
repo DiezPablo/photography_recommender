@@ -583,3 +583,9 @@ test("fauna en España: ficha de un lugar", async ({ page, request }) => {
 test("fauna en España: lugar que no existe da 404", async ({ request }) => {
   expect((await request.get("/espana/lugar/no-existe")).status()).toBe(404);
 });
+
+test("fauna en España: este finde cerca", async ({ page }) => {
+  await page.goto("/espana?modo=finde&lat=37.390&lon=-5.990&lugar=Sevilla&km=50");
+  await expect(page.getByRole("link", { name: "Este finde" })).toHaveAttribute("aria-current", "page");
+  await expect(page.locator(".lista-finde li, .nota-pie").first()).toBeVisible({ timeout: 20000 });
+});

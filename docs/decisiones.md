@@ -595,3 +595,8 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   Migres; salen en la ficha, en «¿Qué veo aquí?» si caen en el mes y en «¿Dónde veo…?» de su especie.
 - Nombrar cuadrículas con 21 000 lugares tardaba segundos con una especie común (miles de celdas × todos los
   lugares): índice por cuadros de 1° y solo los vecinos.
+- «Este finde» (`/espana?modo=finde`): desde tu ubicación o un lugar, hasta 20 lugares a 25, 50 o 100 km
+  (`/espana/cerca` admite `max` y `km`), con la previsión de todos en una sola petición a Open-Meteo. Nota por día
+  = √(especies del mes / las del mejor de la lista) × tiempo (mejor franja, mañana 7-11 o tarde 16-20:
+  1 − 0,7·prob. de lluvia, y ×0,8 o ×0,6 con rachas de más de 35 o 50 km/h) × distancia (hasta −40 % en el
+  límite); un fenómeno de temporada cerca, +15 %. Con desglose y enlaces al día concreto y a la ficha.

@@ -23,12 +23,15 @@ export default function ElegirLugar({
   mes,
   nombre,
   elegir,
+  conCerca = true,
 }: {
   lat: number;
   lon: number;
   mes: number;
   nombre: string;
   elegir: (e: Eleccion) => void;
+  /** la lista «Cerca de aquí» (en «Este finde» ya es la página entera) */
+  conCerca?: boolean;
 }) {
   const [texto, setTexto] = useState("");
   const [opciones, setOpciones] = useState<{ q: string; l: LugarFauna[] }>();
@@ -54,6 +57,7 @@ export default function ElegirLugar({
 
   const claveCerca = `${lat.toFixed(3)},${lon.toFixed(3)},${mes}`;
   useEffect(() => {
+    if (!conCerca) return;
     let vivo = true;
     fetch(`/espana/cerca?lat=${lat}&lon=${lon}&mes=${mes}`)
       .then((r) => (r.ok ? r.json() : { lugares: null }))
@@ -62,7 +66,7 @@ export default function ElegirLugar({
     return () => {
       vivo = false;
     };
-  }, [lat, lon, mes, claveCerca]);
+  }, [lat, lon, mes, claveCerca, conCerca]);
   const cercanos = cerca?.clave === claveCerca ? cerca.l : undefined;
 
   const ir = (l: LugarFauna) => {
