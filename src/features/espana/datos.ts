@@ -78,11 +78,21 @@ export interface LugarCerca extends LugarFauna {
 /** Los lugares más cercanos al punto (hasta maxKm) con lo que hay en sus cuadrículas en el mes (0-11). */
 export function lugaresCerca(lat: number, lon: number, mes: number, max = 12, maxKm = 30): LugarCerca[] {
   const e = cargarEspana();
-  return cargarLugares()
+  const cerca = cargarLugares()
     .map((l) => ({ l, km: distanciaKm({ lat, lon }, l) }))
     .filter((x) => x.km <= maxKm)
-    .sort((a, b) => a.km - b.km)
+    .sort((a, b) => a.km - b.km);
+  // los puntos de eBird son miles (en una ciudad, decenas a pocos km): se guardan sitios para los espacios
+  // protegidos y observatorios más cercanos, que si no quedarían fuera
+  const otros = Math.round(max / 3);
+  const primeros = cerca.slice(0, max - otros);
+  const elegidos = [
+    ...primeros,
+    ...cerca.filter((x) => !x.l.id.startsWith("eb-") && !primeros.includes(x)).slice(0, otros),
+  ];
+  return [...elegidos, ...cerca.filter((x) => !elegidos.includes(x))]
     .slice(0, max)
+    .sort((a, b) => a.km - b.km)
     .map(({ l, km }) => {
       const porGrupo = new Map<string, { k: string; v: number }[]>();
       const vistas = new Set<string>();
