@@ -2,18 +2,8 @@
 // Para fotografiar: por dónde sale y se pone el sol ese día (y hacia dónde mirar para tenerlo a la espalda) y, en
 // la costa, las mareas con la mejor ventana para limícolas (Open-Meteo Marine).
 import { useEffect, useState } from "react";
-import { azimutSol, rumbo } from "@/lib/sol";
+import { direccionesSol, rumbo } from "@/lib/sol";
 import { leerMareas, urlMareas, type MareasDia } from "@/lib/mareas";
-
-export function direccionesSol(fecha: string, lat: number, lon: number) {
-  return {
-    sale: azimutSol(fecha, lat, lon, -0.833, true),
-    pone: azimutSol(fecha, lat, lon, -0.833, false),
-    // a la mitad de la hora dorada (3° de altura), por donde llega la luz buena
-    doradaManana: azimutSol(fecha, lat, lon, 3, true),
-    doradaTarde: azimutSol(fecha, lat, lon, 3, false),
-  };
-}
 
 const frente = (g: number) => (g + 180) % 360;
 

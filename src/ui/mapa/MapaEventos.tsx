@@ -25,6 +25,7 @@ export interface PuntoSimple {
 }
 
 const NADA: PuntoSimple[] = [];
+const SIN_RUMBOS: { grados: number; etiqueta: string; color: string }[] = [];
 
 export default function MapaEventos({
   eventos,
@@ -33,7 +34,7 @@ export default function MapaEventos({
   etiqueta = "Mapa de eventos",
   enlace = "/evento",
   mundo = false,
-  rumbos = [],
+  rumbos = SIN_RUMBOS,
 }: {
   eventos: PuntoEvento[];
   spots?: PuntoSimple[];

@@ -132,3 +132,57 @@ def recientes_espana(salida, s=None) -> int:
     )
     print(f"{salida}: {n_ebird} observaciones de eBird y {len(obs) - n_ebird} de iNaturalist", flush=True)
     return len(obs)
+
+
+def notables_region(region: str, dias: int = 7, s=None) -> list[dict]:
+    """Observaciones «notables» de eBird en la región (rarezas para la zona o la fecha), una por especie y lugar
+    (la más reciente): [{c, n, f, lat, lon, l, k, r, sub}]. eBird ya oculta las especies sensibles; las de
+    ubicación privada van sin nombre de lugar."""
+    datos = _get(f"data/obs/{region}/recent/notable", {"back": min(dias, 30), "sppLocale": "es", "detail": "full"}, s)
+    salida: dict[tuple, dict] = {}
+    for d in datos:
+        if not d.get("sciName") or d.get("lat") is None:
+            continue
+        clave = (d["sciName"], d.get("locId"))
+        f = d.get("obsDt") or ""
+        if clave in salida and salida[clave]["f"] >= f:
+            continue
+        salida[clave] = {
+            "c": d["sciName"],
+            "n": d.get("comName"),
+            "f": f,
+            "lat": round(d["lat"], 2),
+            "lon": round(d["lng"], 2),
+            "l": None if d.get("locationPrivate") else (d.get("locName") or "").replace("--", " · ") or None,
+            "k": d.get("howMany"),
+            "r": bool(d.get("obsReviewed")) and bool(d.get("obsValid")),
+            "sub": d.get("subId"),
+        }
+    return list(salida.values())
+
+
+def rarezas_espana(salida, s=None) -> int:
+    """espana_rarezas.json: lo notable de los últimos 7 días en cada provincia (unas 52 peticiones; con clave)."""
+    from datetime import UTC, datetime
+
+    from safari.comun.ficheros import escribir_json
+
+    if not clave():
+        return 0
+    s = s or sesion()
+    obs = []
+    for p in provincias(s=s):
+        try:
+            obs += [{**o, "p": p.get("name")} for o in notables_region(p["code"], s=s)]
+        except requests.RequestException as e:
+            print(f"  eBird notables {p['code']}: {e}", flush=True)
+    escribir_json(
+        salida,
+        {
+            "generado": datetime.now(UTC).isoformat(timespec="minutes"),
+            "fuente": "eBird (ebird.org), Cornell Lab of Ornithology: observaciones notables",
+            "obs": sorted(obs, key=lambda o: o["f"], reverse=True),
+        },
+    )
+    print(f"{salida}: {len(obs)} observaciones notables de eBird", flush=True)
+    return len(obs)

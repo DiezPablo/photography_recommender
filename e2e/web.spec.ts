@@ -602,3 +602,16 @@ test("fauna en España: mi lista de especies vistas", async ({ page }) => {
   await page.getByRole("button", { name: "quitar" }).first().click();
   await expect(page.getByText("Aún no has marcado ninguna")).toBeVisible();
 });
+
+test("fauna en España: portada con las tres entradas", async ({ page }) => {
+  await page.goto("/espana");
+  await expect(page.getByRole("heading", { name: "Cerca de mí, ahora" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Este finde" })).toBeVisible();
+  await page.getByRole("link", { name: "Buscar una especie" }).click();
+  await expect(page).toHaveURL(/modo=donde/);
+});
+
+test("fauna en España: rarezas de la semana", async ({ page }) => {
+  await page.goto("/espana/rarezas");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Rarezas esta semana");
+});

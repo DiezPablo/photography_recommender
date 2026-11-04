@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useParametrosUrl } from "@/lib/almacen";
 import { MESES } from "@/lib/fechas";
 import ElegirLugar from "@/features/espana/ElegirLugar";
+import { useUbicacionGuardada } from "@/features/espana/ubicacion";
 import { fenomenosCerca } from "@/features/espana/fenomenos";
 import {
   diasFinde,
@@ -32,10 +33,14 @@ const nombreDia = (f: string) =>
 
 export default function FindeEspana({ hoy }: { hoy: string }) {
   const [parametros, actualizar] = useParametrosUrl();
-  const lat = Number(parametros.get("lat") ?? MADRID.lat);
-  const lon = Number(parametros.get("lon") ?? MADRID.lon);
+  const guardada = useUbicacionGuardada();
+  const base = parametros.has("lat") ? null : (guardada ?? null);
+  const lat = Number(parametros.get("lat") ?? base?.lat ?? MADRID.lat);
+  const lon = Number(parametros.get("lon") ?? base?.lon ?? MADRID.lon);
   const km = Number(parametros.get("km") ?? 50);
-  const nombre = parametros.get("lugar") ?? (parametros.has("lat") ? "Tu punto" : "Madrid (cámbialo arriba)");
+  const nombre =
+    parametros.get("lugar") ??
+    (parametros.has("lat") ? "Tu punto" : base ? (base.nombre ?? "Tu punto") : "Madrid (cámbialo arriba)");
   const dias = diasFinde(hoy);
   const mes = Number(dias[0].slice(5, 7)) - 1;
 

@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { LugarFauna } from "@/features/espana/zonas";
+import { guardarUbicacion } from "@/features/espana/ubicacion";
 
 interface LugarCerca extends LugarFauna {
   km: number;
@@ -70,6 +71,7 @@ export default function ElegirLugar({
   const cercanos = cerca?.clave === claveCerca ? cerca.l : undefined;
 
   const ir = (l: LugarFauna) => {
+    guardarUbicacion({ lat: l.lat, lon: l.lon, nombre: l.n });
     elegir({ lat: l.lat, lon: l.lon, radio: radioPara(l.r), nombre: l.n });
     setTexto("");
   };
@@ -106,6 +108,7 @@ export default function ElegirLugar({
             navigator.geolocation?.getCurrentPosition(
               (p) => {
                 setErrorUbicacion(false);
+                guardarUbicacion({ lat: p.coords.latitude, lon: p.coords.longitude, nombre: null });
                 elegir({ lat: p.coords.latitude, lon: p.coords.longitude, radio: 10, nombre: null });
               },
               () => setErrorUbicacion(true),

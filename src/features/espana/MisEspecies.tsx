@@ -19,7 +19,7 @@ export default function MisEspecies() {
   if (!todas.length)
     return (
       <p>
-        Aún no has marcado ninguna. En <Link href="/espana">¿Qué veo aquí?</Link> y en{" "}
+        Aún no has marcado ninguna. En <Link href="/espana?modo=aqui">¿Qué veo aquí?</Link> y en{" "}
         <Link href="/espana?modo=donde">¿Dónde veo…?</Link> cada especie tiene un botón «+ la he visto». La lista se
         guarda solo en este navegador.
       </p>

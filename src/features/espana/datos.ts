@@ -395,3 +395,39 @@ export function rutasCerca(l: LugarFauna, maxKm = 10, max = 6): (Ruta & { a: num
     .sort((a, b) => a.a - b.a)
     .slice(0, max);
 }
+
+export interface Rareza {
+  c: string;
+  n: string | null;
+  /** "2026-11-03 09:30" */
+  f: string;
+  lat: number;
+  lon: number;
+  l: string | null;
+  k: number | null;
+  /** revisada y aceptada por los revisores de eBird */
+  r: boolean;
+  sub: string | null;
+  /** provincia */
+  p: string | null;
+}
+let rarezas: { generado: string; obs: Rareza[] } | null | undefined;
+export function cargarRarezas(): { generado: string; obs: Rareza[] } | null {
+  if (rarezas === undefined) rarezas = leerDatos<{ generado: string; obs: Rareza[] }>("espana_rarezas.json");
+  return rarezas ?? null;
+}
+
+/** Lo notable de los últimos 7 días a menos de `km` del punto, más reciente antes. */
+export function rarezasCerca(lat: number, lon: number, km = 30): (Rareza & { a: number })[] {
+  return (cargarRarezas()?.obs ?? [])
+    .map((o) => ({ ...o, a: Math.round(distanciaKm({ lat, lon }, o)) }))
+    .filter((o) => o.a <= km)
+    .sort((a, b) => b.f.localeCompare(a.f));
+}
+
+/** Clave de GBIF de una especie por nombre científico (para enlazar a «¿Dónde veo…?»). */
+let clavePorCientifico: Map<string, string> | undefined;
+export function claveDe(cientifico: string): string | null {
+  clavePorCientifico ??= new Map(Object.entries(cargarEspana()?.especies ?? {}).map(([k, e]) => [e.c ?? "", k]));
+  return clavePorCientifico.get(cientifico.split(" ").slice(0, 2).join(" ")) ?? null;
+}

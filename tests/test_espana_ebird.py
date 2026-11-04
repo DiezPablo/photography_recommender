@@ -51,3 +51,38 @@ def test_sin_clave(monkeypatch, tmp_path):
     monkeypatch.setattr(inat_espana, "recientes", lambda: [])
     assert ebird.recientes_espana(tmp_path / "r.json") == 0
     assert not (tmp_path / "r.json").exists()
+
+
+def test_notables_una_por_especie_y_lugar(monkeypatch):
+    datos = [
+        {
+            "sciName": "Calidris melanotos",
+            "comName": "Correlimos pectoral",
+            "locId": "L1",
+            "obsDt": "2026-11-01 08:00",
+            "lat": 43.4,
+            "lng": -3.8,
+            "locName": "Marismas--Santoña",
+            "howMany": 1,
+            "obsReviewed": False,
+            "obsValid": True,
+        },
+        {
+            "sciName": "Calidris melanotos",
+            "comName": "Correlimos pectoral",
+            "locId": "L1",
+            "obsDt": "2026-11-03 09:30",
+            "lat": 43.4,
+            "lng": -3.8,
+            "locName": "Marismas--Santoña",
+            "howMany": 2,
+            "obsReviewed": True,
+            "obsValid": True,
+        },
+    ]
+    monkeypatch.setenv("EBIRD_CLAVE", "x")
+    monkeypatch.setattr(ebird, "_get", lambda ruta, params, s=None: datos)
+    xs = ebird.notables_region("ES-CB-S")
+    assert len(xs) == 1
+    assert xs[0]["f"] == "2026-11-03 09:30" and xs[0]["k"] == 2 and xs[0]["r"] is True
+    assert xs[0]["l"] == "Marismas · Santoña"

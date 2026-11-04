@@ -40,6 +40,7 @@ jobs:
       - name: Publicar
         run: |
           .github/scripts/publicar_release.sh "España recientes $(date -u +%Y-%m-%dT%H:%MZ)" salida/espana_recientes.json
+          [ -s salida/espana_rarezas.json ] && .github/scripts/publicar_release.sh "España rarezas $(date -u +%Y-%m-%d)" salida/espana_rarezas.json || true
           [ -s salida/espana_lugares.json ] && .github/scripts/publicar_release.sh "España lugares $(date -u +%Y-%m-%d)" salida/espana_lugares.json || true
           [ -s salida/espana_rutas.json ] && .github/scripts/publicar_release.sh "España rutas $(date -u +%Y-%m-%d)" salida/espana_rutas.json || true
           [ -s salida/espana_natura.json ] && .github/scripts/publicar_release.sh "España Natura 2000 $(date -u +%Y-%m-%d)" salida/espana_natura.json || true

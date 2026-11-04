@@ -188,7 +188,9 @@ def main(argv: list[str] | None = None) -> None:
 
         # --salida trae por defecto safaris.json: aquí, si no se da otra, va a su propio fichero
         por_defecto = ap.get_default("salida")
-        ebird.recientes_espana(a.salida if a.salida != por_defecto else Path("public/datos/espana_recientes.json"))
+        destino = a.salida if a.salida != por_defecto else Path("public/datos/espana_recientes.json")
+        ebird.recientes_espana(destino)
+        ebird.rarezas_espana(destino.parent / "espana_rarezas.json")
         return
     if a.espana_diagnostico:
         from safari.espana import diagnostico

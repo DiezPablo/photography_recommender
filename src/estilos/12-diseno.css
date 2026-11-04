@@ -1580,3 +1580,46 @@ body {
 .lista-vistas {
   padding-left: 1.2rem;
 }
+
+/* España: rarezas */
+.lista-rarezas {
+  display: grid;
+  gap: 8px;
+  padding-left: 1.2rem;
+}
+.rareza-confirmada {
+  color: var(--suma);
+}
+.rareza-sin-revisar {
+  color: var(--resta);
+}
+.indice-provincias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 8px 0 16px;
+}
+
+/* España: portada */
+.entradas-espana {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin: 12px 0;
+}
+.entradas-espana .entrada {
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 14px 16px;
+  background: var(--superficie);
+}
+.entradas-espana h2 {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+}
+.enlaces-inicio {
+  margin: 8px 0 16px;
+}
+.luz-y-mar p {
+  margin: 0 0 8px;
+}

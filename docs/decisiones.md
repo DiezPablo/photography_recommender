@@ -632,3 +632,13 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   (celda de mar a menos de 15 km; si no, es interior) y la ventana para limícolas (de 2 h antes de la pleamar a
   media hora después), si el rango pasa de 0,4 m. La ficha se regenera una vez al día (revalidate 86400) para que
   «hoy» no se quede fijo.
+- Rarezas (`/espana/rarezas` y «Rarezas a menos de 30 km» en cada ficha): `data/obs/{provincia}/recent/notable` de
+  eBird, 7 días, una por especie y lugar, con «confirmada» o «sin revisar» y enlace a la lista de eBird →
+  `espana_rarezas.json` en el workflow diario.
+- Portada de /espana con tres entradas (cerca de mí ahora, este finde, quiero ver una especie), rarezas, mi
+  lista y lo que pasa este mes; «¿Qué veo aquí?» pasa a `?modo=aqui` (los enlaces con `?lat=` o `?zona=` siguen
+  abriéndolo). La última ubicación elegida se recuerda en el navegador y es la de partida de «¿Qué veo aquí?» y
+  «Este finde».
+- Fallo propio corregido: `rumbos = []` como valor por defecto en MapaEventos creaba un array nuevo en cada
+  render, el efecto del mapa se repetía sin fin y la navegación desde la portada no llegaba a la ficha del parque
+  (lo cazó la prueba de Playwright). Ahora es una constante, como los demás.

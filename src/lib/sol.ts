@@ -89,3 +89,14 @@ const RUMBOS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSO", "S
 export function rumbo(grados: number): string {
   return RUMBOS[Math.round((((grados % 360) + 360) % 360) / 22.5) % 16];
 }
+
+/** Por dónde sale y se pone el sol y por dónde llega la luz dorada (a 3° de altura), en grados desde el norte. */
+export function direccionesSol(fecha: string, lat: number, lon: number) {
+  return {
+    sale: azimutSol(fecha, lat, lon, -0.833, true),
+    pone: azimutSol(fecha, lat, lon, -0.833, false),
+    // a la mitad de la hora dorada (3° de altura), por donde llega la luz buena
+    doradaManana: azimutSol(fecha, lat, lon, 3, true),
+    doradaTarde: azimutSol(fecha, lat, lon, 3, false),
+  };
+}

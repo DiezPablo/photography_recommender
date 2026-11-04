@@ -6,8 +6,9 @@ import { notFound } from "next/navigation";
 import MapaEventos from "@/ui/mapa/MapaEventos";
 import FrecuenciaAvistamientos from "@/features/safaris/componentes/FrecuenciaAvistamientos";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
-import LuzYMar, { direccionesSol } from "@/features/espana/LuzYMar";
-import { rumbo } from "@/lib/sol";
+import ListaRarezas from "@/features/espana/ListaRarezas";
+import LuzYMar from "@/features/espana/LuzYMar";
+import { direccionesSol, rumbo } from "@/lib/sol";
 import { fenomenosCerca } from "@/features/espana/fenomenos";
 import {
   calendarioLugar,
@@ -16,6 +17,8 @@ import {
   lugarPorId,
   lugaresCerca,
   rutasCerca,
+  rarezasCerca,
+  claveDe,
   recientesLugar,
 } from "@/features/espana/datos";
 import { MESES } from "@/lib/fechas";
@@ -62,6 +65,7 @@ export default async function PaginaLugar({ params }: Props) {
     .filter((x) => x.id !== l.id)
     .slice(0, 8);
   const rutas = rutasCerca(l);
+  const rarezas = rarezasCerca(l.lat, l.lon, 30).slice(0, 12);
   const sol = direccionesSol(hoy, l.lat, l.lon);
   const espana = cargarEspana();
   const cita = espana?.fuente?.cita;
@@ -178,6 +182,21 @@ export default async function PaginaLugar({ params }: Props) {
             A menos de {l.r + 5} km: aves de <a href="https://ebird.org">eBird</a> (Cornell Lab of Ornithology, la
             última de cada especie en la provincia) y mamíferos, reptiles y anfibios de{" "}
             <a href="https://www.inaturalist.org">iNaturalist</a> (sin especies sensibles).
+          </p>
+        </section>
+      )}
+
+      {rarezas.length > 0 && (
+        <section className="seccion">
+          <h2 className="rotulo">Rarezas a menos de 30 km esta semana</h2>
+          <ListaRarezas
+            obs={rarezas}
+            claves={Object.fromEntries(rarezas.map((o) => [o.c, claveDe(o.c)]))}
+            conDistancia
+          />
+          <p className="nota-pie">
+            Observaciones notables de <a href="https://ebird.org">eBird</a>.{" "}
+            <Link href="/espana/rarezas">Todas las de España →</Link>
           </p>
         </section>
       )}

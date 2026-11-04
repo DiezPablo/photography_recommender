@@ -5,6 +5,7 @@ import Link from "next/link";
 import PlanificadorEspana from "@/features/espana/PlanificadorEspana";
 import DondeVerEspecie from "@/features/espana/DondeVerEspecie";
 import FindeEspana from "@/features/espana/FindeEspana";
+import InicioEspana from "@/features/espana/InicioEspana";
 import { fechaLocal } from "@/lib/sol";
 
 export const metadata: Metadata = {
@@ -15,12 +16,16 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-type Props = { searchParams: Promise<{ modo?: string }> };
+type Props = { searchParams: Promise<{ modo?: string; lat?: string; zona?: string }> };
 
 export default async function PaginaEspana({ searchParams }: Props) {
-  const modo = (await searchParams).modo;
+  const q = await searchParams;
+  const modo = q.modo;
   const donde = modo === "donde";
   const finde = modo === "finde";
+  // sin modo ni punto, la portada; los enlaces antiguos (?lat=…, ?zona=…) siguen abriendo «¿Qué veo aquí?»
+  const inicio = !modo && !q.lat && !q.zona;
+  const aqui = !inicio && !donde && !finde;
   const hoy = fechaLocal(new Date());
   return (
     <main className="calendario safaris espana">
@@ -35,7 +40,10 @@ export default async function PaginaEspana({ searchParams }: Props) {
         </p>
       </header>
       <nav className="pestanas-espana" aria-label="Modo">
-        <Link href="/espana" aria-current={donde || finde ? undefined : "page"}>
+        <Link href="/espana" aria-current={inicio ? "page" : undefined}>
+          Inicio
+        </Link>
+        <Link href="/espana?modo=aqui" aria-current={aqui ? "page" : undefined}>
           ¿Qué veo aquí?
         </Link>
         <Link href="/espana?modo=finde" aria-current={finde ? "page" : undefined}>
@@ -48,7 +56,15 @@ export default async function PaginaEspana({ searchParams }: Props) {
       <p className="enlace-mis-especies">
         <Link href="/espana/mis-especies">Mis especies vistas →</Link>
       </p>
-      {donde ? <DondeVerEspecie hoy={hoy} /> : finde ? <FindeEspana hoy={hoy} /> : <PlanificadorEspana hoy={hoy} />}
+      {inicio ? (
+        <InicioEspana hoy={hoy} />
+      ) : donde ? (
+        <DondeVerEspecie hoy={hoy} />
+      ) : finde ? (
+        <FindeEspana hoy={hoy} />
+      ) : (
+        <PlanificadorEspana hoy={hoy} />
+      )}
       <p className="nota-pie">
         Luz: posición del sol calculada aquí. Tiempo: Open-Meteo (previsión hasta 16 días; más allá, el archivo ERA5 de
         los diez últimos años). Especies: GBIF por cuadrícula europea de 10 km, como frecuencia relativa en su grupo (no

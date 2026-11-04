@@ -20,6 +20,7 @@ const FICHEROS = [
   "espana_lugares.json",
   "espana_actividad.json",
   "espana_rutas.json",
+  "espana_rarezas.json",
   "espana_natura.json",
 ];
 // el único que se pide desde el navegador (fetch en ExploradorSafaris)

@@ -22,6 +22,7 @@ import ElegirLugar from "@/features/espana/ElegirLugar";
 import LuzYMar from "@/features/espana/LuzYMar";
 import BotonVista from "@/features/espana/BotonVista";
 import { useVistas } from "@/features/espana/vistas";
+import { useUbicacionGuardada } from "@/features/espana/ubicacion";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
 import { fenomenosCerca } from "@/features/espana/fenomenos";
 import { ZONAS_ESPANA, type BloqueEspana, type ObsReciente } from "@/features/espana/zonas";
@@ -115,14 +116,19 @@ function especiesDelRadio(bloques: BloqueEspana[], celdas: Set<string>, mes: num
 export default function PlanificadorEspana({ hoy }: { hoy: string }) {
   const [parametros, actualizar] = useParametrosUrl();
   const zona = ZONAS_ESPANA.find((z) => z.id === (parametros.get("zona") ?? "gallocanta")) ?? ZONAS_ESPANA[3];
-  const lat = parametros.has("lat") ? Number(parametros.get("lat")) : zona.lat;
-  const lon = parametros.has("lon") ? Number(parametros.get("lon")) : zona.lon;
+  // sin punto ni zona en la dirección, la última ubicación elegida (solo en este navegador) o Gallocanta
+  const guardada = useUbicacionGuardada();
+  const usarGuardada = !parametros.has("lat") && !parametros.has("zona") && guardada !== null;
+  const lat = parametros.has("lat") ? Number(parametros.get("lat")) : usarGuardada ? guardada.lat : zona.lat;
+  const lon = parametros.has("lon") ? Number(parametros.get("lon")) : usarGuardada ? guardada.lon : zona.lon;
   const radio = Number(parametros.get("radio") ?? zona.radioKm);
   const fecha = parametros.get("fecha") ?? hoy;
   const grupo = parametros.get("grupo") ?? "todos";
   const nombreSitio = parametros.has("lat")
     ? (parametros.get("lugar") ?? `Tu punto (${lat.toFixed(2)}, ${lon.toFixed(2)})`)
-    : zona.nombre;
+    : usarGuardada
+      ? (guardada.nombre ?? `Tu punto (${lat.toFixed(2)}, ${lon.toFixed(2)})`)
+      : zona.nombre;
   const mes = Number(fecha.slice(5, 7)) - 1;
   const luz = luzDia(fecha, lat, lon);
 
