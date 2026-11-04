@@ -27,6 +27,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ bloque: st
   const [e, n] = bloque.slice(6).split("N").map(Number);
   const celdas = Object.fromEntries(
     Object.entries(cache.celdas).filter(([c]) => {
+      if (!/^10kmE\d+N\d+$/.test(c)) return false;
       const [ce, cn] = c.split("E")[1].split("N").map(Number);
       return Math.floor(ce / 10) === e && Math.floor(cn / 10) === n;
     }),

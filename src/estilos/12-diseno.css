@@ -1478,3 +1478,14 @@ body {
     height: 280px;
   }
 }
+
+/* España: filtro por grupo de la lista de especies */
+.filtro-grupos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.filtro-grupos button[aria-pressed="true"] {
+  background: var(--acento);
+  color: var(--superficie);
+}

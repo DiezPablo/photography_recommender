@@ -50,6 +50,13 @@ interface Especie {
   nota: Puntuacion;
 }
 
+const GRUPOS = [
+  ["Aves", "Aves"],
+  ["Mammalia", "Mamíferos"],
+  ["Reptilia", "Reptiles"],
+  ["Amphibia", "Anfibios"],
+] as const;
+
 /** Une las celdas del radio: ‰ de cada especie ponderado por la muestra de su clase en cada celda. */
 function especiesDelRadio(bloques: BloqueEspana[], celdas: Set<string>, mes: number) {
   const suma = new Map<string, { p: number; m: number; clase: string }>();
@@ -79,6 +86,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
   const lon = parametros.has("lon") ? Number(parametros.get("lon")) : zona.lon;
   const radio = Number(parametros.get("radio") ?? zona.radioKm);
   const fecha = parametros.get("fecha") ?? hoy;
+  const grupo = parametros.get("grupo") ?? "todos";
   const mes = Number(fecha.slice(5, 7)) - 1;
   const luz = luzDia(fecha, lat, lon);
 
@@ -162,9 +170,13 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
           }),
         };
       })
-      .sort((a, b) => b.nota.total - a.nota.total)
-      .slice(0, MAX_ESPECIES);
+      .sort((a, b) => b.nota.total - a.nota.total);
   }
+  // la frecuencia es dentro de su grupo: un grupo con pocas observaciones (anfibios, mamíferos) da ‰ altos y, todo
+  // junto, se comería a las aves; por eso se puede elegir grupo y el recuento de cada uno se ve en el botón
+  const porGrupo = new Map<string, number>();
+  for (const e of especies) porGrupo.set(e.clase, (porGrupo.get(e.clase) ?? 0) + 1);
+  const visibles = especies.filter((e) => grupo === "todos" || e.clase === grupo).slice(0, MAX_ESPECIES);
 
   const hora = (d: Date | null) => (d ? horaLocal(d, lon) : "–");
   const franja = (f: Franja | null) => (f ? `${hora(f.desde)}–${hora(f.hasta)}` : "–");
@@ -318,8 +330,26 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
         )}
         {Array.isArray(bloques) && (
           <>
+            {porGrupo.size > 1 && (
+              <p className="filtro-grupos" role="group" aria-label="Grupo">
+                {[
+                  ["todos", "Todas", especies.length] as const,
+                  ...GRUPOS.filter(([c]) => porGrupo.has(c)).map(([c, t]) => [c, t, porGrupo.get(c) ?? 0] as const),
+                ].map(([c, t, n]) => (
+                  <button
+                    key={c}
+                    type="button"
+                    className="quitar"
+                    aria-pressed={grupo === c}
+                    onClick={() => actualizar({ grupo: c === "todos" ? null : c })}
+                  >
+                    {t} <small>{n}</small>
+                  </button>
+                ))}
+              </p>
+            )}
             <ol className="lista-especies-espana">
-              {especies.map((e) => {
+              {visibles.map((e) => {
                 const n = nivelFrecuencia(e.permil);
                 const c = confianza(e.muestra);
                 return (

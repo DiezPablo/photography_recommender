@@ -50,7 +50,7 @@ def test_consulta_sql():
     sql = consulta()
     assert "GBIF_EEARGCode(10000" in sql
     assert "countryCode = 'ES'" in sql
-    assert "gbif_classification.classkey IN ('212', '359', '358', '131')" in sql
+    assert "gbif_classification.classkey IN ('212', '359', '358', '131', '11592253'" in sql
 
 
 def test_por_celda_e_informe(monkeypatch):

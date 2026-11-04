@@ -27,6 +27,13 @@ interface Lugar {
   celdas: number;
 }
 
+/** Cerca de un espacio protegido, su nombre; algo más lejos, la distancia a él; si no, las coordenadas. */
+const titulo = (l: Lugar) =>
+  !l.lugar
+    ? `Cuadrícula en ${l.lat.toFixed(2)}, ${l.lon.toFixed(2)}`
+    : l.lugar.km < 15
+      ? l.lugar.nombre
+      : `A ${l.lugar.km} km de ${l.lugar.nombre}`;
 const nombre = (e: Pick<EspecieLista, "n" | "c">) => e.n ?? e.c ?? "Especie sin nombre";
 const sinTildes = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
@@ -159,7 +166,7 @@ export default function DondeVerEspecie({ hoy }: { hoy: string }) {
                 etiqueta="Dónde se ve"
                 eventos={lugares.map((l) => ({
                   id: l.celda,
-                  nombre: l.lugar ? l.lugar.nombre : `Cuadrícula ${l.celda}`,
+                  nombre: titulo(l),
                   lat: l.lat,
                   lon: l.lon,
                   radio_km: 5,
@@ -175,15 +182,11 @@ export default function DondeVerEspecie({ hoy }: { hoy: string }) {
                   const buenos = l.meses.flatMap((v, i) => ((v ?? 0) >= 20 ? [i + 1] : []));
                   return (
                     <li key={l.celda}>
-                      <b>
-                        {l.lugar
-                          ? l.lugar.nombre
-                          : `Sin espacio protegido cerca (${l.lat.toFixed(2)}, ${l.lon.toFixed(2)})`}
-                      </b>
+                      <b>{titulo(l)}</b>
                       {l.celdas > 1 ? (
                         <small> ({l.celdas} cuadrículas)</small>
                       ) : (
-                        l.lugar && l.lugar.km > 0 && <small> (a {l.lugar.km} km)</small>
+                        l.lugar && l.lugar.km > 0 && l.lugar.km < 15 && <small> (a {l.lugar.km} km)</small>
                       )}{" "}
                       <span className={`f-texto-${n.clave}`}>
                         {n.texto} en {MESES[m]}

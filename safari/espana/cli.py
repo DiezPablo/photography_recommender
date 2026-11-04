@@ -23,7 +23,9 @@ from safari.espana.zonas import ZONAS, celdas
 from safari.frecuencia import muestra
 
 FILAS = Path("cache/espana_filas.json.gz")
-MAX_ESPECIES_CELDA = 80
+# especies por celda y grupo: con un tope común las aves (muchos más registros) se llevaban todos los puestos
+MAX_ESPECIES_CELDA = {212: 80}
+MAX_OTRAS_CLASES = 25
 CLASE_NOMBRE = {v: k for k, v in gbif_descarga.CLASES.items()}
 MESES_ES = [
     "enero",
@@ -65,11 +67,18 @@ def por_celda(filas: list[dict]) -> dict:
     """{celda: {"m": {clase: [12 muestra]}, "e": {especie: [12 ‰]}}} con las especies más vistas de cada celda."""
     grupos: dict[str, list[dict]] = defaultdict(list)
     for f in filas:
-        grupos[f["celda"]].append(f)
+        # GBIF deja sin código las observaciones cuya incertidumbre no cabe en una celda: no son de ningún sitio
+        if f["celda"]:
+            grupos[f["celda"]].append(f)
     salida = {}
     for c, fs in grupos.items():
         est = estacionalidad(fs)
-        mejores = sorted(est.items(), key=lambda x: -x[1]["n"])[:MAX_ESPECIES_CELDA]
+        clase_de = {f["especie"]: f["clase"] for f in fs}
+        por_clase: dict[int, list] = defaultdict(list)
+        for k, d in sorted(est.items(), key=lambda x: -x[1]["n"]):
+            if len(por_clase[clase_de[k]]) < MAX_ESPECIES_CELDA.get(clase_de[k], MAX_OTRAS_CLASES):
+                por_clase[clase_de[k]].append((k, d))
+        mejores = [x for xs in por_clase.values() for x in xs]
         bases: dict[int, list[int]] = defaultdict(lambda: [0] * 12)
         for f in fs:
             bases[f["clase"]][f["mes"] - 1] += f["n"]
@@ -126,7 +135,8 @@ def main(salida: Path = Path("public/datos/espana.json"), descargar: bool = True
     especies = {}
     for k in claves:
         try:
-            especies[str(k)] = {**nombres.especie(k), "clase": clase_de.get(k)}
+            e = nombres.especie(k)
+            especies[str(k)] = {**e, "n": nombres.nombre_es(e.get("c"), e.get("n")), "clase": clase_de.get(k)}
         except Exception as e:
             print(f"  sin nombre para {k}: {e}", flush=True)
             especies[str(k)] = {"c": None, "n": None, "clase": clase_de.get(k)}

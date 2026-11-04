@@ -22,6 +22,9 @@ from safari.comun.red import sesion
 API = "https://api.gbif.org/v1/occurrence/download"
 # clases de GBIF que interesan para fotografiar fauna: aves, mamíferos, reptiles y anfibios
 CLASES = {"Aves": 212, "Mammalia": 359, "Reptilia": 358, "Amphibia": 131}
+# En el backbone de GBIF «Reptilia» ya no es una clase (es sinónimo pro parte): los reptiles cuelgan de Squamata,
+# Testudines y Crocodylia, que se piden y se juntan de nuevo en Reptilia (358)
+REPTILES = {11592253: 358, 11418114: 358, 11493978: 358}
 PAUSA_S = 60
 
 
@@ -30,7 +33,7 @@ def credenciales() -> tuple[str, str] | None:
     return (usuario, clave) if usuario and clave else None
 
 
-def consulta(pais: str = "ES", desde: int = 2005, clases: Iterable[int] = CLASES.values()) -> str:
+def consulta(pais: str = "ES", desde: int = 2005, clases: Iterable[int] = (*CLASES.values(), *REPTILES)) -> str:
     """SQL de la descarga: recuentos por celda de 10 km, clase, especie, año y mes (año para el backtest).
 
     La tabla SQL de GBIF clasifica por defecto con Catalogue of Life (claves de texto como «V2» para Aves); las
@@ -91,10 +94,12 @@ def filas(zip_bytes: bytes) -> list[dict]:
         texto = z.read(nombre).decode("utf-8")
     for f in csv.DictReader(io.StringIO(texto), delimiter="\t"):
         g = {k.lower(): v for k, v in f.items()}
+        if not g["celda"]:
+            continue  # sin celda: incertidumbre mayor que la cuadrícula
         salida.append(
             {
                 "celda": g["celda"],
-                "clase": int(g["classkey"]),
+                "clase": REPTILES.get(int(g["classkey"]), int(g["classkey"])),
                 "especie": int(g["specieskey"]),
                 "anio": int(g["year"]),
                 "mes": int(g["month"]),

@@ -538,3 +538,19 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   `classKey = 212`. La tabla SQL de GBIF clasifica ahora por defecto con Catalogue of Life (claves de texto, Aves
   = «V2»); el backbone de GBIF, cuyas claves usa la app, está en `occurrence.gbif_classification.*` (como texto).
   La consulta filtra y agrupa por `gbif_classification.classkey/specieskey`.
+- Primera descarga real (04-11-2026): 11,5 M filas agregadas, 9016 celdas, 692 especies; backtest en las cuatro
+  zonas entre 13 y 18 aciertos de 20. Arreglos tras revisarla:
+  - GBIF deja sin código EEA las observaciones cuya incertidumbre no cabe en la celda (2,7 M de aves): salían en
+    una celda «» que rompía `/espana/datos/[bloque]`. Se descartan al leer y en las rutas.
+  - Cada celda guardaba sus 80 especies con más registros: eran todas aves y la web no enseñaba mamíferos ni
+    anfibios. Ahora 80 aves y 25 de cada otro grupo.
+  - Reptiles: en el backbone de GBIF «Reptilia» (358) es sinónimo y no tiene registros; se piden Squamata,
+    Testudines y Crocodylia y se juntan en 358.
+  - La frecuencia es dentro de su grupo, así que un grupo con pocos registros da ‰ altos (zorro 433 ‰ en Doñana):
+    la lista de «¿Qué veo aquí?» se filtra por grupo (Todas, Aves, Mamíferos, Reptiles, Anfibios).
+  - Nombres: GBIF da a veces el de otro país o uno equivocado (Sus scrofa «Cerdo doméstico», Herpestes
+    «Huron»). `safari/recursos/nombres_espana.csv` los corrige a mano y el resto se limpia (primer nombre, sin
+    comillas, minúsculas salvo la inicial y nombres propios).
+  - Lugares: los ~158 espacios protegidos españoles del catálogo mundial quedan lejos de muchas celdas (las de
+    grullas en Extremadura). Se nombra el más cercano hasta 40 km («A 29 km de Tablas de Daimiel») y solo se
+    agrupan las celdas a menos de 15 km. Pendiente: espacios protegidos de España completos (Natura 2000/ENP).

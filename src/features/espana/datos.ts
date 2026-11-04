@@ -35,12 +35,17 @@ function areasEspana() {
   return areas;
 }
 
-/** «Parque nacional de Doñana» si hay un espacio protegido a menos de 15 km del punto. */
+/** Hasta dónde se nombra el espacio protegido más cercano («a 29 km de Tablas de Daimiel») y, más cerca, hasta
+ * dónde una cuadrícula cuenta como parte de él (y se agrupa con las demás del mismo espacio). */
+export const KM_NOMBRE = 40;
+export const KM_DENTRO = 15;
+
+/** El espacio protegido más cercano a menos de KM_NOMBRE km del punto, con la distancia. */
 export function nombreLugar(lat: number, lon: number): { nombre: string; km: number } | null {
   let mejor: { nombre: string; km: number } | null = null;
   for (const a of areasEspana()) {
     const km = distanciaKm({ lat, lon }, a);
-    if (km < 15 && (!mejor || km < mejor.km)) mejor = { nombre: a.nombre, km: Math.round(km) };
+    if (km < KM_NOMBRE && (!mejor || km < mejor.km)) mejor = { nombre: a.nombre, km: Math.round(km) };
   }
   return mejor;
 }
@@ -66,7 +71,7 @@ export function lugaresDe(clave: string, mes: number | null, max = 40): LugarEsp
   const valor = (meses: (number | null)[]) =>
     mes === null ? Math.max(0, ...meses.map((v) => v ?? 0)) : (meses[mes] ?? 0);
   const ordenadas = Object.entries(e.celdas)
-    .filter(([, c]) => c.e[clave])
+    .filter(([celda, c]) => c.e[clave] && /^10kmE\d+N\d+$/.test(celda))
     .map(([celda, c]) => ({ celda, meses: c.e[clave], muestra: c.m[clase] ?? Array(12).fill(0) }))
     .filter((x) => valor(x.meses) > 0)
     .sort((a, b) => valor(b.meses) - valor(a.meses));
@@ -75,7 +80,7 @@ export function lugaresDe(clave: string, mes: number | null, max = 40): LugarEsp
   for (const x of ordenadas) {
     const [lat, lon] = centroCelda(x.celda);
     const lugar = nombreLugar(lat, lon);
-    const k = lugar?.nombre ?? x.celda;
+    const k = lugar && lugar.km < KM_DENTRO ? lugar.nombre : x.celda;
     const ya = porLugar.get(k);
     if (ya) ya.celdas++;
     else if (porLugar.size < max)
