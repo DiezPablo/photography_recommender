@@ -576,3 +576,7 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   lista los 12 más cercanos a 30 km con las especies de sus cuadrículas en el mes y cuatro destacadas (una de
   cada grupo por turno). En «¿Dónde veo…?» cada cuadrícula toma el nombre del lugar más cercano (al borde, para
   los espacios grandes).
+- Con 18 500 puntos de eBird, «Cerca de aquí» se llenaba de plazas del centro (todas en la misma cuadrícula y con
+  los mismos datos): queda uno por cuadrícula de 10 km, el de más especies, y un tercio de la lista se guarda para
+  espacios protegidos y observatorios. Para nombrar cuadrículas en «¿Dónde veo…?» solo cuentan los puntos de
+  eBird con 100 especies o más.

@@ -3,7 +3,7 @@
 // «cerca de aquí» y para nombrar cada celda; si aún no están, los espacios protegidos del catálogo mundial.
 import "server-only";
 import { leerDatos } from "@/lib/datos";
-import { celdasEnRadio, centroCelda } from "@/lib/rejilla";
+import { celda, celdasEnRadio, centroCelda } from "@/lib/rejilla";
 import { distanciaKm } from "@/lib/fechas";
 import type { Mundo } from "@/features/safaris/modelo";
 import { ZONAS_ESPANA, type BloqueEspana, type LugarFauna } from "@/features/espana/zonas";
@@ -78,9 +78,20 @@ export interface LugarCerca extends LugarFauna {
 /** Los lugares más cercanos al punto (hasta maxKm) con lo que hay en sus cuadrículas en el mes (0-11). */
 export function lugaresCerca(lat: number, lon: number, mes: number, max = 12, maxKm = 30): LugarCerca[] {
   const e = cargarEspana();
-  const cerca = cargarLugares()
+  // de los puntos de eBird, uno por cuadrícula de 10 km (el de más especies): los de una misma cuadrícula tienen
+  // los mismos datos y en una ciudad llenaban la lista de plazas (Retiro sale; Plaza del Carmen, no)
+  const mejorPorCelda = new Map<string, LugarFauna>();
+  const todos = cargarLugares()
     .map((l) => ({ l, km: distanciaKm({ lat, lon }, l) }))
-    .filter((x) => x.km <= maxKm)
+    .filter((x) => x.km <= maxKm);
+  for (const { l } of todos)
+    if (l.id.startsWith("eb-")) {
+      const c = celda(l.lat, l.lon);
+      const ya = mejorPorCelda.get(c);
+      if (!ya || (l.e ?? 0) > (ya.e ?? 0)) mejorPorCelda.set(c, l);
+    }
+  const cerca = todos
+    .filter((x) => !x.l.id.startsWith("eb-") || mejorPorCelda.get(celda(x.l.lat, x.l.lon)) === x.l)
     .sort((a, b) => a.km - b.km);
   // los puntos de eBird son miles (en una ciudad, decenas a pocos km): se guardan sitios para los espacios
   // protegidos y observatorios más cercanos, que si no quedarían fuera
@@ -129,6 +140,8 @@ export const KM_DENTRO = 15;
 export function nombreLugar(lat: number, lon: number): { nombre: string; km: number } | null {
   let mejor: { nombre: string; km: number } | null = null;
   for (const a of cargarLugares()) {
+    // los puntos de eBird pequeños (una plaza) no dan nombre a una cuadrícula de 10 km
+    if (a.id.startsWith("eb-") && (a.e ?? 0) < 100) continue;
     // distancia al borde (aproximado como círculo): dentro de un parque grande cuenta 0
     const km = Math.max(0, distanciaKm({ lat, lon }, a) - a.r);
     if (km < KM_NOMBRE && (!mejor || km < mejor.km)) mejor = { nombre: a.n, km: Math.round(km) };
