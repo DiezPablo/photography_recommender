@@ -41,3 +41,12 @@ def test_sin_repetir():
     b = {**a, "lat": 40.31}
     c = {**a, "lat": 40.60}
     assert lugares.sin_repetir([a, b, c]) == [a, c]
+
+
+def test_estados_especies():
+    from safari.espana import nombres
+
+    e = nombres.estados()
+    assert e["Felis catus"]["estado"] == "domestica"
+    assert e["Trachemys scripta"]["estado"] == "invasora"
+    assert e["Canis lupus"]["nota"]

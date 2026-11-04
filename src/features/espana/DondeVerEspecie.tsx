@@ -8,12 +8,16 @@ import { useParametrosUrl } from "@/lib/almacen";
 import { MESES, rangoMeses } from "@/lib/fechas";
 import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
 import MapaEventos from "@/ui/mapa/MapaEventos";
+import FenomenosEspana from "@/features/espana/FenomenosEspana";
+import { fenomenosDe } from "@/features/espana/fenomenos";
 
 interface EspecieLista {
   k: string;
   n: string | null;
   c: string | null;
   clase: string | null;
+  estado?: "invasora" | "aviso" | null;
+  nota?: string | null;
   celdas: number;
 }
 
@@ -21,7 +25,7 @@ interface Lugar {
   celda: string;
   lat: number;
   lon: number;
-  lugar: { nombre: string; km: number } | null;
+  lugar: { nombre: string; km: number; id: string } | null;
   meses: (number | null)[];
   muestra: number[];
   celdas: number;
@@ -152,6 +156,17 @@ export default function DondeVerEspecie({ hoy }: { hoy: string }) {
             Dónde ver {elegida ? nombre(elegida).toLowerCase() : "la especie"}
             {mes !== null ? ` en ${MESES[mes]}` : ""}
           </h2>
+          {elegida?.estado === "invasora" && (
+            <p className="aviso-plan">
+              Especie exótica invasora (Catálogo español de especies exóticas invasoras): no es fauna autóctona.
+            </p>
+          )}
+          {elegida?.nota && <p className="aviso-plan">Ojo: {elegida.nota}.</p>}
+          <FenomenosEspana
+            fenomenos={fenomenosDe(elegida?.c)}
+            mesHoy={Number(hoy.slice(5, 7)) - 1}
+            titulo="Momentos especiales"
+          />
           {lugares === undefined && <p className="nota-pie">Buscando…</p>}
           {lugares === null && <p className="nota-pie">No hay datos de esta especie.</p>}
           {lugares && lugares.length === 0 && (
@@ -182,7 +197,13 @@ export default function DondeVerEspecie({ hoy }: { hoy: string }) {
                   const buenos = l.meses.flatMap((v, i) => ((v ?? 0) >= 20 ? [i + 1] : []));
                   return (
                     <li key={l.celda}>
-                      <b>{titulo(l)}</b>
+                      <b>
+                        {l.lugar && l.lugar.km < 15 ? (
+                          <Link href={`/espana/lugar/${encodeURIComponent(l.lugar.id)}`}>{titulo(l)}</Link>
+                        ) : (
+                          titulo(l)
+                        )}
+                      </b>
                       {l.celdas > 1 ? (
                         <small> ({l.celdas} cuadrículas)</small>
                       ) : (

@@ -17,7 +17,7 @@ export const ZONAS_ESPANA: ZonaEspana[] = [
 /** Lo que devuelve /espana/datos/[bloque]: las celdas de un bloque de 100 km y los nombres de sus especies. */
 export interface BloqueEspana {
   celdas: Record<string, { m: Record<string, number[]>; e: Record<string, (number | null)[]> }>;
-  especies: Record<string, { c: string | null; n: string | null; clase?: string | null }>;
+  especies: Record<string, EspecieEspana>;
   cita: string | null;
   /** aves vistas en los últimos 30 días en el bloque (eBird); null si aún no hay datos */
   recientes?: { generado: string; obs: ObsReciente[] } | null;
@@ -42,4 +42,21 @@ export interface LugarFauna {
   lon: number;
   r: number;
   e?: number | null;
+}
+
+/** Nombres de una especie en espana.json; `estado`: «invasora» (Catálogo español de especies exóticas invasoras) o
+ * «aviso» (con `nota`, p. ej. el lobo, que en GBIF va junto con los perros). Las domésticas no llegan. */
+export interface EspecieEspana {
+  c: string | null;
+  n: string | null;
+  clase?: string | null;
+  estado?: "invasora" | "aviso";
+  nota?: string | null;
+}
+
+/** La etiqueta junto al nombre: «invasora» o el aviso. */
+export function etiquetaEstado(e: Pick<EspecieEspana, "estado" | "nota"> | undefined): string | null {
+  if (e?.estado === "invasora") return "invasora";
+  if (e?.estado === "aviso") return e.nota ?? null;
+  return null;
 }

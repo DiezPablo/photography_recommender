@@ -14,7 +14,8 @@ import sys
 from datetime import date, datetime
 from pathlib import Path
 
-RAIZ = Path(__file__).resolve().parents[2] / "src" / "features" / "safaris"
+FEATURES = Path(__file__).resolve().parents[2] / "src" / "features"
+RAICES = [FEATURES / "safaris", FEATURES / "espana"]
 QUE = {
     "temporadaVerde.ts": "Tarifas de los lodges por mes (temporada verde): abrir cada enlace y copiar las del año nuevo.",
     "tasas.ts": "Tasas de entrada de los parques: comprobar en la fuente de cada una.",
@@ -22,13 +23,14 @@ QUE = {
     "cierres.ts": "Cierres estacionales (tigres en el monzón, Kaziranga, Yala…): fechas del año en las fuentes.",
     "familias.ts": "Edades mínimas (gorilas, chimpancés) y parques sin malaria.",
     "eventos.ts": "Calendario de fenómenos (desoves, ballenas, osos, crecidas…): meses en las fuentes.",
+    "fenomenos.ts": "Fenómenos de fauna en España (berrea, grullas, Estrecho…): meses en las fuentes.",
 }
 FECHA = re.compile(r'(?:REVISADO\w*|CONSULTADO)\s*=\s*"(\d{2}-\d{2}-\d{4})"|revisado:\s*"(\d{2}-\d{2}-\d{4})"')
 
 
 def fechas() -> dict[str, list[date]]:
     salida: dict[str, list[date]] = {}
-    for f in sorted(RAIZ.glob("*.ts")):
+    for f in sorted(p for raiz in RAICES for p in raiz.glob("*.ts")):
         for m in FECHA.finditer(f.read_text(encoding="utf-8")):
             salida.setdefault(f.name, []).append(datetime.strptime(m.group(1) or m.group(2), "%d-%m-%Y").date())
     return salida

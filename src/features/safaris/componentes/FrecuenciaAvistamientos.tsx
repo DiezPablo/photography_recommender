@@ -15,7 +15,22 @@ export interface FilaFrecuencia {
 // un valor de cada nivel, para la leyenda
 const LEYENDA = [50, 20, 5, 1, 0].map(nivelFrecuencia);
 
-export default function FrecuenciaAvistamientos({ filas, mesHoy }: { filas: FilaFrecuencia[]; mesHoy: number }) {
+export default function FrecuenciaAvistamientos({
+  filas,
+  mesHoy,
+  unidad = "fotos",
+  titulo = "Qué probabilidad hay de verlos, mes a mes",
+}: {
+  filas: FilaFrecuencia[];
+  mesHoy: number;
+  /** qué cuenta la muestra: fotos (iNaturalist) u observaciones (GBIF) */
+  unidad?: string;
+  titulo?: string;
+}) {
+  const idTitulo = `frecuencia-${titulo
+    .normalize("NFD")
+    .replace(/[^a-zA-Z]+/g, "-")
+    .toLowerCase()}`;
   if (!filas.length) return null;
   const media = (f: FilaFrecuencia) => f.meses.reduce<number>((a, b) => a + (b ?? 0), 0);
   const ordenadas = [...filas].sort((a, b) => media(b) - media(a));
@@ -23,9 +38,9 @@ export default function FrecuenciaAvistamientos({ filas, mesHoy }: { filas: Fila
   const base = filas.map((f) => f.muestra).find((m) => m?.some((x) => x > 0));
   const hoy = confianza(base?.[mesHoy]);
   return (
-    <section className="seccion frecuencia" aria-labelledby="frecuencia-titulo">
-      <h2 className="rotulo" id="frecuencia-titulo">
-        Qué probabilidad hay de verlos, mes a mes
+    <section className="seccion frecuencia" aria-labelledby={idTitulo}>
+      <h2 className="rotulo" id={idTitulo}>
+        {titulo}
       </h2>
       <div className="tabla-desliza">
         <table className="tabla-frecuencia">
@@ -50,7 +65,7 @@ export default function FrecuenciaAvistamientos({ filas, mesHoy }: { filas: Fila
                     <td
                       key={i}
                       className={`f-${n.clave}${i === mesHoy ? " mes-actual" : ""}${c?.clave === "baja" ? " confianza-baja" : ""}`}
-                      title={`${f.nombre} en ${MESES[i]}: ${n.texto}${c ? ` (${c.texto}: ${f.muestra![i].toLocaleString("es-ES")} fotos del grupo)` : ""}`}
+                      title={`${f.nombre} en ${MESES[i]}: ${n.texto}${c ? ` (${c.texto}: ${f.muestra![i].toLocaleString("es-ES")} ${unidad} del grupo)` : ""}`}
                     >
                       <span className="sr">{`${MESES[i]}: ${n.texto}`}</span>
                     </td>
@@ -60,9 +75,9 @@ export default function FrecuenciaAvistamientos({ filas, mesHoy }: { filas: Fila
             ))}
             {base && (
               <tr className="fila-muestra">
-                <th scope="row">Fotos del grupo</th>
+                <th scope="row">{unidad[0].toUpperCase() + unidad.slice(1)} del grupo</th>
                 {base.map((n, i) => (
-                  <td key={i} className={i === mesHoy ? "mes-actual" : undefined} title={`${MESES[i]}: ${n} fotos`}>
+                  <td key={i} className={i === mesHoy ? "mes-actual" : undefined} title={`${MESES[i]}: ${n} ${unidad}`}>
                     {n >= 1000 ? `${Math.round(n / 1000)}k` : n}
                   </td>
                 ))}
@@ -85,15 +100,19 @@ export default function FrecuenciaAvistamientos({ filas, mesHoy }: { filas: Fila
       </p>
       {hoy && base && (
         <p className="confianza-hoy">
-          En {MESES[mesHoy]}, {hoy.texto}: {base[mesHoy].toLocaleString("es-ES")} fotos del grupo con los meses vecinos.
+          En {MESES[mesHoy]}, {hoy.texto}: {base[mesHoy].toLocaleString("es-ES")} {unidad} del grupo con los meses
+          vecinos.
         </p>
       )}
-      <p className="nota-pie">
-        Cuántas de las fotos de su grupo (mamíferos, aves…) que suben los visitantes a iNaturalist cada mes son de esa
-        especie, sumando los meses vecinos. Confianza según cuántas fotos hay detrás: alta desde 300, media desde 100,
-        baja desde 30; con menos, no se da nivel. Corrige que en temporada alta vaya más gente, pero no es una
-        probabilidad exacta: los animales vistosos se fotografían más y el resultado depende de tu guía y de la suerte.
-      </p>
+      {unidad === "fotos" && (
+        <p className="nota-pie">
+          Cuántas de las fotos de su grupo (mamíferos, aves…) que suben los visitantes a iNaturalist cada mes son de esa
+          especie, sumando los meses vecinos. Confianza según cuántas fotos hay detrás: alta desde 300, media desde 100,
+          baja desde 30; con menos, no se da nivel. Corrige que en temporada alta vaya más gente, pero no es una
+          probabilidad exacta: los animales vistosos se fotografían más y el resultado depende de tu guía y de la
+          suerte.
+        </p>
+      )}
     </section>
   );
 }

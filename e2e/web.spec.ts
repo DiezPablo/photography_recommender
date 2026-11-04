@@ -548,7 +548,12 @@ test("fauna en España al revés: dónde veo una especie (o aviso sin datos)", a
   await expect(page).toHaveURL(/k=\d+/);
   await page.getByLabel("Cuándo").selectOption("todo");
   await expect(page.locator(".lista-lugares li").first()).toBeVisible();
-  await expect(page.locator(".lista-lugares li").first().getByRole("link")).toHaveAttribute("href", /\/espana\?lat=/);
+  await expect(
+    page
+      .locator(".lista-lugares li")
+      .first()
+      .getByRole("link", { name: /Qué más se ve aquí/ }),
+  ).toHaveAttribute("href", /\/espana\?lat=/);
 });
 
 test("fauna en España: buscar un lugar y lugares cerca", async ({ page, request }) => {
@@ -563,4 +568,18 @@ test("fauna en España: buscar un lugar y lugares cerca", async ({ page, request
   await page.locator(".elegir-lugar .opciones-especie button").first().click();
   await expect(page).toHaveURL(/lugar=/);
   await expect(page.getByLabel("Dónde")).toHaveAttribute("placeholder", /\S/);
+});
+
+test("fauna en España: ficha de un lugar", async ({ page, request }) => {
+  const r = await request.get("/espana/lugares?q=gallocanta");
+  const { lugares } = (await r.json()) as { lugares: { id: string; n: string }[] };
+  if (!lugares.length) return; // sin lugares publicados aún
+  await page.goto(`/espana/lugar/${encodeURIComponent(lugares[0].id)}`);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(lugares[0].n);
+  await expect(page.getByRole("link", { name: /Qué veo aquí un día concreto/ })).toHaveAttribute("href", /lat=/);
+  await expect(page.locator(".fenomenos")).toContainText("Grullas en Gallocanta");
+});
+
+test("fauna en España: lugar que no existe da 404", async ({ request }) => {
+  expect((await request.get("/espana/lugar/no-existe")).status()).toBe(404);
 });

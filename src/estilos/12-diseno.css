@@ -1524,3 +1524,22 @@ body {
   cursor: pointer;
   text-align: left;
 }
+.etiqueta-invasora {
+  color: var(--resta);
+  font-weight: 600;
+}
+
+/* España: ficha de lugar */
+.enlaces-lugar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+}
+.lista-recientes {
+  columns: 2 16rem;
+  padding-left: 1.2rem;
+}
+.enlace-ficha {
+  font-size: 0.85em;
+}

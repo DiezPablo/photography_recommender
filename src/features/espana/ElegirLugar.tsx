@@ -1,6 +1,7 @@
 "use client";
 // Dónde: un buscador de lugares de fauna (puntos de eBird, espacios protegidos, observatorios), «Mi ubicación» y
 // la lista «Cerca de aquí» con lo que hay en cada uno ese mes. Elegir uno cambia el punto, el radio y el nombre.
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { LugarFauna } from "@/features/espana/zonas";
 
@@ -120,6 +121,9 @@ export default function ElegirLugar({
                 <button type="button" className="enlace" onClick={() => ir(l)}>
                   {l.n}
                 </button>{" "}
+                <Link href={`/espana/lugar/${encodeURIComponent(l.id)}`} className="enlace-ficha">
+                  ficha
+                </Link>{" "}
                 <small>
                   {l.t} · {l.km < 1 ? "aquí" : `a ${l.km.toLocaleString("es-ES")} km`}
                   {l.especies > 0 ? ` · ${l.especies} especies este mes` : ""}

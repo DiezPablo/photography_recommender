@@ -21,7 +21,8 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
     workflow `espana_recientes.yml`, diario.
 - Web Next.js 16 (App Router) en `src/`: `app/` (`/`, `/parque/[id]`, `/especies`, `/especie/[slug]`, `/guia`, `/comparar`, `/migracion`,
   `/planificar`, `/presupuesto`, `/viaje`, `/safari-en/[mes|país]`, `/espana` (luz, tiempo y especies por
-  cuadrícula de 10 km; buscador de lugares y «Cerca de aquí»); `.ics` por parque y `/migracion.ics`,
+  cuadrícula de 10 km; buscador de lugares y «Cerca de aquí»), `/espana/lugar/[id]` (ficha de cada lugar,
+  ISR; fenómenos escritos a mano en `features/espana/fenomenos.ts`); `.ics` por parque y `/migracion.ics`,
   `/recientes.xml`, `sitemap.xml`),
   `features/safaris` (componentes, modelo, `datos.ts` solo servidor), `ui/` (mapa Leaflet, iconos, `Navegacion.tsx`, `FotoGrande.tsx`), `lib/`
   (`datos.ts`: lee `datos/*.gz`; `almacen.ts`; `fechas.ts`), `estilos/` (01-11 heredados de Rasante; el aspecto

@@ -154,6 +154,21 @@ def main(salida: Path = Path("public/datos/espana.json"), descargar: bool = True
         except Exception as e:
             print(f"  sin nombre para {k}: {e}", flush=True)
             especies[str(k)] = {"c": None, "n": None, "clase": clase_de.get(k)}
+    # domésticas fuera (siguen contando en la muestra de su grupo: son esfuerzo de observación); invasoras y avisos,
+    # marcados para la web
+    domesticas = set()
+    for k, e in especies.items():
+        est = nombres.estados().get(e.get("c") or "")
+        if not est:
+            continue
+        if est["estado"] == "domestica":
+            domesticas.add(k)
+        else:
+            e["estado"], e["nota"] = est["estado"], est["nota"]
+    for k in domesticas:
+        del especies[k]
+    for c in celdas_.values():
+        c["e"] = {k: v for k, v in c["e"].items() if k not in domesticas}
 
     def nombre_de(k: int) -> str:
         e = especies.get(str(k)) or nombres.especie(k)

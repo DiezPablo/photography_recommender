@@ -74,3 +74,14 @@ def nombre_es(cientifico: str | None, bruto: str | None) -> str | None:
     palabras = [p if p.lower() in PROPIAS and i else p.lower() for i, p in enumerate(t.split())]
     texto = " ".join(palabras)
     return texto[0].upper() + texto[1:]
+
+
+ESTADOS = Path(__file__).resolve().parent.parent / "recursos" / "especies_estado_espana.csv"
+
+
+@cache
+def estados() -> dict[str, dict]:
+    """Especies domésticas (se quitan), invasoras (con etiqueta) y con aviso, por nombre científico. Las invasoras
+    según el Catálogo español de especies exóticas invasoras (RD 630/2013 y actualizaciones)."""
+    with ESTADOS.open(encoding="utf-8") as f:
+        return {r["cientifico"]: {"estado": r["estado"], "nota": r["nota"] or None} for r in csv.DictReader(f)}

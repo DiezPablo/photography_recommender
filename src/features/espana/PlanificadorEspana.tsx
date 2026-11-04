@@ -19,6 +19,8 @@ import {
 import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
 import { actividadPorDefecto, puntuar, type Puntuacion } from "@/features/espana/puntuacion";
 import ElegirLugar from "@/features/espana/ElegirLugar";
+import FenomenosEspana from "@/features/espana/FenomenosEspana";
+import { fenomenosCerca } from "@/features/espana/fenomenos";
 import { ZONAS_ESPANA, type BloqueEspana, type ObsReciente } from "@/features/espana/zonas";
 
 const RADIOS = [5, 10, 20, 30];
@@ -49,6 +51,8 @@ interface Especie {
   permil: number;
   muestra: number;
   nota: Puntuacion;
+  estado?: "invasora" | "aviso";
+  aviso?: string | null;
   /** última vez vista cerca en 30 días (eBird) */
   ultima: ObsReciente | null;
 }
@@ -198,6 +202,8 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
           clave: k,
           nombre: nombres[k]?.n ?? nombres[k]?.c ?? k,
           cientifico: nombres[k]?.c ?? null,
+          estado: nombres[k]?.estado,
+          aviso: nombres[k]?.nota ?? null,
           clase: s.clase,
           permil,
           muestra: s.m,
@@ -271,6 +277,12 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
           <input type="date" value={fecha} onChange={(e) => e.target.value && actualizar({ fecha: e.target.value })} />
         </label>
       </section>
+
+      <FenomenosEspana
+        fenomenos={fenomenosCerca(lat, lon, radio, mes + 1)}
+        mesHoy={mes}
+        titulo={`Qué pasa en ${MESES[mes]} cerca de aquí`}
+      />
 
       <section className="seccion" aria-labelledby="luz-titulo">
         <h2 className="rotulo" id="luz-titulo">
@@ -407,6 +419,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                     <details>
                       <summary>
                         <b>{e.nombre}</b> <i>{e.cientifico}</i> <span className={`f-texto-${n.clave}`}>{n.texto}</span>
+                        {e.estado === "invasora" && <small className="etiqueta-invasora"> invasora</small>}
                         {e.ultima && (
                           <small className="visto-reciente">
                             {" "}
@@ -425,6 +438,12 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                             {f.nombre}: {Math.round(f.valor * 100)} % <small>({f.detalle})</small>
                           </li>
                         ))}
+                        {e.estado === "invasora" && (
+                          <li>
+                            Especie exótica invasora (Catálogo español): se puede ver, pero no es fauna autóctona.
+                          </li>
+                        )}
+                        {e.aviso && <li>Ojo: {e.aviso}.</li>}
                         <li>
                           Muestra: {e.muestra.toLocaleString("es-ES")} observaciones de su grupo
                           {c ? ` (${c.texto})` : ""}

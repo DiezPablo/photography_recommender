@@ -6,7 +6,7 @@ import { leerDatos } from "@/lib/datos";
 import { celda, celdasEnRadio, centroCelda } from "@/lib/rejilla";
 import { distanciaKm } from "@/lib/fechas";
 import type { Mundo } from "@/features/safaris/modelo";
-import { ZONAS_ESPANA, type BloqueEspana, type LugarFauna } from "@/features/espana/zonas";
+import { ZONAS_ESPANA, type BloqueEspana, type LugarFauna, type ObsReciente } from "@/features/espana/zonas";
 
 export interface Espana {
   generado: string;
@@ -113,6 +113,11 @@ export function lugaresCerca(lat: number, lon: number, mes: number, max = 12, ma
         for (const [k, meses] of Object.entries(d.e)) {
           const v = meses[mes];
           if (!v || vistas.has(k)) continue;
+          // las invasoras cuentan en el total pero no se destacan
+          if (e?.especies[k]?.estado === "invasora") {
+            vistas.add(k);
+            continue;
+          }
           vistas.add(k);
           const clase = e?.especies[k]?.clase ?? "Aves";
           const n = d.m[clase]?.[mes] ?? 0;
@@ -137,14 +142,32 @@ export const KM_NOMBRE = 40;
 export const KM_DENTRO = 15;
 
 /** El espacio protegido más cercano a menos de KM_NOMBRE km del punto, con la distancia. */
-export function nombreLugar(lat: number, lon: number): { nombre: string; km: number } | null {
-  let mejor: { nombre: string; km: number } | null = null;
-  for (const a of cargarLugares()) {
-    // los puntos de eBird pequeños (una plaza) no dan nombre a una cuadrícula de 10 km
-    if (a.id.startsWith("eb-") && (a.e ?? 0) < 100) continue;
+// índice de los lugares por cuadros de 1°: para nombrar una celda basta mirar su cuadro y los ocho vecinos (más de
+// 100 km, por encima de KM_NOMBRE más el radio del espacio más grande); recorrer los 21 000 por cada una de las
+// miles de celdas de una especie común tardaba segundos
+let indice: Map<string, LugarFauna[]> | undefined;
+const cuadro = (lat: number, lon: number) => `${Math.floor(lat)},${Math.floor(lon)}`;
+function lugaresAlrededor(lat: number, lon: number): LugarFauna[] {
+  if (!indice) {
+    indice = new Map();
+    for (const l of cargarLugares()) {
+      if (l.id.startsWith("eb-") && (l.e ?? 0) < 100) continue; // los puntos pequeños (una plaza) no nombran celdas
+      const k = cuadro(l.lat, l.lon);
+      indice.set(k, [...(indice.get(k) ?? []), l]);
+    }
+  }
+  const salida: LugarFauna[] = [];
+  for (let i = -1; i <= 1; i++)
+    for (let j = -1; j <= 1; j++) salida.push(...(indice.get(cuadro(lat + i, lon + j)) ?? []));
+  return salida;
+}
+
+export function nombreLugar(lat: number, lon: number): { nombre: string; km: number; id: string } | null {
+  let mejor: { nombre: string; km: number; id: string } | null = null;
+  for (const a of lugaresAlrededor(lat, lon)) {
     // distancia al borde (aproximado como círculo): dentro de un parque grande cuenta 0
     const km = Math.max(0, distanciaKm({ lat, lon }, a) - a.r);
-    if (km < KM_NOMBRE && (!mejor || km < mejor.km)) mejor = { nombre: a.n, km: Math.round(km) };
+    if (km < KM_NOMBRE && (!mejor || km < mejor.km)) mejor = { nombre: a.n, km: Math.round(km), id: a.id };
   }
   return mejor;
 }
@@ -153,7 +176,7 @@ export interface LugarEspecie {
   celda: string;
   lat: number;
   lon: number;
-  lugar: { nombre: string; km: number } | null;
+  lugar: { nombre: string; km: number; id: string } | null;
   /** ‰ de su grupo por mes */
   meses: (number | null)[];
   /** observaciones de su grupo por mes (tamaño de muestra) */
@@ -192,4 +215,79 @@ export function lugaresDe(clave: string, mes: number | null, max = 40): LugarEsp
       });
   }
   return [...porLugar.values()];
+}
+
+let porId: Map<string, LugarFauna> | undefined;
+export function lugarPorId(id: string): LugarFauna | null {
+  porId ??= new Map(cargarLugares().map((l) => [l.id, l]));
+  return porId.get(id) ?? null;
+}
+
+export interface FilaLugar {
+  clave: string;
+  nombre: string;
+  cientifico: string | null;
+  clase: string;
+  estado?: "invasora" | "aviso";
+  meses: (number | null)[];
+  muestra: number[];
+}
+
+/** El año de un lugar: las especies de sus cuadrículas con su ‰ de cada mes (media ponderada por la muestra de su
+ * grupo en cada cuadrícula), las `porGrupo` más frecuentes de cada grupo. */
+export function calendarioLugar(l: LugarFauna, porGrupo = 12): { filas: FilaLugar[]; celdas: number } {
+  const e = cargarEspana();
+  if (!e) return { filas: [], celdas: 0 };
+  const suma = new Map<string, { p: number[]; m: number[]; clase: string }>();
+  const muestras = new Map<string, number[]>();
+  let n = 0;
+  for (const c of celdasEnRadio(l.lat, l.lon, Math.min(l.r, 10))) {
+    const d = e.celdas[c];
+    if (!d) continue;
+    n++;
+    for (const [clase, m] of Object.entries(d.m)) {
+      const t = muestras.get(clase) ?? Array(12).fill(0);
+      muestras.set(
+        clase,
+        t.map((x, i) => x + (m[i] ?? 0)),
+      );
+    }
+    for (const [k, meses] of Object.entries(d.e)) {
+      const clase = e.especies[k]?.clase ?? "Aves";
+      const m = d.m[clase] ?? Array(12).fill(0);
+      const s = suma.get(k) ?? { p: Array(12).fill(0), m: Array(12).fill(0), clase };
+      meses.forEach((v, i) => {
+        if (v === null) return;
+        s.p[i] += v * m[i];
+        s.m[i] += m[i];
+      });
+      suma.set(k, s);
+    }
+  }
+  const filas: FilaLugar[] = [...suma.entries()].map(([k, s]) => ({
+    clave: k,
+    nombre: e.especies[k]?.n ?? e.especies[k]?.c ?? k,
+    cientifico: e.especies[k]?.c ?? null,
+    clase: s.clase,
+    estado: e.especies[k]?.estado,
+    meses: s.p.map((p, i) => (s.m[i] ? Math.round(p / s.m[i]) : null)),
+    muestra: muestras.get(s.clase) ?? Array(12).fill(0),
+  }));
+  const media = (f: FilaLugar) => f.meses.reduce<number>((a, b) => a + (b ?? 0), 0);
+  const elegidas = new Map<string, FilaLugar[]>();
+  for (const f of filas.filter((x) => x.estado !== "invasora").sort((a, b) => media(b) - media(a))) {
+    const xs = elegidas.get(f.clase) ?? [];
+    if (xs.length < porGrupo) xs.push(f);
+    elegidas.set(f.clase, xs);
+  }
+  return { filas: [...elegidas.values()].flat(), celdas: n };
+}
+
+/** Aves vistas en 30 días cerca del lugar (eBird: la última de cada especie por provincia), más recientes antes. */
+let recientes: { generado: string; obs: ObsReciente[] } | null | undefined;
+export function recientesLugar(l: LugarFauna, margenKm = 5): ObsReciente[] {
+  if (recientes === undefined) recientes = leerDatos<{ generado: string; obs: ObsReciente[] }>("espana_recientes.json");
+  return (recientes?.obs ?? [])
+    .filter((o) => distanciaKm(l, o) <= l.r + margenKm)
+    .sort((a, b) => b.f.localeCompare(a.f));
 }

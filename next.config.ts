@@ -18,6 +18,12 @@ const config: NextConfig = {
       "./datos/safaris_mundo.json.gz",
     ],
     "/espana/cerca": ["./datos/espana.json.gz", "./datos/espana_lugares.json.gz", "./datos/safaris_mundo.json.gz"],
+    "/espana/lugar/[id]": [
+      "./datos/espana.json.gz",
+      "./datos/espana_lugares.json.gz",
+      "./datos/espana_recientes.json.gz",
+      "./datos/safaris_mundo.json.gz",
+    ],
     "/espana/lugares": ["./datos/espana_lugares.json.gz", "./datos/safaris_mundo.json.gz"],
     "/comparar": ["./datos/safaris.json.gz", "./datos/safaris_mundo.json.gz"],
   },

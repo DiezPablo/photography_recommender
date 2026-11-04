@@ -580,3 +580,18 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   los mismos datos): queda uno por cuadrícula de 10 km, el de más especies, y un tercio de la lista se guarda para
   espacios protegidos y observatorios. Para nombrar cuadrículas en «¿Dónde veo…?» solo cuentan los puntos de
   eBird con 100 especies o más.
+- Especies domésticas fuera de España (`safari/recursos/especies_estado_espana.csv`: gato, oveja, cabra, caballo,
+  gallina…; siguen contando en la muestra de su grupo) e invasoras marcadas según el Catálogo español de especies
+  exóticas invasoras (visón americano, cotorras, galápago de Florida, mapache…): etiqueta «invasora» y no salen
+  entre las destacadas. El lobo lleva aviso: GBIF lo junta con el perro doméstico (Canis lupus familiaris).
+- Ficha de cada lugar (`/espana/lugar/[id]`, ISR): qué se ve cada mes en sus cuadrículas por grupo (la tabla de
+  frecuencia de los parques, ahora con «observaciones» en vez de «fotos»), fenómenos, aves vistas en 30 días
+  cerca (eBird), cómo llegar (OSM), enlace a eBird o Wikidata y lugares cercanos. En el mapa del sitio, los
+  espacios protegidos, observatorios y puntos de eBird con 100 especies o más (~7100).
+- Fenómenos de España (`features/espana/fenomenos.ts`, revisión anual con `revision_datos.py`, que ahora mira
+  también `features/espana`): grullas en Gallocanta, berrea en Monfragüe y Cabañeros, paso del Estrecho,
+  flamencos en Fuente de Piedra, celo de la cabra montés en Gredos, lince en Andújar y oso en Somiedo (solo la
+  zona), invernada en el delta del Ebro y Doñana. Fuentes: artículo de cada lugar en Wikipedia y Fundación
+  Migres; salen en la ficha, en «¿Qué veo aquí?» si caen en el mes y en «¿Dónde veo…?» de su especie.
+- Nombrar cuadrículas con 21 000 lugares tardaba segundos con una especie común (miles de celdas × todos los
+  lugares): índice por cuadros de 1° y solo los vecinos.

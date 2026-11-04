@@ -9,7 +9,15 @@ export function GET() {
   const celdas = new Map<string, number>();
   for (const c of Object.values(e.celdas)) for (const k of Object.keys(c.e)) celdas.set(k, (celdas.get(k) ?? 0) + 1);
   const especies = Object.entries(e.especies)
-    .map(([k, v]) => ({ k, n: v.n, c: v.c, clase: v.clase ?? null, celdas: celdas.get(k) ?? 0 }))
+    .map(([k, v]) => ({
+      k,
+      n: v.n,
+      c: v.c,
+      clase: v.clase ?? null,
+      estado: v.estado ?? null,
+      nota: v.nota ?? null,
+      celdas: celdas.get(k) ?? 0,
+    }))
     .filter((x) => x.celdas > 0)
     .sort((a, b) => b.celdas - a.celdas);
   return Response.json({ especies });
