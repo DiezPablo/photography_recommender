@@ -487,3 +487,26 @@ export function recientesDe(cientifico: string | null | undefined): ObsReciente[
     .filter((o) => o.c.split(" ").slice(0, 2).join(" ") === cientifico)
     .sort((a, b) => b.f.localeCompare(a.f));
 }
+
+let ebirdEspana: { celdas: Record<string, { l: number[]; d: Record<string, (number | null)[]> }> } | null | undefined;
+/** Aves: % de listas de eBird con la especie cada mes en toda España (ponderado por listas) y las listas detrás. */
+export function deteccionEspecie(clave: string): { pct: (number | null)[]; listas: number[] } | null {
+  if (ebirdEspana === undefined) ebirdEspana = leerDatos("espana_ebird.json");
+  if (!ebirdEspana) return null;
+  const con = Array(12).fill(0);
+  const listas = Array(12).fill(0);
+  let hay = false;
+  for (const x of Object.values(ebirdEspana.celdas)) {
+    for (let i = 0; i < 12; i++) {
+      if (x.l[i] < 10) continue;
+      listas[i] += x.l[i];
+      const v = x.d[clave]?.[i];
+      if (v) {
+        con[i] += (v * x.l[i]) / 100;
+        hay = true;
+      }
+    }
+  }
+  if (!hay) return null;
+  return { pct: con.map((c, i) => (listas[i] ? Math.round((1000 * c) / listas[i]) / 10 : null)), listas };
+}

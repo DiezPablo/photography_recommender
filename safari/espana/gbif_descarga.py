@@ -109,6 +109,25 @@ def filas(zip_bytes: bytes) -> list[dict]:
     return salida
 
 
+def tsv(zip_bytes: bytes) -> list[dict]:
+    """Las filas del TSV de una descarga SQL, con los nombres de columna en minúsculas (sin convertir tipos)."""
+    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as z:
+        nombre = next(n for n in z.namelist() if n.endswith((".csv", ".tsv", ".txt")) or "." not in n)
+        texto = z.read(nombre).decode("utf-8")
+    return [{k.lower(): v for k, v in f.items()} for f in csv.DictReader(io.StringIO(texto), delimiter="\t")]
+
+
+def descargar_bruto(sql: str) -> tuple[list[dict], dict] | None:
+    """Pedir, esperar y leer una consulta cualquiera: (filas como texto, meta). None sin credenciales."""
+    s = sesion()
+    clave = pedir(sql, s)
+    if not clave:
+        return None
+    meta = esperar(clave, s=s)
+    zip_bytes = s.get(meta["downloadLink"], timeout=600).content
+    return tsv(zip_bytes), {"clave": clave, "doi": meta.get("doi"), "registros": meta.get("totalRecords")}
+
+
 def descargar(sql: str | None = None) -> tuple[list[dict], dict] | None:
     """Todo el proceso: pedir, esperar y leer. None sin credenciales."""
     s = sesion()

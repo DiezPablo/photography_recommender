@@ -1,6 +1,6 @@
 // Puntuación con desglose (sin página).
 import { expect, test } from "@playwright/test";
-import { factorFrecuencia, factorPresencia, puntuar } from "../src/features/espana/puntuacion";
+import { factorDeteccion, factorFrecuencia, factorPresencia, puntuar } from "../src/features/espana/puntuacion";
 
 test("puntuación: dos notas, suelos y desglose", () => {
   expect(factorFrecuencia(0)).toBe(0);
@@ -20,4 +20,15 @@ test("puntuación: dos notas, suelos y desglose", () => {
   expect(lluvia.fotografiarla).toBeLessThan(buena.fotografiarla);
   // sin frecuencia, nada
   expect(puntuar({ ...base, permil: 0 }).total).toBe(0);
+});
+
+test("detección de eBird: sustituye al ‰ en las aves y sale en el desglose", () => {
+  expect(factorDeteccion(0)).toBe(0);
+  expect(factorDeteccion(25)).toBeCloseTo(0.63, 2);
+  const base = { permil: 5, actividad: "diurna" as const, momento: "dorada" as const, luz: 1, tiempo: 1 };
+  const sin = puntuar(base);
+  const con = puntuar({ ...base, deteccion: { pct: 60, listas: 300 } });
+  expect(con.verla).toBeGreaterThan(sin.verla);
+  expect(con.factores[0].nombre).toBe("Detección en eBird");
+  expect(con.factores[0].detalle).toContain("60 %");
 });

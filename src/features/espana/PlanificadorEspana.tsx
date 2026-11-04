@@ -94,6 +94,26 @@ const GRUPOS = [
   ["Amphibia", "Anfibios"],
 ] as const;
 
+/** % de listas de eBird con cada ave en las celdas del radio (ponderado por listas; solo celdas con datos ese mes). */
+function deteccionRadio(bloques: BloqueEspana[], celdas: Set<string>, mes: number) {
+  const con = new Map<string, number>();
+  let total = 0;
+  for (const b of bloques)
+    for (const [c, x] of Object.entries(b.ebird ?? {})) {
+      if (!celdas.has(c) || x.l[mes] < 10) continue;
+      total += x.l[mes];
+      for (const [k, v] of Object.entries(x.d)) {
+        const p = v[mes];
+        if (p === null || p === undefined) continue;
+        con.set(k, (con.get(k) ?? 0) + (p * x.l[mes]) / 100);
+      }
+    }
+  const salida = new Map<string, { pct: number; listas: number }>();
+  // con menos de 30 listas el % es ruido: se queda el ‰
+  if (total >= 30) for (const [k, v] of con) salida.set(k, { pct: Math.round((100 * v) / total), listas: total });
+  return salida;
+}
+
 /** Une las celdas del radio: ‰ de cada especie ponderado por la muestra de su clase en cada celda. */
 function especiesDelRadio(bloques: BloqueEspana[], celdas: Set<string>, mes: number) {
   const suma = new Map<string, { p: number; m: number; clase: string }>();
@@ -196,6 +216,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
   if (Array.isArray(bloques)) {
     cita = bloques[0]?.cita ?? null;
     const { suma, nombres } = especiesDelRadio(bloques, new Set(celdas), mes);
+    const deteccion = deteccionRadio(bloques, new Set(celdas), mes);
     const ultimas = ultimasVistas(bloques, lat, lon, radio);
     hayRecientes = bloques.some((b) => b.recientes);
     const planPronto = Math.abs(Date.parse(fecha) - Date.parse(hoy)) <= DIAS_PLAN_RECIENTES * DIA_MS;
@@ -223,6 +244,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
           ultima,
           nota: puntuar({
             permil: permilNota,
+            deteccion: s.clase === "Aves" ? (deteccion.get(k) ?? null) : null,
             diasDesdeUltimo: dias,
             actividad: actividadPorDefecto(s.clase),
             perfil: nombres[k]?.h ?? null,

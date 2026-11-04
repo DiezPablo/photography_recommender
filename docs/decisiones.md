@@ -674,3 +674,11 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     dispositivo.
   - Normas (`/espana/normas`): arts. 54.5 y 57.1.b de la Ley 42/2007 citados del BOE, drones (AESA, ENAIRE) y la
     página oficial de los 17 parques nacionales; código ético. Entra en la revisión anual.
+- Frecuencia de detección de eBird para aves (`safari/espana/ebird_frecuencia.py`, `--espana-ebird`, en
+  `espana.yml`): del conjunto de eBird en GBIF (cada registro lleva su lista en `eventID`), dos descargas SQL con
+  `COUNT(DISTINCT eventId)`: listas por cuadrícula y mes, y listas con cada especie; 2015-2024 para calcular y 2025
+  para el backtest (sección en `docs/espana-viabilidad.md`). Sin dato con menos de 10 listas en la celda y mes.
+  En «¿Qué veo aquí?», para las aves con 30 listas o más en el radio, «verla» usa la detección (1 − e^(−%/25):
+  25 % ≈ 0,63) en vez del ‰ del grupo, y el desglose dice «en el 34 % de 820 listas». La ficha de especie da la
+  detección en toda España. Ojo: eBird en GBIF puede incluir listas incompletas, que inflan algo las especies
+  llamativas.

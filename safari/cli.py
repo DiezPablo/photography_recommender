@@ -164,6 +164,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--espana", action="store_true", help="fauna en España con GBIF (necesita GBIF_USUARIO/CLAVE)")
     ap.add_argument("--espana-actividad", type=Path, help="espana.json → hora de actividad por especie (iNaturalist)")
     ap.add_argument("--espana-lugares", action="store_true", help="lugares de fauna en España (eBird, Wikidata, OSM)")
+    ap.add_argument("--espana-ebird", action="store_true", help="frecuencia de detección de aves (eBird en GBIF)")
     ap.add_argument("--espana-recientes", action="store_true", help="aves vistas en 30 días por provincia (eBird)")
     ap.add_argument("--espana-diagnostico", action="store_true", help="consultas SQL de prueba a GBIF (Gallocanta)")
     a = ap.parse_args(argv)
@@ -182,6 +183,11 @@ def main(argv: list[str] | None = None) -> None:
         from safari.espana import natura
 
         natura.main(destino.parent / "espana_natura.json")
+        return
+    if a.espana_ebird:
+        from safari.espana import ebird_frecuencia
+
+        ebird_frecuencia.main()
         return
     if a.espana_recientes:
         from safari.espana import ebird

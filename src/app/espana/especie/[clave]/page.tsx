@@ -10,7 +10,14 @@ import BotonVista from "@/features/espana/BotonVista";
 import { fenomenosDe } from "@/features/espana/fenomenos";
 import { hidesDe } from "@/features/espana/hides";
 import { fotografiaDe } from "@/features/espana/fotografia";
-import { actividadDe, cargarEspana, curvaEspecie, lugaresDe, recientesDe } from "@/features/espana/datos";
+import {
+  actividadDe,
+  cargarEspana,
+  curvaEspecie,
+  deteccionEspecie,
+  lugaresDe,
+  recientesDe,
+} from "@/features/espana/datos";
 import { MESES, rangoMeses } from "@/lib/fechas";
 import { fechaLocal } from "@/lib/sol";
 
@@ -58,6 +65,7 @@ export default async function PaginaEspecie({ params }: Props) {
   const hoy = fechaLocal(new Date());
   const mesHoy = Number(hoy.slice(5, 7)) - 1;
   const curva = curvaEspecie(clave);
+  const deteccion = e.clase === "Aves" ? deteccionEspecie(clave) : null;
   const buenos = curva.meses.flatMap((v, i) => ((v ?? 0) >= 20 ? [i + 1] : []));
   const lugares = lugaresDe(clave, null, 12);
   const foto = fotografiaDe(e.c);
@@ -101,6 +109,15 @@ export default async function PaginaEspecie({ params }: Props) {
         mesHoy={mesHoy}
         filas={[{ nombre, meses: curva.meses, muestra: curva.muestra }]}
       />
+
+      {deteccion && (
+        <p className="nota-pie">
+          En eBird sale en el {deteccion.pct.map((p, i) => (p === null ? null : `${p} %`))[mesHoy] ?? "–"} de las listas
+          de España en {MESES[mesHoy]}; su mejor mes,{" "}
+          {MESES[deteccion.pct.reduce<number>((a, v, i) => ((v ?? 0) > (deteccion.pct[a] ?? 0) ? i : a), 0)]} (
+          {Math.max(...deteccion.pct.map((v) => v ?? 0))} %). En los mejores sitios el porcentaje es mucho mayor.
+        </p>
+      )}
 
       <FenomenosEspana fenomenos={fenomenosDe(e.c)} mesHoy={mesHoy} titulo="Momentos especiales" />
 

@@ -19,6 +19,8 @@ export interface BloqueEspana {
   celdas: Record<string, { m: Record<string, number[]>; e: Record<string, (number | null)[]> }>;
   especies: Record<string, EspecieEspana>;
   cita: string | null;
+  /** frecuencia de detección de eBird por celda: listas por mes y % de listas con cada ave */
+  ebird?: Record<string, { l: number[]; d: Record<string, (number | null)[]> }> | null;
   /** aves vistas en los últimos 30 días en el bloque (eBird); null si aún no hay datos */
   recientes?: { generado: string; obs: ObsReciente[] } | null;
 }

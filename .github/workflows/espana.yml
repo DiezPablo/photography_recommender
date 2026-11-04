@@ -61,6 +61,12 @@ jobs:
         if: ${{ !inputs.diagnostico }}
         run: python -m safari --espana
 
+      - name: Frecuencia de detección de eBird (aves)
+        if: ${{ !inputs.diagnostico }}
+        run: |
+          [ "${{ inputs.nueva_descarga }}" = "true" ] && rm -f cache/espana_ebird.json.gz || true
+          python -m safari --espana-ebird
+
       - uses: actions/cache/save@v6
         if: always()
         with:
@@ -77,5 +83,6 @@ jobs:
 
       - name: Publicar
         run: |
+          [ -s public/datos/espana_ebird.json ] && .github/scripts/publicar_release.sh "España eBird ($(date -u +%Y-%m-%d))" public/datos/espana_ebird.json || true
           [ -s public/datos/espana.json ] || { echo "Nada que publicar"; exit 0; }
           .github/scripts/publicar_release.sh "España ($(date -u +%Y-%m-%d))" public/datos/espana.json

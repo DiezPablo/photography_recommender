@@ -39,6 +39,11 @@ export function factorFrecuencia(permil: number | null | undefined): number {
 }
 
 /** Visto en los últimos días: 1 si hace ≤ 7, baja hasta 0,5 a los 30; sin dato, 0,5 (suelo). */
+/** % de listas de eBird con la especie → 0-1: 10 % ≈ 0,33; 25 % ≈ 0,63; 50 % ≈ 0,86. */
+export function factorDeteccion(pct: number): number {
+  return 1 - Math.exp(-pct / 25);
+}
+
 export function factorPresencia(diasDesdeUltimo: number | null | undefined): number {
   if (diasDesdeUltimo === null || diasDesdeUltimo === undefined) return 0.5;
   if (diasDesdeUltimo <= 7) return 1;
@@ -88,6 +93,8 @@ function geometrica(fs: Factor[], pesos: Pesos): number {
 export function puntuar(
   entrada: {
     permil: number | null | undefined;
+    /** aves: % de listas de eBird con la especie y cuántas listas hay detrás; si está, sustituye al ‰ */
+    deteccion?: { pct: number; listas: number } | null;
     diasDesdeUltimo?: number | null;
     actividad: Actividad;
     /** perfil medido en iNaturalist; sin él, el patrón del grupo */
@@ -101,12 +108,19 @@ export function puntuar(
   pesos: Pesos = PESOS,
 ): Puntuacion {
   const ver: Factor[] = [
-    {
-      clave: "frecuencia",
-      nombre: "Frecuencia en la época",
-      valor: factorFrecuencia(entrada.permil),
-      detalle: entrada.permil ? `${entrada.permil} ‰ de su grupo` : "sin datos ese mes",
-    },
+    entrada.deteccion
+      ? {
+          clave: "frecuencia",
+          nombre: "Detección en eBird",
+          valor: factorDeteccion(entrada.deteccion.pct),
+          detalle: `en el ${entrada.deteccion.pct} % de ${entrada.deteccion.listas.toLocaleString("es-ES")} listas ese mes`,
+        }
+      : {
+          clave: "frecuencia",
+          nombre: "Frecuencia en la época",
+          valor: factorFrecuencia(entrada.permil),
+          detalle: entrada.permil ? `${entrada.permil} ‰ de su grupo` : "sin datos ese mes",
+        },
     {
       clave: "presencia",
       nombre: "Vista hace poco",

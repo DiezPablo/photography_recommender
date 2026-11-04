@@ -22,6 +22,7 @@ const FICHEROS = [
   "espana_rutas.json",
   "espana_rarezas.json",
   "espana_natura.json",
+  "espana_ebird.json",
 ];
 // el único que se pide desde el navegador (fetch en ExploradorSafaris)
 const PUBLICOS = ["safaris_indice.json"];

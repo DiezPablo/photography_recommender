@@ -20,6 +20,7 @@ interface Espana {
 
 let cache: Espana | null | undefined;
 let actividad: { especies: Record<string, { f: [number, number, number]; n: number }> } | null | undefined;
+let ebird: { celdas: Record<string, { l: number[]; d: Record<string, (number | null)[]> }> } | null | undefined;
 let recientes: { generado: string; obs: ObsReciente[] } | null | undefined;
 
 export async function GET(_: Request, { params }: { params: Promise<{ bloque: string }> }) {
@@ -45,10 +46,15 @@ export async function GET(_: Request, { params }: { params: Promise<{ bloque: st
   // aves vistas en 30 días (eBird, la última de cada especie por provincia) dentro del bloque
   if (recientes === undefined) recientes = leerDatos<{ generado: string; obs: ObsReciente[] }>("espana_recientes.json");
   const obs = (recientes?.obs ?? []).filter((o) => bloqueDe(celda(o.lat, o.lon)) === bloque);
+  if (ebird === undefined) ebird = leerDatos("espana_ebird.json");
+  const deteccion = ebird
+    ? Object.fromEntries(Object.keys(celdas).flatMap((c) => (ebird!.celdas[c] ? [[c, ebird!.celdas[c]]] : [])))
+    : null;
   const cuerpo: BloqueEspana = {
     celdas,
     especies,
     cita: cache.fuente?.cita ?? null,
+    ebird: deteccion,
     recientes: recientes ? { generado: recientes.generado, obs } : null,
   };
   return Response.json(cuerpo, { headers: { "Cache-Control": "public, max-age=86400" } });
