@@ -18,6 +18,7 @@ import {
 } from "@/lib/tiempo";
 import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
 import { actividadPorDefecto, puntuar, type Puntuacion } from "@/features/espana/puntuacion";
+import ElegirLugar from "@/features/espana/ElegirLugar";
 import { ZONAS_ESPANA, type BloqueEspana, type ObsReciente } from "@/features/espana/zonas";
 
 const RADIOS = [5, 10, 20, 30];
@@ -112,6 +113,9 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
   const radio = Number(parametros.get("radio") ?? zona.radioKm);
   const fecha = parametros.get("fecha") ?? hoy;
   const grupo = parametros.get("grupo") ?? "todos";
+  const nombreSitio = parametros.has("lat")
+    ? (parametros.get("lugar") ?? `Tu punto (${lat.toFixed(2)}, ${lon.toFixed(2)})`)
+    : zona.nombre;
   const mes = Number(fecha.slice(5, 7)) - 1;
   const luz = luzDia(fecha, lat, lon);
 
@@ -237,28 +241,21 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
   return (
     <>
       <section className="seccion formulario-plan">
-        <label className="campo">
-          <span className="rotulo">Dónde</span>
-          <select
-            value={parametros.has("lat") ? "aqui" : zona.id}
-            onChange={(e) => {
-              if (e.target.value !== "aqui") {
-                actualizar({ zona: e.target.value, lat: null, lon: null, radio: null });
-                return;
-              }
-              navigator.geolocation?.getCurrentPosition((p) =>
-                actualizar({ lat: p.coords.latitude.toFixed(3), lon: p.coords.longitude.toFixed(3), zona: null }),
-              );
-            }}
-          >
-            {ZONAS_ESPANA.map((z) => (
-              <option key={z.id} value={z.id}>
-                {z.nombre}
-              </option>
-            ))}
-            <option value="aqui">Mi ubicación</option>
-          </select>
-        </label>
+        <ElegirLugar
+          lat={lat}
+          lon={lon}
+          mes={mes}
+          nombre={nombreSitio}
+          elegir={(e) =>
+            actualizar({
+              lat: e.lat.toFixed(3),
+              lon: e.lon.toFixed(3),
+              radio: String(e.radio),
+              lugar: e.nombre,
+              zona: null,
+            })
+          }
+        />
         <label className="campo">
           <span className="rotulo">Radio</span>
           <select value={radio} onChange={(e) => actualizar({ radio: e.target.value })}>

@@ -31,3 +31,15 @@ export interface ObsReciente {
   lon: number;
   l: string | null;
 }
+
+/** Un lugar de espana_lugares.json: punto de eBird, espacio protegido u observatorio (r: radio en km; e: especies
+ * vistas en eBird, solo en los puntos de eBird). */
+export interface LugarFauna {
+  id: string;
+  n: string;
+  t: string;
+  lat: number;
+  lon: number;
+  r: number;
+  e?: number | null;
+}

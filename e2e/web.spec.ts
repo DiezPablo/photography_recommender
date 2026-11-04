@@ -550,3 +550,17 @@ test("fauna en España al revés: dónde veo una especie (o aviso sin datos)", a
   await expect(page.locator(".lista-lugares li").first()).toBeVisible();
   await expect(page.locator(".lista-lugares li").first().getByRole("link")).toHaveAttribute("href", /\/espana\?lat=/);
 });
+
+test("fauna en España: buscar un lugar y lugares cerca", async ({ page, request }) => {
+  const cerca = (await (await request.get("/espana/cerca?lat=40.42&lon=-3.70&mes=10")).json()) as {
+    lugares: { n: string }[];
+  };
+  await page.goto("/espana?lat=40.420&lon=-3.700&radio=10&fecha=2026-11-08");
+  if (!cerca.lugares.length) return; // sin lugares publicados aún
+  await expect(page.locator(".cerca-de-aqui summary")).toContainText("lugares para ver fauna");
+  const nombre = cerca.lugares[0].n;
+  await page.getByLabel("Dónde").fill(nombre.slice(0, 8));
+  await page.locator(".elegir-lugar .opciones-especie button").first().click();
+  await expect(page).toHaveURL(/lugar=/);
+  await expect(page.getByLabel("Dónde")).toHaveAttribute("placeholder", /\S/);
+});

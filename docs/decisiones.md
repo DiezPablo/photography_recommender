@@ -564,3 +564,15 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   nombre (y eBird ya oculta las especies sensibles); coordenadas a 2 decimales. `/espana/datos/[bloque]` añade
   las del bloque y la web pone «vista el 2 nov en …» y la usa en «vista hace poco» si el plan es en las
   próximas dos semanas (a meses vista no dice nada). Crédito a eBird visible, como se dijo al pedir la clave.
+- Lugares de fauna en toda España, no solo las cuatro zonas de prueba (`espana_lugares.json`, diario):
+  - puntos de observación de eBird con 30 especies o más (`ref/hotspot/ES`, una petición): lagunas, sotos,
+    parques urbanos, bosques pequeños;
+  - unos 2300 espacios protegidos de Wikidata (Natura 2000, ZEPA, parques y reservas naturales, monumentos
+    naturales, parques periurbanos…; sin conjuntos históricos ni yacimientos), con radio por su superficie;
+  - unos 360 observatorios de aves de OSM, ya agrupados en Rasante (sin exhibiciones de cetrería).
+  Se quitan los repetidos (mismo nombre a menos de 3 km). Si una fuente falla, no se publica (queda el de ayer);
+  Wikidata corta a veces la respuesta: tres intentos.
+- `/espana`: «Dónde» es un buscador de esos lugares, con «Mi ubicación», y «Cerca de aquí» (`/espana/cerca`)
+  lista los 12 más cercanos a 30 km con las especies de sus cuadrículas en el mes y cuatro destacadas (una de
+  cada grupo por turno). En «¿Dónde veo…?» cada cuadrícula toma el nombre del lugar más cercano (al borde, para
+  los espacios grandes).

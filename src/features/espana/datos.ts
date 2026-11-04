@@ -1,11 +1,12 @@
-// Datos de España en el servidor: espana.json (descarga de GBIF por cuadrícula de 10 km) y, para nombrar cada
-// celda, los espacios protegidos de España del catálogo mundial.
+// Datos de España en el servidor: espana.json (descarga de GBIF por cuadrícula de 10 km) y los lugares
+// (espana_lugares.json: puntos de eBird, espacios protegidos de Wikidata, observatorios de OSM) para buscar, para
+// «cerca de aquí» y para nombrar cada celda; si aún no están, los espacios protegidos del catálogo mundial.
 import "server-only";
 import { leerDatos } from "@/lib/datos";
-import { centroCelda } from "@/lib/rejilla";
+import { celdasEnRadio, centroCelda } from "@/lib/rejilla";
 import { distanciaKm } from "@/lib/fechas";
 import type { Mundo } from "@/features/safaris/modelo";
-import { ZONAS_ESPANA, type BloqueEspana } from "@/features/espana/zonas";
+import { ZONAS_ESPANA, type BloqueEspana, type LugarFauna } from "@/features/espana/zonas";
 
 export interface Espana {
   generado: string;
@@ -20,19 +21,93 @@ export function cargarEspana(): Espana | null {
   return espana;
 }
 
-let areas: { nombre: string; lat: number; lon: number }[] | undefined;
-function areasEspana() {
-  if (areas === undefined) {
-    const m = leerDatos<Mundo>("safaris_mundo.json");
-    const espanaQ = Object.entries(m?.paises ?? {}).find(([, p]) => p.nombre === "España")?.[0];
-    areas = [
-      ...ZONAS_ESPANA.map((z) => ({ nombre: z.nombre, lat: z.lat, lon: z.lon })),
-      ...(m?.parques ?? [])
-        .filter((p) => p.pais === espanaQ)
-        .map((p) => ({ nombre: p.nombre, lat: p.lat, lon: p.lon })),
-    ];
+let lugares: LugarFauna[] | undefined;
+/** Todos los lugares: los de espana_lugares.json o, mientras no exista, las zonas y los parques del catálogo. */
+export function cargarLugares(): LugarFauna[] {
+  if (lugares === undefined) {
+    const propios = leerDatos<{ lugares: LugarFauna[] }>("espana_lugares.json")?.lugares;
+    const zonas: LugarFauna[] = ZONAS_ESPANA.map((z) => ({
+      id: `zona-${z.id}`,
+      n: z.nombre,
+      t: "Destacado",
+      lat: z.lat,
+      lon: z.lon,
+      r: z.radioKm,
+    }));
+    if (propios?.length) lugares = [...zonas, ...propios];
+    else {
+      const m = leerDatos<Mundo>("safaris_mundo.json");
+      const espanaQ = Object.entries(m?.paises ?? {}).find(([, p]) => p.nombre === "España")?.[0];
+      lugares = [
+        ...zonas,
+        ...(m?.parques ?? [])
+          .filter((p) => p.pais === espanaQ)
+          .map((p) => ({ id: p.id, n: p.nombre, t: "Espacio protegido", lat: p.lat, lon: p.lon, r: p.radio_km ?? 5 })),
+      ];
+    }
   }
-  return areas;
+  return lugares;
+}
+
+const sinTildes = (t: string) =>
+  t
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+/** Lugares cuyo nombre contiene el texto (sin tildes); antes los que empiezan así y los de más especies. */
+export function buscarLugares(q: string, max = 12): LugarFauna[] {
+  const t = sinTildes(q.trim());
+  if (t.length < 2) return [];
+  return cargarLugares()
+    .map((l) => ({ l, i: sinTildes(l.n).indexOf(t) }))
+    .filter((x) => x.i >= 0)
+    .sort((a, b) => Number(a.i !== 0) - Number(b.i !== 0) || (b.l.e ?? 0) - (a.l.e ?? 0) || a.l.n.length - b.l.n.length)
+    .slice(0, max)
+    .map((x) => x.l);
+}
+
+export interface LugarCerca extends LugarFauna {
+  km: number;
+  /** especies con registros en el mes en sus cuadrículas */
+  especies: number;
+  /** las más frecuentes del mes, una de cada grupo por turno */
+  destacadas: string[];
+}
+
+/** Los lugares más cercanos al punto (hasta maxKm) con lo que hay en sus cuadrículas en el mes (0-11). */
+export function lugaresCerca(lat: number, lon: number, mes: number, max = 12, maxKm = 30): LugarCerca[] {
+  const e = cargarEspana();
+  return cargarLugares()
+    .map((l) => ({ l, km: distanciaKm({ lat, lon }, l) }))
+    .filter((x) => x.km <= maxKm)
+    .sort((a, b) => a.km - b.km)
+    .slice(0, max)
+    .map(({ l, km }) => {
+      const porGrupo = new Map<string, { k: string; v: number }[]>();
+      const vistas = new Set<string>();
+      for (const c of celdasEnRadio(l.lat, l.lon, Math.min(l.r, 10))) {
+        const d = e?.celdas[c];
+        if (!d) continue;
+        for (const [k, meses] of Object.entries(d.e)) {
+          const v = meses[mes];
+          if (!v || vistas.has(k)) continue;
+          vistas.add(k);
+          const clase = e?.especies[k]?.clase ?? "Aves";
+          const n = d.m[clase]?.[mes] ?? 0;
+          const lista = porGrupo.get(clase) ?? [];
+          lista.push({ k, v: (v * n) / (n + 100) });
+          porGrupo.set(clase, lista);
+        }
+      }
+      const listas = [...porGrupo.values()].map((xs) => xs.sort((a, b) => b.v - a.v));
+      const destacadas: string[] = [];
+      for (let i = 0; destacadas.length < 4 && listas.some((xs) => xs[i]); i++)
+        for (const xs of listas)
+          if (xs[i] && destacadas.length < 4)
+            destacadas.push(e?.especies[xs[i].k]?.n ?? e?.especies[xs[i].k]?.c ?? xs[i].k);
+      return { ...l, km: Math.round(km * 10) / 10, especies: vistas.size, destacadas };
+    });
 }
 
 /** Hasta dónde se nombra el espacio protegido más cercano («a 29 km de Tablas de Daimiel») y, más cerca, hasta
@@ -43,9 +118,10 @@ export const KM_DENTRO = 15;
 /** El espacio protegido más cercano a menos de KM_NOMBRE km del punto, con la distancia. */
 export function nombreLugar(lat: number, lon: number): { nombre: string; km: number } | null {
   let mejor: { nombre: string; km: number } | null = null;
-  for (const a of areasEspana()) {
-    const km = distanciaKm({ lat, lon }, a);
-    if (km < KM_NOMBRE && (!mejor || km < mejor.km)) mejor = { nombre: a.nombre, km: Math.round(km) };
+  for (const a of cargarLugares()) {
+    // distancia al borde (aproximado como círculo): dentro de un parque grande cuenta 0
+    const km = Math.max(0, distanciaKm({ lat, lon }, a) - a.r);
+    if (km < KM_NOMBRE && (!mejor || km < mejor.km)) mejor = { nombre: a.n, km: Math.round(km) };
   }
   return mejor;
 }

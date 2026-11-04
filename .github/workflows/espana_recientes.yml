@@ -1,4 +1,4 @@
-# Aves vistas en España en los últimos 30 días (eBird, la última de cada especie por provincia): «última vez
+# Lugares de fauna en España (espana_lugares.json) y aves vistas en los últimos 30 días (eBird, la última de cada especie por provincia): «última vez
 # vista» en /espana. Una vez al día (unas 52 peticiones); sin EBIRD_CLAVE no hace nada.
 name: España recientes
 
@@ -35,5 +35,9 @@ jobs:
       - run: pip install -e .
       - name: eBird por provincias
         run: python -m safari --espana-recientes --salida salida/espana_recientes.json
+      - name: Lugares (puntos de eBird, espacios protegidos de Wikidata, observatorios de OSM)
+        run: python -m safari --espana-lugares --salida salida/espana_lugares.json
       - name: Publicar
-        run: .github/scripts/publicar_release.sh "España recientes $(date -u +%Y-%m-%dT%H:%MZ)" salida/espana_recientes.json
+        run: |
+          .github/scripts/publicar_release.sh "España recientes $(date -u +%Y-%m-%dT%H:%MZ)" salida/espana_recientes.json
+          [ -s salida/espana_lugares.json ] && .github/scripts/publicar_release.sh "España lugares $(date -u +%Y-%m-%d)" salida/espana_lugares.json || true

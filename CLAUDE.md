@@ -16,10 +16,12 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
   - `comun` (caché `CacheJson`, sesión HTTP, `escribir_json` sin NaN), `commons` (Wikimedia Commons), `gbif`.
   - `espana` (`--espana`): cuadrícula EEA, descarga SQL de GBIF y eBird (credenciales opcionales en `.env.example`),
     estacionalidad con confianza y backtest; workflow `espana.yml` a mano. `--espana-recientes`: la última ave vista
-    de cada especie por provincia en 30 días (eBird) → `espana_recientes.json`, workflow `espana_recientes.yml` diario.
+    de cada especie por provincia en 30 días (eBird) → `espana_recientes.json`; `--espana-lugares`: puntos de eBird,
+    espacios protegidos de Wikidata y observatorios de OSM (de Rasante) → `espana_lugares.json`; los dos en el
+    workflow `espana_recientes.yml`, diario.
 - Web Next.js 16 (App Router) en `src/`: `app/` (`/`, `/parque/[id]`, `/especies`, `/especie/[slug]`, `/guia`, `/comparar`, `/migracion`,
   `/planificar`, `/presupuesto`, `/viaje`, `/safari-en/[mes|país]`, `/espana` (luz, tiempo y especies por
-  cuadrícula de 10 km); `.ics` por parque y `/migracion.ics`,
+  cuadrícula de 10 km; buscador de lugares y «Cerca de aquí»); `.ics` por parque y `/migracion.ics`,
   `/recientes.xml`, `sitemap.xml`),
   `features/safaris` (componentes, modelo, `datos.ts` solo servidor), `ui/` (mapa Leaflet, iconos, `Navegacion.tsx`, `FotoGrande.tsx`), `lib/`
   (`datos.ts`: lee `datos/*.gz`; `almacen.ts`; `fechas.ts`), `estilos/` (01-11 heredados de Rasante; el aspecto
