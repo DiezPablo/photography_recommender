@@ -36,3 +36,19 @@ def test_backtest():
     assert bt["observadas"] == 2
     assert bt["aciertos"] == 1
     assert bt["listas"] == 200
+
+
+def test_spearman():
+    assert ef.spearman([1, 2, 3, 4, 5], [10, 20, 30, 40, 50]) == 1.0
+    assert ef.spearman([1, 2, 3, 4, 5], [50, 40, 30, 20, 10]) == -1.0
+    assert ef.spearman([1, 2], [1, 2]) is None
+
+
+def test_calibracion_y_comparar():
+    listas, especies = filas()
+    entreno, prueba = ef.frecuencias(listas, especies), ef.frecuencias(listas, especies, prueba=True)
+    cal = {x["banda"]: x for x in ef.calibracion(entreno, prueba)}
+    assert cal["60-100 %"]["previsto"] == 75 and cal["60-100 %"]["visto"] == 75
+    assert cal["5-10 %"]["visto"] == 0  # la especie 9999 no salió en 2025
+    c = ef.comparar(entreno, prueba, {"2474950": 50.0}, {C}, 11)
+    assert c["especies"] == 3

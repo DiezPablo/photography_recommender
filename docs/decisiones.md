@@ -682,3 +682,7 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   25 % ≈ 0,63) en vez del ‰ del grupo, y el desglose dice «en el 34 % de 820 listas». La ficha de especie da la
   detección en toda España. Ojo: eBird en GBIF puede incluir listas incompletas, que inflan algo las especies
   llamativas.
+- Validación de la detección de eBird: el backtest «top 20» sale 20 de 20 con los dos métodos (las aves más
+  comunes siempre aparecen), así que no distingue. Se añaden al informe la calibración en toda España (por bandas
+  de % previsto, el % visto en 2025, ponderado por listas) y la correlación de rangos de Spearman en cada zona,
+  detección de eBird frente al ‰ de GBIF, contra la detección de 2025.

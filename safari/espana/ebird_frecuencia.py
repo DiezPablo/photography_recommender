@@ -109,6 +109,98 @@ def backtest(entreno: dict, prueba: dict, celdas: set[str], mes: int, top: int =
     }
 
 
+BANDAS = [(0, 5), (5, 10), (10, 20), (20, 40), (40, 60), (60, 101)]
+
+
+def calibracion(entreno: dict, prueba: dict) -> list[dict]:
+    """¿Cuadra el %? Para cada celda, mes y especie con listas en los dos periodos, el % previsto (2015-2024) frente al
+    visto en el año de prueba, agrupado por bandas y ponderado por las listas del año de prueba."""
+    suma: dict[tuple, list[float]] = {b: [0.0, 0.0, 0.0, 0] for b in BANDAS}  # previsto·w, visto·w, w, n
+    for c, x in entreno.items():
+        y = prueba.get(c)
+        if not y:
+            continue
+        for m in range(12):
+            if x["l"][m] < MIN_LISTAS or y["l"][m] < MIN_LISTAS:
+                continue
+            w = y["l"][m]
+            for k, v in x["d"].items():
+                p = v[m]
+                if p is None:
+                    continue
+                visto = (y["d"].get(k) or [0] * 12)[m] or 0
+                b = next(b for b in BANDAS if b[0] <= p < b[1])
+                t = suma[b]
+                t[0] += p * w
+                t[1] += visto * w
+                t[2] += w
+                t[3] += 1
+    return [
+        {
+            "banda": f"{b[0]}-{min(b[1], 100)} %",
+            "n": t[3],
+            "previsto": round(t[0] / t[2], 1),
+            "visto": round(t[1] / t[2], 1),
+        }
+        for b, t in suma.items()
+        if t[2]
+    ]
+
+
+def _rangos(xs: list[float]) -> list[float]:
+    orden = sorted(range(len(xs)), key=lambda i: xs[i])
+    r = [0.0] * len(xs)
+    i = 0
+    while i < len(orden):
+        j = i
+        while j + 1 < len(orden) and xs[orden[j + 1]] == xs[orden[i]]:
+            j += 1
+        for k in range(i, j + 1):
+            r[orden[k]] = (i + j) / 2
+        i = j + 1
+    return r
+
+
+def spearman(xs: list[float], ys: list[float]) -> float | None:
+    """Correlación de rangos (con empates): 1 = mismo orden, 0 = nada que ver."""
+    if len(xs) < 5:
+        return None
+    a, b = _rangos(xs), _rangos(ys)
+    ma, mb = sum(a) / len(a), sum(b) / len(b)
+    cov = sum((x - ma) * (y - mb) for x, y in zip(a, b, strict=True))
+    va = sum((x - ma) ** 2 for x in a) ** 0.5
+    vb = sum((y - mb) ** 2 for y in b) ** 0.5
+    return round(cov / (va * vb), 2) if va and vb else None
+
+
+def _ponderado(datos: dict, celdas: set[str], mes: int) -> dict[str, float]:
+    suma: dict[str, float] = defaultdict(float)
+    peso = 0
+    for c in celdas:
+        x = datos.get(c)
+        if not x or x["l"][mes - 1] < MIN_LISTAS:
+            continue
+        peso += x["l"][mes - 1]
+        for k, v in x["d"].items():
+            if v[mes - 1]:
+                suma[k] += v[mes - 1] * x["l"][mes - 1]
+    return {k: v / peso for k, v in suma.items()} if peso else {}
+
+
+def comparar(entreno: dict, prueba: dict, por_mil: dict[str, float], celdas: set[str], mes: int) -> dict:
+    """Orden de las aves en la zona y mes según la detección de eBird (2015-2024) y según el ‰ de GBIF, frente a la
+    detección vista en el año de prueba: correlación de rangos de cada método sobre las mismas especies."""
+    previsto = _ponderado(entreno, celdas, mes)
+    visto = _ponderado(prueba, celdas, mes)
+    especies = sorted(set(previsto) | set(visto))
+    obs = [visto.get(k, 0.0) for k in especies]
+    return {
+        "especies": len(especies),
+        "ebird": spearman([previsto.get(k, 0.0) for k in especies], obs),
+        "gbif": spearman([por_mil.get(k, 0.0) for k in especies], obs),
+    }
+
+
 def main(salida: Path = Path("public/datos/espana_ebird.json"), descargar: bool = True) -> None:
     from safari.comun.ficheros import escribir_json
     from safari.espana.zonas import ZONAS, celdas
@@ -132,6 +224,12 @@ def main(salida: Path = Path("public/datos/espana_ebird.json"), descargar: bool 
         },
     )
     print(f"{salida}: {len(entreno)} celdas con listas de eBird", flush=True)
+    # el ‰ de GBIF (método anterior) para comparar, si la descarga de GBIF está en la caché
+    from safari.espana import cli as espana_cli
+    from safari.espana.estacionalidad import estacionalidad
+
+    gbif = espana_cli.cargar_filas(False)
+    aves_gbif = [f for f in gbif[0] if f["clase"] == 212] if gbif else []
     informe = Path("docs/espana-viabilidad.md")
     lineas = [
         "",
@@ -146,6 +244,29 @@ def main(salida: Path = Path("public/datos/espana_ebird.json"), descargar: bool 
         lineas.append(
             f"- {z['nombre']} (mes {z['mes_prueba']}): {bt['aciertos']} de 20 entre {bt['observadas']} vistas "
             f"(precisión {bt['precision']}; {bt['listas']} listas de entreno)."
+        )
+    lineas += [
+        "",
+        f"Calibración en toda España: cuando dice «X % de las listas» ({DESDE}-{PRUEBA - 1}), qué % se vio en "
+        f"{PRUEBA} (celdas y meses con al menos {MIN_LISTAS} listas en los dos periodos):",
+        "",
+        "| Previsto | Casos | % previsto (media) | % visto en " + str(PRUEBA) + " |",
+        "|---|---|---|---|",
+        *[f"| {x['banda']} | {x['n']} | {x['previsto']} | {x['visto']} |" for x in calibracion(entreno, prueba)],
+        "",
+        f"Orden de las aves en cada zona frente a la detección vista en {PRUEBA} (correlación de rangos de Spearman; "
+        "1 = mismo orden): detección de eBird frente al ‰ de su grupo en GBIF.",
+        "",
+    ]
+    for z in ZONAS:
+        cs = set(celdas(z))
+        mes = z["mes_prueba"]
+        est = estacionalidad(aves_gbif, cs, hasta=PRUEBA) if aves_gbif else {}
+        por_mil = {str(k): (d["frecuencia"][mes - 1] or 0) for k, d in est.items()}
+        c = comparar(entreno, prueba, por_mil, cs, mes)
+        lineas.append(
+            f"- {z['nombre']} (mes {mes}, {c['especies']} especies): eBird {c['ebird']}, GBIF ‰ "
+            f"{c['gbif'] if aves_gbif else 'sin datos'}."
         )
     if informe.exists():
         texto = informe.read_text(encoding="utf-8").split("\n## Frecuencia de detección de eBird")[0].rstrip()
