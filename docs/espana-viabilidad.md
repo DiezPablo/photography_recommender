@@ -255,3 +255,12 @@ Las más frecuentes en noviembre por grupo (‰ de su grupo, confianza); la frec
 10. Musaraña gris (Crocidura russula): 9 ‰ (media)
 
 Backtest de aves 2025 (noviembre): 20 de 126 especies observadas estaban entre las 20 primeras (precisión 1.0, cobertura 0.16).
+
+## Frecuencia de detección de eBird (aves)
+
+En qué parte de las listas de eBird de cada cuadrícula y mes sale cada especie (2015-2024). Backtest 2025: de las aves vistas en 2025, cuántas estaban entre las 20 con más detección.
+
+- Doñana (mes 1): 20 de 20 entre 122 vistas (precisión 1.0; 2272 listas de entreno).
+- Sierra de Gredos (mes 5): 20 de 20 entre 102 vistas (precisión 1.0; 1544 listas de entreno).
+- Picos de Europa (mes 10): 20 de 20 entre 79 vistas (precisión 1.0; 463 listas de entreno).
+- Laguna de Gallocanta (mes 11): 20 de 20 entre 79 vistas (precisión 1.0; 651 listas de entreno).
