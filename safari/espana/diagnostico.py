@@ -16,17 +16,17 @@ CAJA = "decimalLatitude >= 40.9 AND decimalLatitude <= 41.05 AND decimalLongitud
 VARIANTES = {
     "solo caja": f"SELECT COUNT(*) AS n FROM occurrence WHERE {CAJA}",
     "+ país": f"SELECT COUNT(*) AS n FROM occurrence WHERE {CAJA} AND countryCode = 'ES'",
-    "+ clase aves": f"SELECT COUNT(*) AS n FROM occurrence WHERE {CAJA} AND countryCode = 'ES' AND classKey = 212",
+    "+ clase aves": f"SELECT COUNT(*) AS n FROM occurrence WHERE {CAJA} AND countryCode = 'ES' AND occurrence.gbif_classification.classkey = '212'",
     "+ coordenadas y sin problemas": (
-        f"SELECT COUNT(*) AS n FROM occurrence WHERE {CAJA} AND countryCode = 'ES' AND classKey = 212 "
+        f"SELECT COUNT(*) AS n FROM occurrence WHERE {CAJA} AND countryCode = 'ES' AND occurrence.gbif_classification.classkey = '212' "
         "AND hasCoordinate = TRUE AND hasGeospatialIssues = FALSE"
     ),
     "+ presente": (
-        f"SELECT COUNT(*) AS n FROM occurrence WHERE {CAJA} AND countryCode = 'ES' AND classKey = 212 "
+        f"SELECT COUNT(*) AS n FROM occurrence WHERE {CAJA} AND countryCode = 'ES' AND occurrence.gbif_classification.classkey = '212' "
         "AND occurrenceStatus = 'PRESENT'"
     ),
     "+ año y mes": (
-        f"SELECT COUNT(*) AS n FROM occurrence WHERE {CAJA} AND countryCode = 'ES' AND classKey = 212 "
+        f"SELECT COUNT(*) AS n FROM occurrence WHERE {CAJA} AND countryCode = 'ES' AND occurrence.gbif_classification.classkey = '212' "
         'AND "year" >= 2005 AND "month" IS NOT NULL AND speciesKey IS NOT NULL'
     ),
     "agrupada (como la de España)": gbif_descarga.consulta().replace(

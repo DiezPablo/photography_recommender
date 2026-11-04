@@ -31,16 +31,22 @@ def credenciales() -> tuple[str, str] | None:
 
 
 def consulta(pais: str = "ES", desde: int = 2005, clases: Iterable[int] = CLASES.values()) -> str:
-    """SQL de la descarga: recuentos por celda de 10 km, clase, especie, año y mes (año para el backtest)."""
-    lista = ", ".join(str(c) for c in clases)
+    """SQL de la descarga: recuentos por celda de 10 km, clase, especie, año y mes (año para el backtest).
+
+    La tabla SQL de GBIF clasifica por defecto con Catalogue of Life (claves de texto como «V2» para Aves); las
+    claves numéricas del backbone de GBIF, las que usa el resto de la app, van con el prefijo
+    `gbif_classification.` (y como texto). Con `classKey IN (212, …)` la descarga salía vacía.
+    """
+    lista = ", ".join(f"'{c}'" for c in clases)
+    celda = "GBIF_EEARGCode(10000, decimalLatitude, decimalLongitude, COALESCE(coordinateUncertaintyInMeters, 1000))"
+    clase, especie = "occurrence.gbif_classification.classkey", "occurrence.gbif_classification.specieskey"
     return (
-        "SELECT GBIF_EEARGCode(10000, decimalLatitude, decimalLongitude, "
-        'COALESCE(coordinateUncertaintyInMeters, 1000)) AS celda, classKey, speciesKey, "year", "month", '
+        f'SELECT {celda} AS celda, {clase} AS classkey, {especie} AS specieskey, "year", "month", '
         "COUNT(*) AS n FROM occurrence "
         f"WHERE countryCode = '{pais}' AND hasCoordinate = TRUE AND hasGeospatialIssues = FALSE "
-        f'AND speciesKey IS NOT NULL AND "month" IS NOT NULL AND "year" >= {desde} '
-        f"AND occurrenceStatus = 'PRESENT' AND classKey IN ({lista}) "
-        'GROUP BY celda, classKey, speciesKey, "year", "month"'
+        f'AND {especie} IS NOT NULL AND "month" IS NOT NULL AND "year" >= {desde} '
+        f"AND occurrenceStatus = 'PRESENT' AND {clase} IN ({lista}) "
+        f'GROUP BY {celda}, {clase}, {especie}, "year", "month"'
     )
 
 

@@ -533,3 +533,8 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   del móvil (cinco botones); antes solo estaban en el pie y no se encontraban.
 - Los secretos de GBIF y eBird están en el environment de GitHub `EBIRD_CLAVE`: `espana.yml` lo declara
   (`environment: EBIRD_CLAVE`); sin eso el trabajo no los ve.
+- La primera descarga SQL de España salió válida pero vacía. El diagnóstico (`--espana-diagnostico`, consultas
+  pequeñas sobre Gallocanta) lo localizó en el filtro de clase: 123 338 registros con caja y país, 0 al añadir
+  `classKey = 212`. La tabla SQL de GBIF clasifica ahora por defecto con Catalogue of Life (claves de texto, Aves
+  = «V2»); el backbone de GBIF, cuyas claves usa la app, está en `occurrence.gbif_classification.*` (como texto).
+  La consulta filtra y agrupa por `gbif_classification.classkey/specieskey`.
