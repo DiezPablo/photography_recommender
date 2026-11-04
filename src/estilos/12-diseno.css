@@ -1489,3 +1489,6 @@ body {
   background: var(--acento);
   color: var(--superficie);
 }
+.visto-reciente {
+  color: var(--suma);
+}

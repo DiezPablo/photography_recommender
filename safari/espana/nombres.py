@@ -36,7 +36,22 @@ def especie(clave: int, s: requests.Session | None = None) -> dict:
 
 CORRECCIONES = Path(__file__).resolve().parent.parent / "recursos" / "nombres_espana.csv"
 # palabras que van con mayúscula dentro de un nombre común (topónimos y apellidos)
-PROPIAS = {"audouin", "cuvier", "bonelli", "leach", "sandwich", "thekla", "cabrera", "madeira", "san", "antón", "nilo"}
+PROPIAS = {
+    "audouin",
+    "cuvier",
+    "bonelli",
+    "leach",
+    "sandwich",
+    "thekla",
+    "cabrera",
+    "madeira",
+    "san",
+    "antón",
+    "nilo",
+    "carbonell",
+    "schreiber",
+    "bocage",
+}
 
 
 @cache

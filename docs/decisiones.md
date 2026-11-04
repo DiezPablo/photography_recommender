@@ -554,3 +554,13 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   - Lugares: los ~158 espacios protegidos españoles del catálogo mundial quedan lejos de muchas celdas (las de
     grullas en Extremadura). Se nombra el más cercano hasta 40 km («A 29 km de Tablas de Daimiel») y solo se
     agrupan las celdas a menos de 15 km. Pendiente: espacios protegidos de España completos (Natura 2000/ENP).
+- Informe de viabilidad por grupo (20 aves y 10 de cada otro grupo) y backtest solo de aves: mezclados, los ‰ de
+  grupos distintos no se comparan.
+- «Todas» en «¿Qué veo aquí?» alterna los grupos por su puesto dentro de cada uno (mejor ave, mejor mamífero…);
+  el filtro por grupo sigue su propio orden. Para la nota el ‰ se rebaja con poca muestra, ‰ · n / (n + 100):
+  un corzo entre 93 registros de mamíferos daba 581 ‰.
+- eBird: `data/obs/{provincia}/recent` (la última observación de cada especie en cada provincia, 30 días; unas 52
+  peticiones al día) en `espana_recientes.yml` con el environment `EBIRD_CLAVE`. Sin ubicaciones privadas con
+  nombre (y eBird ya oculta las especies sensibles); coordenadas a 2 decimales. `/espana/datos/[bloque]` añade
+  las del bloque y la web pone «vista el 2 nov en …» y la usa en «vista hace poco» si el plan es en las
+  próximas dos semanas (a meses vista no dice nada). Crédito a eBird visible, como se dijo al pedir la clave.

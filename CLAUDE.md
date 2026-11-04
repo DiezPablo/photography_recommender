@@ -15,7 +15,8 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
     `safaris_indice.json`. Incremental: `--minutos` fija el tiempo de peticiones nuevas; después solo caché.
   - `comun` (caché `CacheJson`, sesión HTTP, `escribir_json` sin NaN), `commons` (Wikimedia Commons), `gbif`.
   - `espana` (`--espana`): cuadrícula EEA, descarga SQL de GBIF y eBird (credenciales opcionales en `.env.example`),
-    estacionalidad con confianza y backtest; workflow `espana.yml` a mano.
+    estacionalidad con confianza y backtest; workflow `espana.yml` a mano. `--espana-recientes`: la última ave vista
+    de cada especie por provincia en 30 días (eBird) → `espana_recientes.json`, workflow `espana_recientes.yml` diario.
 - Web Next.js 16 (App Router) en `src/`: `app/` (`/`, `/parque/[id]`, `/especies`, `/especie/[slug]`, `/guia`, `/comparar`, `/migracion`,
   `/planificar`, `/presupuesto`, `/viaje`, `/safari-en/[mes|país]`, `/espana` (luz, tiempo y especies por
   cuadrícula de 10 km); `.ics` por parque y `/migracion.ics`,

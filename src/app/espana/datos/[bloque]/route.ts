@@ -2,7 +2,8 @@
 // la frecuencia por mes de sus especies y la muestra de cada clase, y los nombres. 404 mientras no haya descarga
 // de GBIF (espana.json).
 import { leerDatos } from "@/lib/datos";
-import type { BloqueEspana } from "@/features/espana/zonas";
+import type { BloqueEspana, ObsReciente } from "@/features/espana/zonas";
+import { bloque as bloqueDe, celda } from "@/lib/rejilla";
 
 export const dynamicParams = true;
 export const revalidate = false;
@@ -18,6 +19,7 @@ interface Espana {
 }
 
 let cache: Espana | null | undefined;
+let recientes: { generado: string; obs: ObsReciente[] } | null | undefined;
 
 export async function GET(_: Request, { params }: { params: Promise<{ bloque: string }> }) {
   const { bloque } = await params;
@@ -34,6 +36,14 @@ export async function GET(_: Request, { params }: { params: Promise<{ bloque: st
   );
   const claves = new Set(Object.values(celdas).flatMap((c) => Object.keys(c.e)));
   const especies = Object.fromEntries(Object.entries(cache.especies).filter(([k]) => claves.has(k)));
-  const cuerpo: BloqueEspana = { celdas, especies, cita: cache.fuente?.cita ?? null };
+  // aves vistas en 30 días (eBird, la última de cada especie por provincia) dentro del bloque
+  if (recientes === undefined) recientes = leerDatos<{ generado: string; obs: ObsReciente[] }>("espana_recientes.json");
+  const obs = (recientes?.obs ?? []).filter((o) => bloqueDe(celda(o.lat, o.lon)) === bloque);
+  const cuerpo: BloqueEspana = {
+    celdas,
+    especies,
+    cita: cache.fuente?.cita ?? null,
+    recientes: recientes ? { generado: recientes.generado, obs } : null,
+  };
   return Response.json(cuerpo, { headers: { "Cache-Control": "public, max-age=86400" } });
 }

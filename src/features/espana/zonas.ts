@@ -19,4 +19,15 @@ export interface BloqueEspana {
   celdas: Record<string, { m: Record<string, number[]>; e: Record<string, (number | null)[]> }>;
   especies: Record<string, { c: string | null; n: string | null; clase?: string | null }>;
   cita: string | null;
+  /** aves vistas en los últimos 30 días en el bloque (eBird); null si aún no hay datos */
+  recientes?: { generado: string; obs: ObsReciente[] } | null;
+}
+
+/** Una observación de eBird: la última de la especie (científico) en su provincia, con fecha y lugar. */
+export interface ObsReciente {
+  c: string;
+  f: string;
+  lat: number;
+  lon: number;
+  l: string | null;
 }

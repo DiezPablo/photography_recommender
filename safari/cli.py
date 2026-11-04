@@ -162,8 +162,16 @@ def main(argv: list[str] | None = None) -> None:
         "--sondeo-precios", action="store_true", help="sondeo de webs de operadores (docs/sondeo-precios.md)"
     )
     ap.add_argument("--espana", action="store_true", help="fauna en España con GBIF (necesita GBIF_USUARIO/CLAVE)")
+    ap.add_argument("--espana-recientes", action="store_true", help="aves vistas en 30 días por provincia (eBird)")
     ap.add_argument("--espana-diagnostico", action="store_true", help="consultas SQL de prueba a GBIF (Gallocanta)")
     a = ap.parse_args(argv)
+    if a.espana_recientes:
+        from safari.espana import ebird
+
+        # --salida trae por defecto safaris.json: aquí, si no se da otra, va a su propio fichero
+        por_defecto = ap.get_default("salida")
+        ebird.recientes_espana(a.salida if a.salida != por_defecto else Path("public/datos/espana_recientes.json"))
+        return
     if a.espana_diagnostico:
         from safari.espana import diagnostico
 

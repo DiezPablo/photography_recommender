@@ -4,7 +4,7 @@
 // fotografiarla) y su desglose. Todo en el navegador: Open-Meteo sin clave y los datos de la cuadrícula por bloques.
 import { useEffect, useState } from "react";
 import { useParametrosUrl } from "@/lib/almacen";
-import { MESES } from "@/lib/fechas";
+import { MESES, distanciaKm } from "@/lib/fechas";
 import { calidadLuz, luzDia, type Franja, type LuzDia } from "@/lib/luz";
 import { horaLocal } from "@/lib/sol";
 import { bloque, celdasEnRadio } from "@/lib/rejilla";
@@ -18,7 +18,7 @@ import {
 } from "@/lib/tiempo";
 import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
 import { actividadPorDefecto, puntuar, type Puntuacion } from "@/features/espana/puntuacion";
-import { ZONAS_ESPANA, type BloqueEspana } from "@/features/espana/zonas";
+import { ZONAS_ESPANA, type BloqueEspana, type ObsReciente } from "@/features/espana/zonas";
 
 const RADIOS = [5, 10, 20, 30];
 const MAX_ESPECIES = 30;
@@ -48,6 +48,31 @@ interface Especie {
   permil: number;
   muestra: number;
   nota: Puntuacion;
+  /** última vez vista cerca en 30 días (eBird) */
+  ultima: ObsReciente | null;
+}
+
+const DIA_MS = 86_400_000;
+/** Muestra a partir de la cual la frecuencia se cree casi entera (la mitad con esta muestra). */
+const MUESTRA_PRUDENTE = 100;
+const fechaCorta = (f: string) => `${Number(f.slice(8, 10))} ${MESES[Number(f.slice(5, 7)) - 1].slice(0, 3)}`;
+/** Hasta qué distancia del radio cuenta una observación reciente (eBird da la última por provincia). */
+const MARGEN_RECIENTES_KM = 15;
+/** Solo pesa lo visto estos días si el plan es para pronto: a meses vista no dice nada. */
+const DIAS_PLAN_RECIENTES = 14;
+const especieDe = (cientifico: string) => cientifico.split(" ").slice(0, 2).join(" ");
+
+/** La observación más reciente de cada especie (por nombre científico) a menos de radio + margen del punto. */
+function ultimasVistas(bloques: BloqueEspana[], lat: number, lon: number, radioKm: number) {
+  const salida = new Map<string, ObsReciente>();
+  for (const b of bloques)
+    for (const o of b.recientes?.obs ?? []) {
+      if (distanciaKm({ lat, lon }, o) > radioKm + MARGEN_RECIENTES_KM) continue;
+      const k = especieDe(o.c);
+      const ya = salida.get(k);
+      if (!ya || o.f > ya.f) salida.set(k, o);
+    }
+  return salida;
 }
 
 const GRUPOS = [
@@ -146,13 +171,25 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
 
   let especies: Especie[] = [];
   let cita: string | null = null;
+  let hayRecientes = false;
   if (Array.isArray(bloques)) {
     cita = bloques[0]?.cita ?? null;
     const { suma, nombres } = especiesDelRadio(bloques, new Set(celdas), mes);
+    const ultimas = ultimasVistas(bloques, lat, lon, radio);
+    hayRecientes = bloques.some((b) => b.recientes);
+    const planPronto = Math.abs(Date.parse(fecha) - Date.parse(hoy)) <= DIAS_PLAN_RECIENTES * DIA_MS;
     especies = [...suma.entries()]
       .filter(([, s]) => s.m > 0 && s.p > 0)
       .map(([k, s]) => {
         const permil = Math.round(s.p / s.m);
+        // con poca muestra el ‰ es ruido (un corzo entre 93 registros de mamíferos da 581 ‰): se rebaja hacia 0
+        // con n / (n + MUESTRA_PRUDENTE) para la nota; con cientos de registros apenas cambia
+        const permilNota = Math.round((permil * s.m) / (s.m + MUESTRA_PRUDENTE));
+        const cientifico = nombres[k]?.c ?? null;
+        const ultima = cientifico ? (ultimas.get(especieDe(cientifico)) ?? null) : null;
+        // eBird solo cuenta aves: para el resto (o sin datos, o a meses vista) la presencia reciente es neutra
+        const dias =
+          ultima && planPronto ? Math.max(0, Math.round((Date.parse(hoy) - Date.parse(ultima.f)) / DIA_MS)) : null;
         return {
           clave: k,
           nombre: nombres[k]?.n ?? nombres[k]?.c ?? k,
@@ -160,9 +197,10 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
           clase: s.clase,
           permil,
           muestra: s.m,
+          ultima,
           nota: puntuar({
-            permil,
-            diasDesdeUltimo: null,
+            permil: permilNota,
+            diasDesdeUltimo: dias,
             actividad: actividadPorDefecto(s.clase),
             momento: mejor?.momento ?? "dorada",
             luz: mejor?.luz ?? 1,
@@ -176,7 +214,22 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
   // junto, se comería a las aves; por eso se puede elegir grupo y el recuento de cada uno se ve en el botón
   const porGrupo = new Map<string, number>();
   for (const e of especies) porGrupo.set(e.clase, (porGrupo.get(e.clase) ?? 0) + 1);
-  const visibles = especies.filter((e) => grupo === "todos" || e.clase === grupo).slice(0, MAX_ESPECIES);
+  // en «Todas» se alternan los grupos por su puesto dentro de cada uno (la mejor ave, el mejor mamífero…): los ‰
+  // de grupos distintos no se pueden comparar (hay cientos de aves para repartir y pocos anfibios)
+  const puesto = new Map<string, number>();
+  const vistos = new Map<string, number>();
+  for (const e of especies) {
+    const n = vistos.get(e.clase) ?? 0;
+    puesto.set(e.clave, n);
+    vistos.set(e.clase, n + 1);
+  }
+  const visibles = (
+    grupo === "todos"
+      ? [...especies].sort(
+          (a, b) => (puesto.get(a.clave) ?? 0) - (puesto.get(b.clave) ?? 0) || b.nota.total - a.nota.total,
+        )
+      : especies.filter((e) => e.clase === grupo)
+  ).slice(0, MAX_ESPECIES);
 
   const hora = (d: Date | null) => (d ? horaLocal(d, lon) : "–");
   const franja = (f: Franja | null) => (f ? `${hora(f.desde)}–${hora(f.hasta)}` : "–");
@@ -357,6 +410,13 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                     <details>
                       <summary>
                         <b>{e.nombre}</b> <i>{e.cientifico}</i> <span className={`f-texto-${n.clave}`}>{n.texto}</span>
+                        {e.ultima && (
+                          <small className="visto-reciente">
+                            {" "}
+                            · vista el {fechaCorta(e.ultima.f)}
+                            {e.ultima.l ? ` en ${e.ultima.l}` : ""}
+                          </small>
+                        )}
                         <span className="notas-especie">
                           verla {Math.round(e.nota.verla * 10)}/10 · fotografiarla{" "}
                           {Math.round(e.nota.fotografiarla * 10)}/10
@@ -371,6 +431,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                         <li>
                           Muestra: {e.muestra.toLocaleString("es-ES")} observaciones de su grupo
                           {c ? ` (${c.texto})` : ""}
+                          {e.muestra < 1000 ? "; con poca muestra la frecuencia cuenta menos en la nota" : ""}
                         </li>
                       </ul>
                     </details>
@@ -379,6 +440,12 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
               })}
             </ol>
             {cita && <p className="nota-pie">{cita}</p>}
+            {hayRecientes && (
+              <p className="nota-pie">
+                Aves vistas en los últimos 30 días: <a href="https://ebird.org">eBird</a> (Cornell Lab of Ornithology),
+                la última de cada especie en cada provincia; solo cuentan en la nota si vas en las próximas dos semanas.
+              </p>
+            )}
           </>
         )}
       </section>

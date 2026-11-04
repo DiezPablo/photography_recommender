@@ -26,6 +26,7 @@ FILAS = Path("cache/espana_filas.json.gz")
 # especies por celda y grupo: con un tope común las aves (muchos más registros) se llevaban todos los puestos
 MAX_ESPECIES_CELDA = {212: 80}
 MAX_OTRAS_CLASES = 25
+GRUPO_ES = {"Aves": "Aves", "Mammalia": "Mamíferos", "Reptilia": "Reptiles", "Amphibia": "Anfibios"}
 CLASE_NOMBRE = {v: k for k, v in gbif_descarga.CLASES.items()}
 MESES_ES = [
     "enero",
@@ -104,19 +105,32 @@ def informe(filas: list[dict], meta: dict, nombre_de) -> str:
         por_mes = [sum(f["n"] for f in fs if f["mes"] == m) for m in range(1, 13)]
         est = estacionalidad(fs)
         mes = z["mes_prueba"]
-        top = ranking(est, mes, 20)
-        bt = backtest(filas, cs, mes, ultimo)
+        clase_de = {f["especie"]: f["clase"] for f in fs}
         lineas += [
             f"## {z['nombre']} ({len(cs)} celdas, {z['radio_km']} km)",
             "",
             "Observaciones por mes: " + ", ".join(f"{MESES_ES[i][:3]} {n}" for i, n in enumerate(por_mes)) + ".",
             "",
-            f"Las 20 más frecuentes en {MESES_ES[mes - 1]} (‰ de su clase, confianza):",
+            f"Las más frecuentes en {MESES_ES[mes - 1]} por grupo (‰ de su grupo, confianza); la frecuencia es dentro"
+            " del grupo, así que no se mezclan:",
             "",
-            *[f"{i + 1}. {nombre_de(k)}: {v} ‰ ({c or 'sin dato'})" for i, (k, v, c) in enumerate(top)],
-            "",
-            f"Backtest {ultimo} ({MESES_ES[mes - 1]}): {bt['aciertos']} de {bt['observadas']} especies observadas "
-            f"estaban entre las 20 primeras (precisión {bt['precision']}, cobertura {bt['cobertura']}).",
+        ]
+        for nombre_clase, k_clase in gbif_descarga.CLASES.items():
+            tope = 20 if k_clase == 212 else 10
+            top = ranking({k: d for k, d in est.items() if clase_de.get(k) == k_clase}, mes, tope)
+            if not top:
+                continue
+            lineas += [
+                f"### {GRUPO_ES.get(nombre_clase, nombre_clase)}",
+                "",
+                *[f"{i + 1}. {nombre_de(k)}: {v} ‰ ({c or 'sin dato'})" for i, (k, v, c) in enumerate(top)],
+                "",
+            ]
+        aves = [f for f in filas if f["clase"] == 212]
+        bt = backtest(aves, cs, mes, ultimo)
+        lineas += [
+            f"Backtest de aves {ultimo} ({MESES_ES[mes - 1]}): {bt['aciertos']} de {bt['observadas']} especies "
+            f"observadas estaban entre las 20 primeras (precisión {bt['precision']}, cobertura {bt['cobertura']}).",
             "",
         ]
     return "\n".join(lineas)
