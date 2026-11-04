@@ -642,3 +642,14 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
 - Fallo propio corregido: `rumbos = []` como valor por defecto en MapaEventos creaba un array nuevo en cada
   render, el efecto del mapa se repetía sin fin y la navegación desde la portada no llegaba a la ficha del parque
   (lo cazó la prueba de Playwright). Ahora es una constante, como los demás.
+- Hides y salidas guiadas (`features/espana/hides.ts`, `/espana/hides`, en cada ficha a 60 km y en «¿Dónde
+  veo…?» de cada especie): catálogo escrito a mano con la web de cada operador consultada el 04-11-2026 (Hides de
+  Calera, OTEA, Wildtracani, Wildlife & Photo, Fundación Quebrantahuesos, Photo Logistics, Birding in
+  Extremadura; lobo en la Culebra, oso en Somiedo, lince en Andújar, berrea en Cabañeros, cetáceos en Tarifa).
+  Solo zona (municipio o comarca), enlace directo sin comisiones, precio solo si la web lo publica. Fuera los
+  hides en nido o colonia de cría (abubilla «en un viejo nido», cernícalo primilla en casa de labor). Con
+  especies amenazadas, aviso de pedir la autorización. Las propuestas llegan por una plantilla de incidencia de
+  GitHub (sin servidor ni cuentas) y se revisan a mano; `hides.ts` entra en la revisión anual.
+- Observatorios: si Overpass no responde (tres intentos con pausa), se reutilizan los ya publicados por este
+  proyecto (ids `osm-node-…`); los que vinieron de Rasante no se reutilizan, y si no hay propios se publica sin
+  observatorios ese día.

@@ -152,7 +152,12 @@ def observatorios(s: requests.Session | None = None) -> list[dict]:
     exhibiciones de cetrería ni los de acceso privado. Los que no tienen nombre se nombran al final (`todos`)."""
     from safari.practico import overpass
 
-    d = overpass(CONSULTA_OBSERVATORIOS, timeout=300)
+    d = None
+    for intento in range(3):  # la consulta de toda España a veces no entra a la primera
+        d = overpass(CONSULTA_OBSERVATORIOS + f"// intento {intento}\n", timeout=300)
+        if d:
+            break
+        time.sleep(60 * (intento + 1))
     if not d:
         raise requests.ConnectionError("Overpass no respondió (observatorios)")
     grupos: list[dict] = []
@@ -206,6 +211,24 @@ def sin_repetir(xs: list[dict], km: float = 3) -> list[dict]:
     return salida
 
 
+PUBLICADO = "https://github.com/DiezPablo/safari_recommender/releases/download/datos/espana_lugares.json.gz"
+
+
+def observatorios_publicados(s: requests.Session) -> list[dict]:
+    """Si Overpass falla, los observatorios ya publicados por este proyecto (ids osm-node-…, osm-way-…); los de
+    formatos anteriores no se reutilizan."""
+    import gzip
+    import json
+
+    try:
+        r = s.get(PUBLICADO, timeout=120)
+        r.raise_for_status()
+        xs = json.loads(gzip.decompress(r.content))["lugares"]
+    except (requests.RequestException, ValueError, KeyError, OSError):
+        return []
+    return [x for x in xs if re.match(r"osm-(node|way|relation)-\d+$", x.get("id", ""))]
+
+
 def todos(s: requests.Session | None = None) -> tuple[list[dict], dict[str, int]]:
     """Los lugares de las tres fuentes y cuántos de cada una (una fuente que falla no tumba a las demás)."""
     s = s or sesion()
@@ -215,7 +238,9 @@ def todos(s: requests.Session | None = None) -> tuple[list[dict], dict[str, int]
             xs = f(s)
         except (requests.RequestException, KeyError, ValueError) as e:
             print(f"  lugares {nombre}: {e}", flush=True)
-            xs = []
+            xs = observatorios_publicados(s) if nombre == "OpenStreetMap" else []
+            if xs:
+                print(f"  lugares {nombre}: se reutilizan {len(xs)} ya publicados", flush=True)
         cuenta[nombre] = len(xs)
         salida += xs
     # observatorios sin nombre: «Observatorio de aves junto a <el lugar con nombre más cercano a menos de 5 km>»
@@ -237,7 +262,9 @@ def main(salida) -> None:
     from safari.comun.ficheros import escribir_json
 
     xs, cuenta = todos()
-    faltan = [f for f, n in cuenta.items() if not n and (f != "eBird" or ebird.clave())]
+    # sin observatorios (Overpass caído y nada propio publicado) se publica igual: mejor sin ellos un día que con
+    # los de otro proyecto
+    faltan = [f for f, n in cuenta.items() if not n and f not in ("OpenStreetMap",) and (f != "eBird" or ebird.clave())]
     if faltan:
         # mejor el fichero de ayer completo que uno al que le falta una fuente entera
         print(f"Lugares: sin datos de {', '.join(faltan)}; no se escribe nada", flush=True)

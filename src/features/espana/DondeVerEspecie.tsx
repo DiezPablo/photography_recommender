@@ -9,6 +9,8 @@ import { MESES, rangoMeses } from "@/lib/fechas";
 import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
 import MapaEventos from "@/ui/mapa/MapaEventos";
 import BotonVista from "@/features/espana/BotonVista";
+import TarjetaHide from "@/features/espana/TarjetaHide";
+import { hidesDe } from "@/features/espana/hides";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
 import { fenomenosDe } from "@/features/espana/fenomenos";
 
@@ -168,6 +170,16 @@ export default function DondeVerEspecie({ hoy }: { hoy: string }) {
             </p>
           )}
           {elegida?.nota && <p className="aviso-plan">Ojo: {elegida.nota}.</p>}
+          {hidesDe(elegida?.c).length > 0 && (
+            <div className="fenomenos">
+              <h3>Hides y salidas para fotografiarla</h3>
+              <ul className="lista-hides">
+                {hidesDe(elegida?.c).map((h) => (
+                  <TarjetaHide key={h.id} h={h} />
+                ))}
+              </ul>
+            </div>
+          )}
           <FenomenosEspana
             fenomenos={fenomenosDe(elegida?.c)}
             mesHoy={Number(hoy.slice(5, 7)) - 1}

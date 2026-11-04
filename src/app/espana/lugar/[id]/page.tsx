@@ -7,6 +7,8 @@ import MapaEventos from "@/ui/mapa/MapaEventos";
 import FrecuenciaAvistamientos from "@/features/safaris/componentes/FrecuenciaAvistamientos";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
 import ListaRarezas from "@/features/espana/ListaRarezas";
+import TarjetaHide from "@/features/espana/TarjetaHide";
+import { hidesCerca } from "@/features/espana/hides";
 import LuzYMar from "@/features/espana/LuzYMar";
 import { direccionesSol, rumbo } from "@/lib/sol";
 import { fenomenosCerca } from "@/features/espana/fenomenos";
@@ -65,6 +67,7 @@ export default async function PaginaLugar({ params }: Props) {
     .filter((x) => x.id !== l.id)
     .slice(0, 8);
   const rutas = rutasCerca(l);
+  const hides = hidesCerca(l.lat, l.lon, 60).slice(0, 6);
   const rarezas = rarezasCerca(l.lat, l.lon, 30).slice(0, 12);
   const sol = direccionesSol(hoy, l.lat, l.lon);
   const espana = cargarEspana();
@@ -182,6 +185,20 @@ export default async function PaginaLugar({ params }: Props) {
             A menos de {l.r + 5} km: aves de <a href="https://ebird.org">eBird</a> (Cornell Lab of Ornithology, la
             última de cada especie en la provincia) y mamíferos, reptiles y anfibios de{" "}
             <a href="https://www.inaturalist.org">iNaturalist</a> (sin especies sensibles).
+          </p>
+        </section>
+      )}
+
+      {hides.length > 0 && (
+        <section className="seccion">
+          <h2 className="rotulo">Hides y salidas guiadas cerca</h2>
+          <ul className="lista-hides">
+            {hides.map((h) => (
+              <TarjetaHide key={h.id} h={h} km={h.km} />
+            ))}
+          </ul>
+          <p className="nota-pie">
+            <Link href="/espana/hides">Todos los hides y salidas →</Link>
           </p>
         </section>
       )}

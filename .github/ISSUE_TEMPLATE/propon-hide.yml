@@ -1,0 +1,39 @@
+name: Propón un hide o una salida guiada
+description: Un hide fotográfico o una salida guiada de fauna en España para el catálogo (se revisa a mano).
+labels: ["hides"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Solo hides y salidas con web pública. No se incluyen hides en nidos ni en colonias de cría, ni puntos exactos de especies sensibles.
+  - type: input
+    id: nombre
+    attributes:
+      label: Nombre del hide o la salida
+    validations:
+      required: true
+  - type: input
+    id: web
+    attributes:
+      label: Web del operador
+      placeholder: https://…
+    validations:
+      required: true
+  - type: input
+    id: zona
+    attributes:
+      label: Zona (municipio o comarca y provincia)
+    validations:
+      required: true
+  - type: input
+    id: especies
+    attributes:
+      label: Especies objetivo
+  - type: input
+    id: temporada
+    attributes:
+      label: Temporada (meses)
+  - type: textarea
+    id: notas
+    attributes:
+      label: Otros datos (tipo, orientación de la luz, plazas, precio)

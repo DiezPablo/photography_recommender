@@ -615,3 +615,14 @@ test("fauna en España: rarezas de la semana", async ({ page }) => {
   await page.goto("/espana/rarezas");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Rarezas esta semana");
 });
+
+test("fauna en España: hides y salidas guiadas, con filtros", async ({ page }) => {
+  await page.goto("/espana/hides");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Hides y salidas guiadas");
+  const todos = await page.locator(".tarjeta-hide").count();
+  expect(todos).toBeGreaterThan(20);
+  await page.getByLabel("Especie, zona u operador").fill("quebrantahuesos");
+  await expect(page.locator(".tarjeta-hide").first()).toContainText(/[Qq]uebrantahuesos/);
+  expect(await page.locator(".tarjeta-hide").count()).toBeLessThan(todos);
+  await expect(page.getByRole("link", { name: "Propón un hide o una salida" })).toHaveAttribute("href", /issues\/new/);
+});
