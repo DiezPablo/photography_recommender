@@ -8,6 +8,7 @@ import { useParametrosUrl } from "@/lib/almacen";
 import { MESES, rangoMeses } from "@/lib/fechas";
 import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
 import MapaEventos from "@/ui/mapa/MapaEventos";
+import BotonVista from "@/features/espana/BotonVista";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
 import { fenomenosDe } from "@/features/espana/fenomenos";
 
@@ -156,6 +157,11 @@ export default function DondeVerEspecie({ hoy }: { hoy: string }) {
             Dónde ver {elegida ? nombre(elegida).toLowerCase() : "la especie"}
             {mes !== null ? ` en ${MESES[mes]}` : ""}
           </h2>
+          {elegida && (
+            <p>
+              <BotonVista clave={elegida.k} especie={{ n: nombre(elegida), c: elegida.c, clase: elegida.clase }} />
+            </p>
+          )}
           {elegida?.estado === "invasora" && (
             <p className="aviso-plan">
               Especie exótica invasora (Catálogo español de especies exóticas invasoras): no es fauna autóctona.

@@ -35,9 +35,11 @@ jobs:
       - run: pip install -e .
       - name: eBird por provincias
         run: python -m safari --espana-recientes --salida salida/espana_recientes.json
-      - name: Lugares (puntos de eBird, espacios protegidos de Wikidata, observatorios de OSM)
+      - name: Lugares (puntos de eBird, espacios protegidos de Wikidata, observatorios de OSM, Natura 2000, Rasante)
         run: python -m safari --espana-lugares --salida salida/espana_lugares.json
       - name: Publicar
         run: |
           .github/scripts/publicar_release.sh "España recientes $(date -u +%Y-%m-%dT%H:%MZ)" salida/espana_recientes.json
           [ -s salida/espana_lugares.json ] && .github/scripts/publicar_release.sh "España lugares $(date -u +%Y-%m-%d)" salida/espana_lugares.json || true
+          [ -s salida/espana_rasante.json ] && .github/scripts/publicar_release.sh "España Rasante $(date -u +%Y-%m-%d)" salida/espana_rasante.json || true
+          [ -s salida/espana_natura.json ] && .github/scripts/publicar_release.sh "España Natura 2000 $(date -u +%Y-%m-%d)" salida/espana_natura.json || true

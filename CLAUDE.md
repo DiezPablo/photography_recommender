@@ -18,11 +18,16 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
     estacionalidad con confianza y backtest; workflow `espana.yml` a mano. `--espana-recientes`: la última ave vista
     de cada especie por provincia en 30 días (eBird) → `espana_recientes.json`; `--espana-lugares`: puntos de eBird,
     espacios protegidos de Wikidata y observatorios de OSM (de Rasante) → `espana_lugares.json`; los dos en el
-    workflow `espana_recientes.yml`, diario.
+    workflow `espana_recientes.yml`, diario, que también escribe `espana_natura.json` (límites Natura 2000 de la
+    EEA y sus cuadrículas, `natura`) y `espana_rasante.json` (spots y rutas de Rasante); `espana_recientes.json`
+    lleva además mamíferos, reptiles y anfibios de iNaturalist (`inat_espana`). `--espana-actividad espana.json`:
+    hora de actividad por especie (altura del sol en cada observación de iNaturalist) → `espana_actividad.json`,
+    workflow `espana_actividad.yml`, semanal.
 - Web Next.js 16 (App Router) en `src/`: `app/` (`/`, `/parque/[id]`, `/especies`, `/especie/[slug]`, `/guia`, `/comparar`, `/migracion`,
   `/planificar`, `/presupuesto`, `/viaje`, `/safari-en/[mes|país]`, `/espana` (luz, tiempo y especies por
   cuadrícula de 10 km; buscador de lugares y «Cerca de aquí»), `/espana/lugar/[id]` (ficha de cada lugar,
-  ISR; fenómenos escritos a mano en `features/espana/fenomenos.ts`); `.ics` por parque y `/migracion.ics`,
+  ISR; fenómenos escritos a mano en `features/espana/fenomenos.ts`), `/espana/mis-especies` (lista de vistas, solo
+  en el navegador); `.ics` por parque y `/migracion.ics`,
   `/recientes.xml`, `sitemap.xml`),
   `features/safaris` (componentes, modelo, `datos.ts` solo servidor), `ui/` (mapa Leaflet, iconos, `Navegacion.tsx`, `FotoGrande.tsx`), `lib/`
   (`datos.ts`: lee `datos/*.gz`; `almacen.ts`; `fechas.ts`), `estilos/` (01-11 heredados de Rasante; el aspecto

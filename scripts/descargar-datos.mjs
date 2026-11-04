@@ -18,6 +18,9 @@ const FICHEROS = [
   "espana.json",
   "espana_recientes.json",
   "espana_lugares.json",
+  "espana_rasante.json",
+  "espana_actividad.json",
+  "espana_natura.json",
 ];
 // el único que se pide desde el navegador (fetch en ExploradorSafaris)
 const PUBLICOS = ["safaris_indice.json"];

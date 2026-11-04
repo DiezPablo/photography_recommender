@@ -21,6 +21,79 @@ export function cargarEspana(): Espana | null {
   return espana;
 }
 
+export interface SitioNatura {
+  n: string;
+  /** A: ZEPA (aves); B: LIC/ZEC (hábitats); C: los dos */
+  t: string | null;
+  a: number;
+  lat: number;
+  lon: number;
+  celdas: string[];
+  g: GeoJSON.Geometry;
+}
+let natura: Record<string, SitioNatura> | null | undefined;
+/** Espacios de la Red Natura 2000 con su contorno y sus cuadrículas (espana_natura.json, de la EEA). */
+export function cargarNatura(): Record<string, SitioNatura> {
+  if (natura === undefined)
+    natura = leerDatos<{ sitios: Record<string, SitioNatura> }>("espana_natura.json")?.sitios ?? null;
+  return natura ?? {};
+}
+
+const TIPO_NATURA: Record<string, string> = { A: "ZEPA", B: "Red Natura 2000", C: "ZEPA y ZEC" };
+
+/** Los espacios Natura 2000 que no tienen ya un lugar de Wikidata (por código o por nombre), como lugares. */
+function lugaresNatura(propios: LugarFauna[]): LugarFauna[] {
+  const codigos = new Set(propios.map((l) => l.z).filter(Boolean));
+  const nombres = new Set(propios.filter((l) => l.id.startsWith("wd-")).map((l) => l.n.toLowerCase()));
+  return Object.entries(cargarNatura())
+    .filter(([c, x]) => !codigos.has(c) && !nombres.has(x.n.toLowerCase()))
+    .map(([c, x]) => ({
+      id: `n2k-${c}`,
+      n: x.n,
+      t: TIPO_NATURA[x.t ?? ""] ?? "Red Natura 2000",
+      lat: x.lat,
+      lon: x.lon,
+      r: Math.round(Math.min(30, Math.max(1, Math.sqrt(x.a / Math.PI))) * 10) / 10,
+      z: c,
+    }));
+}
+
+/** Las cuadrículas de un lugar: las que toca su contorno Natura 2000 si lo tiene; si no, las del círculo. */
+export function celdasDe(l: LugarFauna): string[] {
+  const sitio = l.z ? cargarNatura()[l.z] : undefined;
+  return sitio?.celdas.length ? sitio.celdas : celdasEnRadio(l.lat, l.lon, Math.min(l.r, 10));
+}
+
+/** Contorno Natura 2000 del lugar, para el mapa. */
+export function contornoDe(l: LugarFauna): GeoJSON.Geometry | null {
+  return (l.z && cargarNatura()[l.z]?.g) || null;
+}
+
+// cuadrícula → el espacio Natura 2000 más grande que la contiene (el más conocido: «Cuenca de Gallocanta» antes que
+// «Laguna de Gallocanta»), con el id de su lugar
+let dentroDe: Map<string, { nombre: string; id: string }> | undefined;
+function espacioDeCelda(c: string): { nombre: string; id: string } | null {
+  if (!dentroDe) {
+    dentroDe = new Map();
+    const idPorCodigo = new Map(
+      cargarLugares()
+        .filter((l) => l.z)
+        .map((l) => [l.z!, l]),
+    );
+    const area = new Map<string, number>();
+    for (const [codigo, x] of Object.entries(cargarNatura())) {
+      const l = idPorCodigo.get(codigo);
+      if (!l) continue;
+      for (const celda of x.celdas)
+        if (x.a > (area.get(celda) ?? -1)) {
+          area.set(celda, x.a);
+          dentroDe.set(celda, { nombre: l.n, id: l.id });
+        }
+    }
+  }
+  return dentroDe.get(c) ?? null;
+}
+
 let lugares: LugarFauna[] | undefined;
 /** Todos los lugares: los de espana_lugares.json o, mientras no exista, las zonas y los parques del catálogo. */
 export function cargarLugares(): LugarFauna[] {
@@ -34,7 +107,7 @@ export function cargarLugares(): LugarFauna[] {
       lon: z.lon,
       r: z.radioKm,
     }));
-    if (propios?.length) lugares = [...zonas, ...propios];
+    if (propios?.length) lugares = [...zonas, ...propios, ...lugaresNatura(propios)];
     else {
       const m = leerDatos<Mundo>("safaris_mundo.json");
       const espanaQ = Object.entries(m?.paises ?? {}).find(([, p]) => p.nombre === "España")?.[0];
@@ -81,8 +154,10 @@ export function lugaresCerca(lat: number, lon: number, mes: number, max = 12, ma
   // de los puntos de eBird, uno por cuadrícula de 10 km (el de más especies): los de una misma cuadrícula tienen
   // los mismos datos y en una ciudad llenaban la lista de plazas (Retiro sale; Plaza del Carmen, no)
   const mejorPorCelda = new Map<string, LugarFauna>();
+  const aqui = celda(lat, lon);
   const todos = cargarLugares()
-    .map((l) => ({ l, km: distanciaKm({ lat, lon }, l) }))
+    // dentro del contorno Natura 2000 (en una de sus cuadrículas), a 0 km aunque el centro quede lejos
+    .map((l) => ({ l, km: l.z && cargarNatura()[l.z]?.celdas.includes(aqui) ? 0 : distanciaKm({ lat, lon }, l) }))
     .filter((x) => x.km <= maxKm);
   for (const { l } of todos)
     if (l.id.startsWith("eb-")) {
@@ -107,7 +182,7 @@ export function lugaresCerca(lat: number, lon: number, mes: number, max = 12, ma
     .map(({ l, km }) => {
       const porGrupo = new Map<string, { k: string; v: number }[]>();
       const vistas = new Set<string>();
-      for (const c of celdasEnRadio(l.lat, l.lon, Math.min(l.r, 10))) {
+      for (const c of celdasDe(l)) {
         const d = e?.celdas[c];
         if (!d) continue;
         for (const [k, meses] of Object.entries(d.e)) {
@@ -162,7 +237,14 @@ function lugaresAlrededor(lat: number, lon: number): LugarFauna[] {
   return salida;
 }
 
-export function nombreLugar(lat: number, lon: number): { nombre: string; km: number; id: string } | null {
+export function nombreLugar(
+  lat: number,
+  lon: number,
+  celda?: string,
+): { nombre: string; km: number; id: string } | null {
+  // dentro de un espacio Natura 2000 (por su contorno real), ese
+  const dentro = celda ? espacioDeCelda(celda) : null;
+  if (dentro) return { ...dentro, km: 0 };
   let mejor: { nombre: string; km: number; id: string } | null = null;
   for (const a of lugaresAlrededor(lat, lon)) {
     // distancia al borde (aproximado como círculo): dentro de un parque grande cuenta 0
@@ -201,7 +283,7 @@ export function lugaresDe(clave: string, mes: number | null, max = 40): LugarEsp
   const porLugar = new Map<string, LugarEspecie>();
   for (const x of ordenadas) {
     const [lat, lon] = centroCelda(x.celda);
-    const lugar = nombreLugar(lat, lon);
+    const lugar = nombreLugar(lat, lon, x.celda);
     const k = lugar && lugar.km < KM_DENTRO ? lugar.nombre : x.celda;
     const ya = porLugar.get(k);
     if (ya) ya.celdas++;
@@ -241,7 +323,7 @@ export function calendarioLugar(l: LugarFauna, porGrupo = 12): { filas: FilaLuga
   const suma = new Map<string, { p: number[]; m: number[]; clase: string }>();
   const muestras = new Map<string, number[]>();
   let n = 0;
-  for (const c of celdasEnRadio(l.lat, l.lon, Math.min(l.r, 10))) {
+  for (const c of celdasDe(l)) {
     const d = e.celdas[c];
     if (!d) continue;
     n++;
@@ -283,11 +365,46 @@ export function calendarioLugar(l: LugarFauna, porGrupo = 12): { filas: FilaLuga
   return { filas: [...elegidas.values()].flat(), celdas: n };
 }
 
-/** Aves vistas en 30 días cerca del lugar (eBird: la última de cada especie por provincia), más recientes antes. */
+/** Lo visto en 30 días cerca del lugar (aves de eBird; mamíferos, reptiles y anfibios de iNaturalist), más
+ * recientes antes; las domésticas, fuera (no están en espana.json). */
 let recientes: { generado: string; obs: ObsReciente[] } | null | undefined;
 export function recientesLugar(l: LugarFauna, margenKm = 5): ObsReciente[] {
   if (recientes === undefined) recientes = leerDatos<{ generado: string; obs: ObsReciente[] }>("espana_recientes.json");
+  const conocidas = new Set(Object.values(cargarEspana()?.especies ?? {}).map((e) => e.c));
   return (recientes?.obs ?? [])
-    .filter((o) => distanciaKm(l, o) <= l.r + margenKm)
+    .filter((o) => distanciaKm(l, o) <= l.r + margenKm && conocidas.has(o.c))
     .sort((a, b) => b.f.localeCompare(a.f));
+}
+
+interface SpotRasante {
+  id: string;
+  n: string;
+  lat: number;
+  lon: number;
+  p?: number | null;
+}
+interface RutaRasante {
+  id: string;
+  n: string;
+  lat: number;
+  lon: number;
+  km?: number | null;
+  d?: string | null;
+  c?: boolean;
+}
+let rasante: { spots: SpotRasante[]; rutas: RutaRasante[] } | null | undefined;
+
+/** Spots de fotografía y salidas de rutas de Rasante cerca del lugar (hasta `maxKm` del borde aproximado). */
+export function rasanteCerca(
+  l: LugarFauna,
+  maxKm = 10,
+): { spots: (SpotRasante & { km: number })[]; rutas: (RutaRasante & { km: number })[] } {
+  if (rasante === undefined) rasante = leerDatos("espana_rasante.json");
+  const cerca = <T extends { lat: number; lon: number }>(xs: T[], max: number) =>
+    xs
+      .map((x) => ({ ...x, km: Math.round(distanciaKm(l, x) * 10) / 10 }))
+      .filter((x) => x.km <= l.r + maxKm)
+      .sort((a, b) => a.km - b.km)
+      .slice(0, max);
+  return { spots: cerca(rasante?.spots ?? [], 5), rutas: cerca(rasante?.rutas ?? [], 6) };
 }

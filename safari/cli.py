@@ -162,14 +162,26 @@ def main(argv: list[str] | None = None) -> None:
         "--sondeo-precios", action="store_true", help="sondeo de webs de operadores (docs/sondeo-precios.md)"
     )
     ap.add_argument("--espana", action="store_true", help="fauna en España con GBIF (necesita GBIF_USUARIO/CLAVE)")
+    ap.add_argument("--espana-actividad", type=Path, help="espana.json → hora de actividad por especie (iNaturalist)")
     ap.add_argument("--espana-lugares", action="store_true", help="lugares de fauna en España (eBird, Wikidata, OSM)")
     ap.add_argument("--espana-recientes", action="store_true", help="aves vistas en 30 días por provincia (eBird)")
     ap.add_argument("--espana-diagnostico", action="store_true", help="consultas SQL de prueba a GBIF (Gallocanta)")
     a = ap.parse_args(argv)
+    if a.espana_actividad:
+        from safari.espana import inat_espana
+
+        destino = a.salida if a.salida != ap.get_default("salida") else Path("public/datos/espana_actividad.json")
+        inat_espana.actividad_main(destino, a.espana_actividad)
+        return
     if a.espana_lugares:
         from safari.espana import lugares
 
-        lugares.main(a.salida if a.salida != ap.get_default("salida") else Path("public/datos/espana_lugares.json"))
+        destino = a.salida if a.salida != ap.get_default("salida") else Path("public/datos/espana_lugares.json")
+        lugares.main(destino)
+        lugares.rasante(destino.parent / "espana_rasante.json")
+        from safari.espana import natura
+
+        natura.main(destino.parent / "espana_natura.json")
         return
     if a.espana_recientes:
         from safari.espana import ebird

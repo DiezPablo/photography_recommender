@@ -34,14 +34,20 @@ def test_recientes_espana(monkeypatch, tmp_path):
         return [{"code": "ES-AR-TE", "name": "Teruel"}] if ruta.startswith("ref/") else OBS
 
     monkeypatch.setattr(ebird, "_get", falso)
+    from safari.espana import inat_espana
+
+    monkeypatch.setattr(inat_espana, "recientes", lambda: [])
     salida = tmp_path / "r.json"
     assert ebird.recientes_espana(salida) == 2
     d = json.loads(salida.read_text())
-    assert d["obs"][0] == {"c": "Grus grus", "f": "2026-11-02", "lat": 40.97, "lon": -1.52, "l": "Laguna"}
+    assert d["obs"][0] == {"c": "Grus grus", "f": "2026-11-02", "lat": 40.97, "lon": -1.52, "l": "Laguna", "s": "e"}
     assert d["obs"][1]["l"] is None  # ubicación privada: sin nombre
 
 
 def test_sin_clave(monkeypatch, tmp_path):
+    from safari.espana import inat_espana
+
     monkeypatch.delenv("EBIRD_CLAVE", raising=False)
+    monkeypatch.setattr(inat_espana, "recientes", lambda: [])
     assert ebird.recientes_espana(tmp_path / "r.json") == 0
     assert not (tmp_path / "r.json").exists()

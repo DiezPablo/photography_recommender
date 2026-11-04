@@ -54,7 +54,26 @@ export function factorActividad(actividad: Actividad, momento: "noche" | "azul" 
   return tabla[actividad][momento];
 }
 
-/** Sin tabla de actividad por especie todavía: aves de día, mamíferos al amanecer y al atardecer. */
+/** Perfil de actividad medido (espana_actividad.json): [noche, crepúsculo, día] en 0-1 frente a su grupo, y cuántas
+ * observaciones con hora hay detrás. */
+export interface PerfilActividad {
+  f: [number, number, number];
+  n: number;
+}
+
+/** Con perfil medido: 0,3 + 0,7 × su valor en el tramo, mezclado con el patrón del grupo según la muestra
+ * (n / (n + 50)): con 50 observaciones, mitad y mitad. */
+export function factorActividadMedida(
+  perfil: PerfilActividad,
+  actividad: Actividad,
+  momento: "noche" | "azul" | "dorada" | "dia",
+): number {
+  const tramo = momento === "noche" ? 0 : momento === "dia" ? 2 : 1;
+  const w = perfil.n / (perfil.n + 50);
+  return w * (0.3 + 0.7 * perfil.f[tramo]) + (1 - w) * factorActividad(actividad, momento);
+}
+
+/** Sin perfil medido de la especie: aves de día, mamíferos al amanecer y al atardecer. */
 export function actividadPorDefecto(clase: string): Actividad {
   return clase === "Mammalia" ? "crepuscular" : "diurna";
 }
@@ -70,6 +89,8 @@ export function puntuar(
     permil: number | null | undefined;
     diasDesdeUltimo?: number | null;
     actividad: Actividad;
+    /** perfil medido en iNaturalist; sin él, el patrón del grupo */
+    perfil?: PerfilActividad | null;
     momento: "noche" | "azul" | "dorada" | "dia";
     luz: number;
     tiempo: number;
@@ -95,8 +116,12 @@ export function puntuar(
     {
       clave: "actividad",
       nombre: "Activa a esa hora",
-      valor: factorActividad(entrada.actividad, entrada.momento),
-      detalle: `especie ${entrada.actividad}, franja ${entrada.momento}`,
+      valor: entrada.perfil
+        ? factorActividadMedida(entrada.perfil, entrada.actividad, entrada.momento)
+        : factorActividad(entrada.actividad, entrada.momento),
+      detalle: entrada.perfil
+        ? `franja ${entrada.momento}; según la hora de ${entrada.perfil.n} observaciones en iNaturalist`
+        : `especie ${entrada.actividad} (patrón de su grupo), franja ${entrada.momento}`,
     },
   ];
   const foto: Factor[] = [

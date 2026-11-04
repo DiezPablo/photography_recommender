@@ -23,13 +23,16 @@ export interface BloqueEspana {
   recientes?: { generado: string; obs: ObsReciente[] } | null;
 }
 
-/** Una observación de eBird: la última de la especie (científico) en su provincia, con fecha y lugar. */
+/** Una observación reciente: de eBird, la última de la especie en su provincia; de iNaturalist, la última por zona
+ * de ~10 km (sin nombre de lugar). */
 export interface ObsReciente {
   c: string;
   f: string;
   lat: number;
   lon: number;
   l: string | null;
+  /** fuente: «e» eBird (aves), «i» iNaturalist (mamíferos, reptiles y anfibios) */
+  s?: "e" | "i";
 }
 
 /** Un lugar de espana_lugares.json: punto de eBird, espacio protegido u observatorio (r: radio en km; e: especies
@@ -42,6 +45,8 @@ export interface LugarFauna {
   lon: number;
   r: number;
   e?: number | null;
+  /** código Natura 2000 (contorno y cuadrículas en espana_natura.json) */
+  z?: string | null;
 }
 
 /** Nombres de una especie en espana.json; `estado`: «invasora» (Catálogo español de especies exóticas invasoras) o
@@ -52,6 +57,8 @@ export interface EspecieEspana {
   clase?: string | null;
   estado?: "invasora" | "aviso";
   nota?: string | null;
+  /** actividad medida: [noche, crepúsculo, día] y muestra (espana_actividad.json) */
+  h?: { f: [number, number, number]; n: number } | null;
 }
 
 /** La etiqueta junto al nombre: «invasora» o el aviso. */

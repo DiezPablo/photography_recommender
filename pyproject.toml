@@ -12,6 +12,7 @@ license = { text = "Uso personal, no comercial" }
 authors = [{ name = "Pablo Díez" }]
 dependencies = [
   "requests>=2.31",
+  "shapely>=2.0",
 ]
 
 [project.optional-dependencies]

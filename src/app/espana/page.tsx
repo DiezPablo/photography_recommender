@@ -45,6 +45,9 @@ export default async function PaginaEspana({ searchParams }: Props) {
           ¿Dónde veo…?
         </Link>
       </nav>
+      <p className="enlace-mis-especies">
+        <Link href="/espana/mis-especies">Mis especies vistas →</Link>
+      </p>
       {donde ? <DondeVerEspecie hoy={hoy} /> : finde ? <FindeEspana hoy={hoy} /> : <PlanificadorEspana hoy={hoy} />}
       <p className="nota-pie">
         Luz: posición del sol calculada aquí. Tiempo: Open-Meteo (previsión hasta 16 días; más allá, el archivo ERA5 de

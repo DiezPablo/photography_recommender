@@ -19,6 +19,8 @@ import {
 import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
 import { actividadPorDefecto, puntuar, type Puntuacion } from "@/features/espana/puntuacion";
 import ElegirLugar from "@/features/espana/ElegirLugar";
+import BotonVista from "@/features/espana/BotonVista";
+import { useVistas } from "@/features/espana/vistas";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
 import { fenomenosCerca } from "@/features/espana/fenomenos";
 import { ZONAS_ESPANA, type BloqueEspana, type ObsReciente } from "@/features/espana/zonas";
@@ -53,7 +55,7 @@ interface Especie {
   nota: Puntuacion;
   estado?: "invasora" | "aviso";
   aviso?: string | null;
-  /** última vez vista cerca en 30 días (eBird) */
+  /** última vez vista cerca en 30 días (eBird o iNaturalist) */
   ultima: ObsReciente | null;
 }
 
@@ -195,7 +197,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
         const permilNota = Math.round((permil * s.m) / (s.m + MUESTRA_PRUDENTE));
         const cientifico = nombres[k]?.c ?? null;
         const ultima = cientifico ? (ultimas.get(especieDe(cientifico)) ?? null) : null;
-        // eBird solo cuenta aves: para el resto (o sin datos, o a meses vista) la presencia reciente es neutra
+        // sin observación reciente (o a meses vista) la presencia es neutra
         const dias =
           ultima && planPronto ? Math.max(0, Math.round((Date.parse(hoy) - Date.parse(ultima.f)) / DIA_MS)) : null;
         return {
@@ -212,6 +214,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
             permil: permilNota,
             diasDesdeUltimo: dias,
             actividad: actividadPorDefecto(s.clase),
+            perfil: nombres[k]?.h ?? null,
             momento: mejor?.momento ?? "dorada",
             luz: mejor?.luz ?? 1,
             tiempo: mejor?.tiempo ?? 1,
@@ -233,13 +236,18 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
     puesto.set(e.clave, n);
     vistos.set(e.clase, n + 1);
   }
+  const { vistas } = useVistas();
+  const hayVistas = Object.keys(vistas).length > 0;
+  const soloNuevas = parametros.get("nuevas") === "1";
   const visibles = (
     grupo === "todos"
       ? [...especies].sort(
           (a, b) => (puesto.get(a.clave) ?? 0) - (puesto.get(b.clave) ?? 0) || b.nota.total - a.nota.total,
         )
       : especies.filter((e) => e.clase === grupo)
-  ).slice(0, MAX_ESPECIES);
+  )
+    .filter((e) => !soloNuevas || !vistas[e.clave])
+    .slice(0, MAX_ESPECIES);
 
   const hora = (d: Date | null) => (d ? horaLocal(d, lon) : "–");
   const franja = (f: Franja | null) => (f ? `${hora(f.desde)}–${hora(f.hasta)}` : "–");
@@ -408,6 +416,16 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                     {t} <small>{n}</small>
                   </button>
                 ))}
+                {hayVistas && (
+                  <button
+                    type="button"
+                    className="quitar"
+                    aria-pressed={soloNuevas}
+                    onClick={() => actualizar({ nuevas: soloNuevas ? null : "1" })}
+                  >
+                    Sin ver
+                  </button>
+                )}
               </p>
             )}
             <ol className="lista-especies-espana">
@@ -420,11 +438,13 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                       <summary>
                         <b>{e.nombre}</b> <i>{e.cientifico}</i> <span className={`f-texto-${n.clave}`}>{n.texto}</span>
                         {e.estado === "invasora" && <small className="etiqueta-invasora"> invasora</small>}
+                        {hayVistas && !vistas[e.clave] && <small className="etiqueta-nueva"> nueva para ti</small>}
+                        <BotonVista clave={e.clave} especie={{ n: e.nombre, c: e.cientifico, clase: e.clase }} />
                         {e.ultima && (
                           <small className="visto-reciente">
                             {" "}
                             · vista el {fechaCorta(e.ultima.f)}
-                            {e.ultima.l ? ` en ${e.ultima.l}` : ""}
+                            {e.ultima.l ? ` en ${e.ultima.l.replace(/--/g, " · ")}` : ""}
                           </small>
                         )}
                         <span className="notas-especie">
@@ -458,8 +478,10 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
             {cita && <p className="nota-pie">{cita}</p>}
             {hayRecientes && (
               <p className="nota-pie">
-                Aves vistas en los últimos 30 días: <a href="https://ebird.org">eBird</a> (Cornell Lab of Ornithology),
-                la última de cada especie en cada provincia; solo cuentan en la nota si vas en las próximas dos semanas.
+                Visto en los últimos 30 días: aves de <a href="https://ebird.org">eBird</a> (Cornell Lab of Ornithology,
+                la última de cada especie en cada provincia) y mamíferos, reptiles y anfibios de{" "}
+                <a href="https://www.inaturalist.org">iNaturalist</a> (grado de investigación, sin especies sensibles);
+                solo cuentan en la nota si vas en las próximas dos semanas.
               </p>
             )}
           </>

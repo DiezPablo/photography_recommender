@@ -6,7 +6,8 @@
   periurbanos…), con su superficie para el radio;
 - observatorios de aves de OpenStreetMap, ya agrupados en Rasante (su release `datos`, fauna.json).
 
-→ espana_lugares.json: [{id, n, t, lat, lon, r, e}] (t: tipo; r: radio en km; e: especies vistas en eBird).
+→ espana_lugares.json: [{id, n, t, lat, lon, r, e, z}] (t: tipo; r: radio en km; e: especies vistas en eBird; z:
+código Natura 2000, si lo tiene).
 """
 
 from __future__ import annotations
@@ -29,10 +30,11 @@ MIN_ESPECIES_HOTSPOT = 30  # por debajo suelen ser puntos de una sola visita
 NO_NATURALES = {"Q3317612", "Q9096832", "Q28748126", "Q56528396", "Q107989230"}
 
 CONSULTA = """
-SELECT ?i ?iLabel ?tipo ?tipoLabel ?c ?area WHERE {
+SELECT ?i ?iLabel ?tipo ?tipoLabel ?c ?area ?n2k WHERE {
   ?i wdt:P17 wd:Q29; wdt:P625 ?c; wdt:P31 ?tipo.
   ?tipo wdt:P279* wd:Q473972.
   OPTIONAL { ?i p:P2046/psn:P2046/wikibase:quantityAmount ?area. }
+  OPTIONAL { ?i wdt:P3425 ?n2k. }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "es,ca,gl,eu,en". }
 }
 """
@@ -102,10 +104,16 @@ def protegidos(s: requests.Session | None = None) -> list[dict]:
             "lon": round(float(m.group(1)), 4),
             "r": radio_km(area),
         }
+        if "n2k" in b:
+            lugar["z"] = b["n2k"]["value"]  # código Natura 2000: su contorno y sus cuadrículas en espana_natura.json
         ya = por_id.get(qid)
         # un mismo espacio con varios tipos (ZEPA y ZEC…): el más concreto que no sea el genérico
         if not ya or (ya["t"] in ("Espacio protegido", "Red Natura 2000") and lugar["t"] != "Espacio protegido"):
+            if ya and ya.get("z") and not lugar.get("z"):
+                lugar["z"] = ya["z"]
             por_id[qid] = lugar
+        elif lugar.get("z") and not ya.get("z"):
+            ya["z"] = lugar["z"]
     return list(por_id.values())
 
 
@@ -204,3 +212,49 @@ def main(salida) -> None:
         },
     )
     print(f"{salida}: {len(xs)} lugares {cuenta}", flush=True)
+
+
+RASANTE = "https://github.com/DiezPablo/photo_recommender/releases/download/datos/"
+
+
+def rasante(salida, s: requests.Session | None = None) -> None:
+    """espana_rasante.json: los spots de fotografía y las rutas de senderismo de Rasante (la web hermana), en
+    ligero (nombre, punto y lo justo para la lista), para «Fotografía y rutas cerca» en la ficha de cada lugar."""
+    from safari.comun.ficheros import escribir_json
+
+    s = s or sesion()
+    try:
+        spots = json.loads(gzip.decompress(s.get(RASANTE + "spots.geojson.gz", timeout=120).content))["features"]
+        rutas = json.loads(gzip.decompress(s.get(RASANTE + "rutas.json.gz", timeout=300).content))["rutas"]
+    except (requests.RequestException, KeyError, ValueError, OSError) as e:
+        print(f"  Rasante: {e}; no se escribe nada", flush=True)
+        return
+    escribir_json(
+        salida,
+        {
+            "spots": [
+                {
+                    "id": f["properties"]["id"],
+                    "n": f["properties"]["nombre"],
+                    "lat": round(f["geometry"]["coordinates"][1], 4),
+                    "lon": round(f["geometry"]["coordinates"][0], 4),
+                    "p": f["properties"].get("puntuacion"),
+                }
+                for f in spots
+            ],
+            "rutas": [
+                {
+                    "id": r["id"],
+                    "n": r["nombre"],
+                    "lat": round(r["inicio"][0], 4),
+                    "lon": round(r["inicio"][1], 4),
+                    "km": r.get("km"),
+                    "d": r.get("dificultad"),
+                    "c": bool(r.get("circular")),
+                }
+                for r in rutas
+                if r.get("inicio")
+            ],
+        },
+    )
+    print(f"{salida}: {len(spots)} spots y {len(rutas)} rutas de Rasante", flush=True)

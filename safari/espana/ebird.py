@@ -87,36 +87,48 @@ def recientes_region(region: str, dias: int = 30, s=None) -> list[dict]:
                 "f": (d.get("obsDt") or "")[:10],
                 "lat": round(d["lat"], 2),
                 "lon": round(d["lng"], 2),
-                "l": None if d.get("locationPrivate") else d.get("locName"),
+                "l": None if d.get("locationPrivate") else (d.get("locName") or "").replace("--", " · ") or None,
             }
         )
     return salida
 
 
 def recientes_espana(salida, s=None) -> int:
-    """espana_recientes.json: la última observación de cada especie en cada provincia (unas 52 peticiones). Sin
-    EBIRD_CLAVE no escribe nada. Devuelve cuántas observaciones guardó."""
+    """espana_recientes.json: lo visto en 30 días. Aves de eBird (la última de cada especie en cada provincia, unas
+    52 peticiones; solo con EBIRD_CLAVE) y mamíferos, reptiles y anfibios de iNaturalist (sin clave). `s` dice la
+    fuente de cada una («e» o «i»). Devuelve cuántas observaciones guardó."""
     from datetime import UTC, datetime
 
     from safari.comun.ficheros import escribir_json
+    from safari.espana import inat_espana
 
-    if not clave():
-        print("eBird: sin EBIRD_CLAVE, no se pide nada", flush=True)
-        return 0
-    s = s or sesion()
     obs = []
-    for p in provincias(s=s):
-        try:
-            obs += recientes_region(p["code"], s=s)
-        except requests.RequestException as e:
-            print(f"  eBird {p['code']}: {e}", flush=True)
+    if clave():
+        s = s or sesion()
+        for p in provincias(s=s):
+            try:
+                obs += [{**o, "s": "e"} for o in recientes_region(p["code"], s=s)]
+            except requests.RequestException as e:
+                print(f"  eBird {p['code']}: {e}", flush=True)
+    else:
+        print("eBird: sin EBIRD_CLAVE, solo iNaturalist", flush=True)
+    n_ebird = len(obs)
+    try:
+        obs += inat_espana.recientes()
+    except requests.RequestException as e:
+        print(f"  iNaturalist: {e}", flush=True)
+    if not obs:
+        return 0
     escribir_json(
         salida,
         {
             "generado": datetime.now(UTC).isoformat(timespec="minutes"),
-            "fuente": "eBird (ebird.org), Cornell Lab of Ornithology",
+            "fuentes": {
+                "e": "eBird (ebird.org), Cornell Lab of Ornithology",
+                "i": "iNaturalist (inaturalist.org), grado de investigación",
+            },
             "obs": obs,
         },
     )
-    print(f"{salida}: {len(obs)} observaciones de eBird", flush=True)
+    print(f"{salida}: {n_ebird} observaciones de eBird y {len(obs) - n_ebird} de iNaturalist", flush=True)
     return len(obs)

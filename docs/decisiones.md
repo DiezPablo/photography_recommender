@@ -600,3 +600,23 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   = √(especies del mes / las del mejor de la lista) × tiempo (mejor franja, mañana 7-11 o tarde 16-20:
   1 − 0,7·prob. de lluvia, y ×0,8 o ×0,6 con rachas de más de 35 o 50 km/h) × distancia (hasta −40 % en el
   límite); un fenómeno de temporada cerca, +15 %. Con desglose y enlaces al día concreto y a la ficha.
+- Mi lista de especies vistas (`/espana/mis-especies`): solo en localStorage, sin cuentas. Botón «+ la he visto»
+  en «¿Qué veo aquí?» y «¿Dónde veo…?», etiqueta «nueva para ti», filtro «Sin ver» y descarga en CSV.
+- Rasante en la ficha de cada lugar: spots de fotografía (5) y salidas de rutas (6) a menos de 10 km del borde,
+  con enlace a su ficha en Rasante (`espana_rasante.json`, ligero, en el workflow diario). La orientación de los
+  observatorios (etiqueta `direction` de OSM) no se ha hecho: casi ninguno la tiene y pediría Overpass.
+- Recientes de iNaturalist (mamíferos, reptiles y anfibios, grado de investigación, 30 días; unas 15 peticiones):
+  la última de cada especie por zona de ~0,1°, punto a 2 decimales y sin dirección (puede ser una calle). Fuera
+  las de coordenadas ocultas y, aunque iNaturalist no las oculte, lince, oso, lobo, desmán, visón europeo y
+  tortugas (se persiguen o se cogen). Las domésticas, fuera.
+- Actividad por hora (`espana_actividad.json`, semanal): iNaturalist no da histograma por hora del día, así que
+  por especie se piden hasta 200 observaciones con hora y se clasifica cada una por la altura del sol en ese
+  momento y lugar (noche < −6°, crepúsculo hasta 15°, día), que no depende de la estación. El perfil se divide
+  por el de su grupo (corrige que la gente sale de día) y se escala a su mejor tramo. En la nota: 0,3 + 0,7 ×
+  perfil, mezclado con el patrón del grupo según n / (n + 50).
+- Red Natura 2000 con límites reales (servicio de mapas de la EEA, capa 2, `MS='ES'`, 1861 espacios
+  simplificados a ~300 m; 0,6 MB comprimido): cuadrículas que toca cada uno, punto interior y contorno para el
+  mapa. Los lugares de Wikidata llevan su código (P3425, unos 1570); los espacios sin elemento en Wikidata entran
+  como lugares `n2k-…`. La ficha usa las cuadrículas del contorno en vez del círculo, «Cerca de aquí» pone 0 km si
+  estás dentro y en «¿Dónde veo…?» la cuadrícula toma el nombre del espacio más grande que la contiene. Lo de las
+  cuadrículas de la frontera con Portugal queda igual (su centro puede caer fuera; no afecta a los datos).

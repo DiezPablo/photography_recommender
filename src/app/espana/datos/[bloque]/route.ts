@@ -19,6 +19,7 @@ interface Espana {
 }
 
 let cache: Espana | null | undefined;
+let actividad: { especies: Record<string, { f: [number, number, number]; n: number }> } | null | undefined;
 let recientes: { generado: string; obs: ObsReciente[] } | null | undefined;
 
 export async function GET(_: Request, { params }: { params: Promise<{ bloque: string }> }) {
@@ -35,7 +36,12 @@ export async function GET(_: Request, { params }: { params: Promise<{ bloque: st
     }),
   );
   const claves = new Set(Object.values(celdas).flatMap((c) => Object.keys(c.e)));
-  const especies = Object.fromEntries(Object.entries(cache.especies).filter(([k]) => claves.has(k)));
+  if (actividad === undefined) actividad = leerDatos("espana_actividad.json");
+  const especies = Object.fromEntries(
+    Object.entries(cache.especies)
+      .filter(([k]) => claves.has(k))
+      .map(([k, e]) => [k, { ...e, h: (e.c && actividad?.especies[e.c]) || null }]),
+  );
   // aves vistas en 30 días (eBird, la última de cada especie por provincia) dentro del bloque
   if (recientes === undefined) recientes = leerDatos<{ generado: string; obs: ObsReciente[] }>("espana_recientes.json");
   const obs = (recientes?.obs ?? []).filter((o) => bloqueDe(celda(o.lat, o.lon)) === bloque);

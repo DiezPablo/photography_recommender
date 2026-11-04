@@ -14,6 +14,8 @@ export interface PuntoEvento {
   categoria: string;
   /** a dónde lleva su ventana; null, a ninguna (por defecto, `${enlace}/${id}`) */
   href?: string | null;
+  /** contorno real (GeoJSON, p. ej. un espacio Natura 2000): se dibuja en vez del círculo */
+  forma?: GeoJSON.Geometry | null;
 }
 export interface PuntoSimple {
   id: string;
@@ -54,13 +56,10 @@ export default function MapaEventos({
     const solo = eventos.length === 1;
     for (const e of eventos) {
       const color = colorCss(`var(--c-${e.categoria})`);
-      const area = L.circle([e.lat, e.lon], {
-        radius: e.radio_km * 1000,
-        color,
-        weight: solo ? 2 : 1,
-        fillColor: color,
-        fillOpacity: solo ? 0.08 : 0.18,
-      }).addTo(g);
+      const estilo = { color, weight: solo ? 2 : 1, fillColor: color, fillOpacity: solo ? 0.08 : 0.18 };
+      const contorno = e.forma ? L.geoJSON(e.forma, { style: () => estilo }) : null;
+      const area = contorno ?? L.circle([e.lat, e.lon], { radius: e.radio_km * 1000, ...estilo });
+      area.addTo(g);
       const centro = L.circleMarker([e.lat, e.lon], {
         radius: solo ? 7 : 6,
         weight: 2,
@@ -73,6 +72,11 @@ export default function MapaEventos({
         const html = `<strong>${esc(e.nombre)}</strong>${href ? `<br><a href="${href}">Ver →</a>` : ""}`;
         area.bindPopup(html);
         centro.bindPopup(html);
+      }
+      if (contorno) {
+        const b = contorno.getBounds();
+        limites.push([b.getSouth(), b.getWest()], [b.getNorth(), b.getEast()]);
+        continue;
       }
       // el círculo a mano: getBounds() de Leaflet necesita que el mapa ya tenga vista
       const dLat = e.radio_km / 111;

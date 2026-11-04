@@ -589,3 +589,16 @@ test("fauna en España: este finde cerca", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Este finde" })).toHaveAttribute("aria-current", "page");
   await expect(page.locator(".lista-finde li, .nota-pie").first()).toBeVisible({ timeout: 20000 });
 });
+
+test("fauna en España: mi lista de especies vistas", async ({ page }) => {
+  await page.goto("/espana?zona=gallocanta&fecha=2026-11-08");
+  const boton = page.locator(".lista-especies-espana .boton-vista").first();
+  if (!(await boton.isVisible({ timeout: 15000 }).catch(() => false))) return; // sin datos de especies
+  const nombre = await page.locator(".lista-especies-espana summary b").first().innerText();
+  await boton.click();
+  await expect(boton).toHaveText("✓ vista");
+  await page.goto("/espana/mis-especies");
+  await expect(page.locator(".lista-vistas")).toContainText(nombre);
+  await page.getByRole("button", { name: "quitar" }).first().click();
+  await expect(page.getByText("Aún no has marcado ninguna")).toBeVisible();
+});

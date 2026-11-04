@@ -1554,3 +1554,29 @@ body {
   font-weight: 700;
   color: var(--acento);
 }
+
+/* España: mi lista de especies vistas */
+.boton-vista {
+  margin-left: 6px;
+  font-size: 0.8em;
+  padding: 1px 8px;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: var(--superficie);
+  cursor: pointer;
+}
+.boton-vista.vista {
+  background: var(--acento-suave);
+  border-color: var(--acento);
+}
+.etiqueta-nueva {
+  color: var(--acento);
+  font-weight: 600;
+}
+.enlace-mis-especies {
+  text-align: right;
+  margin: 4px 0 0;
+}
+.lista-vistas {
+  padding-left: 1.2rem;
+}
