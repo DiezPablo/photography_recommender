@@ -13,6 +13,7 @@ import {
   cargarSafaris,
   getParque,
   getParqueMundo,
+  idActual,
   confianza,
   nivelFrecuencia,
   nombreEstrella,
@@ -43,7 +44,15 @@ function km(n: number): string {
 
 export default async function PaginaComparar({ searchParams }: Props) {
   const q = await searchParams;
-  const ids = [...new Set((q.p ?? "").split(",").filter(Boolean))].slice(0, MAX_COMPARAR);
+  // los ids antiguos (con el Q de Wikidata) de enlaces guardados se traducen a los limpios (T05)
+  const ids = [
+    ...new Set(
+      (q.p ?? "")
+        .split(",")
+        .filter(Boolean)
+        .map((id) => (getParqueMundo(id) ? id : (idActual(id) ?? id))),
+    ),
+  ].slice(0, MAX_COMPARAR);
   const mesHoy = Number(fechaLocal(new Date()).slice(5, 7)) - 1;
   // «marzo» o el número (0-11): el mes elegido en la cabecera viaja con el nombre
   const mes = mesDeParametro(q.mes) ?? mesHoy;

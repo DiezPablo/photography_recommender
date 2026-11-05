@@ -29,7 +29,7 @@ const NUCLEO =
 export const CIERRES: Record<string, Cierre> = {
   kanha: { meses: [7, 8, 9], tipo: "zona", texto: NUCLEO, fuente: MP },
   bandhavgarh: { meses: [7, 8, 9], tipo: "zona", texto: NUCLEO, fuente: MP },
-  "parque-nacional-de-pench-q2720864": { meses: [7, 8, 9], tipo: "zona", texto: NUCLEO, fuente: MP },
+  "parque-nacional-de-pench": { meses: [7, 8, 9], tipo: "zona", texto: NUCLEO, fuente: MP },
   tadoba: {
     meses: [7, 8, 9],
     tipo: "zona",
@@ -88,7 +88,7 @@ export const CIERRES: Record<string, Cierre> = {
 
 /** El cierre del parque ese mes (1-12), si lo hay. */
 export function cierreEn(id: string, mes: number): Cierre | null {
-  const c = CIERRES[id];
+  const c = cierreDe(id);
   return c && c.meses.includes(mes) ? c : null;
 }
 
@@ -105,3 +105,8 @@ export const TEXTO_TIPO_CIERRE: Record<TipoCierre, string> = {
   zona: "Zonas principales cerradas",
   campamentos: "Casi todo cerrado",
 };
+
+/** El cierre de un parque por su id, también con el id antiguo que llevaba el Q de Wikidata (T05). */
+export function cierreDe(id: string): Cierre | null {
+  return CIERRES[id] ?? CIERRES[id.replace(/-q\d+$/, "")] ?? null;
+}

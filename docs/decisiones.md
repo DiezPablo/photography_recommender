@@ -850,3 +850,16 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     originales de menos de 960 px (Commons no da miniatura mayor que el original), así que no pesan de más.
   - T02: esqueletos con la altura del contenido en lugar de «Cargando…» (presupuesto, mi viaje, especies y
     planificador de España, mi lista, diario). Lighthouse: CLS 0-0,001 en portada, especies y ficha.
+- Auditoría, bloque 5, tanda 3 (datos):
+  - T12: el refinado (`refinar.solapes`) marca `solapa` y pasa a nivel C las reservas de la biosfera, «Greater…» y
+    transfronterizas que contienen otro parque del catálogo, y los parques con el mismo nombre sin genéricos ni país
+    a menos de 150 km (las tres partes del Parque W): queda el de más fauna. Ya no salen en «Más parques donde se ve»,
+    «Combínalo con» ni el buscador por defecto, pero se encuentran buscando su nombre. Con los datos de hoy, 10 de
+    los 551 destinos.
+  - T05: URLs limpias (`refinar.ids_limpios`): el id es el nombre en slug y solo lleva el Q de Wikidata si dos
+    parques darían la misma dirección (3359 de 3429 quedan sin Q). El id anterior va en `id_antiguo` y la ficha
+    redirige de forma permanente (308, el equivalente de Next a un 301) desde la URL vieja; el comparador traduce los
+    ids viejos de enlaces guardados. El cierre de Pench se escribía con el id viejo: ahora se busca con o sin Q.
+  - T16: las tarifas por mes del Serengeti y el Ngorongoro son todas de Lemala porque es la única empresa que
+    publica sus tarifas mes a mes; la ficha lo dice cuando todas vienen de la misma web. Añadir otras cadenas queda
+    para cuando haya hojas de tarifas públicas que se puedan citar.

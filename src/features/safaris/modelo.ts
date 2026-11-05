@@ -180,6 +180,8 @@ export interface Llegar {
 
 export interface ParqueMundo {
   id: string;
+  /** el id con el Q de Wikidata que tenía antes de las URLs limpias (T05), para redirigir */
+  id_antiguo?: string;
   qid: string | null;
   nombre: string;
   clase: string;

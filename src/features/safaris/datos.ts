@@ -100,17 +100,32 @@ export function getParqueMundo(id: string): ParqueMundo | undefined {
   return cargarMundo()?.parques.find((p) => p.id === id);
 }
 
+/** El id actual de una URL antigua (T05): el que llevaba el Q de Wikidata o, por si los datos aún no tienen
+ * `id_antiguo`, el mismo Q. null si no hay a dónde redirigir. */
+export function idActual(id: string): string | null {
+  const parques = cargarMundo()?.parques ?? [];
+  const p = parques.find((x) => x.id_antiguo === id);
+  if (p) return p.id;
+  const q = id.match(/-(q\d+)$/)?.[1];
+  const porQid = q ? parques.find((x) => x.qid?.toLowerCase() === q) : undefined;
+  return porQid && porQid.id !== id ? porQid.id : null;
+}
+
 /** Los mejores parques del mundo para una especie del catálogo (por su nombre científico). */
 export function parquesMundoDe(cientifico: string, max = 25): { p: ParqueMundo; n: number }[] {
   const m = cargarMundo();
   if (!m) return [];
   const clave = Object.entries(m.estrella).find(([, c]) => c === cientifico)?.[0];
   if (!clave) return [];
-  return m.parques
-    .map((p) => ({ p, n: p.estrella[clave] ?? 0 }))
-    .filter((x) => x.n >= 3)
-    .sort((a, b) => b.n - a.n)
-    .slice(0, max);
+  return (
+    m.parques
+      // sin los duplicados ni las reservas que contienen a otro parque (T12: nivel C tras el refinado)
+      .filter((p) => p.nivel !== "C")
+      .map((p) => ({ p, n: p.estrella[clave] ?? 0 }))
+      .filter((x) => x.n >= 3)
+      .sort((a, b) => b.n - a.n)
+      .slice(0, max)
+  );
 }
 
 /** Nombre en español de una especie estrella del mundo (clave de GBIF): el del catálogo, si lo tiene. */

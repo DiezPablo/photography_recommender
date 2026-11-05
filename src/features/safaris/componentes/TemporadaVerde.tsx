@@ -39,6 +39,9 @@ export default function TemporadaVerde({ p, mesActual }: { p: Parque; mesActual:
   const caro = a.caros.includes(7) ? 7 : a.caros[0];
   const lluvia = p.clima?.lluvia_mm;
   const { igual, bajan } = cambiosEspecies(p, barato, caro);
+  // T16: si todas las tarifas vienen de la misma web, se dice (no es un sesgo elegido, es lo que hay publicado)
+  const empresas = new Set(ix.lodges.map((t) => new URL(t.fuente).hostname.replace(/^www\./, "")));
+  const unaEmpresa = ix.lodges.length > 1 && empresas.size === 1 ? [...empresas][0] : null;
   return (
     <div className="temporada-verde">
       <h3>Precio de los lodges</h3>
@@ -87,6 +90,13 @@ export default function TemporadaVerde({ p, mesActual }: { p: Parque; mesActual:
       )}
       <details>
         <summary>Las tarifas ({ix.lodges.length})</summary>
+        {unaEmpresa && (
+          <p className="nota-pie">
+            Todas son de la misma empresa ({unaEmpresa}): son las únicas tarifas por mes publicadas que hemos encontrado
+            para este parque; los demás lodges las dan solo si se piden. El patrón (cuánto bajan en temporada verde)
+            suele ser parecido, pero no el precio.
+          </p>
+        )}
         <ul className="lista-tarifas">
           {ix.lodges.map((t) => {
             const v = t.precios.filter((x): x is number => x !== null);

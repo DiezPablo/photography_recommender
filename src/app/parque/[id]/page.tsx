@@ -10,7 +10,7 @@ import { CONSULTADO as TARIFAS_CONSULTADAS, TARIFAS as TARIFAS_LODGES } from "@/
 import { TASAS } from "@/features/safaris/tasas";
 import { REVISADO, practicoDe } from "@/features/safaris/paises";
 import FotoGrande from "@/ui/FotoGrande";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import MapaEventos from "@/ui/mapa/MapaEventos";
 import AnoSafari from "@/features/safaris/componentes/AnoSafari";
 import { CincoGrandes, CombinaCon } from "@/features/safaris/componentes/ComplementosSafari";
@@ -41,6 +41,7 @@ import {
   especiePorTaxon,
   getParque,
   getParqueMundo,
+  idActual,
   nombreTaxon,
   slugEspecie,
   TEXTO_TIPO,
@@ -95,6 +96,11 @@ export default async function PaginaParque({ params }: Props) {
   const enMundo = getParqueMundo(id);
   const mesHoy = Number(fechaLocal(new Date()).slice(5, 7)) - 1;
   if (!p) {
+    // URLs antiguas con el Q de Wikidata (T05): redirección permanente a la limpia
+    if (!enMundo) {
+      const nuevo = idActual(id);
+      if (nuevo) permanentRedirect(`/parque/${nuevo}`);
+    }
     if (!enMundo || !mundo) notFound();
     const conFicha = Object.fromEntries((cargarSafaris()?.especies ?? []).map((e) => [e.cientifico, slugEspecie(e)]));
     return <FichaMundo p={enMundo} mundo={mundo} mesHoy={mesHoy} conFicha={conFicha} />;

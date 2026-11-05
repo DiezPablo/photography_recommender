@@ -66,7 +66,7 @@ export function CincoGrandes({
 export function CombinaCon({ p, mundo, nombre }: { p: ParqueMundo; mundo: Mundo; nombre: string }) {
   const propia = epocaDe(p);
   const cerca = mundo.parques
-    .filter((x) => x.id !== p.id && x.puntuacion >= 80)
+    .filter((x) => x.id !== p.id && x.puntuacion >= 80 && x.nivel !== "C")
     .map((x) => {
       const km = distanciaKm(p, x);
       const comun = propia.filter((m) => epocaDe(x).includes(m));

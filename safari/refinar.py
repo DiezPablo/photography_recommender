@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import math
 import re
+import unicodedata
 
 from safari import limpieza
 from safari.catalogo import cargar
@@ -93,6 +94,109 @@ def nivel(p: dict, cientifico: dict[str, str] | None = None) -> str:
     return "C"
 
 
+CONTENEDOR = re.compile(r"biosphere|biosfera|\bgreater\b|transboundary|transfronter|\bmab\b", re.IGNORECASE)
+GENERICAS = {
+    "parque",
+    "nacional",
+    "national",
+    "park",
+    "parc",
+    "reserva",
+    "reserve",
+    "game",
+    "nature",
+    "natural",
+    "de",
+    "del",
+    "la",
+    "el",
+    "of",
+    "the",
+    "du",
+    "des",
+    "region",
+    "area",
+    "conservation",
+    "wildlife",
+    "sanctuary",
+    "y",
+    "and",
+}
+DUPLICADO_KM = 150
+
+
+def _sin_acentos(t: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFD", t) if unicodedata.category(c) != "Mn").lower()
+
+
+def nucleo(nombre: str, paises: set[str]) -> str:
+    """Lo que queda del nombre sin palabras genéricas ni países: «W National Park of Benin» y «Parque nacional W de
+    Níger» → «w»."""
+    t = _sin_acentos(nombre)
+    for pais in sorted(paises, key=len, reverse=True):
+        t = re.sub(rf"\b{re.escape(pais)}\b", " ", t)
+    return " ".join(w for w in re.findall(r"[a-z0-9]+", t) if w not in GENERICAS)
+
+
+def _km(a: dict, b: dict) -> float:
+    dy = (a["lat"] - b["lat"]) * 111.32
+    dx = (a["lon"] - b["lon"]) * 111.32 * math.cos(math.radians((a["lat"] + b["lat"]) / 2))
+    return math.hypot(dx, dy)
+
+
+def solapes(parques: list[dict]) -> None:
+    """Parques duplicados o que contienen a otro (T12), en el sitio: las reservas de la biosfera y los «Greater…» que
+    contienen otro parque del catálogo, y los del mismo nombre sin genéricos ni país a menos de 150 km (las tres
+    partes del Parque W), se marcan `solapa` (el id del que se queda) y pasan a nivel C: ya no salen en listas ni en
+    el buscador por defecto, pero se encuentran buscando su nombre."""
+    parques = [p for p in parques if p.get("id") and p.get("lat") is not None and p.get("lon") is not None]
+    paises = {_sin_acentos(p["pais_nombre"]) for p in parques if p.get("pais_nombre")}
+    paises |= {"benin", "niger", "burkina faso", "tanzania", "kenya", "south africa", "botswana", "zambia", "zimbabwe"}
+    peso = lambda p: (bool(p.get("destacado")), p.get("puntuacion") or 0)
+    normales = [p for p in parques if not CONTENEDOR.search(p["nombre"])]
+    for p in parques:
+        p.pop("solapa", None)
+        if CONTENEDOR.search(p["nombre"]) and not p.get("destacado"):
+            dentro = [q for q in normales if _km(p, q) <= (p.get("radio_km") or 0) + 10 and q.get("nivel") != "C"]
+            if dentro:
+                p["solapa"] = max(dentro, key=peso)["id"]
+    grupos: dict[str, list[dict]] = {}
+    for p in normales:
+        if (n := nucleo(p["nombre"], paises)) and not p.get("solapa"):
+            grupos.setdefault(n, []).append(p)
+    for xs in grupos.values():
+        xs.sort(key=peso, reverse=True)
+        for p in xs[1:]:
+            if not p.get("destacado") and _km(p, xs[0]) <= DUPLICADO_KM:
+                p["solapa"] = xs[0]["id"]
+
+
+CON_QID = re.compile(r"^(.+)-q\d+$")
+
+
+def ids_limpios(parques: list[dict]) -> None:
+    """URLs legibles (T05): «serengeti-ngorongoro-biosphere-reserve-q22671002» → «serengeti-ngorongoro-biosphere-reserve».
+    El Q de Wikidata se queda solo si otro parque daría la misma dirección. El id anterior se guarda en
+    `id_antiguo` para redirigir las URLs viejas. En el sitio; idempotente."""
+    from safari.mundo import slug
+
+    parques = [p for p in parques if p.get("id") and p.get("nombre")]
+    usados = {p["id"] for p in parques if not CON_QID.match(p["id"])}
+    bases: dict[str, int] = {}
+    for p in parques:
+        if CON_QID.match(p["id"]):
+            b = slug(p["nombre"])
+            bases[b] = bases.get(b, 0) + 1
+    for p in parques:
+        if not CON_QID.match(p["id"]):
+            continue
+        b = slug(p["nombre"])
+        if b and bases[b] == 1 and b not in usados:
+            p["id_antiguo"] = p["id"]
+            p["id"] = b
+            usados.add(b)
+
+
 def refinar(datos: dict, curados: list[dict] | None = None) -> dict:
     """Devuelve los datos con las especies estrella filtradas, la puntuación recalculada y el nivel de cada parque."""
     areas = nativos(curados)
@@ -113,4 +217,9 @@ def refinar(datos: dict, curados: list[dict] | None = None) -> dict:
         if p.get("operadores_ciudad"):
             p["operadores_ciudad"]["lista"] = limpieza.operadores(p["operadores_ciudad"]["lista"])
     limpieza.repartir_alojamientos(datos["parques"])
+    ids_limpios(datos["parques"])
+    solapes(datos["parques"])
+    for p in datos["parques"]:
+        if p.get("solapa"):
+            p["nivel"] = "C"
     return datos
