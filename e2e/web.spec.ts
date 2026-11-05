@@ -682,3 +682,17 @@ test("navegación en dos mundos: el conmutador y el menú cambian con la secció
       .first(),
   ).toBeAttached();
 });
+
+test.describe("sin JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("se ven la lista de parques, el formulario del planificador y las especies de España", async ({ page }) => {
+    await page.goto("/");
+    expect(await page.locator(".rejilla-safaris li").count()).toBeGreaterThan(5);
+    await page.goto("/planificar");
+    await expect(page.getByLabel("País")).toBeVisible();
+    await expect(page.getByLabel("Noches de safari")).toBeVisible();
+    await page.goto("/espana?modo=donde");
+    await expect(page.locator(".enlaces-especies button, .nota-pie").first()).toBeVisible();
+  });
+});

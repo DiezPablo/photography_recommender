@@ -25,6 +25,7 @@ import {
   cargarMundo,
   cargarRecientes,
   exclusionesDe,
+  fotoFauna,
   cargarSafaris,
   enlaceResenas,
   urlWeb,
@@ -37,7 +38,7 @@ import {
 } from "@/features/safaris/datos";
 import { fechaLocal } from "@/lib/sol";
 import { etiquetaWeb } from "@/features/safaris/modelo";
-import Credito, { esNd } from "@/ui/Credito";
+import Credito, { esNd, origenFoto, textoCredito } from "@/ui/Credito";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -91,6 +92,9 @@ export default async function PaginaParque({ params }: Props) {
   }
   const datos = cargarSafaris()!;
   const recientes = cargarRecientes()?.parques[p.id];
+  // cabecera con fauna (su especie estrella); el paisaje de Commons, solo si no hay foto de fauna
+  const fauna = fotoFauna(p);
+  const fotoHero = fauna?.foto ?? p.foto ?? null;
   const estrella = p.estrella.map(especiePorTaxon).filter((e) => e !== undefined);
   const conFicha = datos.especies.map((e) => e.taxon);
   const respaldo = (recientes?.mamiferos ?? []).map((m) => ({ ...m, foto: null }));
@@ -109,8 +113,13 @@ export default async function PaginaParque({ params }: Props) {
   ];
   return (
     <main className="ficha evento cat-fauna safari">
-      <header className={`ficha-hero${p.foto ? "" : " sin-foto"}`}>
-        {p.foto && <FotoGrande src={p.foto.url} />}
+      <header className={`ficha-hero${fotoHero ? "" : " sin-foto"}`}>
+        {fotoHero && (
+          <FotoGrande
+            src={fotoHero.url}
+            alt={fauna ? `${fauna.especie}, especie estrella de ${p.nombre}` : `Paisaje de ${p.nombre}`}
+          />
+        )}
         <div className="ficha-hero-texto">
           <nav className="migas rotulo" aria-label="Migas">
             <Link href="/">Safaris</Link>
@@ -147,16 +156,16 @@ export default async function PaginaParque({ params }: Props) {
             </a>
           </p>
         </div>
-        {p.foto && (
+        {fotoHero && (
           <figcaption>
-            {p.foto.web ? (
-              <a href={p.foto.web} rel="noopener">
-                {p.foto.autor ?? "Wikimedia Commons"}
+            {fauna ? `${fauna.especie} · ` : ""}
+            {origenFoto(fotoHero) ? (
+              <a href={origenFoto(fotoHero)!} rel="noopener">
+                {textoCredito(fotoHero)}
               </a>
             ) : (
-              p.foto.autor
+              textoCredito(fotoHero)
             )}
-            {p.foto.licencia && ` · ${p.foto.licencia}`}
           </figcaption>
         )}
       </header>

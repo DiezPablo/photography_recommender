@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { fechaLocal } from "@/lib/sol";
 import Planificador from "@/features/safaris/componentes/Planificador";
+import { paisesPlanificador } from "@/features/safaris/datos";
 
 export const metadata: Metadata = {
   title: "Planifica tu ruta de safari",
@@ -23,7 +24,7 @@ export default function PaginaPlanificar() {
           uno y cómo moverte entre ellos. El error más común es meter demasiados parques: aquí te avisamos.
         </p>
       </header>
-      <Planificador mesHoy={mesHoy} />
+      <Planificador mesHoy={mesHoy} paisesIniciales={paisesPlanificador()} />
     </main>
   );
 }

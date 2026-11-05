@@ -34,3 +34,26 @@ def test_webs_oficiales():
     assert w["serengeti"][0] == "https://www.tanzaniaparks.go.tz/"
     assert w["ngorongoro"][0] == "https://www.ncaa.go.tz/"
     assert all(u.startswith("https://") for u, _ in w.values())
+
+
+def test_foto_alternativa(monkeypatch):
+    res = {
+        "results": [
+            {
+                "taxon_photos": [
+                    {"photo": {"license_code": None, "medium_url": "https://x/1/medium.jpg"}},
+                    {
+                        "photo": {
+                            "license_code": "cc-by-nc-nd",
+                            "medium_url": "https://x/2/medium.jpg",
+                            "attribution": "A",
+                        }
+                    },
+                    {"photo": {"license_code": "cc-by", "medium_url": "https://x/3/medium.jpg", "attribution": "B"}},
+                ]
+            }
+        ]
+    }
+    monkeypatch.setattr(inat, "_get", lambda ruta, params, cache=None: res)
+    f = inat.foto_alternativa(1)
+    assert f == {"url": "https://x/3/medium.jpg", "autor": "B", "licencia": "CC-BY"}  # sin ND antes

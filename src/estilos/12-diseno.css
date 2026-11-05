@@ -1885,3 +1885,43 @@ img.foto-nd {
   object-fit: contain !important;
   background: var(--superficie-2);
 }
+
+/* Esqueletos de carga: el hueco con la altura del contenido final (sin saltos al cargar) */
+.esqueleto {
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--superficie-2) 25%, var(--superficie) 50%, var(--superficie-2) 75%);
+  background-size: 200% 100%;
+  animation: esqueleto 1.4s ease-in-out infinite;
+}
+.esqueleto-plan {
+  height: 620px;
+  margin: 12px 0;
+}
+@keyframes esqueleto {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto {
+    animation: none;
+  }
+}
+.mapa-vacio {
+  height: 100%;
+  min-height: 280px;
+  border-radius: 10px;
+  background: var(--superficie-2);
+}
+
+/* Sin foto: silueta de huella, nunca un hueco vacío */
+.sin-foto {
+  background-color: var(--superficie-2);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23b9ab94'%3E%3Cellipse cx='6' cy='9' rx='2' ry='2.6'/%3E%3Cellipse cx='10' cy='5.5' rx='2' ry='2.6'/%3E%3Cellipse cx='14.5' cy='5.5' rx='2' ry='2.6'/%3E%3Cellipse cx='18.5' cy='9' rx='2' ry='2.6'/%3E%3Cpath d='M12 11c-3 0-6 3.6-6 6.4 0 1.7 1.4 2.6 3 2.6 1.2 0 2-.6 3-.6s1.8.6 3 .6c1.6 0 3-.9 3-2.6 0-2.8-3-6.4-6-6.4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 34%;
+}

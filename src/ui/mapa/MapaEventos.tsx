@@ -132,7 +132,11 @@ export default function MapaEventos({
 
   return (
     <div ref={caja} className="mapa-caja" role="region" aria-label={etiqueta} data-listo={listo ? "si" : "no"}>
-      {!listo && <div className="mapa-vacio">Cargando mapa…</div>}
+      {!listo && (
+        <div className="mapa-vacio esqueleto">
+          <span className="sr">Cargando mapa…</span>
+        </div>
+      )}
     </div>
   );
 }

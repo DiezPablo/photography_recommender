@@ -246,7 +246,11 @@ export default function MapaExplorador({ hoy }: { hoy: string }) {
         aria-label="Explorador de fauna"
         data-listo={listo ? "si" : "no"}
       >
-        {!listo && <div className="mapa-vacio">Cargando mapa…</div>}
+        {!listo && (
+          <div className="mapa-vacio esqueleto">
+            <span className="sr">Cargando mapa…</span>
+          </div>
+        )}
       </div>
       <p className="nota-pie">
         {clave && elegida

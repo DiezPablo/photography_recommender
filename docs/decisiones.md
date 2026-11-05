@@ -723,3 +723,13 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   - T21: «©» con autor, licencia y enlace a la original en las fotos de especie (tarjetas, ficha, estrellas del
     parque) y título con el crédito en las miniaturas; las fotos ND no se recortan (`object-fit: contain`). El
     pipeline ya solo guardaba fotos con licencia Creative Commons.
+- Auditoría, bloque 2 (P0 técnico y visual):
+  - T01: lo principal se pinta en el servidor: la primera página del buscador de la portada
+    (`primerosDelIndice`, mismo orden que el navegador), el formulario del planificador (países del servidor y
+    esqueleto del resultado) y la lista de especies de España (`listaEspeciesEspana`). Los mapas siguen en el
+    cliente, con un esqueleto de altura fija. Prueba de Playwright con JavaScript desactivado.
+  - T17: las cabeceras (portada y ficha de parque) son un animal: la foto de su primera especie estrella sin
+    licencia ND (`fotoFauna`), en grande; el paisaje de Commons queda solo si no hay ninguna.
+  - T18: el pipeline buscaba solo la foto por defecto de iNaturalist, que a veces no tiene licencia (la hiena
+    manchada): ahora mira sus otras fotos y coge la primera con licencia abierta, mejor sin ND
+    (`inat.foto_alternativa`). Mientras, y siempre que falte, una silueta de huella en vez del hueco.

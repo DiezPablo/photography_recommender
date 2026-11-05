@@ -95,13 +95,29 @@ def ficha_taxon(t: dict) -> dict:
     }
 
 
+def foto_alternativa(taxon_id: int) -> dict | None:
+    """Si la foto por defecto del taxón no tiene licencia abierta, la primera de sus otras fotos que sí la tenga
+    (mejor sin ND, que no permite recortarla). Unas 19 especies estrella se quedaban sin foto."""
+    d = _get(f"taxa/{taxon_id}", {"locale": "es"})
+    fotos = [tp.get("photo") or {} for t in d.get("results", []) for tp in t.get("taxon_photos", [])]
+    con_licencia = [f for f in fotos if f.get("license_code") and f.get("medium_url")]
+    con_licencia.sort(key=lambda f: "nd" in f["license_code"].lower())
+    if not con_licencia:
+        return None
+    f = con_licencia[0]
+    return {"url": f["medium_url"], "autor": f.get("attribution"), "licencia": f["license_code"].upper()}
+
+
 def taxon(cientifico: str) -> dict | None:
     """Taxón de iNaturalist por nombre científico exacto o sinónimo (Bison bison es Bos bison en iNaturalist)."""
     d = _get("taxa", {"q": cientifico, "rank": "species,subspecies", "locale": "es", "per_page": 10})
     buscado = cientifico.lower()
     for t in d.get("results", []):
         if buscado in (t.get("name", "").lower(), (t.get("matched_term") or "").lower()):
-            return ficha_taxon(t)
+            ficha = ficha_taxon(t)
+            if ficha["foto"] is None:
+                ficha["foto"] = foto_alternativa(t["id"])
+            return ficha
     return None
 
 

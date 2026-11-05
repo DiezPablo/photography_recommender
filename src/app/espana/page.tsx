@@ -5,6 +5,7 @@ import Link from "next/link";
 import PlanificadorEspana from "@/features/espana/PlanificadorEspana";
 import DondeVerEspecie from "@/features/espana/DondeVerEspecie";
 import FindeEspana from "@/features/espana/FindeEspana";
+import { listaEspeciesEspana } from "@/features/espana/datos";
 import InicioEspana from "@/features/espana/InicioEspana";
 import { fechaLocal } from "@/lib/sol";
 
@@ -46,7 +47,7 @@ export default async function PaginaEspana({ searchParams }: Props) {
       {inicio ? (
         <InicioEspana hoy={hoy} />
       ) : donde ? (
-        <DondeVerEspecie hoy={hoy} />
+        <DondeVerEspecie hoy={hoy} inicial={listaEspeciesEspana()} />
       ) : finde ? (
         <FindeEspana hoy={hoy} />
       ) : (

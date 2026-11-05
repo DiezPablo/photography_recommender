@@ -23,12 +23,15 @@ export default function ExploradorSafaris({
   especies,
   mesHoy,
   fotos,
+  iniciales = [],
 }: {
   /** especies estrella: clave de GBIF y nombre */
   especies: { clave: number; nombre: string }[];
   mesHoy: number;
   /** fotos de los destacados (del catálogo curado), por id */
   fotos: Record<string, string>;
+  /** la primera página sin filtros, pintada en el servidor (se ve sin JavaScript y mientras carga el índice) */
+  iniciales?: FilaIndice[];
 }) {
   const [filas, setFilas] = useState<FilaIndice[] | null>(null);
   const [error, setError] = useState(false);
@@ -54,7 +57,7 @@ export default function ExploradorSafaris({
   }, []);
 
   const lista = useMemo(() => {
-    if (!filas) return [];
+    if (!filas) return iniciales.map((f) => ({ f, epoca: buenaEpoca(f)?.includes(mes + 1) ?? false }));
     const q = normal(texto.trim());
     const clave = especie ? Number(especie) : null;
     const deZonas = new Set(buscarZonas(texto).map((z) => z.parque));
@@ -73,7 +76,7 @@ export default function ExploradorSafaris({
           (!q || deZonas.has(f.id) || normal(`${f.n} ${f.p ?? ""}`).includes(q)),
       )
       .sort((a, b) => Number(b.epoca) - Number(a.epoca) || Number(b.f.d) - Number(a.f.d) || b.f.s - a.f.s);
-  }, [filas, texto, continente, especie, soloEpoca, mes, todos, cuenta, ninos]);
+  }, [filas, iniciales, texto, continente, especie, soloEpoca, mes, todos, cuenta, ninos]);
   const ocultos = (filas ?? []).filter((f) => !esDestino(f)).length;
 
   const zonas = buscarZonas(texto);
@@ -196,7 +199,7 @@ export default function ExploradorSafaris({
               ? `${lista.length.toLocaleString("es-ES")} parques · primero los que están en buena época en ${MESES[mes]}`
               : error
                 ? "No se pudieron cargar los parques"
-                : "Cargando parques…"}
+                : `Primero los que están en buena época en ${MESES[mes]}`}
           </h2>
           <ul className="rejilla-especies rejilla-safaris">
             {lista.slice(0, limite).map(({ f, epoca }) => (

@@ -510,3 +510,35 @@ export function deteccionEspecie(clave: string): { pct: (number | null)[]; lista
   if (!hay) return null;
   return { pct: con.map((c, i) => (listas[i] ? Math.round((1000 * c) / listas[i]) / 10 : null)), listas };
 }
+
+export interface EspecieEnLista {
+  k: string;
+  n: string | null;
+  c: string | null;
+  clase: string | null;
+  estado: "invasora" | "aviso" | null;
+  nota: string | null;
+  celdas: number;
+}
+let listaEspecies: EspecieEnLista[] | undefined;
+/** Las especies de España para el buscador, de más a menos cuadrículas (una sola vez por proceso). */
+export function listaEspeciesEspana(): EspecieEnLista[] {
+  if (listaEspecies) return listaEspecies;
+  const e = cargarEspana();
+  if (!e) return [];
+  const celdas = new Map<string, number>();
+  for (const c of Object.values(e.celdas)) for (const k of Object.keys(c.e)) celdas.set(k, (celdas.get(k) ?? 0) + 1);
+  listaEspecies = Object.entries(e.especies)
+    .map(([k, v]) => ({
+      k,
+      n: v.n,
+      c: v.c,
+      clase: v.clase ?? null,
+      estado: v.estado ?? null,
+      nota: v.nota ?? null,
+      celdas: celdas.get(k) ?? 0,
+    }))
+    .filter((x) => x.celdas > 0)
+    .sort((a, b) => b.celdas - a.celdas);
+  return listaEspecies;
+}

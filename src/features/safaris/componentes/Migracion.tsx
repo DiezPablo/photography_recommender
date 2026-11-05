@@ -159,7 +159,11 @@ export default function Migracion({ mesHoy }: { mesHoy: number }) {
         aria-label="Mapa de la migración"
         data-listo={listo ? "si" : "no"}
       >
-        {!listo && <div className="mapa-vacio">Cargando mapa…</div>}
+        {!listo && (
+          <div className="mapa-vacio esqueleto">
+            <span className="sr">Cargando mapa…</span>
+          </div>
+        )}
       </div>
       <p className="nota-pie leyenda-migracion">
         <span className="pto zona" /> zona típica del mes · <span className="pto visto" /> ñus vistos en los últimos{" "}

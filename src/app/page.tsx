@@ -10,6 +10,8 @@ import {
   cargarRecientes,
   cargarSafaris,
   cifras,
+  fotoFauna,
+  primerosDelIndice,
   enTemporada,
   especiePorTaxon,
   nombreEstrella,
@@ -18,7 +20,7 @@ import {
   slugEspecie,
 } from "@/features/safaris/datos";
 import { fechaLocal } from "@/lib/sol";
-import { esNd, textoCredito } from "@/ui/Credito";
+import { esNd, origenFoto, textoCredito } from "@/ui/Credito";
 
 export const metadata: Metadata = {
   title: "Safaris",
@@ -40,14 +42,22 @@ export default function PaginaSafaris() {
   const destinos = (mundo?.parques ?? []).filter((p) => p.nivel !== "C");
   const c = cifras();
   // la foto de la portada: el primer destacado en buena época este mes que tenga foto
-  const hero = ahora.find((p) => p.foto) ?? parques.find((p) => p.foto);
+  // la cabecera: un animal (especie estrella) del primer destacado en buena época que tenga foto
+  const conFauna = [...ahora, ...parques].map((p) => ({ p, f: fotoFauna(p) })).find((x) => x.f);
+  const hero = conFauna?.p ?? ahora.find((p) => p.foto) ?? parques.find((p) => p.foto);
+  const fotoHero = conFauna?.f?.foto ?? hero?.foto ?? null;
   const especies = Object.keys(mundo?.estrella ?? {})
     .map((k) => ({ clave: Number(k), nombre: nombreEstrella(k) }))
     .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
   return (
     <main className="calendario fauna safaris">
       <figure className="portada-hero">
-        {hero?.foto && <FotoGrande src={hero.foto.url} />}
+        {fotoHero && (
+          <FotoGrande
+            src={fotoHero.url}
+            alt={conFauna?.f ? `${conFauna.f.especie}, especie estrella de ${conFauna.p.nombre}` : hero?.nombre}
+          />
+        )}
         <div className="portada-hero-texto">
           <p className="rotulo">Atlas de fauna · {MESES[mesHoy]}</p>
           <h1>Dónde y cuándo ver cada animal</h1>
@@ -60,17 +70,16 @@ export default function PaginaSafaris() {
             <Link href="/migracion">Dónde está la migración</Link>
           </div>
         </div>
-        {hero?.foto && (
+        {fotoHero && hero && (
           <figcaption>
-            {hero.nombre} ·{" "}
-            {hero.foto.web ? (
-              <a href={hero.foto.web} rel="noopener">
-                {hero.foto.autor ?? "Wikimedia Commons"}
+            {conFauna?.f ? `${conFauna.f.especie} · ${hero.nombre}` : hero.nombre} ·{" "}
+            {origenFoto(fotoHero) ? (
+              <a href={origenFoto(fotoHero)!} rel="noopener">
+                {textoCredito(fotoHero)}
               </a>
             ) : (
-              hero.foto.autor
+              textoCredito(fotoHero)
             )}
-            {hero.foto.licencia && ` · ${hero.foto.licencia}`}
           </figcaption>
         )}
       </figure>
@@ -160,6 +169,7 @@ export default function PaginaSafaris() {
             especies={especies}
             mesHoy={mesHoy}
             fotos={Object.fromEntries(parques.filter((p) => p.foto).map((p) => [p.id, p.foto!.url]))}
+            iniciales={primerosDelIndice(mesHoy)}
           />
           <noscript>
             <ul className="lista-cercanos">

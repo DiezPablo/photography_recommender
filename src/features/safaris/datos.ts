@@ -3,8 +3,25 @@ import "server-only";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { leerDatos } from "@/lib/datos";
-import type { EspecieSafari, Mundo, Parque, ParqueMundo, Recientes, Safaris } from "@/features/safaris/modelo";
-import { capitalizar, paisesDe, slugEspecie, slugTexto } from "@/features/safaris/modelo";
+import type {
+  EspecieSafari,
+  FilaIndice,
+  FotoSafari,
+  Mundo,
+  Parque,
+  ParqueMundo,
+  Recientes,
+  Safaris,
+} from "@/features/safaris/modelo";
+import {
+  buenaEpoca,
+  capitalizar,
+  esDestino,
+  nombreTaxon as nombreTaxonDe,
+  paisesDe,
+  slugEspecie,
+  slugTexto,
+} from "@/features/safaris/modelo";
 
 export * from "@/features/safaris/modelo";
 
@@ -106,4 +123,41 @@ export function cifras(): { destacados: number; destinos: number; paises: number
     paises: new Set((destinos.length ? destinos : parques).map((p) => p.pais)).size,
     especies: cargarSafaris()?.especies.length ?? 0,
   };
+}
+
+let indice: FilaIndice[] | null | undefined;
+/** El índice del buscador (safaris_indice.json) en el servidor: para pintar la primera página sin JavaScript. */
+export function cargarIndice(): FilaIndice[] {
+  if (indice === undefined) indice = leerDatos<{ parques: FilaIndice[] }>("safaris_indice.json")?.parques ?? null;
+  return indice ?? [];
+}
+
+/** La primera página del buscador sin filtros (destinos de fauna, primero los que están en buena época ese mes),
+ * tal como la ordena el navegador. */
+export function primerosDelIndice(mes: number, n = 30): FilaIndice[] {
+  return cargarIndice()
+    .filter(esDestino)
+    .map((f) => ({ f, epoca: buenaEpoca(f)?.includes(mes + 1) ?? false }))
+    .sort((a, b) => Number(b.epoca) - Number(a.epoca) || Number(b.f.d) - Number(a.f.d) || b.f.s - a.f.s)
+    .slice(0, n)
+    .map((x) => x.f);
+}
+
+/** Países del planificador, de más a menos interés (como en el navegador). */
+export function paisesPlanificador(): string[] {
+  const interes = new Map<string, number>();
+  for (const f of cargarIndice().filter(esDestino)) if (f.p) interes.set(f.p, (interes.get(f.p) ?? 0) + f.s);
+  return [...interes.entries()].sort((a, b) => b[1] - a[1]).map(([p]) => p);
+}
+
+/** La foto de cabecera de un parque: su primera especie estrella con foto que se pueda recortar (sin licencia
+ * ND), en grande. Las cabeceras eran paisajes de Commons; el paisaje queda solo si no hay ninguna. */
+export function fotoFauna(p: Parque): { foto: FotoSafari; especie: string } | null {
+  for (const t of p.estrella) {
+    const e = especiePorTaxon(t);
+    const f = e?.foto;
+    if (!e || !f || f.licencia?.toUpperCase().includes("ND")) continue;
+    return { foto: { ...f, url: f.url.replace("/medium.", "/large.") }, especie: nombreTaxonDe(e) };
+  }
+  return null;
 }

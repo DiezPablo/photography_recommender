@@ -44,15 +44,17 @@ const titulo = (l: Lugar) =>
 const nombre = (e: Pick<EspecieLista, "n" | "c">) => e.n ?? e.c ?? "Especie sin nombre";
 const sinTildes = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
-export default function DondeVerEspecie({ hoy }: { hoy: string }) {
+export default function DondeVerEspecie({ hoy, inicial }: { hoy: string; inicial?: EspecieLista[] }) {
   const [parametros, actualizar] = useParametrosUrl();
   const clave = parametros.get("k");
   const mes = parametros.get("mes") === "todo" ? null : Number(parametros.get("mes") ?? Number(hoy.slice(5, 7)) - 1);
   const [busqueda, setBusqueda] = useState("");
-  const [lista, setLista] = useState<EspecieLista[] | null>(null);
+  // la lista llega pintada desde el servidor (se ve sin JavaScript); si no, se pide
+  const [lista, setLista] = useState<EspecieLista[] | null>(inicial ?? null);
   const [res, setRes] = useState<{ clave: string; lugares: Lugar[] | null; cita: string | null }>();
 
   useEffect(() => {
+    if (inicial) return;
     let vivo = true;
     fetch("/espana/especies.json")
       .then((r) => (r.ok ? r.json() : { especies: [] }))
@@ -61,7 +63,7 @@ export default function DondeVerEspecie({ hoy }: { hoy: string }) {
     return () => {
       vivo = false;
     };
-  }, []);
+  }, [inicial]);
 
   const claveConsulta = clave ? `${clave}|${mes ?? "todo"}` : "";
   useEffect(() => {

@@ -48,7 +48,7 @@ function conMasNoches(plan: Plan, otro: Plan): string | null {
   return cambios.length ? cambios.join(", ") : null;
 }
 
-export default function Planificador({ mesHoy }: { mesHoy: number }) {
+export default function Planificador({ mesHoy, paisesIniciales = [] }: { mesHoy: number; paisesIniciales?: string[] }) {
   const { especies: datos, indice } = useDatosNavegador();
   const [parametros, actualizar] = useParametrosUrl();
   const pais = parametros.get("pais") ?? PAIS_INICIAL;
@@ -61,7 +61,43 @@ export default function Planificador({ mesHoy }: { mesHoy: number }) {
   const conNinos = parametros.get("ninos") === "1";
   const volar = parametros.get("volar") === "1";
 
-  if (!datos || !indice) return <p className="nota-pie">Cargando parques…</p>;
+  // sin los datos aún (o sin JavaScript): el formulario básico, ya con su valor, y el hueco del resultado
+  if (!datos || !indice)
+    return (
+      <>
+        <section className="seccion formulario-plan">
+          <label className="campo">
+            <span className="rotulo">País</span>
+            <select value={pais} onChange={(e) => actualizar({ pais: e.target.value, ver: null })}>
+              {(paisesIniciales.length ? paisesIniciales : [pais]).map((p) => (
+                <option key={p}>{p}</option>
+              ))}
+            </select>
+          </label>
+          <label className="campo">
+            <span className="rotulo">Noches de safari</span>
+            <select value={noches} onChange={(e) => actualizar({ noches: e.target.value, dias: null })}>
+              {Array.from({ length: MAX_NOCHES }, (_, i) => i + 1).map((n) => (
+                <option key={n} value={n}>
+                  {n} {n === 1 ? "noche" : "noches"}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="campo">
+            <span className="rotulo">Mes del viaje</span>
+            <select value={mes} onChange={(e) => actualizar({ mes: e.target.value })}>
+              {MESES.map((m, i) => (
+                <option key={m} value={i}>
+                  {m}
+                </option>
+              ))}
+            </select>
+          </label>
+        </section>
+        <div className="esqueleto esqueleto-plan" aria-busy="true" aria-label="Calculando la ruta" />
+      </>
+    );
 
   const filas = [...indice.values()].filter(esDestino);
   // países ordenados por interés total de sus parques (los de safari primero)
