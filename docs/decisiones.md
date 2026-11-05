@@ -877,3 +877,11 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   - T47: estados vacíos con qué es, para qué sirve y un botón para empezar (mis especies, diario, mi viaje), y
     copia en JSON para descargar y recuperar lo que solo vive en el navegador (`ui/CopiaLocal.tsx`; el diario ya
     la tenía).
+- Auditoría, bloque 5, tanda 5 (especies):
+  - T25 y T45: en la ficha de las 25 especies principales, «Para verla y fotografiarla»: estado en la Lista Roja de
+    la UICN, tamaño, cuándo está activa, distancia típica y focal, qué fotografiar y un consejo
+    (`features/safaris/fichasEspecie.ts`, escrito a mano y en la revisión anual). Ética: en los rinocerontes se
+    recuerda no compartir la ubicación de las fotos.
+  - T22 quedó hecho con T19 (campo `posicion` en las fotos elegidas).
+- Bloque 5 completo. Pendiente, por falta de fuentes que se puedan citar: tarifas de otras cadenas en el Serengeti
+  y el Ngorongoro (T16) y hacia dónde mira cada hide de España (T27).

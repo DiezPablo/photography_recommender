@@ -26,6 +26,7 @@ QUE = {
     "fenomenos.ts": "Fenómenos de fauna en España (berrea, grullas, Estrecho…): meses en las fuentes.",
     "hides.ts": "Hides y salidas guiadas en España: que la web siga activa, temporadas y precios.",
     "fotografia.ts": "Dificultad y consejos de fotografía por especie en España.",
+    "fichasEspecie.ts": "Estado UICN, tamaño y consejos de las especies principales: Lista Roja y guías de campo.",
     "fotografiaParques.ts": "Fotografía en cada parque (salir de pista, horarios, nocturnos, hides): normas del parque.",
     "normas.ts": "Normas de fotografía de fauna: enlaces oficiales (BOE, AESA, ENAIRE, parques nacionales).",
 }

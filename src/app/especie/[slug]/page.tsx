@@ -18,6 +18,7 @@ import {
 import { fechaLocal } from "@/lib/sol";
 import { eventosDeEspecie } from "@/features/safaris/eventos";
 import ParquesEspecie from "@/features/safaris/componentes/ParquesEspecie";
+import { FICHAS, REVISADO_FICHAS, TEXTO_UICN } from "@/features/safaris/fichasEspecie";
 import { TASAS } from "@/features/safaris/tasas";
 import { EnlaceFuente, textoMeses } from "@/features/safaris/componentes/Fenomenos";
 
@@ -94,6 +95,46 @@ export default async function PaginaEspecieSafari({ params }: Props) {
         </div>
       </header>
       <div className="ficha-grid">
+        {FICHAS[e.cientifico] && (
+          <section className="seccion ficha-especie-datos" aria-labelledby="para-verla">
+            <h2 className="rotulo" id="para-verla">
+              Para verla y fotografiarla
+            </h2>
+            <dl className="datos-foto">
+              <div>
+                <dt>Estado (UICN)</dt>
+                <dd>
+                  <span className={`uicn uicn-${FICHAS[e.cientifico].uicn}`}>{FICHAS[e.cientifico].uicn}</span>{" "}
+                  {TEXTO_UICN[FICHAS[e.cientifico].uicn]}
+                </dd>
+              </div>
+              <div>
+                <dt>Tamaño</dt>
+                <dd>{FICHAS[e.cientifico].tamano}</dd>
+              </div>
+              <div>
+                <dt>Cuándo está activa</dt>
+                <dd>{FICHAS[e.cientifico].actividad}</dd>
+              </div>
+              <div>
+                <dt>Distancia y focal</dt>
+                <dd>{FICHAS[e.cientifico].distancia}</dd>
+              </div>
+              <div>
+                <dt>Qué fotografiar</dt>
+                <dd>{FICHAS[e.cientifico].fotogenico.join(" · ")}</dd>
+              </div>
+              <div>
+                <dt>Consejo</dt>
+                <dd>{FICHAS[e.cientifico].consejo}</dd>
+              </div>
+            </dl>
+            <p className="nota-pie">
+              Estado según la Lista Roja de la UICN; tamaño y conducta, de guías de campo (revisado el {REVISADO_FICHAS}
+              ).
+            </p>
+          </section>
+        )}
         {eventosDeEspecie(e.cientifico).length > 0 && (
           <section className="seccion">
             <h2 className="rotulo">Momentos especiales</h2>

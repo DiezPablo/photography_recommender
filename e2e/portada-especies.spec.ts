@@ -40,3 +40,11 @@ test("/especies: filtros por grupo, continente y buena época", async ({ page })
   await page.getByLabel(/En buena época en/).check();
   await expect(page.locator(".filtros-especies-mas")).toContainText(/\d+ especies?/);
 });
+
+test("ficha de especie: estado UICN, tamaño y consejos de fotografía", async ({ page }) => {
+  await page.goto("/especie/panthera-leo");
+  const datos = page.locator(".ficha-especie-datos");
+  await expect(datos).toContainText("Vulnerable");
+  await expect(datos).toContainText("Cuándo está activa");
+  await expect(datos).toContainText("Distancia y focal");
+});

@@ -2905,3 +2905,26 @@ html[data-mes="12"] [data-m="12"] {
     font-size: 0.78rem;
   }
 }
+/* estado UICN (T45) */
+.uicn {
+  display: inline-block;
+  min-width: 2.2em;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font: 700 0.75rem var(--f-mono);
+  text-align: center;
+  color: #fff;
+}
+.uicn-LC,
+.uicn-NT {
+  background: #4f6b57;
+}
+.uicn-VU {
+  background: #8a6a12;
+}
+.uicn-EN {
+  background: #a5502f;
+}
+.uicn-CR {
+  background: #8f2b2b;
+}
