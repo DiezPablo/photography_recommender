@@ -38,8 +38,6 @@ export default function PaginaSafaris() {
     .sort((a, b) => puntuacionAhora(b, mesHoy, recientes) - puntuacionAhora(a, mesHoy, recientes))
     .slice(0, 6);
   const mundo = cargarMundo();
-  // destinos de fauna (niveles A y B); el resto de espacios protegidos solo sale si se busca
-  const destinos = (mundo?.parques ?? []).filter((p) => p.nivel !== "C");
   const c = cifras();
   // la foto de la portada: el primer destacado en buena época este mes que tenga foto
   // la cabecera: un animal (especie estrella) del primer destacado en buena época que tenga foto

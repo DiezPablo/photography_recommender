@@ -21,7 +21,7 @@ from safari.comun.ficheros import escribir_json
 from safari.frecuencia import frecuencia, muestra
 
 DIAS_RECIENTES = 30
-MIN_OBS_ESPECIE = 3  # con una o dos observaciones puede ser un animal de paso o un error: no cuenta como «se ve aquí»
+MIN_OBS_ESPECIE = 20  # con menos puede ser un animal de paso, un error o un zoo cercano: no cuenta como «se ve aquí»
 GRUPOS = (("Mammalia", 30), ("Aves", 12), ("Reptilia", 6))
 _ERRORES = (requests.RequestException, KeyError, ValueError)
 
@@ -127,6 +127,19 @@ def calcular(parques: list[dict], con_clima: bool = True, con_alojamientos: bool
         lugares = sorted(por_especie[t["taxon"]], key=lambda x: -x["n"])
         especies.append({**t, "cientifico": c, "parques": [x for x in lugares if x["n"] >= MIN_OBS_ESPECIE]})
     especies.sort(key=lambda e: -sum(x["n"] for x in e["parques"]))
+    pendientes = sorted(
+        {
+            x["cientifico"]
+            for p in salida
+            for xs in (p.get("especies") or {}).values()
+            for x in xs
+            if not x.get("nombre")
+        }
+    )
+    print(
+        f"  nombres en español pendientes (se enseña el científico): {len(pendientes)}: {', '.join(pendientes[:40])}",
+        flush=True,
+    )
     return {"parques": salida, "especies": especies}
 
 

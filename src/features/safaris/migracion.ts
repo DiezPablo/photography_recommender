@@ -16,6 +16,8 @@ export interface ZonaMigracion {
   base: string;
   /** parque del catálogo donde está */
   parque: string;
+  /** otros parques del catálogo desde los que se ve lo mismo (los cruces del Mara, desde Kogatende o el Masái Mara) */
+  tambien?: string[];
   cruces?: boolean;
   partos?: boolean;
   /** lluvias largas: hay migración, pero el parque está en temporada verde (fuera de su mejor época) */
@@ -96,6 +98,7 @@ export const MIGRACION: ZonaMigracion[] = [
     que: "Empiezan los cruces del río Mara, el momento más buscado. Dónde y cuándo cruzan no se puede prever: hay que esperar en la orilla.",
     base: "Kogatende (norte del Serengeti) o el Mara Triangle",
     parque: "masai-mara",
+    tambien: ["serengeti"],
     cruces: true,
   },
   {
@@ -107,6 +110,7 @@ export const MIGRACION: ZonaMigracion[] = [
     que: "Cruces del Mara casi a diario y el grueso de las manadas en el Masái Mara: el pico de la temporada (y de precios).",
     base: "Masái Mara (reserva o conservancies) o Kogatende",
     parque: "masai-mara",
+    tambien: ["serengeti"],
     cruces: true,
   },
   {
@@ -118,6 +122,7 @@ export const MIGRACION: ZonaMigracion[] = [
     que: "Siguen los cruces, en ambos sentidos; el Mara está lleno de manadas y depredadores.",
     base: "Masái Mara o Kogatende",
     parque: "masai-mara",
+    tambien: ["serengeti"],
     cruces: true,
   },
   {
@@ -129,6 +134,7 @@ export const MIGRACION: ZonaMigracion[] = [
     que: "Últimos cruces; con las primeras lluvias cortas las manadas empiezan a bajar hacia el sur.",
     base: "Kogatende, Lobo o Masái Mara",
     parque: "serengeti",
+    tambien: ["masai-mara"],
     cruces: true,
   },
   {

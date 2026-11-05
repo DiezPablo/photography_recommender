@@ -36,6 +36,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+// con menos observaciones puede ser un animal de paso, uno mal identificado o de un zoo cercano: no se lista
+// (el pipeline aplica el mismo umbral, MIN_OBS_ESPECIE en safari/cli.py)
+const MIN_OBS = 20;
+
 export default async function PaginaEspecieSafari({ params }: Props) {
   const e = getEspecieSafari((await params).slug);
   if (!e) notFound();
@@ -43,10 +47,10 @@ export default async function PaginaEspecieSafari({ params }: Props) {
   const mesHoy = Number(fechaLocal(new Date()).slice(5, 7)) - 1;
   const parques = e.parques
     .map((x) => ({ ...x, p: getParque(x.id)!, mes: recientes?.parques[x.id]?.estrella[String(e.taxon)] ?? 0 }))
-    .filter((x) => x.p);
+    .filter((x) => x.p && x.n >= MIN_OBS);
   const max = Math.max(1, ...parques.map((x) => x.n));
   const destacados = new Set(parques.map((x) => x.id));
-  const mundo = parquesMundoDe(e.cientifico).filter((x) => !destacados.has(x.p.id));
+  const mundo = parquesMundoDe(e.cientifico).filter((x) => !destacados.has(x.p.id) && x.n >= MIN_OBS);
   const paises = cargarMundo()?.paises ?? {};
   return (
     <main className="ficha evento cat-fauna especie">
@@ -152,8 +156,11 @@ export default async function PaginaEspecieSafari({ params }: Props) {
         </section>
       )}
       <p className="nota-pie">
-        Observaciones verificables de iNaturalist alrededor de cada parque: dependen también de cuánta gente va y sube
-        fotos. Foto: {e.foto?.licencia}.
+        Dos fuentes distintas: «Mejores parques» cuenta las observaciones de iNaturalist con grado de investigación
+        alrededor de cada parque destacado; «Más parques del mundo» cuenta los registros de GBIF (que reúne iNaturalist,
+        eBird, museos y censos) dentro de cada parque. Por eso las cifras no se comparan entre una lista y otra. Solo se
+        listan parques con al menos {MIN_OBS} observaciones, y todas dependen de cuánta gente va y sube fotos. Foto:{" "}
+        {e.foto?.licencia}.
       </p>
     </main>
   );

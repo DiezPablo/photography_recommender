@@ -16,6 +16,7 @@ import requests
 
 from safari.comun.cache import CacheJson
 from safari.comun.red import sesion
+from safari.nombres_comunes import nombre_comun
 
 API = "https://api.inaturalist.org/v1"
 CACHE = CacheJson(prefijo="inat_", max_edad_s=25 * 86400)
@@ -85,11 +86,10 @@ def foto(t: dict) -> dict | None:
 
 
 def ficha_taxon(t: dict) -> dict:
-    nombre = t.get("preferred_common_name")
     return {
         "taxon": t["id"],
         "cientifico": t["name"],
-        "nombre": nombre[0].upper() + nombre[1:] if nombre else None,
+        "nombre": nombre_comun(t["name"], t.get("preferred_common_name")),
         "grupo": t.get("iconic_taxon_name"),
         "foto": foto(t),
     }

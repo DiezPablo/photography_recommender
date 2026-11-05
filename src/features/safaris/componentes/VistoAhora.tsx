@@ -3,6 +3,7 @@
 // si no responde, se muestra lo que trajo la última actualización de los datos.
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { nombreComunCon, type ReglasNombres } from "@/features/safaris/modelo";
 import { slugEspecie } from "@/features/safaris/modelo";
 
 interface Fila {
@@ -24,6 +25,7 @@ export default function VistoAhora({
   respaldo,
   conFicha,
   excluir = [],
+  reglas,
 }: {
   lat: number;
   lon: number;
@@ -33,6 +35,8 @@ export default function VistoAhora({
   conFicha: number[];
   /** domésticas y especies imposibles en este parque (exclusiones.csv) */
   excluir?: string[];
+  /** reglas de nombres comunes (diccionario y nombres propios), para los nombres que llegan en directo */
+  reglas?: ReglasNombres;
 }) {
   const [filas, setFilas] = useState<Fila[] | null>(null);
   const [directo, setDirecto] = useState(false);
@@ -60,7 +64,9 @@ export default function VistoAhora({
             }) => ({
               taxon: r.taxon.id,
               cientifico: r.taxon.name,
-              nombre: r.taxon.preferred_common_name ?? null,
+              nombre: reglas
+                ? nombreComunCon(r.taxon.name, r.taxon.preferred_common_name, reglas)
+                : (r.taxon.preferred_common_name ?? null),
               n: r.count,
               foto: r.taxon.default_photo?.license_code ? r.taxon.default_photo.square_url : null,
               credito: r.taxon.default_photo?.license_code
@@ -75,7 +81,7 @@ export default function VistoAhora({
     return () => {
       vivo = false;
     };
-  }, [lat, lon, radioKm, respaldo]);
+  }, [lat, lon, radioKm, respaldo, reglas]);
 
   const lista = (filas ?? respaldo)
     .filter((f) => !excluir.some((c) => f.cientifico === c || f.cientifico.startsWith(`${c} `)))

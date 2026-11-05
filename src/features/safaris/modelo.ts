@@ -310,8 +310,9 @@ export function capitalizar(nombre: string): string {
   return nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase();
 }
 
-export function nombreEspecieMundo(m: Pick<Mundo, "especies">, clave: number | string): string {
+export function nombreEspecieMundo(m: Pick<Mundo, "especies">, clave: number | string, reglas?: ReglasNombres): string {
   const e = m.especies[String(clave)];
+  if (reglas) return nombreComunCon(e?.c, e?.n, reglas) ?? e?.c ?? "Especie sin nombre común";
   return e?.n ? limpiarNombre(e.n) : (e?.c ?? "Especie sin nombre común");
 }
 
@@ -393,4 +394,56 @@ export function etiquetaWeb(url: string | null | undefined): string {
   } catch {
     return "Más información";
   }
+}
+
+/** Reglas de nombres comunes (safari/recursos/nombres_safari.csv y nombres_propios.txt, las mismas del pipeline). */
+export interface ReglasNombres {
+  diccionario: Record<string, string>;
+  propios: string[];
+}
+
+/** El nombre común que se enseña: el del diccionario o el bruto limpio (sin guion blando, «de el» → «del»,
+ * mayúscula solo en la inicial y en los nombres propios). null si no hay o es el científico. */
+export function nombreComunCon(
+  cientifico: string | null | undefined,
+  bruto: string | null | undefined,
+  reglas: ReglasNombres,
+): string | null {
+  if (cientifico) {
+    const sp = cientifico.split(" ").slice(0, 2).join(" ");
+    const d = reglas.diccionario[cientifico] ?? reglas.diccionario[sp];
+    if (d) return d;
+  }
+  if (!bruto) return null;
+  const limpio = limpiarNombre(bruto.replace(/­/g, "").replace(/\s+/g, " ").trim());
+  if (!limpio || (cientifico && limpio.toLowerCase() === cientifico.toLowerCase())) return null;
+  const propios = new Set(reglas.propios);
+  const texto = limpio
+    .split(" ")
+    .map((w, i) =>
+      i === 0
+        ? w
+        : w
+            .split("-")
+            .map((x) =>
+              propios.has(x) || propios.has(x[0]?.toUpperCase() + x.slice(1).toLowerCase()) ? x : x.toLowerCase(),
+            )
+            .join("-"),
+    )
+    .join(" ")
+    .replace(/\bde El\b(?! [A-ZÁÉÍÓÚ])/g, "de el")
+    .replace(/\bde el\b/g, "del");
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+/** Nombre corto de un aeropuerto, el suyo y no el de la ciudad que da OurAirports: el de Kilimanjaro (JRO) figura
+ * en «Arusha», y eso hacía leer «Arusha (JRO)» cuando Arusha tiene su propio aeropuerto (ARK). */
+export function nombreAeropuerto(a: { nombre: string; ciudad: string | null }): string {
+  const corto = a.nombre
+    .replace(/\b(International|Regional|Domestic)\b/gi, "")
+    .replace(/\b(Airport|Airfield|Aerodrome|Airstrip)\b/gi, "")
+    .replace(/\b(Aeropuerto|Aeroporto|Aéroport)( Internacional| International| Internacional de| de)?\b/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+  return corto || a.ciudad || a.nombre;
 }

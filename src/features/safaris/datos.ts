@@ -1,5 +1,6 @@
 // Lectura de public/datos/safaris.json y safaris_recientes.json (solo servidor).
 import "server-only";
+import { nombreComun } from "@/features/safaris/nombres";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { leerDatos } from "@/lib/datos";
@@ -15,7 +16,6 @@ import type {
 } from "@/features/safaris/modelo";
 import {
   buenaEpoca,
-  capitalizar,
   esDestino,
   nombreTaxon as nombreTaxonDe,
   paisesDe,
@@ -32,13 +32,39 @@ function leer<T>(nombre: string): T | null {
 let cache: Safaris | null | undefined;
 let cacheRecientes: Recientes | null | undefined;
 
+/** Nombres comunes con las mismas reglas que el pipeline (diccionario, mayúsculas, guion blando), también para
+ * los datos publicados antes de que el pipeline las aplicara. */
+function conNombres<T extends { cientifico: string; nombre?: string | null }>(x: T): T {
+  return { ...x, nombre: nombreComun(x.cientifico, x.nombre) };
+}
+
 export function cargarSafaris(): Safaris | null {
-  if (cache === undefined) cache = leer<Safaris>("safaris.json");
+  if (cache === undefined) {
+    const d = leer<Safaris>("safaris.json");
+    cache = d && {
+      ...d,
+      especies: d.especies.map(conNombres),
+      parques: d.parques.map((p) => ({
+        ...p,
+        especies: p.especies
+          ? Object.fromEntries(Object.entries(p.especies).map(([g, xs]) => [g, xs.map(conNombres)]))
+          : p.especies,
+      })),
+    };
+  }
   return cache;
 }
 
 export function cargarRecientes(): Recientes | null {
-  if (cacheRecientes === undefined) cacheRecientes = leer<Recientes>("safaris_recientes.json");
+  if (cacheRecientes === undefined) {
+    const d = leer<Recientes>("safaris_recientes.json");
+    cacheRecientes = d && {
+      ...d,
+      parques: Object.fromEntries(
+        Object.entries(d.parques).map(([id, r]) => [id, { ...r, mamiferos: r.mamiferos.map(conNombres) }]),
+      ),
+    };
+  }
   return cacheRecientes;
 }
 
@@ -83,9 +109,9 @@ export function nombreEstrella(clave: number | string): string {
   const m = cargarMundo();
   const cientifico = m?.estrella[String(clave)];
   const c = cientifico ? cargarSafaris()?.especies.find((e) => e.cientifico === cientifico) : undefined;
-  if (c?.nombre) return capitalizar(c.nombre);
-  const n = m?.especies[String(clave)]?.n;
-  return n ? capitalizar(n) : (cientifico ?? "Especie sin nombre común");
+  if (c?.nombre) return c.nombre;
+  const n = nombreComun(cientifico, m?.especies[String(clave)]?.n);
+  return n ?? cientifico ?? "Especie sin nombre común";
 }
 
 /** Países con parques destacados: slug → nombre (para /safari-en/tanzania). */

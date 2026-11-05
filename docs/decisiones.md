@@ -733,3 +733,17 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   - T18: el pipeline buscaba solo la foto por defecto de iNaturalist, que a veces no tiene licencia (la hiena
     manchada): ahora mira sus otras fotos y coge la primera con licencia abierta, mejor sin ND
     (`inat.foto_alternativa`). Mientras, y siempre que falte, una silueta de huella en vez del hueco.
+- Auditoría, bloque 3 (arreglos rápidos P1), primera parte:
+  - T48/T49/T11: nombres en español con un diccionario propio (`safari/recursos/nombres_safari.csv`, manda sobre
+    el de iNaturalist) y mayúsculas solo en la inicial y en nombres propios (`nombres_propios.txt`); lo usan el
+    pipeline (`safari/nombres_comunes.py`) y la web (`features/safaris/nombres.ts`), también en «Visto ahora». El
+    pipeline lista en el log las especies sin nombre en español para ir completando el diccionario. Se quitan los
+    guiones blandos (U+00AD). El enlace del flamenco enano apuntaba a la sinonimia antigua: se enlaza por taxón y
+    `/especie/phoeniconaias-minor` redirige.
+  - T13: los cruces del Mara se ven desde el norte del Serengeti (Kogatende) y desde el Masái Mara: cada mes de
+    la migración puede tener `tambien` (otros parques), y el Serengeti pasa de «junio y octubre» a junio-octubre,
+    con el texto «el Grumeti en junio y julio; el Mara, de julio a octubre». El aeropuerto se nombra por su nombre
+    (OurAirports pone Kilimanjaro, JRO, en «Arusha»), y si hay uno regular más cerca que el internacional se
+    dice. Tasas redondeadas igual en todas partes («Unos 83 USD/día»). Umbral de 20 observaciones para que un
+    parque cuente como «se ve aquí» (`MIN_OBS_ESPECIE`, y el mismo filtro en la web), y nota en la ficha de
+    especie sobre por qué no se comparan las cifras de iNaturalist (destacados) y GBIF (resto).

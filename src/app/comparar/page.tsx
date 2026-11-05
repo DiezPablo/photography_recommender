@@ -3,7 +3,7 @@
 // del mes.
 import type { Metadata } from "next";
 import Link from "next/link";
-import { etiquetaWeb } from "@/features/safaris/modelo";
+import { etiquetaWeb, nombreAeropuerto } from "@/features/safaris/modelo";
 import { textoCredito } from "@/ui/Credito";
 import { INICIALES, MESES } from "@/lib/fechas";
 import { fechaLocal } from "@/lib/sol";
@@ -113,7 +113,7 @@ export default async function PaginaComparar({ searchParams }: Props) {
       "Aeropuerto internacional más cerca",
       (p) => internacional(p)?.km ?? null,
       (a, b) => a - b,
-      (p, v) => `${internacional(p)!.ciudad ?? internacional(p)!.nombre} a ${km(v)}`,
+      (p, v) => `${nombreAeropuerto(internacional(p)!)} a ${km(v)}`,
     ),
     gana(
       "Entrada más barata",
@@ -302,7 +302,7 @@ export default async function PaginaComparar({ searchParams }: Props) {
                 {fila("Se entra por", (p) => estanciaDe(p.id, p.radio_km).entrada ?? "–")}
                 {fila("Aeropuerto internacional más cercano", (p) => {
                   const a = internacional(p);
-                  return a ? `${a.ciudad ?? a.nombre} (${a.iata}), ${km(a.km)}` : "–";
+                  return a ? `${nombreAeropuerto(a)} (${a.iata}), ${km(a.km)}` : "–";
                 })}
                 {fila("Pistas de avioneta", (p) => p.llegar.n_pistas || "–")}
                 {fila("Por tu cuenta", (p) =>

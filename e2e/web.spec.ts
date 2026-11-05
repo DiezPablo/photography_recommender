@@ -252,7 +252,7 @@ test("ficha de parque: resumen arriba con época, especies, entrada, cómo llega
   await page.goto("/parque/serengeti");
   const resumen = page.getByRole("region", { name: "Resumen" });
   await expect(resumen).toContainText("Cuándo ir");
-  await expect(resumen).toContainText("82,6 USD/día");
+  await expect(resumen).toContainText("Unos 83 USD/día");
   await expect(resumen).toContainText("Con licencia: TATO");
   await expect(resumen.getByRole("link", { name: /operador/ })).toBeVisible();
   await page.screenshot({ path: `${CAPTURAS}/${info.project.name}-resumen-parque.png` });

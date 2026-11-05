@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { reglasNombres } from "@/features/safaris/nombres";
 import { Suscribir } from "@/ui/Suscribir";
 import { Frescura } from "@/ui/Frescura";
 import AvisoCierre from "@/features/safaris/componentes/AvisoCierre";
@@ -281,6 +282,7 @@ export default async function PaginaParque({ params }: Props) {
           respaldo={respaldo}
           conFicha={conFicha}
           excluir={exclusionesDe(p.id)}
+          reglas={reglasNombres()}
         />
       </div>
 
@@ -296,7 +298,9 @@ export default async function PaginaParque({ params }: Props) {
                     {p.especies[g].slice(0, max).map((e) => (
                       <li key={e.taxon}>
                         {conFicha.includes(e.taxon) ? (
-                          <Link href={`/especie/${slugEspecie(e)}`}>{nombreTaxon(e)}</Link>
+                          // por el taxón, no por el nombre: iNaturalist y el catálogo usan sinónimos distintos
+                          // (Phoeniconaias / Phoenicopterus minor) y salían dos fichas
+                          <Link href={`/especie/${slugEspecie(especiePorTaxon(e.taxon) ?? e)}`}>{nombreTaxon(e)}</Link>
                         ) : (
                           nombreTaxon(e)
                         )}{" "}

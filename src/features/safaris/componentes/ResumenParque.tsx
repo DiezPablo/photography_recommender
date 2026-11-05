@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { MESES, rangoMeses } from "@/lib/fechas";
 import { asociacionDe } from "@/features/safaris/asociaciones";
-import type { ParqueMundo } from "@/features/safaris/modelo";
+import { nombreAeropuerto, type ParqueMundo } from "@/features/safaris/modelo";
 import { TASAS } from "@/features/safaris/tasas";
 import { EDAD_MINIMA, SIN_MALARIA, textoFamilias } from "@/features/safaris/familias";
 
@@ -41,6 +41,7 @@ export default function ResumenParque({
   const ahora = epoca?.includes(mesHoy + 1);
   const tasa = TASAS[id];
   const intl = mundo?.llegar.aeropuertos.find((a) => a.internacional) ?? mundo?.llegar.aeropuertos[0];
+  const cercano = mundo?.llegar.aeropuertos.find((a) => a !== intl && a.km < (intl?.km ?? 0));
   const operadores = (mundo?.operadores_ciudad?.lista.length ?? 0) + (mundo?.osm?.operadores.length ?? 0);
   const asociacion = asociacionDe(pais);
   return (
@@ -80,9 +81,9 @@ export default function ResumenParque({
             {tasa ? (
               <>
                 {tasa.usdDiaMes
-                  ? `${Math.min(...Array.from({ length: 12 }, (_, m) => tasa.usdDiaMes!(m + 1)))}-${tasa.usdDia} USD/día`
+                  ? `${Math.round(Math.min(...Array.from({ length: 12 }, (_, m) => tasa.usdDiaMes!(m + 1))))}-${Math.round(tasa.usdDia)} USD/día`
                   : tasa.usdDia > 0
-                    ? `${tasa.usdDia.toLocaleString("es-ES")} USD/día`
+                    ? `Unos ${Math.round(tasa.usdDia)} USD/día`
                     : (tasa.extras?.[0]?.concepto ?? "Ver tasas")}
                 <small>
                   <Link href={`/presupuesto?p=${id}:3`}>Calcular presupuesto →</Link>
@@ -100,7 +101,12 @@ export default function ResumenParque({
           <dd>
             {intl ? (
               <>
-                {intl.ciudad ?? intl.nombre} ({intl.iata})<small>a {intl.km} km en línea recta</small>
+                {nombreAeropuerto(intl)} ({intl.iata})<small>a {intl.km} km en línea recta</small>
+                {cercano && (
+                  <small>
+                    El más cercano: {nombreAeropuerto(cercano)} ({cercano.iata}), a {cercano.km} km
+                  </small>
+                )}
               </>
             ) : (
               "Sin datos"

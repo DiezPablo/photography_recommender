@@ -123,11 +123,21 @@ function deMigracion(): Evento[] {
   const salida: Evento[] = [];
   const grupos: [string, (z: (typeof MIGRACION)[number]) => boolean, string, string][] = [
     ["partos", (z) => !!z.partos, "Partos de los ñus", "Miles de crías al día y, con ellas, grandes felinos e hienas."],
-    ["cruces", (z) => !!z.cruces, "Cruces de ríos", "Las manadas cruzan el Grumeti y el Mara, con cocodrilos."],
+    [
+      "cruces",
+      (z) => !!z.cruces,
+      "Cruces de ríos",
+      "De junio a octubre: el Grumeti en junio y julio; el Mara, de julio a octubre, con cocodrilos. Las fechas cambian cada año con la lluvia.",
+    ],
   ];
   for (const [clave, filtro, titulo, descripcion] of grupos) {
     const porParque = new Map<string, number[]>();
-    for (const z of MIGRACION.filter(filtro)) porParque.set(z.parque, [...(porParque.get(z.parque) ?? []), z.mes]);
+    for (const z of MIGRACION.filter(filtro))
+      for (const parque of [z.parque, ...(z.tambien ?? [])])
+        porParque.set(
+          parque,
+          [...(porParque.get(parque) ?? []), z.mes].sort((a, b) => a - b),
+        );
     for (const [parque, meses] of porParque)
       salida.push({
         id: `migracion-${clave}-${parque}`,

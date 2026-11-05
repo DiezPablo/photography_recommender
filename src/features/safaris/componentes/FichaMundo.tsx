@@ -1,6 +1,7 @@
 // Ficha de un parque del mundo que no está en el catálogo escrito a mano: todo sale de datos abiertos
 // (Wikidata, GBIF, NASA, OurAirports, OpenStreetMap) y de iNaturalist en directo.
 import Link from "next/link";
+import { reglasNombres } from "@/features/safaris/nombres";
 import { Suscribir } from "@/ui/Suscribir";
 import { Frescura } from "@/ui/Frescura";
 import AvisoCierre from "@/features/safaris/componentes/AvisoCierre";
@@ -139,7 +140,7 @@ export default function FichaMundo({
                 return { nombre: nombreEstrella(k), n, href: slug ? `/especie/${slug}` : undefined };
               })
             : // sin especies estrella (Madagascar, islas…): los mamíferos más vistos
-              p.mamiferos.map(([k, n]) => ({ nombre: nombreEspecieMundo(mundo, k), n }))
+              p.mamiferos.map(([k, n]) => ({ nombre: nombreEspecieMundo(mundo, k, reglasNombres()), n }))
         }
         mundo={p}
         pais={pais?.nombre}
@@ -216,6 +217,7 @@ export default function FichaMundo({
           respaldo={[]}
           conFicha={[]}
           excluir={exclusionesDe(p.id)}
+          reglas={reglasNombres()}
         />
       </div>
 
@@ -237,7 +239,7 @@ export default function FichaMundo({
                   {lista.map(([k, n]) => (
                     <li key={k}>
                       <a href={`https://www.gbif.org/species/${k}`} target="_blank" rel="noopener">
-                        {nombreEspecieMundo(mundo, k)}
+                        {nombreEspecieMundo(mundo, k, reglasNombres())}
                       </a>{" "}
                       <small>{n.toLocaleString("es-ES")}</small>
                     </li>
