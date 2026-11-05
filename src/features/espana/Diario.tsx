@@ -146,7 +146,15 @@ export default function Diario({ hoy }: { hoy: string }) {
 
       <section className="seccion">
         <h2 className="rotulo">Salidas</h2>
-        {!salidas.length && <p className="nota-pie">Aún no hay salidas. Se guardan solo en este navegador.</p>}
+        {!salidas.length && (
+          <div className="estado-vacio">
+            <p>
+              Aún no hay salidas. Apunta cada una con el formulario de arriba (fecha, lugar, especies y notas) y verás
+              cuántas haces al año, dónde vuelves más y qué especies has anotado. Se guardan solo en este navegador:
+              abajo puedes descargar una copia o restaurar una.
+            </p>
+          </div>
+        )}
         <ul className="lista-hides">
           {salidas.map((x) => (
             <li key={x.id} className="tarjeta-hide">

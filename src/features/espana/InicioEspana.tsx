@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MESES } from "@/lib/fechas";
+import { IconoCamara, IconoInfo, IconoLibro, IconoPajaro, IconoPrismaticos, IconoRuta } from "@/ui/Iconos";
 import { FENOMENOS } from "@/features/espana/fenomenos";
 import { guardarUbicacion, useUbicacionGuardada } from "@/features/espana/ubicacion";
 
@@ -90,15 +91,20 @@ export default function InicioEspana({ hoy }: { hoy: string }) {
       </div>
 
       <nav className="mas-espana" aria-label="Más">
-        {[
-          ["/espana/mapa", "Mapa de fauna", "Lugares, hides y dónde se ve cada especie"],
-          ["/espana/hides", "Hides y salidas", "Para fotografiar o ver con guía"],
-          ["/espana/rarezas", "Rarezas", "Lo raro visto esta semana"],
-          ["/espana/mis-especies", "Mis especies", "Las que has visto"],
-          ["/espana/diario", "Mi diario", "Tus salidas"],
-          ["/espana/normas", "Normas", "Ley, drones y código ético"],
-        ].map(([href, titulo, texto]) => (
+        {(
+          [
+            ["/espana/mapa", "Mapa de fauna", "Lugares, hides y dónde se ve cada especie", IconoRuta],
+            ["/espana/hides", "Hides y salidas", "Para fotografiar o ver con guía", IconoCamara],
+            ["/espana/rarezas", "Rarezas", "Lo raro visto esta semana", IconoPrismaticos],
+            ["/espana/mis-especies", "Mis especies", "Las que has visto", IconoPajaro],
+            ["/espana/diario", "Mi diario", "Tus salidas", IconoLibro],
+            ["/espana/normas", "Normas", "Ley, drones y código ético", IconoInfo],
+          ] as const
+        ).map(([href, titulo, texto, Icono]) => (
           <Link key={href} href={href}>
+            <span className="icono-tarjeta" aria-hidden>
+              <Icono size={22} />
+            </span>
             <b>{titulo}</b>
             <small>{texto}</small>
           </Link>

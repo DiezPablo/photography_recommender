@@ -17,6 +17,9 @@ import { fechaValida, sumarDias } from "@/features/safaris/calendario";
 import { Suscribir } from "@/ui/Suscribir";
 import {
   CLAVE_LISTA,
+  CLAVE_OFERTAS,
+  CLAVE_VIAJE,
+  CLAVE_VISTOS,
   CLAVE_SUPUESTOS,
   EXTERIORES,
   guardarViaje,
@@ -30,6 +33,10 @@ import {
 import { practicoDe, SANIDAD } from "@/features/safaris/paises";
 import BuscadorParques from "./BuscadorParques";
 import Esqueleto from "@/ui/Esqueleto";
+import CopiaLocal from "@/ui/CopiaLocal";
+
+// todo lo de «Mi viaje» que vive en el navegador, para la copia (T47)
+const CLAVES_COPIA = [CLAVE_VIAJE, CLAVE_LISTA, CLAVE_SUPUESTOS, CLAVE_OFERTAS, CLAVE_VISTOS, "safaris.comparar"];
 
 const MAX_ESPECIES = 8;
 const GORILAS = new Set(["bwindi", "volcanes"]);
@@ -54,8 +61,10 @@ export default function MiViaje({ mesHoy }: { mesHoy: number }) {
       <section className="seccion">
         <h2>Aún no tienes un viaje</h2>
         <p>
-          Empieza en el <Link href="/planificar">planificador de ruta</Link> o en el{" "}
-          <Link href="/presupuesto">presupuesto</Link> y pulsa «Guardar en Mi viaje». Se guarda solo en este navegador.
+          Aquí se junta tu safari: los parques y las noches, qué verás ese mes, el presupuesto, la lista de lo que hay
+          que llevar y hacer, y un enlace para compartirlo. Empieza con «+ Añadir a mi viaje» en la ficha de un parque,
+          o en el <Link href="/planificar">planificador de ruta</Link> o el <Link href="/presupuesto">presupuesto</Link>{" "}
+          con «Guardar en Mi viaje».
         </p>
         <p className="enlaces">
           <Link
@@ -74,6 +83,7 @@ export default function MiViaje({ mesHoy }: { mesHoy: number }) {
             Ver un ejemplo: norte de Tanzania en agosto →
           </Link>
         </p>
+        <CopiaLocal claves={CLAVES_COPIA} nombre="mi-viaje" />
       </section>
     );
   if (!indice || !datos) return <Esqueleto alto={600} texto="Cargando tu viaje…" />;
@@ -385,6 +395,7 @@ export default function MiViaje({ mesHoy }: { mesHoy: number }) {
           Comparar sus parques
         </Link>
       </p>
+      <CopiaLocal claves={CLAVES_COPIA} nombre="mi-viaje" />
     </>
   );
 }

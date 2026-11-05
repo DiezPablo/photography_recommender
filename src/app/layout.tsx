@@ -15,7 +15,7 @@ const serif = Newsreader({ subsets: ["latin"], variable: "--f-serif", display: "
 const mono = IBM_Plex_Mono({ subsets: ["latin"], variable: "--f-mono", display: "swap", weight: ["400", "500"] });
 
 export const metadata: Metadata = {
-  title: { default: "Safaris · dónde y cuándo ver cada animal", template: "%s · Safaris" },
+  title: { default: "Atlas de fauna · dónde y cuándo ver cada animal", template: "%s · Atlas de fauna" },
   description:
     "Parques nacionales y reservas de todo el mundo: qué fauna se ve y cuándo, lo visto en el último mes, cómo llegar, alojamientos y operadores. Datos abiertos, sin comisiones.",
   metadataBase: new URL(SITIO),
@@ -40,8 +40,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <header className="cabecera">
           <div className="cabecera-in">
-            <Link href="/" className="marca" aria-label="Safaris, inicio">
-              Safaris<span className="marca-sub">atlas de fauna</span>
+            <Link href="/" className="marca" aria-label="Atlas de fauna, inicio">
+              Atlas de fauna
             </Link>
             <Suspense fallback={null}>
               <Mundos />
@@ -60,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="pie">
           <div className="pie-in">
             <div className="pie-marca">
-              <p className="marca">Safaris</p>
+              <p className="marca">Atlas de fauna</p>
               <p>
                 Dónde y cuándo ver cada animal, en todo el mundo. Sin comisiones ni alojamientos patrocinados: reservas
                 directamente con el parque, el lodge o el operador.

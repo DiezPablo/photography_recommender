@@ -863,3 +863,17 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   - T16: las tarifas por mes del Serengeti y el Ngorongoro son todas de Lemala porque es la única empresa que
     publica sus tarifas mes a mes; la ficha lo dice cuando todas vienen de la misma web. Añadir otras cadenas queda
     para cuando haya hojas de tarifas públicas que se puedan citar.
+- Auditoría, bloque 5, tanda 4 (España y lo tuyo):
+  - T30: la marca general pasa a «Atlas de fauna» (cabecera, pie y título de las páginas); «Safaris» y «España» son
+    los dos mundos del conmutador. El menú de España tiene sus siete secciones: Cerca de mí · Este finde · Buscar
+    especie · Mapa · Hides · Rarezas · Mi diario (más Inicio); «Qué veo aquí» pasa a «Cerca de mí» también en el
+    título de la página.
+  - T31: no había duplicado de «Mis especies vistas» en /espana (ya se había quitado); las seis funciones (mapa,
+    hides, rarezas, mis especies, diario, normas) son tarjetas con icono y una línea.
+  - T27: fenómenos nuevos de noviembre (ánsares y avutardas en Villafáfila, buitres en Monfragüe) y el lince de
+    Andújar desde noviembre; los de dormidero (grullas, ánsares) dan la hora de salida y puesta del sol del mes. La
+    orientación de la luz por lugar ya estaba (rumbo del sol al amanecer y al atardecer en la ficha de cada lugar)
+    y los hides cercanos también; no hay datos abiertos de hacia dónde mira cada hide, así que no se inventa.
+  - T47: estados vacíos con qué es, para qué sirve y un botón para empezar (mis especies, diario, mi viaje), y
+    copia en JSON para descargar y recuperar lo que solo vive en el navegador (`ui/CopiaLocal.tsx`; el diario ya
+    la tenía).

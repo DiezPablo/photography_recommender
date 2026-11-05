@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useHidratado } from "@/lib/almacen";
 import { useVistas } from "@/features/espana/vistas";
 import Esqueleto from "@/ui/Esqueleto";
+import CopiaLocal from "@/ui/CopiaLocal";
 
 const GRUPOS: [string, string][] = [
   ["Aves", "Aves"],
@@ -19,11 +20,20 @@ export default function MisEspecies() {
   const todas = Object.entries(vistas).sort((a, b) => a[1].n.localeCompare(b[1].n, "es"));
   if (!todas.length)
     return (
-      <p>
-        Aún no has marcado ninguna. En <Link href="/espana?modo=aqui">¿Qué veo aquí?</Link> y en{" "}
-        <Link href="/espana?modo=donde">¿Dónde veo…?</Link> cada especie tiene un botón «+ la he visto». La lista se
-        guarda solo en este navegador.
-      </p>
+      <section className="estado-vacio">
+        <h2>Tu lista de especies empieza aquí</h2>
+        <p>
+          Marca las especies que vas viendo y tendrás tu lista por grupos, con la fecha, para saber cuántas llevas y
+          cuáles te faltan en cada sitio. Cada especie tiene un botón «+ la he visto».
+        </p>
+        <p className="enlaces">
+          <Link className="boton" href="/espana?modo=aqui">
+            Ver qué hay cerca de mí
+          </Link>
+          <Link href="/espana?modo=donde">Buscar una especie</Link>
+        </p>
+        <CopiaLocal claves={["espana-vistas"]} nombre="mis-especies" />
+      </section>
     );
   const csv = () => {
     const filas = [
@@ -39,6 +49,7 @@ export default function MisEspecies() {
   };
   return (
     <>
+      <CopiaLocal claves={["espana-vistas"]} nombre="mis-especies" />
       <p className="entradilla">
         {todas.length} especies:{" "}
         {GRUPOS.map(([c, t]) => [t, todas.filter(([, v]) => v.clase === c).length] as const)

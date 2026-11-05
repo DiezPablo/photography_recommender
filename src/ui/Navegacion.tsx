@@ -66,7 +66,7 @@ const ESPANA: Seccion[] = [
   },
   {
     href: "/espana?modo=aqui",
-    texto: "Qué veo aquí",
+    texto: "Cerca de mí",
     corto: "Cerca",
     Icono: IconoUbicacion,
     activa: (r, q) => r.startsWith("/espana/lugar") || (r === "/espana" && modo(q) === "aqui"),
@@ -90,6 +90,18 @@ const ESPANA: Seccion[] = [
   },
   { href: "/espana/mapa", texto: "Mapa", Icono: IconoRuta, activa: (r) => r.startsWith("/espana/mapa"), movil: true },
   { href: "/espana/hides", texto: "Hides", Icono: IconoHuella, activa: (r) => r.startsWith("/espana/hides") },
+  {
+    href: "/espana/rarezas",
+    texto: "Rarezas",
+    Icono: IconoPrismaticos,
+    activa: (r) => r.startsWith("/espana/rarezas"),
+  },
+  {
+    href: "/espana/diario",
+    texto: "Mi diario",
+    Icono: IconoLibro,
+    activa: (r) => ["/espana/diario", "/espana/mis-especies"].some((x) => r.startsWith(x)),
+  },
 ];
 
 function useNav() {

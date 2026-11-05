@@ -3,7 +3,7 @@
 // «¿Dónde veo…?» de su especie. Las especies sensibles (lince, oso) solo por zona: nunca puntos.
 // Revisión anual con .github/scripts/revision_datos.py.
 
-export const REVISADO_FENOMENOS = "04-11-2026";
+export const REVISADO_FENOMENOS = "05-11-2026";
 
 export interface Fenomeno {
   id: string;
@@ -18,6 +18,8 @@ export interface Fenomeno {
   pico?: number[];
   /** nombre científico, para «¿Dónde veo…?» */
   especie?: string;
+  /** aves que entran y salen de un dormidero (T27): se dan la salida y la puesta del sol del mes */
+  dormidero?: string;
   fuentes: string[];
 }
 
@@ -35,6 +37,7 @@ export const FENOMENOS: Fenomeno[] = [
     meses: [10, 11, 12, 1, 2, 3],
     pico: [11, 2],
     especie: "Grus grus",
+    dormidero: "Salen de la laguna hacia el amanecer y vuelven en la última media hora de luz.",
     fuentes: [`${WIKI}Laguna_de_Gallocanta`, `${WIKI}Grus_grus`],
   },
   {
@@ -105,11 +108,11 @@ export const FENOMENOS: Fenomeno[] = [
     id: "andujar-lince",
     titulo: "Lince ibérico en Sierra de Andújar",
     descripcion:
-      "En el celo (diciembre-febrero, sobre todo enero) el lince se mueve más y es cuando más se ve, siempre de lejos y desde las pistas públicas. Especie amenazada: aquí solo la zona, sin puntos.",
+      "De noviembre a marzo, y sobre todo en el celo (enero), el lince se mueve más de día y es cuando más se ve, siempre de lejos y desde las pistas públicas. Especie amenazada: aquí solo la zona, sin puntos.",
     lat: 38.2,
     lon: -4.05,
     radioKm: 20,
-    meses: [12, 1, 2],
+    meses: [11, 12, 1, 2, 3],
     pico: [1],
     especie: "Lynx pardinus",
     fuentes: [`${WIKI}Parque_natural_de_la_Sierra_de_And%C3%BAjar`],
@@ -148,6 +151,33 @@ export const FENOMENOS: Fenomeno[] = [
     radioKm: 25,
     meses: [11, 12, 1, 2],
     fuentes: [`${WIKI}Parque_nacional_y_natural_de_Do%C3%B1ana`],
+  },
+  {
+    id: "villafafila-ansares-avutardas",
+    titulo: "Ánsares y avutardas en Villafáfila",
+    descripcion:
+      "En invierno llegan miles de ánsares comunes a las lagunas, y la estepa cerealista tiene una de las mayores poblaciones de avutarda del mundo, que en invierno se agrupa en bandos fáciles de ver desde los caminos. Al amanecer los ánsares salen de las lagunas a comer.",
+    lat: 41.83,
+    lon: -5.6,
+    radioKm: 12,
+    meses: [11, 12, 1, 2],
+    pico: [12, 1],
+    especie: "Otis tarda",
+    dormidero: "Los ánsares salen de las lagunas hacia el amanecer y vuelven al atardecer.",
+    fuentes: [`${WIKI}Reserva_natural_de_las_Lagunas_de_Villaf%C3%A1fila`, `${WIKI}Otis_tarda`],
+  },
+  {
+    id: "monfrague-buitres",
+    titulo: "Buitres en Monfragüe",
+    descripcion:
+      "La colonia de buitres leonados de la Peña Falcón, frente al Salto del Gitano, se ve todo el año; en invierno empiezan el cortejo y la puesta, y con el sol de la mañana remontan las térmicas. También buitres negros y alimoches (estos, de marzo a septiembre).",
+    lat: 39.83,
+    lon: -6.06,
+    radioKm: 10,
+    meses: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    pico: [1, 2],
+    especie: "Gyps fulvus",
+    fuentes: [`${WIKI}Parque_nacional_de_Monfrag%C3%BCe`, `${WIKI}Gyps_fulvus`],
   },
 ];
 

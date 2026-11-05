@@ -530,7 +530,7 @@ test("calendario de fenómenos: ficha, página del mes, especie y .ics", async (
 
 test("fauna en España: luz, tiempo y especies (o aviso sin datos)", async ({ page }) => {
   await page.goto("/espana?zona=gallocanta&fecha=2026-11-08");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Qué veo aquí");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Cerca de mí");
   await expect(page.locator(".resumen-dia")).toContainText("Mejor momento");
   // la luz y el tiempo por horas van plegados debajo
   await page.getByText("Luz, mar y tiempo hora a hora").click();

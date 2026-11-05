@@ -2838,3 +2838,70 @@ html[data-mes="12"] [data-m="12"] {
   gap: 6px;
   min-height: 36px;
 }
+/* tarjetas de la portada de España (T31) */
+.mas-espana .icono-tarjeta {
+  color: var(--acento);
+  margin-bottom: 4px;
+}
+
+/* Secciones personales (T47) */
+.estado-vacio {
+  padding: 18px 20px;
+  border: 1px dashed var(--borde);
+  border-radius: 14px;
+  background: var(--superficie);
+}
+.estado-vacio h2 {
+  margin-top: 0;
+}
+.copia-local {
+  margin: 16px 0;
+}
+.copia-local-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.copia-local-botones label {
+  cursor: pointer;
+}
+
+/* Cabecera con la marca «Atlas de fauna» y el menú de España de ocho secciones (T30): sin saltos de línea */
+.cabecera .marca,
+.menu a,
+.cabecera .boton-viaje {
+  white-space: nowrap;
+}
+@media (min-width: 901px) and (max-width: 1400px) {
+  .menu {
+    gap: 16px;
+  }
+  .menu a {
+    font-size: 0.88rem;
+  }
+  .buscador-global {
+    flex-basis: 200px;
+  }
+}
+@media (max-width: 480px) {
+  .cabecera .marca {
+    font-size: 1.1rem;
+  }
+}
+@media (max-width: 400px) {
+  .cabecera-in {
+    gap: 6px;
+    padding: 0 10px;
+  }
+  .cabecera .marca {
+    font-size: 1rem;
+  }
+  .mundos a {
+    padding: 4px 7px;
+    font-size: 0.78rem;
+  }
+  .selector-mes select {
+    padding: 0 16px 0 6px;
+    font-size: 0.78rem;
+  }
+}
