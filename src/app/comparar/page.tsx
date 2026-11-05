@@ -25,6 +25,7 @@ import { POR_TU_CUENTA, practicoDe, TEXTO_POR_TU_CUENTA } from "@/features/safar
 import { EDAD_MINIMA, SIN_MALARIA } from "@/features/safaris/familias";
 import { estanciaDe } from "@/features/safaris/estancias";
 import { cierreEn, TEXTO_TIPO_CIERRE } from "@/features/safaris/cierres";
+import { fuenteImagen } from "@/lib/imagenes";
 
 export const metadata: Metadata = {
   title: "Comparar parques",
@@ -213,7 +214,14 @@ export default async function PaginaComparar({ searchParams }: Props) {
                     <th key={p.id} scope="col">
                       {p.foto && (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={p.foto.url} alt={p.nombre} title={textoCredito(p.foto)} loading="lazy" />
+                        <img
+                          {...fuenteImagen(p.foto.url, "240px")}
+                          alt={p.nombre}
+                          title={textoCredito(p.foto)}
+                          width={500}
+                          height={333}
+                          loading="lazy"
+                        />
                       )}
                       <Link href={`/parque/${p.id}`}>{p.nombre}</Link>
                       <small>{paisDe(p)}</small>

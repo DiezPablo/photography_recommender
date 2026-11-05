@@ -10,6 +10,13 @@ export default function FotoGrande({ src, alt = "", posicion }: { src: string; a
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={url}
+      // las de iNaturalist, en el móvil la de 500 px y en pantallas grandes la de 1024 (T03)
+      srcSet={
+        /\/(medium|large)\.(jpe?g|png)$/i.test(url)
+          ? `${url.replace(/\/(medium|large)\./, "/medium.")} 500w, ${url.replace(/\/(medium|large)\./, "/large.")} 1024w`
+          : undefined
+      }
+      sizes="100vw"
       alt={alt}
       fetchPriority="high"
       style={posicion ? { objectPosition: posicion } : undefined}

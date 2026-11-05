@@ -30,6 +30,7 @@ import { useUbicacionGuardada } from "@/features/espana/ubicacion";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
 import { fenomenosCerca } from "@/features/espana/fenomenos";
 import { ZONAS_ESPANA, type BloqueEspana, type ObsReciente } from "@/features/espana/zonas";
+import Esqueleto from "@/ui/Esqueleto";
 
 const RADIOS = [5, 10, 20, 30];
 const MAX_ESPECIES = 30;
@@ -348,7 +349,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
         <h2 className="rotulo" id="especies-titulo">
           Qué es probable ver en {MESES[mes]}
         </h2>
-        {bloques === null && <p className="nota-pie">Cargando…</p>}
+        {bloques === null && <Esqueleto alto={400} />}
         {bloques === "sin-datos" && (
           <p className="nota-pie">
             Aún no hay datos de especies para España: saldrán de una descarga de GBIF por cuadrícula de 10 km (en

@@ -48,6 +48,7 @@ import {
 import { fechaLocal } from "@/lib/sol";
 import { etiquetaWeb } from "@/features/safaris/modelo";
 import Credito, { esNd, origenFoto, textoCredito } from "@/ui/Credito";
+import { fuenteImagen } from "@/lib/imagenes";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -253,7 +254,9 @@ export default async function PaginaParque({ params }: Props) {
                 <figure className="con-credito">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={g.url}
+                    {...fuenteImagen(g.url, "(max-width: 600px) 50vw, (max-width: 1100px) 33vw, 240px")}
+                    width={500}
+                    height={375}
                     alt={`${g.nombre ?? g.cientifico} en ${p.nombre}`}
                     loading="lazy"
                     className={esNd(g) ? "foto-nd" : undefined}
@@ -299,7 +302,9 @@ export default async function PaginaParque({ params }: Props) {
                       <span className="con-credito">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={fotoDe(e)!.url}
+                          {...fuenteImagen(fotoDe(e)!.url, "(max-width: 600px) 50vw, (max-width: 1100px) 33vw, 240px")}
+                          width={500}
+                          height={375}
                           alt={`${nombreTaxon(e)}${fotoEstrella(p, e.taxon) ? ` en ${p.nombre}` : ""} (foto de iNaturalist)`}
                           loading="lazy"
                           className={esNd(fotoDe(e)) ? "foto-nd" : undefined}

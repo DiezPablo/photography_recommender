@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import ListaEspecies from "@/features/safaris/componentes/ListaEspecies";
+import { grupoFauna } from "@/features/safaris/gruposFauna";
+import { fechaLocal } from "@/lib/sol";
 import { cifras, cargarSafaris, getParque, nombreTaxon, slugEspecie } from "@/features/safaris/datos";
 
 export const metadata: Metadata = {
@@ -19,11 +21,15 @@ export default function PaginaEspeciesSafari() {
         </p>
       </header>
       <ListaEspecies
+        mesHoy={Number(fechaLocal(new Date()).slice(5, 7)) - 1}
         especies={especies.map((e) => ({
           taxon: e.taxon,
           nombre: nombreTaxon(e),
           cientifico: e.cientifico,
-          grupo: e.grupo,
+          grupo: grupoFauna(e.cientifico, e.grupo),
+          // continentes y meses de buena época de sus parques (T44)
+          continentes: [...new Set(e.parques.map((x) => getParque(x.id)?.continente).filter((c): c is string => !!c))],
+          meses: [...new Set(e.parques.flatMap((x) => getParque(x.id)?.meses ?? []))],
           foto: e.foto ?? null,
           href: `/especie/${slugEspecie(e)}`,
           parques: e.parques

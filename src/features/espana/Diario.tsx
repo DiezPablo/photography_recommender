@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { escribirAlmacen, leerAlmacen, useAlmacen, useHidratado } from "@/lib/almacen";
 import { MESES } from "@/lib/fechas";
 import { useUbicacionGuardada } from "@/features/espana/ubicacion";
+import Esqueleto from "@/ui/Esqueleto";
 
 const CLAVE = "espana-diario";
 
@@ -44,7 +45,7 @@ export default function Diario({ hoy }: { hoy: string }) {
   const [form, setForm] = useState<Omit<Salida, "id">>({ f: hoy, lugar: "", especies: "", notas: "", foto: "" });
   const [error, setError] = useState<string | null>(null);
 
-  if (!hidratado) return <p className="nota-pie">Cargando tu diario…</p>;
+  if (!hidratado) return <Esqueleto alto={240} texto="Cargando tu diario…" />;
 
   const guardar = (xs: Salida[]) => escribirAlmacen(CLAVE, JSON.stringify(xs));
   const anadir = (e: React.FormEvent) => {

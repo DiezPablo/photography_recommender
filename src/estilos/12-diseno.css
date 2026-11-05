@@ -2739,3 +2739,102 @@ html[data-mes="12"] [data-m="12"] {
     padding-bottom: calc(130px + env(safe-area-inset-bottom));
   }
 }
+
+/* Imágenes con width y height (T03): el navegador reserva su hueco antes de cargarlas (sin saltos), pero la altura
+   la decide el CSS de cada sitio (aspect-ratio); :where() no suma especificidad, así no pisa a nadie */
+:where(img[width][height]) {
+  height: auto;
+}
+
+/* Buscador de la portada (T35, T36, T26) */
+.botones-opcion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.botones-opcion button,
+.vista-resultados button,
+.sin-resultados button {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: var(--superficie);
+  font: 500 0.88rem var(--f-cuerpo);
+  color: var(--texto);
+  cursor: pointer;
+}
+.botones-opcion button[aria-pressed="true"],
+.vista-resultados button[aria-pressed="true"] {
+  background: var(--texto);
+  border-color: var(--texto);
+  color: var(--fondo);
+}
+.sin-resultados {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+}
+.sin-resultados ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.vista-resultados {
+  display: none;
+  gap: 6px;
+  margin: 12px 0 0;
+}
+@media (max-width: 900px) {
+  .vista-resultados {
+    display: flex;
+  }
+  .fauna-grid.vista-lista .resultados-mapa,
+  .fauna-grid.vista-mapa .resultados-lista {
+    display: none;
+  }
+}
+.ejemplos-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin: 0;
+  color: #fff;
+  font-size: 0.9rem;
+}
+.ejemplos-hero a {
+  color: #fff;
+}
+.filtros-especies-mas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 8px 0 0;
+}
+.filtros-especies-mas select {
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--superficie);
+  color: var(--texto);
+  font: inherit;
+}
+.portada-hero .entradas-hero .entrada-espana {
+  color: var(--texto-2);
+}
+.portada-hero .entradas-hero .entrada-espana a {
+  color: var(--texto);
+}
+.casilla-especies {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+}

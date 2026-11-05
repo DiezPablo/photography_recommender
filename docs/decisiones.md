@@ -832,3 +832,21 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   - T24: fila «Momentos» en la franja de 12 meses, con los fenómenos del parque (partos, cruces, celos, crías…).
   - T42: acción principal «Añadir a mi viaje» (con las noches habituales del parque y el mes elegido), fija abajo
     en el móvil; «Comparar» pasa a botón secundario.
+- Auditoría, bloque 5, tanda 2 (portada, especies, imágenes y carga):
+  - T35: portada en el orden hero con entradas → «¿Qué quieres ver?» → resultados → en buena época → migración →
+    cifras. Se quitan la lista estática de los destacados (con el contenido ya pintado en el servidor, T01, solo
+    duplicaba) y los chips «Por especie» (repetían /especies, que está en el menú). El número de parques cambia en
+    vivo; si no hay ninguno, se sugiere qué filtro quitar con cuántos habría («Quitando «sin malaria» hay 12
+    parques»). En el móvil, botones Lista / Mapa; en escritorio siguen los dos juntos.
+  - T36: «Cómo quieres ir» en tres botones (Con guía · Por mi cuenta (turismo) · Por mi cuenta (4×4)); ejemplos para
+    empezar (Tigres en marzo, Safari sin malaria con niños, Grullas en España: la ficha de la grulla, que dice dónde
+    y cuándo; «este finde» exigiría ubicación).
+  - T26: filtros «Para fotografía» (salir de pista, pocos vehículos, hides o barcas) con los datos de T23; solo
+    los 19 parques con esos datos pueden cumplirlos.
+  - T44: /especies con grupos finos (felinos, primates…), continente y «en buena época en <mes elegido>».
+  - T03: `srcset` (iNaturalist medium/large; Commons 330/500/960) con `sizes`, `width`/`height` en las tarjetas
+    (con `:where(img[width][height]) { height: auto }` para que mande el aspect-ratio del CSS) y la cabecera con
+    `fetchpriority="high"` y su `srcset`. Las 312 fotos de parques que apuntan al original de Commons son
+    originales de menos de 960 px (Commons no da miniatura mayor que el original), así que no pesan de más.
+  - T02: esqueletos con la altura del contenido en lugar de «Cargando…» (presupuesto, mi viaje, especies y
+    planificador de España, mi lista, diario). Lighthouse: CLS 0-0,001 en portada, especies y ficha.

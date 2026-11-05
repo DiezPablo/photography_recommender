@@ -3,33 +3,43 @@
 // seguidas, 37 pantallas en el móvil.
 import Link from "next/link";
 import { useState } from "react";
+import { MESES } from "@/lib/fechas";
+import { useMesElegido } from "@/lib/mes";
+import { GRUPOS_FAUNA, type GrupoFauna } from "@/features/safaris/gruposFauna";
 import Credito, { esNd } from "@/ui/Credito";
 import type { FotoSafari } from "@/features/safaris/modelo";
+import { fuenteImagen } from "@/lib/imagenes";
 
 export interface EspecieTarjeta {
   taxon: number;
   nombre: string;
   cientifico: string;
-  grupo: string | null;
+  grupo: GrupoFauna;
+  continentes: string[];
+  /** meses (1-12) de buena época en alguno de sus parques */
+  meses: number[];
   foto: FotoSafari | null;
   href: string;
   parques: string;
 }
 
-const GRUPOS: [string, string][] = [
-  ["Mammalia", "Mamíferos"],
-  ["Aves", "Aves"],
-  ["Reptilia", "Reptiles"],
-];
 const sinTildes = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
-export default function ListaEspecies({ especies }: { especies: EspecieTarjeta[] }) {
+export default function ListaEspecies({ especies, mesHoy }: { especies: EspecieTarjeta[]; mesHoy: number }) {
   const [q, setQ] = useState("");
   const [grupo, setGrupo] = useState<string | null>(null);
+  const [continente, setContinente] = useState("");
+  const [enEpoca, setEnEpoca] = useState(false);
+  const [mes] = useMesElegido(mesHoy);
   const t = sinTildes(q.trim());
   const lista = especies.filter(
-    (e) => (!grupo || e.grupo === grupo) && (!t || sinTildes(`${e.nombre} ${e.cientifico} ${e.parques}`).includes(t)),
+    (e) =>
+      (!grupo || e.grupo === grupo) &&
+      (!continente || e.continentes.includes(continente)) &&
+      (!enEpoca || e.meses.includes(mes + 1)) &&
+      (!t || sinTildes(`${e.nombre} ${e.cientifico} ${e.parques}`).includes(t)),
   );
+  const continentes = [...new Set(especies.flatMap((e) => e.continentes))].sort((a, b) => a.localeCompare(b, "es"));
   return (
     <>
       <div className="filtros-especies">
@@ -44,14 +54,33 @@ export default function ListaEspecies({ especies }: { especies: EspecieTarjeta[]
           <button type="button" className="quitar" aria-pressed={!grupo} onClick={() => setGrupo(null)}>
             Todas <small>{especies.length}</small>
           </button>
-          {GRUPOS.filter(([g]) => especies.some((e) => e.grupo === g)).map(([g, texto]) => (
+          {GRUPOS_FAUNA.filter((g) => especies.some((e) => e.grupo === g)).map((g) => (
             <button key={g} type="button" className="quitar" aria-pressed={grupo === g} onClick={() => setGrupo(g)}>
-              {texto} <small>{especies.filter((e) => e.grupo === g).length}</small>
+              {g} <small>{especies.filter((e) => e.grupo === g).length}</small>
             </button>
           ))}
         </p>
+        <p className="filtros-especies-mas">
+          <label>
+            <span className="sr">Continente</span>
+            <select value={continente} onChange={(e) => setContinente(e.target.value)}>
+              <option value="">Todos los continentes</option>
+              {continentes.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </label>
+          <label className="casilla-especies">
+            <input type="checkbox" checked={enEpoca} onChange={(e) => setEnEpoca(e.target.checked)} /> En buena época en{" "}
+            {MESES[mes]}
+          </label>
+          <span className="nota-pie" aria-live="polite">
+            {lista.length} {lista.length === 1 ? "especie" : "especies"}
+          </span>
+        </p>
       </div>
-      {!lista.length && <p className="nota-pie">Ninguna especie con «{q}».</p>}
+      {!lista.length && <p className="nota-pie">Ninguna especie con esos filtros.</p>}
+      <h2 className="sr">Especies</h2>
       <ul className="rejilla-especies">
         {lista.map((e) => (
           <li key={e.taxon} className="tarjeta-especie">
@@ -59,7 +88,9 @@ export default function ListaEspecies({ especies }: { especies: EspecieTarjeta[]
               <span className="con-credito">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={e.foto.url}
+                  {...fuenteImagen(e.foto.url, "(max-width: 600px) 50vw, (max-width: 1100px) 33vw, 240px")}
+                  width={500}
+                  height={375}
                   style={e.foto.posicion ? { objectPosition: e.foto.posicion } : undefined}
                   alt={e.nombre}
                   loading="lazy"

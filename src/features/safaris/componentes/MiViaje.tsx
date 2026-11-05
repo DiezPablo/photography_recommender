@@ -29,6 +29,7 @@ import {
 } from "@/features/safaris/viaje";
 import { practicoDe, SANIDAD } from "@/features/safaris/paises";
 import BuscadorParques from "./BuscadorParques";
+import Esqueleto from "@/ui/Esqueleto";
 
 const MAX_ESPECIES = 8;
 const GORILAS = new Set(["bwindi", "volcanes"]);
@@ -75,7 +76,7 @@ export default function MiViaje({ mesHoy }: { mesHoy: number }) {
         </p>
       </section>
     );
-  if (!indice || !datos) return <p className="nota-pie">Cargando…</p>;
+  if (!indice || !datos) return <Esqueleto alto={600} texto="Cargando tu viaje…" />;
 
   // editar un plan compartido lo guarda como propio
   const cambiar = (c: Partial<Viaje>) => {

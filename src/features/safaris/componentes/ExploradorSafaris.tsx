@@ -11,10 +11,18 @@ import { POR_TU_CUENTA } from "@/features/safaris/paises";
 import { EDAD_MINIMA, SIN_MALARIA } from "@/features/safaris/familias";
 import { esDestino, buenaEpoca, CONTINENTES, type FilaIndice } from "@/features/safaris/modelo";
 import { useParametrosUrl } from "@/lib/almacen";
+import { FOTOGRAFIA, type FotografiaParque } from "@/features/safaris/fotografiaParques";
 import SelectorEspecie, { type OpcionEspecie } from "@/ui/SelectorEspecie";
 import { useMesElegido } from "@/lib/mes";
+import { fuenteImagen } from "@/lib/imagenes";
 
 const POR_PAGINA = 30;
+// filtros para fotografía (T26): clave en la URL, texto y si un parque lo cumple
+const FILTROS_FOTO: [string, string, (x: FotografiaParque) => boolean][] = [
+  ["pista", "Se puede salir de pista", (x) => x.fueraPista !== "no"],
+  ["pocos", "Pocos vehículos", (x) => x.aglomeracion === "baja"],
+  ["hides", "Hides o barcas", (x) => !!x.especial],
+];
 const EN_MAPA = 300;
 
 function normal(t: string) {
@@ -58,27 +66,75 @@ export default function ExploradorSafaris({
       .catch(() => setError(true));
   }, []);
 
+  // filtros para fotografía (T26), con los datos escritos a mano de fotografiaParques.ts
+  const fotoTexto = parametros.get("foto") ?? "";
+  const foto = useMemo(() => fotoTexto.split(",").filter(Boolean), [fotoTexto]);
+  // cada filtro activo: su nombre (para sugerir quitarlo si no hay resultados) y si un parque lo cumple
+  const filtros = useMemo(() => {
+    const clave = especie ? Number(especie) : null;
+    const xs: { id: string; nombre: string; pasa: (f: FilaIndice, epoca: boolean) => boolean }[] = [];
+    if (continente) xs.push({ id: "continente", nombre: continente, pasa: (f) => f.c === continente });
+    if (clave !== null)
+      xs.push({
+        id: "especie",
+        nombre: especies.find((e) => e.clave === clave)?.nombre ?? "la especie",
+        pasa: (f) => f.e.includes(clave),
+      });
+    if (soloEpoca) xs.push({ id: "epoca", nombre: "solo buena época", pasa: (_, epoca) => epoca });
+    if (ninos)
+      xs.push({ id: "ninos", nombre: "sin malaria", pasa: (f) => SIN_MALARIA.has(f.id) && !EDAD_MINIMA[f.id] });
+    if (cuenta)
+      xs.push({
+        id: "cuenta",
+        nombre: cuenta === "4x4" ? "por mi cuenta (4×4)" : "por mi cuenta (turismo)",
+        pasa: (f) =>
+          POR_TU_CUENTA[f.id]?.nivel === "turismo" || (cuenta === "4x4" && POR_TU_CUENTA[f.id]?.nivel === "4x4"),
+      });
+    for (const c of foto) {
+      const d = FILTROS_FOTO.find((x) => x[0] === c);
+      if (d)
+        xs.push({
+          id: `foto:${c}`,
+          nombre: d[1].toLowerCase(),
+          pasa: (f) => !!FOTOGRAFIA[f.id] && d[2](FOTOGRAFIA[f.id]),
+        });
+    }
+    return xs;
+  }, [continente, especie, especies, soloEpoca, ninos, cuenta, foto]);
+
+  const filtrar = useMemo(() => {
+    const q = normal(texto.trim());
+    const deZonas = new Set(buscarZonas(texto).map((z) => z.parque));
+    return (sin?: string) =>
+      (filas ?? [])
+        .map((f) => ({ f, epoca: buenaEpoca(f)?.includes(mes + 1) ?? false }))
+        .filter(
+          ({ f, epoca }) =>
+            filtros.every((x) => x.id === sin || x.pasa(f, epoca)) &&
+            (todos || !!q || esDestino(f)) &&
+            (!q || deZonas.has(f.id) || normal(`${f.n} ${f.p ?? ""}`).includes(q)),
+        );
+  }, [filas, texto, mes, todos, filtros]);
+
   const lista = useMemo(() => {
     if (!filas) return iniciales.map((f) => ({ f, epoca: buenaEpoca(f)?.includes(mes + 1) ?? false }));
-    const q = normal(texto.trim());
-    const clave = especie ? Number(especie) : null;
-    const deZonas = new Set(buscarZonas(texto).map((z) => z.parque));
-    return filas
-      .map((f) => ({ f, epoca: buenaEpoca(f)?.includes(mes + 1) ?? false }))
-      .filter(
-        ({ f, epoca }) =>
-          (!continente || f.c === continente) &&
-          (clave === null || f.e.includes(clave)) &&
-          (!soloEpoca || epoca) &&
-          (todos || !!q || esDestino(f)) &&
-          (!ninos || (SIN_MALARIA.has(f.id) && !EDAD_MINIMA[f.id])) &&
-          (!cuenta ||
-            POR_TU_CUENTA[f.id]?.nivel === "turismo" ||
-            (cuenta === "4x4" && POR_TU_CUENTA[f.id]?.nivel === "4x4")) &&
-          (!q || deZonas.has(f.id) || normal(`${f.n} ${f.p ?? ""}`).includes(q)),
-      )
-      .sort((a, b) => Number(b.epoca) - Number(a.epoca) || Number(b.f.d) - Number(a.f.d) || b.f.s - a.f.s);
-  }, [filas, iniciales, texto, continente, especie, soloEpoca, mes, todos, cuenta, ninos]);
+    return filtrar().sort(
+      (a, b) => Number(b.epoca) - Number(a.epoca) || Number(b.f.d) - Number(a.f.d) || b.f.s - a.f.s,
+    );
+  }, [filas, iniciales, mes, filtrar]);
+  // sin resultados: cuántos habría quitando cada filtro (T35)
+  const sugerencias =
+    filas && !lista.length
+      ? filtros
+          .map((x) => ({ x, n: filtrar(x.id).length }))
+          .filter((s) => s.n > 0)
+          .sort((a, b) => b.n - a.n)
+      : [];
+  const quitar = (id: string) => {
+    if (id.startsWith("foto:")) actualizar({ foto: foto.filter((c) => `foto:${c}` !== id).join(",") || null });
+    else actualizar({ [id]: null });
+  };
+  const [vista, setVista] = useState<"lista" | "mapa">("lista");
   const ocultos = (filas ?? []).filter((f) => !esDestino(f)).length;
 
   const zonas = buscarZonas(texto);
@@ -140,14 +196,50 @@ export default function ExploradorSafaris({
               onCambio={(c) => actualizar({ especie: c === null ? null : String(c) })}
             />
           </div>
-          <label className="campo">
-            <span className="rotulo">Cómo quieres ir</span>
-            <select value={cuenta} onChange={(e) => actualizar({ cuenta: e.target.value || null })}>
-              <option value="">Con guía o por tu cuenta</option>
-              <option value="turismo">Por tu cuenta en coche normal</option>
-              <option value="4x4">Por tu cuenta, también en 4×4</option>
-            </select>
-          </label>
+          <div className="campo" role="group" aria-labelledby="como-ir">
+            <span className="rotulo" id="como-ir">
+              Cómo quieres ir
+            </span>
+            <span className="botones-opcion">
+              {(
+                [
+                  ["", "Con guía"],
+                  ["turismo", "Por mi cuenta (turismo)"],
+                  ["4x4", "Por mi cuenta (4×4)"],
+                ] as const
+              ).map(([v, texto]) => (
+                <button
+                  key={v}
+                  type="button"
+                  aria-pressed={cuenta === v}
+                  onClick={() => actualizar({ cuenta: v || null })}
+                >
+                  {texto}
+                </button>
+              ))}
+            </span>
+          </div>
+          <div className="campo" role="group" aria-labelledby="para-foto">
+            <span className="rotulo" id="para-foto">
+              Para fotografía
+            </span>
+            <span className="botones-opcion">
+              {FILTROS_FOTO.map(([c, texto]) => (
+                <button
+                  key={c}
+                  type="button"
+                  aria-pressed={foto.includes(c)}
+                  onClick={() =>
+                    actualizar({
+                      foto: (foto.includes(c) ? foto.filter((x) => x !== c) : [...foto, c]).join(",") || null,
+                    })
+                  }
+                >
+                  {texto}
+                </button>
+              ))}
+            </span>
+          </div>
           <label className="campo campo-casilla">
             <input
               type="checkbox"
@@ -190,8 +282,16 @@ export default function ExploradorSafaris({
         </ul>
       )}
 
-      <div className="fauna-grid">
-        <section className="seccion">
+      <p className="vista-resultados" role="group" aria-label="Ver como">
+        <button type="button" aria-pressed={vista === "lista"} onClick={() => setVista("lista")}>
+          Lista
+        </button>
+        <button type="button" aria-pressed={vista === "mapa"} onClick={() => setVista("mapa")}>
+          Mapa
+        </button>
+      </p>
+      <div className={`fauna-grid vista-${vista}`}>
+        <section className="seccion resultados-lista">
           <h2 className="rotulo" aria-live="polite">
             {filas
               ? `${lista.length.toLocaleString("es-ES")} parques · primero los que están en buena época en ${MESES[mes]}`
@@ -199,12 +299,33 @@ export default function ExploradorSafaris({
                 ? "No se pudieron cargar los parques"
                 : `Primero los que están en buena época en ${MESES[mes]}`}
           </h2>
+          {sugerencias.length > 0 && (
+            <div className="sin-resultados">
+              <p>Ningún parque cumple todo a la vez.</p>
+              <ul>
+                {sugerencias.slice(0, 3).map(({ x, n }) => (
+                  <li key={x.id}>
+                    <button type="button" onClick={() => quitar(x.id)}>
+                      Quitando «{x.nombre}» hay {n.toLocaleString("es-ES")} {n === 1 ? "parque" : "parques"}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <ul className="rejilla-especies rejilla-safaris">
             {lista.slice(0, limite).map(({ f, epoca }) => (
               <li key={f.id} className="tarjeta-especie">
                 {(f.f ?? fotos[f.id]) ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={f.f ?? fotos[f.id]} alt="" loading="lazy" decoding="async" />
+                  <img
+                    {...fuenteImagen((f.f ?? fotos[f.id])!, "(max-width: 600px) 50vw, (max-width: 1100px) 33vw, 240px")}
+                    alt=""
+                    width={500}
+                    height={333}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 ) : (
                   <span className="sin-foto" aria-hidden />
                 )}
@@ -233,7 +354,7 @@ export default function ExploradorSafaris({
             </button>
           )}
         </section>
-        <div className="seccion mapa-mes">
+        <div className="seccion mapa-mes resultados-mapa">
           <MapaEventos eventos={puntos} enlace="/parque" etiqueta="Mapa de parques de safari" mundo />
           {lista.length > EN_MAPA && <p className="nota-pie">En el mapa, los {EN_MAPA} primeros de la lista.</p>}
         </div>

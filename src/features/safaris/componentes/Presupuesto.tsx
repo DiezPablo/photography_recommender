@@ -24,6 +24,7 @@ import { useDatosNavegador } from "@/features/safaris/useDatosNavegador";
 import CampoNumero from "@/ui/CampoNumero";
 import BuscadorParques from "./BuscadorParques";
 import { CLAVE_OFERTAS, CLAVE_SUPUESTOS, EXTERIORES, guardarViaje, leerJson, VISADO } from "@/features/safaris/viaje";
+import Esqueleto from "@/ui/Esqueleto";
 
 const MAX_OFERTAS = 4;
 
@@ -97,7 +98,7 @@ export default function Presupuesto({ mesHoy }: { mesHoy: number }) {
     "Gracias.",
   ].join("\n");
 
-  if (!indice) return <p className="nota-pie">Cargando parques…</p>;
+  if (!indice) return <Esqueleto alto={520} texto="Cargando parques…" />;
 
   return (
     <>

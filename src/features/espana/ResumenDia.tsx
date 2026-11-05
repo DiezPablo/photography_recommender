@@ -2,6 +2,7 @@
 // mareas, tiempo por horas, desglose de cada especie) va debajo.
 import Link from "next/link";
 import { rumbo } from "@/lib/sol";
+import Esqueleto from "@/ui/Esqueleto";
 
 export default function ResumenDia({
   mejor,
@@ -46,7 +47,7 @@ export default function ResumenDia({
             ))}
           </p>
         ) : (
-          <p className="nota-pie">Cargando especies…</p>
+          <Esqueleto alto={120} texto="Cargando especies…" />
         )}
       </div>
     </section>

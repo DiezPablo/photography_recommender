@@ -6,6 +6,7 @@ import FotoGrande from "@/ui/FotoGrande";
 import QueVer from "@/features/safaris/componentes/QueVer";
 import ExploradorSafaris from "@/features/safaris/componentes/ExploradorSafaris";
 import EntradasHero from "@/features/safaris/componentes/EntradasHero";
+import { listaEspeciesEspana } from "@/features/espana/datos";
 import {
   cargarMundo,
   cargarRecientes,
@@ -22,6 +23,7 @@ import {
 } from "@/features/safaris/datos";
 import { fechaLocal } from "@/lib/sol";
 import { esNd, origenFoto, textoCredito } from "@/ui/Credito";
+import { fuenteImagen } from "@/lib/imagenes";
 
 export const metadata: Metadata = {
   title: "Safaris",
@@ -46,6 +48,9 @@ export default function PaginaSafaris() {
   const hero = conFauna?.p ?? ahora.find((p) => p.foto) ?? parques.find((p) => p.foto);
   const fotoHero = conFauna?.f?.foto ?? hero?.foto ?? null;
   const opciones = opcionesEspecie();
+  // ejemplos para quien llega por primera vez (T36)
+  const tigre = opciones.find((o) => o.cientifico === "Panthera tigris");
+  const grulla = listaEspeciesEspana().find((e) => e.c === "Grus grus");
   return (
     <main className="calendario fauna safaris">
       <figure className="portada-hero">
@@ -64,6 +69,11 @@ export default function PaginaSafaris() {
             y cómo organizarlo: rutas, presupuesto y operadores locales, sin intermediarios.
           </p>
           <EntradasHero opciones={opciones} mesHoy={mesHoy} />
+          <p className="ejemplos-hero">
+            Para empezar: {tigre && <Link href={`/?especie=${tigre.clave}&mes=marzo#explorar`}>Tigres en marzo</Link>}
+            <Link href="/?ninos=1#explorar">Safari sin malaria con niños</Link>
+            {grulla && <Link href={`/espana/especie/${grulla.k}`}>Grullas en España</Link>}
+          </p>
           <div className="acciones">
             <Link href="/planificar">Planifica tu safari</Link>
             <Link href="/migracion">Dónde está la migración</Link>
@@ -83,24 +93,20 @@ export default function PaginaSafaris() {
         )}
       </figure>
 
-      <section className="portada-cifras" aria-label="En cifras">
-        <p>
-          <b>{c.destinos.toLocaleString("es-ES")}</b>
-          <span>destinos de fauna, {c.destacados} de ellos destacados</span>
-        </p>
-        <p>
-          <b>{c.paises}</b>
-          <span>países</span>
-        </p>
-        <p>
-          <b>{c.especies}</b>
-          <span>especies con ficha, mes a mes</span>
-        </p>
-      </section>
-      <p className="confianza-portada">Sin comisiones: reservas directamente con el parque, el lodge o el operador.</p>
-
       <QueVer mesHoy={mesHoy} />
 
+      {parques.length ? (
+        <>
+          <ExploradorSafaris
+            especies={opciones}
+            mesHoy={mesHoy}
+            fotos={Object.fromEntries(parques.filter((p) => p.foto).map((p) => [p.id, p.foto!.url]))}
+            iniciales={primerosDelIndice(mesHoy)}
+          />
+        </>
+      ) : (
+        <p>Los safaris aún no están disponibles.</p>
+      )}
       {ahora.length > 0 && (
         <section className="seccion">
           <h2>En buena época ahora, en {MESES[mesHoy]}</h2>
@@ -123,7 +129,9 @@ export default function PaginaSafaris() {
                     {p.foto && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={p.foto.url}
+                        {...fuenteImagen(p.foto.url, "(max-width: 600px) 50vw, (max-width: 1100px) 33vw, 240px")}
+                        width={500}
+                        height={333}
                         alt={`${p.nombre} (${p.pais})`}
                         title={textoCredito(p.foto)}
                         loading="lazy"
@@ -162,38 +170,21 @@ export default function PaginaSafaris() {
         </p>
       </section>
 
-      {parques.length ? (
-        <>
-          <ExploradorSafaris
-            especies={opciones}
-            mesHoy={mesHoy}
-            fotos={Object.fromEntries(parques.filter((p) => p.foto).map((p) => [p.id, p.foto!.url]))}
-            iniciales={primerosDelIndice(mesHoy)}
-          />
-          <noscript>
-            <ul className="lista-cercanos">
-              {parques.map((p) => (
-                <li key={p.id}>
-                  <Link href={`/parque/${p.id}`}>{p.nombre}</Link>
-                  <small>{p.pais}</small>
-                </li>
-              ))}
-            </ul>
-          </noscript>
-          <section className="seccion">
-            <h2 className="rotulo">Por especie</h2>
-            <p className="enlaces-especies">
-              {(datos?.especies ?? []).slice(0, 24).map((e) => (
-                <Link key={e.taxon} href={`/especie/${slugEspecie(e)}`}>
-                  {nombreTaxon(e)}
-                </Link>
-              ))}
-            </p>
-          </section>
-        </>
-      ) : (
-        <p>Los safaris aún no están disponibles.</p>
-      )}
+      <section className="portada-cifras" aria-label="En cifras">
+        <p>
+          <b>{c.destinos.toLocaleString("es-ES")}</b>
+          <span>destinos de fauna, {c.destacados} de ellos destacados</span>
+        </p>
+        <p>
+          <b>{c.paises}</b>
+          <span>países</span>
+        </p>
+        <p>
+          <b>{c.especies}</b>
+          <span>especies con ficha, mes a mes</span>
+        </p>
+      </section>
+      <p className="confianza-portada">Sin comisiones: reservas directamente con el parque, el lodge o el operador.</p>
     </main>
   );
 }

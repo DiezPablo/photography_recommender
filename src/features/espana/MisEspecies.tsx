@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useHidratado } from "@/lib/almacen";
 import { useVistas } from "@/features/espana/vistas";
+import Esqueleto from "@/ui/Esqueleto";
 
 const GRUPOS: [string, string][] = [
   ["Aves", "Aves"],
@@ -14,7 +15,7 @@ const GRUPOS: [string, string][] = [
 export default function MisEspecies() {
   const { vistas, alternar, borrarTodo } = useVistas();
   const hidratado = useHidratado();
-  if (!hidratado) return <p className="nota-pie">Cargando tu lista…</p>;
+  if (!hidratado) return <Esqueleto alto={240} texto="Cargando tu lista…" />;
   const todas = Object.entries(vistas).sort((a, b) => a[1].n.localeCompare(b[1].n, "es"));
   if (!todas.length)
     return (

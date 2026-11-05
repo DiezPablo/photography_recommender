@@ -13,6 +13,7 @@ import TarjetaHide from "@/features/espana/TarjetaHide";
 import { hidesDe } from "@/features/espana/hides";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
 import { fenomenosDe } from "@/features/espana/fenomenos";
+import Esqueleto from "@/ui/Esqueleto";
 
 interface EspecieLista {
   k: string;
@@ -82,7 +83,7 @@ export default function DondeVerEspecie({ hoy, inicial }: { hoy: string; inicial
   }, [clave, mes, claveConsulta]);
   const lugares = res?.clave === claveConsulta ? res.lugares : undefined;
 
-  if (lista === null) return <p className="nota-pie">Cargando especies…</p>;
+  if (lista === null) return <Esqueleto alto={360} texto="Cargando especies…" />;
   if (!lista.length)
     return (
       <p className="nota-pie">
