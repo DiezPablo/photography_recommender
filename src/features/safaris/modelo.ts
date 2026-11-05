@@ -6,6 +6,8 @@ export interface FotoSafari {
   autor: string | null;
   licencia: string | null;
   web?: string | null;
+  /** punto focal al recortar (object-position), en las fotos elegidas a mano */
+  posicion?: string;
 }
 
 export interface TaxonSafari {
@@ -59,6 +61,10 @@ export interface Parque {
   observaciones?: number;
   clima?: { lluvia_mm: number[]; tmax: (number | null)[] };
   alojamientos?: Alojamiento[];
+  /** la foto más votada de cada especie estrella hecha en el propio parque (T20), por taxón */
+  fotos_estrella?: Record<string, FotoSafari & { obs?: number }>;
+  /** fotos más votadas de mamíferos y aves hechas en el parque, una por especie */
+  galeria?: (FotoSafari & { obs?: number; taxon: number; cientifico: string; nombre: string | null })[];
 }
 
 export interface EspecieSafari extends TaxonSafari {

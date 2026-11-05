@@ -1,6 +1,6 @@
 // Lectura de public/datos/safaris.json y safaris_recientes.json (solo servidor).
 import "server-only";
-import { nombreComun } from "@/features/safaris/nombres";
+import { fotosElegidas, nombreComun } from "@/features/safaris/nombres";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { leerDatos } from "@/lib/datos";
@@ -41,12 +41,18 @@ function conNombres<T extends { cientifico: string; nombre?: string | null }>(x:
   return { ...x, nombre: nombreComun(x.cientifico, x.nombre) };
 }
 
+/** La foto elegida a mano (T19), si la especie la tiene. */
+function conFotoElegida<T extends { cientifico: string; foto?: FotoSafari | null }>(x: T): T {
+  const f = fotosElegidas()[x.cientifico];
+  return f ? { ...x, foto: f } : x;
+}
+
 export function cargarSafaris(): Safaris | null {
   if (cache === undefined) {
     const d = leer<Safaris>("safaris.json");
     cache = d && {
       ...d,
-      especies: d.especies.map(conNombres),
+      especies: d.especies.map(conNombres).map(conFotoElegida),
       parques: d.parques.map((p) => ({
         ...p,
         especies: p.especies
@@ -184,11 +190,18 @@ export function paisesPlanificador(): string[] {
 export function fotoFauna(p: Parque): { foto: FotoSafari; especie: string } | null {
   for (const t of p.estrella) {
     const e = especiePorTaxon(t);
-    const f = e?.foto;
+    // la cabecera: la foto elegida a mano (T19) si la hay; si no, la hecha en el propio parque (T20); si no, la
+    // de la especie
+    const f = (e && fotosElegidas()[e.cientifico]) || fotoEstrella(p, t) || e?.foto;
     if (!e || !f || f.licencia?.toUpperCase().includes("ND")) continue;
     return { foto: { ...f, url: f.url.replace("/medium.", "/large.") }, especie: nombreTaxonDe(e) };
   }
   return null;
+}
+
+/** La foto de una especie estrella hecha en el parque, si el pipeline encontró una con licencia abierta. */
+export function fotoEstrella(p: Parque, taxon: number): FotoSafari | null {
+  return p.fotos_estrella?.[String(taxon)] ?? null;
 }
 
 /** Lo que busca el buscador de la cabecera: parques (todos los del índice o, con `todos` falso, solo los destinos de

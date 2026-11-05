@@ -2,7 +2,11 @@ import type { NextConfig } from "next";
 
 // Las reglas de nombres comunes y las exclusiones de especies (mismos ficheros que el pipeline): las lee el
 // servidor al cargar los datos de safaris, así que van con todas las funciones que los leen
-const NOMBRES = ["./safari/recursos/nombres_safari.csv", "./safari/recursos/nombres_propios.txt"];
+const NOMBRES = [
+  "./safari/recursos/nombres_safari.csv",
+  "./safari/recursos/nombres_propios.txt",
+  "./safari/recursos/fotos_especies.csv",
+];
 const SAFARIS = ["./datos/safaris.json.gz", "./datos/safaris_mundo.json.gz", ...NOMBRES];
 
 const config: NextConfig = {

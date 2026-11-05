@@ -60,6 +60,7 @@ export default function ListaEspecies({ especies }: { especies: EspecieTarjeta[]
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={e.foto.url}
+                  style={e.foto.posicion ? { objectPosition: e.foto.posicion } : undefined}
                   alt={e.nombre}
                   loading="lazy"
                   decoding="async"

@@ -805,3 +805,18 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   y en `revision.yml`): salir de pista, vehículo, horario frente al amanecer y atardecer del mes elegido (hora
   local del parque), salidas nocturnas, vehículos por avistamiento, hides o barcas, focal y notas. En el resto
   de parques no sale.
+- Auditoría, bloque 4, T20 y T19 (fotos):
+  - T20: el pipeline busca, para cada especie estrella de cada destacado, la foto más votada en iNaturalist hecha
+    dentro del parque (grado de investigación, licencia abierta, mejor sin ND): `inat.foto_en_parque` →
+    `fotos_estrella`; y una galería de las 8 más votadas de mamíferos y aves del parque, una por especie y sin las
+    excluidas (`inat.galeria` → `galeria`). Las tarjetas de especies estrella de la ficha usan la del parque y la
+    galería sale tras el veredicto (capa 3 de T37) si hay al menos 3. Unas 400 peticiones más por semana, con caché.
+  - T19: 25 fotos elegidas a mano entre las 12 más votadas de cada especie (sin ND, para poder recortarlas, y sin
+    animales en cautividad), con los criterios de la auditoría: ojo nítido, fondo limpio, luz lateral o dorada,
+    comportamiento natural, sin collares, vehículos ni fototrampeo, y que funcione en horizontal. Están en
+    `safari/recursos/fotos_especies.csv` (con autor, licencia y enlace), que el pipeline aplica sobre la foto por
+    defecto y no sobrescribe; la web la lee también, así que se ve sin esperar al pipeline. Campo `posicion`
+    (object-position) para el punto focal al recortar (T22), puesto en la jirafa, la cebra y el picozapato.
+    La cabecera de cada parque usa la elegida a mano si la especie la tiene; si no, la hecha en el parque.
+    La tortuga gigante se guarda como Chelonoidis porteri (el nombre del catálogo); iNaturalist no tiene esa especie
+    y la foto sale de Chelonoidis niger, que la agrupa.

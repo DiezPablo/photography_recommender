@@ -65,6 +65,7 @@ export default async function PaginaEspecieSafari({ params }: Props) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={e.foto.url.replace("/medium.", "/large.")}
+              style={e.foto.posicion ? { objectPosition: e.foto.posicion } : undefined}
               alt={nombreTaxon(e)}
               className={esNd(e.foto) ? "foto-nd" : undefined}
             />

@@ -52,6 +52,7 @@ export default function PaginaSafaris() {
         {fotoHero && (
           <FotoGrande
             src={fotoHero.url}
+            posicion={fotoHero.posicion}
             alt={conFauna?.f ? `${conFauna.f.especie}, especie estrella de ${conFauna.p.nombre}` : hero?.nombre}
           />
         )}

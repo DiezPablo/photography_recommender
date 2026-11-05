@@ -2,7 +2,7 @@
 import "server-only";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { nombreComunCon, type ReglasNombres } from "@/features/safaris/modelo";
+import { nombreComunCon, type FotoSafari, type ReglasNombres } from "@/features/safaris/modelo";
 
 let reglas: ReglasNombres | undefined;
 export function reglasNombres(): ReglasNombres {
@@ -29,4 +29,43 @@ export function reglasNombres(): ReglasNombres {
 /** Nombre común con las reglas (en el servidor). */
 export function nombreComun(cientifico: string | null | undefined, bruto: string | null | undefined): string | null {
   return nombreComunCon(cientifico, bruto, reglasNombres());
+}
+
+/** Una línea de CSV con campos entre comillas (el autor lleva comas). */
+function camposCsv(l: string): string[] {
+  const salida: string[] = [];
+  let actual = "";
+  let comillas = false;
+  for (let i = 0; i < l.length; i++) {
+    const c = l[i];
+    if (c === '"' && comillas && l[i + 1] === '"') {
+      actual += '"';
+      i++;
+    } else if (c === '"') comillas = !comillas;
+    else if (c === "," && !comillas) {
+      salida.push(actual);
+      actual = "";
+    } else actual += c;
+  }
+  salida.push(actual);
+  return salida;
+}
+
+let elegidas: Record<string, FotoSafari> | undefined;
+/** Fotos elegidas a mano para las especies principales (safari/recursos/fotos_especies.csv, T19); la misma lista
+ * que aplica el pipeline, aquí también para los datos publicados antes. */
+export function fotosElegidas(): Record<string, FotoSafari> {
+  if (!elegidas) {
+    const lineas = readFileSync(path.join(process.cwd(), "safari", "recursos", "fotos_especies.csv"), "utf8")
+      .trim()
+      .split("\n")
+      .slice(1);
+    elegidas = Object.fromEntries(
+      lineas.map((l) => {
+        const [cientifico, url, autor, licencia, web, posicion] = camposCsv(l);
+        return [cientifico, { url, autor, licencia, web, ...(posicion ? { posicion } : {}) }];
+      }),
+    );
+  }
+  return elegidas;
 }

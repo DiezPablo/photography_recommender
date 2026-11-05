@@ -57,6 +57,15 @@ def _zona(p: dict) -> dict:
 
 
 EXCLUSIONES = Path(__file__).resolve().parent / "recursos" / "exclusiones.csv"
+FOTOS_ELEGIDAS = Path(__file__).resolve().parent / "recursos" / "fotos_especies.csv"
+
+
+@cache
+def fotos_elegidas() -> dict[str, dict]:
+    """Fotos elegidas a mano para las especies principales (T19): ojo nítido, fondo limpio, buena luz, sin collares
+    ni vehículos. Mandan sobre la foto por defecto de iNaturalist; `posicion` es el punto focal al recortar."""
+    with FOTOS_ELEGIDAS.open(encoding="utf-8") as f:
+        return {r["cientifico"]: {k: v for k, v in r.items() if k != "cientifico" and v} for r in csv.DictReader(f)}
 
 
 @cache
@@ -108,6 +117,79 @@ def foto_alternativa(taxon_id: int) -> dict | None:
     return {"url": f["medium_url"], "autor": f.get("attribution"), "licencia": f["license_code"].upper()}
 
 
+LICENCIAS_ABIERTAS = "cc0,cc-by,cc-by-sa,cc-by-nc,cc-by-nc-sa,cc-by-nd,cc-by-nc-nd"
+
+
+def _foto_de_observacion(o: dict) -> dict | None:
+    """La primera foto con licencia de una observación, en tamaño medio, con su autor y la observación."""
+    for f in o.get("photos") or []:
+        if f.get("license_code") and f.get("url"):
+            return {
+                "url": f["url"].replace("/square.", "/medium."),
+                "autor": f.get("attribution"),
+                "licencia": f["license_code"].upper(),
+                "obs": o.get("id"),
+            }
+    return None
+
+
+def _ordenar_nd(fotos: list[dict]) -> list[dict]:
+    # mejor sin ND, que no deja recortar; estable, así que dentro de cada grupo manda el orden de votos
+    return sorted(fotos, key=lambda f: "ND" in f["licencia"])
+
+
+def foto_en_parque(p: dict, taxon_id: int) -> dict | None:
+    """La foto más votada de una especie hecha dentro del parque (T20): el león del Serengeti en la ficha del
+    Serengeti, no el mismo león en todas. Solo fotos con licencia abierta; None si no hay ninguna."""
+    d = _get(
+        "observations",
+        {
+            **_zona(p),
+            "taxon_id": taxon_id,
+            "photos": "true",
+            "photo_license": LICENCIAS_ABIERTAS,
+            "order_by": "votes",
+            "per_page": 10,
+        },
+    )
+    fotos = [f for o in d.get("results", []) if (f := _foto_de_observacion(o))]
+    return _ordenar_nd(fotos)[0] if fotos else None
+
+
+def galeria(p: dict, n: int = 8) -> list[dict]:
+    """Las fotos más votadas de mamíferos y aves hechas en el parque, una por especie, sin las excluidas."""
+    d = _get(
+        "observations",
+        {
+            **_zona(p),
+            "iconic_taxa": "Mammalia,Aves",
+            "photos": "true",
+            "photo_license": LICENCIAS_ABIERTAS,
+            "order_by": "votes",
+            "locale": "es",
+            "per_page": 40,
+        },
+    )
+    salida, vistas = [], set()
+    for o in d.get("results", []):
+        t = o.get("taxon") or {}
+        if not t.get("id") or t["id"] in vistas or excluida(p.get("id"), t.get("name")):
+            continue
+        if f := _foto_de_observacion(o):
+            vistas.add(t["id"])
+            salida.append(
+                {
+                    **f,
+                    "taxon": t["id"],
+                    "cientifico": t.get("name"),
+                    "nombre": nombre_comun(t.get("name", ""), t.get("preferred_common_name")),
+                }
+            )
+        if len(salida) >= n:
+            break
+    return salida
+
+
 def taxon(cientifico: str) -> dict | None:
     """Taxón de iNaturalist por nombre científico exacto o sinónimo (Bison bison es Bos bison en iNaturalist)."""
     d = _get("taxa", {"q": cientifico, "rank": "species,subspecies", "locale": "es", "per_page": 10})
@@ -115,6 +197,8 @@ def taxon(cientifico: str) -> dict | None:
     for t in d.get("results", []):
         if buscado in (t.get("name", "").lower(), (t.get("matched_term") or "").lower()):
             ficha = ficha_taxon(t)
+            if elegida := fotos_elegidas().get(cientifico):
+                ficha["foto"] = elegida
             if ficha["foto"] is None:
                 ficha["foto"] = foto_alternativa(t["id"])
             return ficha

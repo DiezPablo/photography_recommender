@@ -32,6 +32,8 @@ import {
   cargarRecientes,
   exclusionesDe,
   fotoFauna,
+  fotoEstrella,
+  type FotoSafari,
   cargarSafaris,
   urlWeb,
   especiePorTaxon,
@@ -108,6 +110,8 @@ export default async function PaginaParque({ params }: Props) {
   const gruposAlojamiento: GrupoAlojamientos[] = zonas
     ? zonas.map((z) => ({ nombre: z.nombre, nota: z.nota, lista: alojamientos.filter((a) => zonaDe(p.id, a) === z) }))
     : [{ nombre: null, lista: alojamientos }];
+  // la foto de cada especie estrella hecha en este parque (T20); si no hay, la de la especie
+  const fotoDe = (e: { taxon: number; foto?: FotoSafari | null }) => fotoEstrella(p, e.taxon) ?? e.foto ?? null;
   const filasFrecuencia = estrella
     .filter((e) => p.frecuencia?.[String(e.taxon)])
     .map((e) => ({
@@ -143,6 +147,7 @@ export default async function PaginaParque({ params }: Props) {
         {fotoHero && (
           <FotoGrande
             src={fotoHero.url}
+            posicion={fotoHero.posicion}
             alt={fauna ? `${fauna.especie}, especie estrella de ${p.nombre}` : `Paisaje de ${p.nombre}`}
           />
         )}
@@ -222,6 +227,32 @@ export default async function PaginaParque({ params }: Props) {
 
       <VeredictoMes meses={veredictos(p, filasFrecuencia)} mesHoy={mesHoy} />
 
+      {(p.galeria?.length ?? 0) >= 3 && (
+        <section className="seccion galeria-parque" aria-labelledby="galeria-titulo">
+          <h2 className="rotulo" id="galeria-titulo">
+            Fotos hechas en {p.nombre}
+          </h2>
+          <ul>
+            {p.galeria!.map((g) => (
+              <li key={g.url}>
+                <figure className="con-credito">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={g.url}
+                    alt={`${g.nombre ?? g.cientifico} en ${p.nombre}`}
+                    loading="lazy"
+                    className={esNd(g) ? "foto-nd" : undefined}
+                  />
+                  <figcaption>{g.nombre ?? <i>{g.cientifico}</i>}</figcaption>
+                  <Credito foto={g} />
+                </figure>
+              </li>
+            ))}
+          </ul>
+          <p className="nota-pie">Las fotos más votadas en iNaturalist de las hechas aquí, con licencia abierta.</p>
+        </section>
+      )}
+
       <section className="seccion" id="cuando">
         <h2 className="rotulo">Cuándo ir</h2>
         <AnoSafari p={p} mesActual={mesHoy} />
@@ -249,16 +280,16 @@ export default async function PaginaParque({ params }: Props) {
                 const mes = recientes?.estrella[String(e.taxon)] ?? 0;
                 return (
                   <li key={e.taxon} className="tarjeta-especie">
-                    {e.foto ? (
+                    {fotoDe(e) ? (
                       <span className="con-credito">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={e.foto.url}
-                          alt={`${nombreTaxon(e)} (foto de iNaturalist)`}
+                          src={fotoDe(e)!.url}
+                          alt={`${nombreTaxon(e)}${fotoEstrella(p, e.taxon) ? ` en ${p.nombre}` : ""} (foto de iNaturalist)`}
                           loading="lazy"
-                          className={esNd(e.foto) ? "foto-nd" : undefined}
+                          className={esNd(fotoDe(e)) ? "foto-nd" : undefined}
                         />
-                        <Credito foto={e.foto} />
+                        <Credito foto={fotoDe(e)!} />
                       </span>
                     ) : (
                       <span className="sin-foto" aria-hidden />

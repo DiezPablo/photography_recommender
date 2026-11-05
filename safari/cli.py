@@ -108,6 +108,13 @@ def calcular(parques: list[dict], con_clima: bool = True, con_alojamientos: bool
             x["meses_mamiferos"] = meses_relativos(inat.por_mes(p, "Mammalia"))
             x["observaciones"] = sum(inat.por_mes(p))
             x["frecuencia"], x["muestra"] = frecuencias(p, [estrella[c] for c in p["estrella"] if c in estrella])
+            # fotos hechas en el propio parque (T20): la de cada especie estrella y una galería
+            x["fotos_estrella"] = {
+                str(estrella[c]["taxon"]): f
+                for c in p["estrella"]
+                if c in estrella and (f := inat.foto_en_parque(p, estrella[c]["taxon"]))
+            }
+            x["galeria"] = inat.galeria(p)
         except _ERRORES as e:
             print(f"  {p['nombre']}: sin iNaturalist ({e})", flush=True)
         try:
