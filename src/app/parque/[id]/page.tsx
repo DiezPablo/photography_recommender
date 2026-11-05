@@ -19,6 +19,8 @@ import ResumenParque from "@/features/safaris/componentes/ResumenParque";
 import FrecuenciaAvistamientos from "@/features/safaris/componentes/FrecuenciaAvistamientos";
 import IndiceFicha from "@/features/safaris/componentes/IndiceFicha";
 import VeredictoMes from "@/features/safaris/componentes/VeredictoMes";
+import Fotografia from "@/features/safaris/componentes/Fotografia";
+import { FOTOGRAFIA } from "@/features/safaris/fotografiaParques";
 import Alojamientos, { type GrupoAlojamientos } from "@/features/safaris/componentes/Alojamientos";
 import { ZONAS_PARQUE, zonaDe, zonasRecomendadas } from "@/features/safaris/zonasParque";
 import { veredictos } from "@/features/safaris/veredicto";
@@ -199,6 +201,7 @@ export default async function PaginaParque({ params }: Props) {
           ["resumen", "Resumen"],
           ["cuando", "Cuándo ir"],
           ["que-se-ve", "Qué se ve"],
+          ...(FOTOGRAFIA[p.id] ? ([["fotografia", "Fotografía"]] as [string, string][]) : []),
           ["organiza", "Organizar"],
           ...(alojamientos.length ? ([["dormir", "Dónde dormir"]] as [string, string][]) : []),
           ["mapa", "Mapa"],
@@ -325,6 +328,8 @@ export default async function PaginaParque({ params }: Props) {
           </details>
         )}
       </div>
+
+      {FOTOGRAFIA[p.id] && <Fotografia f={FOTOGRAFIA[p.id]} lat={p.lat} lon={p.lon} mesHoy={mesHoy} />}
 
       <div className="capa">
         <h2 className="titulo-capa">Organizar el viaje</h2>

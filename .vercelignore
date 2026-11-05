@@ -2,7 +2,9 @@ cache
 tests
 e2e
 __pycache__
-safari
+# el pipeline no hace falta en Vercel, pero la web lee sus recursos (exclusiones y nombres de especies)
+safari/*
+!safari/recursos
 pyproject.toml
 *.py
 docs

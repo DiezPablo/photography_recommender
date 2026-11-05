@@ -55,7 +55,7 @@ test("el mes elegido se conserva al ir a una ficha y cambia su veredicto", async
 test("ficha del Serengeti: capas, alojamientos por zona con la recomendada del mes", async ({ page }) => {
   await page.goto("/parque/serengeti?mes=febrero");
   const titulos = await page.locator(".titulo-capa").allTextContents();
-  expect(titulos).toEqual(["Qué se ve", "Organizar el viaje"]);
+  expect(titulos).toEqual(["Qué se ve", "Fotografía", "Organizar el viaje"]);
   const dormir = page.locator("#dormir");
   test.skip(!(await dormir.count()), "sin alojamientos en los datos");
   await expect(dormir.locator(".zona-recomendada")).toContainText("Sur");
@@ -82,4 +82,15 @@ test("portada: «Tengo un animal» con buscador y grupos lleva a «¿Qué quiere
     .first()
     .click();
   await expect(page).toHaveURL(/ver=\d+/);
+});
+
+test("ficha del Masái Mara: bloque de fotografía con el amanecer del mes elegido", async ({ page }) => {
+  await page.goto("/parque/masai-mara?mes=agosto");
+  const foto = page.locator("#fotografia");
+  await expect(foto).toContainText("Solo en las concesiones privadas");
+  await expect(foto).toContainText(/A mediados de agosto, el sol sale hacia las 0?6:\d\d/);
+  await expect(page.locator(".indice-ficha a", { hasText: "Fotografía" })).toBeVisible();
+  // en un parque sin datos no sale
+  await page.goto("/parque/kakadu");
+  await expect(page.locator("#fotografia")).toHaveCount(0);
 });

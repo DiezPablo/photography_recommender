@@ -479,7 +479,8 @@ test("planificador: avioneta en tramos largos y salida por otra ciudad en rutas 
   await expect(page).toHaveURL(/volar=1/);
   await expect(page.getByLabel("Avioneta en los tramos de más de 5 h")).toBeChecked();
   await page.goto("/planificar?pais=Tanzania&noches=14&mes=7");
-  await expect(etapas.last()).toContainText("Ruaha");
+  // la ruta larga acaba en el circuito del sur (cuál de los dos depende de los datos de la semana)
+  await expect(etapas.last()).toContainText(/Ruaha|Nyerere/);
   await expect(page.locator(".plan")).toContainText("salida por Dar es Salaam");
 });
 

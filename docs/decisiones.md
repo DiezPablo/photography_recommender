@@ -796,3 +796,12 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   - T43: en la ficha de especie, cada parque con su paisaje en miniatura, barra de observaciones y los 12 meses
     con el elegido resaltado; orden por observaciones, buena época ese mes o entrada más barata. Las miniaturas de
     Commons, a 120 px: Wikimedia solo sirve tamaños estándar y 160 daba error.
+- 05-11-2026: Vercel no desplegaba desde el bloque 1 (producción se quedó en la navegación en dos mundos):
+  `.vercelignore` excluía `safari/` entero y la web lee al compilar `safari/recursos/` (exclusiones y nombres
+  de especies). El CI sí tenía esos ficheros y pasaba. Ahora se excluye `safari/*` salvo `safari/recursos`.
+  También: la prueba del planificador esperaba Ruaha al final de la ruta larga y, con los datos nuevos, es
+  Nyerere; se acepta cualquiera de los dos parques del sur.
+- Auditoría, bloque 4, T23: bloque «Fotografía» en la ficha de 19 parques (`fotografiaParques.ts`, escrito a mano
+  y en `revision.yml`): salir de pista, vehículo, horario frente al amanecer y atardecer del mes elegido (hora
+  local del parque), salidas nocturnas, vehículos por avistamiento, hides o barcas, focal y notas. En el resto
+  de parques no sale.
