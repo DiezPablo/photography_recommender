@@ -62,17 +62,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <nav aria-label="Mapa del sitio">
               <p>Descubrir</p>
-              <Link href="/">Parques</Link>
-              <Link href="/especies">Especies</Link>
+              <Link href="/">Destinos</Link>
+              <Link href="/especies">Animales</Link>
+              <Link href="/safari-en">Calendario</Link>
               <Link href="/migracion">La gran migración</Link>
-              <Link href="/safari-en">Por meses y países</Link>
               <Link href="/temporada-verde">Temporada verde</Link>
-              <Link href="/espana">Fauna en España</Link>
+              <Link href="/espana">España</Link>
               <a href="/recientes.xml">Lo visto, por RSS</a>
             </nav>
             <nav aria-label="Organizar">
               <p>Organizar</p>
-              <Link href="/planificar">Planificar la ruta</Link>
+              <Link href="/planificar">Planificar</Link>
               <Link href="/presupuesto">Presupuesto</Link>
               <Link href="/comparar">Comparar parques</Link>
               <Link href="/viaje">Mi viaje</Link>

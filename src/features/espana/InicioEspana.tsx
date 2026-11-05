@@ -8,6 +8,19 @@ import { MESES } from "@/lib/fechas";
 import { FENOMENOS } from "@/features/espana/fenomenos";
 import { guardarUbicacion, useUbicacionGuardada } from "@/features/espana/ubicacion";
 
+// para empezar sin dar la ubicación: las ciudades más pobladas, repartidas por la península y las islas
+const CIUDADES: { nombre: string; lat: number; lon: number }[] = [
+  { nombre: "Madrid", lat: 40.417, lon: -3.704 },
+  { nombre: "Barcelona", lat: 41.387, lon: 2.17 },
+  { nombre: "Valencia", lat: 39.47, lon: -0.376 },
+  { nombre: "Sevilla", lat: 37.389, lon: -5.984 },
+  { nombre: "Zaragoza", lat: 41.649, lon: -0.889 },
+  { nombre: "Bilbao", lat: 43.263, lon: -2.935 },
+  { nombre: "A Coruña", lat: 43.362, lon: -8.411 },
+  { nombre: "Palma", lat: 39.57, lon: 2.65 },
+  { nombre: "Las Palmas", lat: 28.124, lon: -15.43 },
+];
+
 export default function InicioEspana({ hoy }: { hoy: string }) {
   const router = useRouter();
   const guardada = useUbicacionGuardada();
@@ -33,22 +46,32 @@ export default function InicioEspana({ hoy }: { hoy: string }) {
         <section className="entrada">
           <h2>Cerca de mí, ahora</h2>
           <p>Qué especies hay a tu alrededor este mes, con la luz, el tiempo y los lugares para ir.</p>
+          <p className="ciudades-espana">
+            {guardada && (
+              <Link className="boton" href={`/espana?modo=aqui&${q(guardada)}&radio=10`}>
+                {guardada.nombre ?? "Mi último punto"}
+              </Link>
+            )}
+            {CIUDADES.map((c) => (
+              <Link key={c.nombre} className="chip" href={`/espana?modo=aqui&${q(c)}&radio=20`}>
+                {c.nombre}
+              </Link>
+            ))}
+          </p>
           <p>
-            <button type="button" className="boton" onClick={cercaDeMi}>
+            <button type="button" className="enlace-boton" onClick={cercaDeMi}>
               Usar mi ubicación
             </button>{" "}
-            {guardada && (
-              <Link href={`/espana?modo=aqui&${q(guardada)}&radio=10`}>o {guardada.nombre ?? "el último punto"} →</Link>
-            )}
+            · <Link href="/espana?modo=aqui">Buscar otro lugar →</Link>
           </p>
-          {error && <p className="nota-pie">No se pudo saber tu ubicación: busca un lugar en «¿Qué veo aquí?».</p>}
-          <p>
-            <Link href="/espana?modo=aqui">Elegir otro lugar →</Link>
-          </p>
+          {error && <p className="nota-pie">No se pudo saber tu ubicación: elige una ciudad o busca un lugar.</p>}
         </section>
         <section className="entrada">
           <h2>Este finde</h2>
-          <p>Los mejores sitios cerca para el sábado y el domingo, por fauna del mes, tiempo y distancia.</p>
+          <p>
+            Los mejores sitios para el sábado y el domingo, por fauna del mes, tiempo y distancia
+            {guardada?.nombre ? `, cerca de ${guardada.nombre}` : guardada ? "" : ", desde Madrid (cámbialo allí)"}.
+          </p>
           <p>
             <Link className="boton" href={`/espana?modo=finde${guardada ? `&${q(guardada)}` : ""}`}>
               Ver el fin de semana

@@ -17,6 +17,7 @@ import time
 
 import requests
 
+from safari import limpieza
 from safari.comun.cache import CacheJson
 from safari.comun.red import sesion
 from safari.mundo import sin_tiempo
@@ -352,7 +353,7 @@ def operadores_ciudad(lat: float, lon: float, nombre_ciudad: str | None = None) 
         )
     # primero los que se dedican a viajes y safaris por el nombre y los que tienen web
     salida.sort(key=lambda o: (not o["safari"], o["web"] is None, o["km"]))
-    return salida[:12]
+    return limpieza.operadores(salida)[:12]
 
 
 def epoca(lat: float, temporada: list[int] | None, lluvia: list[int] | None, avistamientos: list[int]) -> dict:
@@ -442,6 +443,8 @@ def clasificar(datos: dict, lat: float, lon: float) -> dict:
             salida["pueblos"].append({**base, "poblacion": t.get("population")})
         elif PUERTA.search(t["name"]):  # las verjas de fincas no interesan: solo las puertas del parque
             salida["puertas"].append(base)
+    salida["alojamientos"] = limpieza.alojamientos(salida["alojamientos"])
+    salida["operadores"] = limpieza.operadores(salida["operadores"])
     salida["alojamientos"].sort(key=lambda a: (a["web"] is None, a["km"]))
     salida["operadores"].sort(key=lambda a: (a["web"] is None and a["telefono"] is None, a["km"]))
     for k in ("puertas", "pueblos"):

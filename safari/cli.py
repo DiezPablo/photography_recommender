@@ -15,7 +15,7 @@ from pathlib import Path
 
 import requests
 
-from safari import entorno, inat, practico
+from safari import entorno, inat, limpieza, practico
 from safari.catalogo import cargar
 from safari.comun.ficheros import escribir_json
 from safari.frecuencia import frecuencia, muestra
@@ -122,6 +122,9 @@ def calcular(parques: list[dict], con_clima: bool = True, con_alojamientos: bool
             print(f"  {p['nombre']}: sin alojamientos ({e})", flush=True)
         salida.append(x)
         print(f"  {i + 1}/{len(parques)} {p['nombre']}", flush=True)
+    con = [x for x in salida if x.get("alojamientos")]
+    for x, lista in zip(con, limpieza.repartir([x["alojamientos"] for x in con]), strict=True):
+        x["alojamientos"] = lista
     especies = []
     for c, t in estrella.items():
         lugares = sorted(por_especie[t["taxon"]], key=lambda x: -x["n"])

@@ -19,7 +19,7 @@ import time
 import requests
 
 from safari.comun.red import sesion
-from safari.espana import ebird
+from safari.espana import ebird, nombres_lugares
 
 WIKIDATA = "https://query.wikidata.org/sparql"
 MIN_ESPECIES_HOTSPOT = 30  # por debajo suelen ser puntos de una sola visita
@@ -243,6 +243,14 @@ def todos(s: requests.Session | None = None) -> tuple[list[dict], dict[str, int]
                 print(f"  lugares {nombre}: se reutilizan {len(xs)} ya publicados", flush=True)
         cuenta[nombre] = len(xs)
         salida += xs
+    # nombres en español: sin avisos ni abreviaturas de eBird, tipos de Wikidata y observatorios de OSM traducidos
+    for x in salida:
+        if x["id"].startswith("eb-"):
+            x["n"] = nombres_lugares.ebird(x["n"])
+        elif x["id"].startswith("wd-"):
+            x["n"] = nombres_lugares.wikidata(x["n"])
+        elif x["id"].startswith("osm-"):
+            x["n"] = nombres_lugares.observatorio(x.get("n"))
     # observatorios sin nombre: «Observatorio de aves junto a <el lugar con nombre más cercano a menos de 5 km>»
     con_nombre = [x for x in salida if x.get("n")]
     for x in salida:

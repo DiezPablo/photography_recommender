@@ -33,15 +33,15 @@ const modo = (q: URLSearchParams) => q.get("modo") ?? (q.has("lat") || q.has("zo
 const SAFARIS: Seccion[] = [
   {
     href: "/",
-    texto: "Descubrir",
+    texto: "Destinos",
     Icono: IconoBrujula,
     activa: (r) => r === "/" || r.startsWith("/parque"),
     movil: true,
   },
-  { href: "/especies", texto: "Especies", Icono: IconoHuella, activa: (r) => r.startsWith("/especie"), movil: true },
+  { href: "/especies", texto: "Animales", Icono: IconoHuella, activa: (r) => r.startsWith("/especie"), movil: true },
   {
     href: "/safari-en",
-    texto: "Cuándo ir",
+    texto: "Calendario",
     Icono: IconoManada,
     activa: (r) => ["/safari-en", "/migracion", "/temporada-verde"].some((x) => r.startsWith(x)),
     movil: true,
@@ -67,7 +67,7 @@ const ESPANA: Seccion[] = [
   {
     href: "/espana?modo=aqui",
     texto: "Qué veo aquí",
-    corto: "Aquí",
+    corto: "Cerca",
     Icono: IconoUbicacion,
     activa: (r, q) => r.startsWith("/espana/lugar") || (r === "/espana" && modo(q) === "aqui"),
     movil: true,

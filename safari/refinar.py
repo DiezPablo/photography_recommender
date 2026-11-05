@@ -15,6 +15,7 @@ from __future__ import annotations
 import math
 import re
 
+from safari import limpieza
 from safari.catalogo import cargar
 
 MIN_OBS_ESTRELLA = 5
@@ -105,4 +106,11 @@ def refinar(datos: dict, curados: list[dict] | None = None) -> dict:
         n_estrella = sum(1 for n in p["estrella"].values() if n >= MIN_OBS_ESTRELLA)
         p["puntuacion"] = puntuacion(p["n_mamiferos"], p["obs"], n_estrella)
         p["nivel"] = nivel(p, cientifico)
+        # la limpieza de OSM también sobre lo ya publicado (el refinado diario no vuelve a pedir nada a OSM)
+        if p.get("osm"):
+            p["osm"]["alojamientos"] = limpieza.alojamientos(p["osm"]["alojamientos"])
+            p["osm"]["operadores"] = limpieza.operadores(p["osm"]["operadores"])
+        if p.get("operadores_ciudad"):
+            p["operadores_ciudad"]["lista"] = limpieza.operadores(p["operadores_ciudad"]["lista"])
+    limpieza.repartir_alojamientos(datos["parques"])
     return datos

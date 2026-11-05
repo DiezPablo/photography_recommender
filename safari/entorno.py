@@ -8,6 +8,7 @@ from urllib.parse import unquote
 
 import requests
 
+from safari import limpieza, practico
 from safari.commons import consultar, texto_plano
 from safari.comun.cache import CacheJson
 from safari.comun.red import sesion
@@ -144,8 +145,10 @@ def alojamientos(lat: float, lon: float, radio_km: float, maximo: int = 30) -> l
                 "telefono": t.get("phone") or t.get("contact:phone"),
                 "estrellas": t.get("stars"),
                 "osm": f"{e['type']}/{e['id']}",
+                "km": round(practico.km((lat, lon), (la, lo))),
             }
         )
+    salida = limpieza.alojamientos(salida)
     # primero los que tienen web (se puede reservar directamente), luego por nombre
     salida.sort(key=lambda a: (a["web"] is None, a["nombre"].lower()))
     return salida[:maximo]

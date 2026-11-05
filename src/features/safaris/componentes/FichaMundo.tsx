@@ -75,7 +75,7 @@ export default function FichaMundo({
         {p.foto && <FotoGrande src={p.foto.url} />}
         <div className="ficha-hero-texto">
           <nav className="migas rotulo" aria-label="Migas">
-            <Link href="/">Safaris</Link>
+            <Link href="/">Destinos</Link>
             {pais?.continente && <span>{pais.continente}</span>}
             {pais?.nombre && <span>{pais.nombre}</span>}
           </nav>

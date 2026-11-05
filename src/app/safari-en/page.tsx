@@ -18,7 +18,7 @@ export default function IndiceRespuestas() {
         <p className="rotulo">
           <Link href="/">Safaris</Link> · Cuándo y adónde
         </p>
-        <h1>Cuándo ir</h1>
+        <h1>Calendario: cuándo ir</h1>
         <p className="entradilla">
           Cada mes, los parques que están en su mejor época; cada país, sus parques y cuándo ir a cada uno; y la
           migración y la temporada verde.

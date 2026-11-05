@@ -614,6 +614,12 @@ test("fauna en España: portada con las tres entradas", async ({ page }) => {
   await expect(page).toHaveURL(/modo=donde/);
 });
 
+test("fauna en España: se empieza por una ciudad, sin pedir la ubicación", async ({ page }) => {
+  await page.goto("/espana");
+  await page.locator(".ciudades-espana").getByRole("link", { name: "Sevilla" }).click();
+  await expect(page).toHaveURL(/modo=aqui.*lugar=Sevilla/);
+});
+
 test("fauna en España: rarezas de la semana", async ({ page }) => {
   await page.goto("/espana/rarezas");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Rarezas esta semana");

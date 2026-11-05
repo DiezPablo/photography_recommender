@@ -747,3 +747,26 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     dice. Tasas redondeadas igual en todas partes («Unos 83 USD/día»). Umbral de 20 observaciones para que un
     parque cuente como «se ve aquí» (`MIN_OBS_ESPECIE`, y el mismo filtro en la web), y nota en la ficha de
     especie sobre por qué no se comparan las cifras de iNaturalist (destacados) y GBIF (resto).
+- Auditoría, bloque 3, segunda parte:
+  - T14: operadores de OSM limpios en el pipeline (`safari/limpieza.py`, también al refinar lo ya publicado):
+    fuera aerolíneas, alquiler de coches y cambio de moneda; uno por empresa (misma web, mismo teléfono por sus
+    nueve últimos dígitos o mismo nombre normalizado). En la web, cinco a la vista y el resto plegado, con el aviso
+    de que salen de OSM y no sabemos si tienen licencia. «Con licencia primero» no se puede: no hay lista abierta de
+    socios de las asociaciones; se enlaza su directorio (decisión: la opción más simple).
+  - T15: alojamientos sin bares ni nombres cortados, uno por nombre (o web) a menos de 500 m, nombres todo en
+    mayúsculas pasados a tipo título, y cada uno solo en el parque más cercano si cae en el círculo de varios
+    (`limpieza.repartir`, en los destacados y en el mundo).
+  - T29: mismas palabras en menú, pie y migas: Destinos · Animales · Calendario · Planificar · Mi viaje; España
+    es el otro mundo del conmutador. «Aquí» de la barra de España pasa a «Cerca» (texto de enlace genérico).
+  - T39: el índice fijo de la ficha marca la sección en la que estás (IntersectionObserver) y la desplaza a la
+    vista en el móvil; sin JavaScript siguen siendo anclas.
+  - T46: la portada de España no pide la ubicación de entrada: nueve ciudades para empezar y «Usar mi
+    ubicación» como opción secundaria; «Este finde» sigue usando Madrid si no hay punto guardado.
+  - T50: nombres de lugares de España en español (`safari/espana/nombres_lugares.py`): sin los avisos de eBird
+    («General Area (please…)»), abreviaturas desarrolladas y delante («Doñana PNat» → «Parque Natural de Doñana»;
+    «RN 2000» → «Red Natura 2000»), tipos en inglés de Wikidata traducidos y observatorios de OSM «Hide G» →
+    «Observatorio G» (o sin nombre, que luego se nombra por el lugar más cercano).
+  - T04: las miniaturas con `alt=""` que quedan van dentro de un enlace con el nombre de la especie o del parque:
+    son decorativas y así no se lee el nombre dos veces.
+  - Lighthouse: el gris secundario (`--texto-3`) no llegaba a 4,5:1 (3,4 en claro, 4,1 en oscuro); se oscurece en
+    claro y se aclara en oscuro. Enlaces del resumen del parque con 24 px de alto para el dedo.

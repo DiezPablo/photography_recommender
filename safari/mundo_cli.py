@@ -16,7 +16,7 @@ from pathlib import Path
 
 import requests
 
-from safari import entorno, mundo, practico
+from safari import entorno, limpieza, mundo, practico
 from safari import gbif as gbif_nombres
 from safari.catalogo import cargar
 from safari.comun.ficheros import escribir_json
@@ -239,6 +239,7 @@ def calcular(hilos: int = 4, osm_max: int = 1500, limite: int | None = None) -> 
     for p, o in zip(parques, osm, strict=True):
         if o is not None:
             p["osm"] = o
+    limpieza.repartir_alojamientos(parques)
     con_osm = sum(1 for p in parques if "osm" in p)
     print(f"  OSM: {con_osm}/{len(parques)} parques; espejos: {practico.resumen_espejos()}", flush=True)
 

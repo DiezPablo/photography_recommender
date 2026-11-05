@@ -177,6 +177,30 @@ export default function OrganizaViaje({
   );
 }
 
+const VISIBLES = 5;
+
+/** Los cinco primeros a la vista; el resto, plegado. */
+function ListaPlegable({ lista, conKm = false }: { lista: LugarOsm[]; conKm?: boolean }) {
+  const fila = (x: LugarOsm) => (
+    <li key={x.osm ?? x.nombre}>
+      <b>{x.nombre}</b>
+      {conKm && <small> a {x.km} km</small>}
+      <Contacto l={x} />
+    </li>
+  );
+  return (
+    <>
+      <ul className="lista-organiza">{lista.slice(0, VISIBLES).map(fila)}</ul>
+      {lista.length > VISIBLES && (
+        <details className="mas-organiza">
+          <summary>Ver {lista.length - VISIBLES} más</summary>
+          <ul className="lista-organiza">{lista.slice(VISIBLES).map(fila)}</ul>
+        </details>
+      )}
+    </>
+  );
+}
+
 /** Empresas para organizar el safari: operadores de la ciudad de acceso y de la zona (OSM), la asociación
  * oficial del país y lo que hay que comprobar antes de pagar. */
 function EmpresasParaOrganizarlo({ p, pais }: { p: ParqueMundo; pais?: Pais }) {
@@ -193,14 +217,7 @@ function EmpresasParaOrganizarlo({ p, pais }: { p: ParqueMundo; pais?: Pais }) {
               <p>
                 <b>Operadores y agencias en {ciudad.ciudad}</b>, desde donde se organizan los safaris de este parque:
               </p>
-              <ul className="lista-organiza">
-                {ciudad.lista.map((x) => (
-                  <li key={x.osm}>
-                    <b>{x.nombre}</b>
-                    <Contacto l={x} />
-                  </li>
-                ))}
-              </ul>
+              <ListaPlegable lista={ciudad.lista} />
             </>
           )}
           {zona.length > 0 && (
@@ -208,15 +225,14 @@ function EmpresasParaOrganizarlo({ p, pais }: { p: ParqueMundo; pais?: Pais }) {
               <p>
                 <b>En la zona del parque:</b>
               </p>
-              <ul className="lista-organiza">
-                {zona.map((x) => (
-                  <li key={x.osm}>
-                    <b>{x.nombre}</b> <small>a {x.km} km</small>
-                    <Contacto l={x} />
-                  </li>
-                ))}
-              </ul>
+              <ListaPlegable lista={zona} conKm />
             </>
+          )}
+          {(ciudad?.lista.length || zona.length) > 0 && (
+            <p className="nota-pie">
+              Sacados de OpenStreetMap: no es una recomendación ni sabemos si tienen licencia. Antes de pagar,
+              compruébalo{asociacion ? ` en el directorio de ${asociacion.sigla}` : ""} y mira sus reseñas.
+            </p>
           )}
           {!ciudad?.lista.length && !zona.length && (
             <>
