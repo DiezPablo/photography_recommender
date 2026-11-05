@@ -8,7 +8,7 @@ export interface DatoFresco {
   url?: string;
 }
 
-function fecha(t: string): string {
+export function fecha(t: string): string {
   if (/^\d{4}-\d{2}-\d{2}/.test(t))
     return new Date(`${t.slice(0, 10)}T12:00:00Z`).toLocaleDateString("es-ES", {
       day: "numeric",
@@ -21,7 +21,7 @@ function fecha(t: string): string {
 
 export function Frescura({ datos }: { datos: DatoFresco[] }) {
   return (
-    <details className="frescura">
+    <details className="frescura" id="de-cuando">
       <summary>De cuándo es cada dato</summary>
       <dl>
         {datos.map((d) => (
@@ -45,5 +45,14 @@ export function Frescura({ datos }: { datos: DatoFresco[] }) {
         ))}
       </dl>
     </details>
+  );
+}
+
+/** Una línea corta arriba de la ficha (T41): lo más reciente que hay y de dónde viene; el detalle, abajo. */
+export function FrescuraCorta({ cuando, fuente }: { cuando: string; fuente: string }) {
+  return (
+    <p className="frescura-corta">
+      Actualizado el {fecha(cuando)} con {fuente} · <a href="#de-cuando">fechas de cada dato</a>
+    </p>
   );
 }

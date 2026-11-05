@@ -646,7 +646,8 @@ test("fauna en España: ficha de una especie", async ({ page, request }) => {
   if (!grulla) return; // sin datos de especies
   await page.goto(`/espana/especie/${grulla.k}`);
   await expect(page.getByRole("heading", { level: 1 })).toContainText(/[Gg]rulla/);
-  await expect(page.locator(".tabla-frecuencia")).toBeVisible();
+  // en el móvil, un mes cada vez en vez de la tabla (T40)
+  await expect(page.locator(".tabla-frecuencia:visible, .frecuencia-mes:visible").first()).toBeVisible();
   await expect(page.locator(".fenomenos")).toContainText("Gallocanta");
   await expect(page.locator("section", { hasText: "Para fotografiarla" })).toContainText("cm");
 });

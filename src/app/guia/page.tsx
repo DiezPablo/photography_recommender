@@ -65,7 +65,8 @@ export default function PaginaGuiaSafari() {
               </li>
               <li>
                 <b>No intentes ver demasiados parques</b>: en el mapa parecen cerca, pero por pista se tarda mucho más.
-                En cada ficha, «Combínalo con» da distancias y tiempos aproximados; mejor 3-4 noches por parque.
+                En cada ficha, «Combínalo con» da distancias y tiempos aproximados; mejor quedarse 3 o 4 noches en cada
+                parque.
               </li>
               <li>
                 En la <b>India</b> muchos parques de tigres cierran con el monzón (julio-septiembre); en marzo-mayo, con

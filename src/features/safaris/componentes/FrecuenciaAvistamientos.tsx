@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { INICIALES, MESES } from "@/lib/fechas";
 import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
+import FrecuenciaMes from "./FrecuenciaMes";
 
 export interface FilaFrecuencia {
   nombre: string;
@@ -42,6 +43,7 @@ export default function FrecuenciaAvistamientos({
       <h2 className="rotulo" id={idTitulo}>
         {titulo}
       </h2>
+      <FrecuenciaMes filas={filas} mesHoy={mesHoy} />
       <div className="tabla-desliza">
         <table className="tabla-frecuencia">
           <thead>
@@ -85,7 +87,8 @@ export default function FrecuenciaAvistamientos({
                 <th scope="row">{unidad[0].toUpperCase() + unidad.slice(1)} del grupo</th>
                 {base.map((n, i) => (
                   <td key={i} className={i === mesHoy ? "mes-actual" : undefined} title={`${MESES[i]}: ${n} ${unidad}`}>
-                    {n >= 1000 ? `${Math.round(n / 1000)}k` : n}
+                    {/* «4.000», no «4k», que se confunde con la resolución 4K (T40) */}
+                    {n.toLocaleString("es-ES")}
                   </td>
                 ))}
               </tr>
@@ -112,13 +115,16 @@ export default function FrecuenciaAvistamientos({
         </p>
       )}
       {unidad === "fotos" && (
-        <p className="nota-pie">
-          Cuántas de las fotos de su grupo (mamíferos, aves…) que suben los visitantes a iNaturalist cada mes son de esa
-          especie, sumando los meses vecinos. Confianza según cuántas fotos hay detrás: alta desde 300, media desde 100,
-          baja desde 30; con menos, no se da nivel. Corrige que en temporada alta vaya más gente, pero no es una
-          probabilidad exacta: los animales vistosos se fotografían más y el resultado depende de tu guía y de la
-          suerte.
-        </p>
+        <details className="como-calculamos">
+          <summary>¿Cómo lo calculamos?</summary>
+          <p className="nota-pie">
+            Cuántas de las fotos de su grupo (mamíferos, aves…) que suben los visitantes a iNaturalist cada mes son de
+            esa especie, sumando los meses vecinos. Confianza según cuántas fotos hay detrás: alta desde 300, media
+            desde 100, baja desde 30; con menos, no se da nivel. Corrige que en temporada alta vaya más gente, pero no
+            es una probabilidad exacta: los animales vistosos se fotografían más y el resultado depende de tu guía y de
+            la suerte.
+          </p>
+        </details>
       )}
     </section>
   );

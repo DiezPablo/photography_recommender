@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { reglasNombres } from "@/features/safaris/nombres";
 import { Suscribir } from "@/ui/Suscribir";
-import { Frescura } from "@/ui/Frescura";
+import { Frescura, FrescuraCorta } from "@/ui/Frescura";
 import AvisoCierre from "@/features/safaris/componentes/AvisoCierre";
 import Fenomenos from "@/features/safaris/componentes/Fenomenos";
 import TemporadaVerde from "@/features/safaris/componentes/TemporadaVerde";
@@ -19,6 +19,8 @@ import ResumenParque from "@/features/safaris/componentes/ResumenParque";
 import FrecuenciaAvistamientos from "@/features/safaris/componentes/FrecuenciaAvistamientos";
 import IndiceFicha from "@/features/safaris/componentes/IndiceFicha";
 import VeredictoMes from "@/features/safaris/componentes/VeredictoMes";
+import BotonViaje from "@/features/safaris/componentes/BotonViaje";
+import { estanciaDe } from "@/features/safaris/estancias";
 import Fotografia from "@/features/safaris/componentes/Fotografia";
 import { FOTOGRAFIA } from "@/features/safaris/fotografiaParques";
 import Alojamientos, { type GrupoAlojamientos } from "@/features/safaris/componentes/Alojamientos";
@@ -112,6 +114,14 @@ export default async function PaginaParque({ params }: Props) {
     : [{ nombre: null, lista: alojamientos }];
   // la foto de cada especie estrella hecha en este parque (T20); si no hay, la de la especie
   const fotoDe = (e: { taxon: number; foto?: FotoSafari | null }) => fotoEstrella(p, e.taxon) ?? e.foto ?? null;
+  // los mismos recuentos de iNaturalist en toda la ficha (T10): por nombre científico, de las estrellas y de las
+  // listas por grupo
+  const conteosCientifico: Record<string, number> = {};
+  for (const xs of Object.values(p.especies ?? {})) for (const x of xs) if (x.n) conteosCientifico[x.cientifico] = x.n;
+  for (const e of estrella) {
+    const n = p.conteo_estrella?.[String(e.taxon)];
+    if (n !== undefined) conteosCientifico[e.cientifico] = n;
+  }
   const filasFrecuencia = estrella
     .filter((e) => p.frecuencia?.[String(e.taxon)])
     .map((e) => ({
@@ -167,6 +177,7 @@ export default async function PaginaParque({ params }: Props) {
             ))}
           </p>
           <p className="enlaces">
+            <BotonViaje id={p.id} nombre={p.nombre} noches={estanciaDe(p.id, p.radio_km).ideal} mesHoy={mesHoy} />
             <BotonComparar id={p.id} />
             {p.web && (
               <a href={p.web} target="_blank" rel="noopener">
@@ -213,6 +224,10 @@ export default async function PaginaParque({ params }: Props) {
         ]}
       />
 
+      <FrescuraCorta
+        cuando={cargarRecientes()?.fecha ?? datos.generado}
+        fuente={cargarRecientes() ? "lo visto en iNaturalist" : "iNaturalist"}
+      />
       <AvisoCierre id={p.id} mesHoy={mesHoy} ahora />
       <ResumenParque
         id={p.id}
@@ -314,7 +329,7 @@ export default async function PaginaParque({ params }: Props) {
         )}
 
         <FrecuenciaAvistamientos mesHoy={mesHoy} filas={filasFrecuencia} />
-        {enMundo && mundo && <CincoGrandes p={enMundo} mundo={mundo} />}
+        {enMundo && mundo && <CincoGrandes p={enMundo} mundo={mundo} conteos={conteosCientifico} />}
 
         <VistoAhora
           lat={p.lat}

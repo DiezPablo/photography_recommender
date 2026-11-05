@@ -22,11 +22,21 @@ function epocaDe(p: ParqueMundo): number[] {
   return buenaEpoca({ la: p.lat, sec: p.meses_secos, ep: p.epoca?.meses, em: p.epoca?.motivo }) ?? [];
 }
 
-export function CincoGrandes({ p, mundo }: { p: ParqueMundo; mundo: Mundo }) {
+export function CincoGrandes({
+  p,
+  mundo,
+  conteos,
+}: {
+  p: ParqueMundo;
+  mundo: Mundo;
+  /** en los destacados, las observaciones de iNaturalist por nombre científico: las mismas que el resto de la
+   * ficha (mismo radio, grado de investigación); sin ellas, los registros de GBIF dentro del parque */
+  conteos?: Record<string, number>;
+}) {
   const clave = Object.fromEntries(Object.entries(mundo.estrella).map(([k, c]) => [c, k]));
   const filas = CINCO_GRANDES.map(([nombre, cientifico]) => ({
     nombre,
-    n: p.estrella[clave[cientifico] ?? ""] ?? 0,
+    n: conteos ? (conteos[cientifico] ?? 0) : (p.estrella[clave[cientifico] ?? ""] ?? 0),
   }));
   if (filas.every((f) => f.n < MIN_OBS)) return null;
   const vistos = filas.filter((f) => f.n >= MIN_OBS).length;
@@ -44,7 +54,10 @@ export function CincoGrandes({ p, mundo }: { p: ParqueMundo; mundo: Mundo }) {
       <p className="nota-pie">
         {vistos >= 5
           ? "Aquí se han observado los cinco grandes (con alguno de los dos rinocerontes)."
-          : "Observaciones en GBIF desde 2010: un «sin registros» no garantiza que no esté, pero sí que es difícil."}
+          : "Un «sin registros» no garantiza que no esté, pero sí que es difícil."}{" "}
+        {conteos
+          ? "Observaciones de iNaturalist con identificación confirmada en el mismo radio que el resto de la ficha."
+          : "Registros de GBIF desde 2010 dentro del parque."}
       </p>
     </section>
   );
@@ -84,8 +97,8 @@ export function CombinaCon({ p, mundo, nombre }: { p: ParqueMundo; mundo: Mundo;
       </ul>
       <p className="nota-pie">
         Las distancias engañan: en pistas de tierra se va despacio, así que los tiempos son orientativos. Si hay pista
-        de aterrizaje en los dos parques, la avioneta ahorra un día de coche. Mejor 3-4 noches por parque que cambiar
-        cada día desde {nombre}.
+        de aterrizaje en los dos parques, la avioneta ahorra un día de coche. Mejor quedarse 3 o 4 noches en cada parque
+        que cambiar cada día desde {nombre}.
       </p>
     </section>
   );

@@ -820,3 +820,15 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     La cabecera de cada parque usa la elegida a mano si la especie la tiene; si no, la hecha en el parque.
     La tortuga gigante se guarda como Chelonoidis porteri (el nombre del catálogo); iNaturalist no tiene esa especie
     y la foto sale de Chelonoidis niger, que la agrupa.
+- Auditoría, bloque 5, tanda 1 (ficha de parque):
+  - T10: «Los cinco grandes» de los destacados cuenta las mismas observaciones de iNaturalist que el resto de la
+    ficha (mismo radio, grado de investigación); en los demás parques, los registros de GBIF, y la nota lo dice.
+  - T40: en el móvil la tabla de probabilidad pasa a un mes cada vez (el elegido, con flechas), sin scroll
+    horizontal; el nivel va también en puntos (4 a 1) y en texto, no solo en color, y en la tabla de escritorio
+    cada celda lleva un punto de tamaño distinto. «4k» pasa a «4.000».
+  - T41: «Mejor quedarse 3 o 4 noches en cada parque…»; el método, en «¿Cómo lo calculamos?»; una línea de
+    frescura arriba de la ficha («Actualizado el … con lo visto en iNaturalist») que enlaza con el detalle de abajo.
+    Las especies sin ficha ya se distinguen (texto sin enlace).
+  - T24: fila «Momentos» en la franja de 12 meses, con los fenómenos del parque (partos, cruces, celos, crías…).
+  - T42: acción principal «Añadir a mi viaje» (con las noches habituales del parque y el mes elegido), fija abajo
+    en el móvil; «Comparar» pasa a botón secundario.

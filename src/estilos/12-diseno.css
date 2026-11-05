@@ -2587,3 +2587,155 @@ html[data-mes="12"] [data-m="12"] {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+.frescura-corta {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  color: var(--texto-2);
+}
+
+/* Tabla de probabilidad (T40): puntos además del color; en el móvil, un mes cada vez */
+.tabla-frecuencia td[class*="f-"]::after,
+.leyenda-frecuencia i[class*="f-"]::after {
+  display: block;
+  text-align: center;
+  line-height: 1.6em;
+  color: var(--fondo);
+  font-size: 0.7rem;
+}
+.tabla-frecuencia td.f-muy-probable::after,
+.leyenda-frecuencia i.f-muy-probable::after {
+  content: "●";
+  font-size: 0.95rem;
+}
+.tabla-frecuencia td.f-probable::after,
+.leyenda-frecuencia i.f-probable::after {
+  content: "●";
+  font-size: 0.7rem;
+  color: var(--texto);
+}
+.tabla-frecuencia td.f-posible::after,
+.leyenda-frecuencia i.f-posible::after {
+  content: "•";
+  color: var(--texto);
+}
+.tabla-frecuencia td.f-dificil::after,
+.leyenda-frecuencia i.f-dificil::after {
+  content: "·";
+  color: var(--texto-2);
+}
+.tabla-frecuencia .fila-muestra td {
+  font-size: 0.6rem;
+}
+.frecuencia-mes {
+  display: none;
+}
+.frecuencia-mes-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 8px;
+}
+.frecuencia-mes-cab button {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--borde);
+  border-radius: 50%;
+  background: var(--superficie);
+  font-size: 1.3rem;
+  color: var(--texto);
+  cursor: pointer;
+}
+.frecuencia-mes ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.frecuencia-mes li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--borde);
+}
+.frecuencia-mes .nivel-puntos {
+  white-space: nowrap;
+  color: var(--texto-2);
+}
+.frecuencia-mes .puntos {
+  color: var(--c-fauna);
+  letter-spacing: 1px;
+}
+.como-calculamos summary {
+  cursor: pointer;
+  font-size: 0.88rem;
+  margin-top: 8px;
+}
+@media (max-width: 600px) {
+  .frecuencia .tabla-desliza {
+    display: none;
+  }
+  .frecuencia-mes {
+    display: block;
+  }
+}
+.leyenda-frecuencia i {
+  width: 16px;
+  height: 16px;
+}
+.leyenda-frecuencia i::after {
+  line-height: 16px !important;
+}
+/* momentos del año en la franja de la ficha (T24) */
+.momento-si {
+  text-align: center;
+  color: var(--ocre);
+  font-size: 0.8rem;
+  line-height: 14px;
+}
+
+/* Acción principal de la ficha (T42): «Añadir a mi viaje»; «Comparar», secundaria */
+.accion-principal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--acento);
+  color: #fff;
+  font: 600 0.95rem var(--f-cuerpo);
+  text-decoration: none;
+  cursor: pointer;
+}
+.accion-principal small {
+  font-weight: 400;
+  opacity: 0.85;
+}
+.accion-principal.dentro {
+  background: var(--superficie);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+}
+.ficha-hero .boton-comparar button {
+  background: transparent;
+  color: inherit;
+  border-color: currentColor;
+}
+@media (max-width: 900px) {
+  .accion-viaje {
+    position: fixed;
+    z-index: 950;
+    left: 12px;
+    right: 12px;
+    bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+  .accion-viaje .accion-principal {
+    width: 100%;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.22);
+  }
+  body:has(.accion-viaje) {
+    padding-bottom: calc(130px + env(safe-area-inset-bottom));
+  }
+}

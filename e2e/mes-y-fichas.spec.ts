@@ -94,3 +94,13 @@ test("ficha del Masái Mara: bloque de fotografía con el amanecer del mes elegi
   await page.goto("/parque/kakadu");
   await expect(page.locator("#fotografia")).toHaveCount(0);
 });
+
+test("ficha: botón «Añadir a mi viaje», recuentos de una sola fuente y momentos del año", async ({ page }) => {
+  await page.goto("/parque/serengeti");
+  await expect(page.locator(".frescura-corta")).toContainText("Actualizado el");
+  await expect(page.locator(".ano-safari").first()).toContainText("Momentos");
+  await page.getByRole("button", { name: /Añadir a mi viaje/ }).click();
+  await expect(page.getByRole("link", { name: /En mi viaje/ })).toBeVisible();
+  const v = await page.evaluate(() => JSON.parse(localStorage.getItem("safaris.viaje")!));
+  expect(v.etapas[0].id).toBe("serengeti");
+});

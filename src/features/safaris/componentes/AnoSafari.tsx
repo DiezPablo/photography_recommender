@@ -2,9 +2,12 @@
 // clima (lluvia y máxima media de la climatología de la NASA, POWER). Una columna por mes.
 import { INICIALES, MESES } from "@/lib/fechas";
 import type { Parque } from "@/features/safaris/modelo";
+import { eventosDe } from "@/features/safaris/eventos";
 
 export default function AnoSafari({ p, mesActual }: { p: Parque; mesActual: number }) {
   const lluviaMax = Math.max(1, ...(p.clima?.lluvia_mm ?? [1]));
+  // momentos del año (T24): partos, cruces, celos, crías, concentraciones… del calendario de fenómenos
+  const eventos = eventosDe(p.id);
   return (
     <div className="ano-safari" role="table" aria-label="El año en el parque">
       <div role="row" className="fila-ano cabecera-ano">
@@ -33,6 +36,26 @@ export default function AnoSafari({ p, mesActual }: { p: Parque; mesActual: numb
           />
         ))}
       </div>
+      {eventos.length > 0 && (
+        <div role="row" className="fila-ano">
+          <span role="rowheader">Momentos</span>
+          {MESES.map((m, i) => {
+            const aqui = eventos.filter((e) => e.meses.includes(i + 1));
+            return (
+              <span
+                role="cell"
+                key={m}
+                data-m={i + 1}
+                className={aqui.length ? "momento-si" : "momento-no"}
+                title={aqui.length ? `${m}: ${aqui.map((e) => e.titulo).join(", ")}` : undefined}
+              >
+                {aqui.length ? <span aria-hidden>★</span> : null}
+                {aqui.length ? <span className="sr">{`${m}: ${aqui.map((e) => e.titulo).join(", ")}`}</span> : null}
+              </span>
+            );
+          })}
+        </div>
+      )}
       {p.meses_mamiferos && (
         <div role="row" className="fila-ano">
           <span role="rowheader">Mamíferos vistos</span>

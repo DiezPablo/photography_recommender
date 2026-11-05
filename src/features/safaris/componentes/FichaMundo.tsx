@@ -11,6 +11,8 @@ import MapaEventos from "@/ui/mapa/MapaEventos";
 import { INICIALES, MESES } from "@/lib/fechas";
 import { CincoGrandes, CombinaCon } from "@/features/safaris/componentes/ComplementosSafari";
 import BotonComparar from "./BotonComparar";
+import BotonViaje from "./BotonViaje";
+import { estanciaDe } from "@/features/safaris/estancias";
 import { exclusionesDe, nombreEstrella } from "@/features/safaris/datos";
 import ResumenParque from "./ResumenParque";
 import IndiceFicha from "./IndiceFicha";
@@ -94,6 +96,7 @@ export default function FichaMundo({
             {p.obs.toLocaleString("es-ES")} observaciones de mamíferos registradas desde 2010.
           </p>
           <p className="enlaces">
+            <BotonViaje id={p.id} nombre={p.nombre} noches={estanciaDe(p.id, p.radio_km).ideal} mesHoy={mesHoy} />
             <BotonComparar id={p.id} />
             <a href="#organiza">Organiza tu viaje ↓</a>
             <a
