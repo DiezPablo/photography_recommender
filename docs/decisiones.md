@@ -770,3 +770,29 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     son decorativas y así no se lee el nombre dos veces.
   - Lighthouse: el gris secundario (`--texto-3`) no llegaba a 4,5:1 (3,4 en claro, 4,1 en oscuro); se oscurece en
     claro y se aclara en oscuro. Enlaces del resumen del parque con 24 px de alto para el dedo.
+- Auditoría, bloque 4 (P1 de mayor impacto), primera parte:
+  - T28: buscador en la cabecera, en todas las páginas: parques, animales (nombre común y científico) y países,
+    tolerante a tildes y erratas (Damerau-Levenshtein: una errata desde 4 letras, dos desde 8; `lib/busqueda.ts`).
+    El autocompletado pide `/buscar.json` al enfocar, con solo los destinos de fauna (18 KB comprimido; con los
+    3400 espacios serían 100 KB); `/buscar?q=` busca en todos y es lo que usa el formulario sin JavaScript. En el
+    móvil es una lupa que se abre a todo el ancho.
+  - T32: el mes del viaje vive en la URL (`?mes=marzo`, también vale el número antiguo) y en el navegador, y se
+    conserva al navegar; un selector fijo en la cabecera de Safaris lo cambia en toda la web. Las columnas de los
+    calendarios llevan `data-m` y el CSS resalta la del mes elegido (`html[data-mes]`), así funciona también en lo
+    pintado en el servidor. El comparador, que calcula en el servidor, se vuelve a pedir al cambiarlo. España no
+    lo usa: sus fechas son de días.
+  - T33: el hero de la portada tiene las tres entradas («Tengo un animal», «unas fechas», «un destino») y el
+    acceso a España; sin JavaScript es un formulario al buscador.
+  - T34: selector de especie con búsqueda tolerante, miniatura y grupos (felinos, primates, grandes herbívoros…;
+    `gruposFauna.ts`, por género) en el hero y en el buscador de parques.
+  - T37: ficha por capas: resumen → veredicto del mes elegido (`veredicto.ts`, con la temporada, la frecuencia de
+    las estrellas, la migración, cierres, precio de los lodges y lluvia) → cuándo ir → qué se ve (estrellas,
+    probabilidad, cinco grandes, visto ahora, todas) → organizar (logística, operadores plegados, tasas) → dónde
+    dormir y mapa → combínalo. «Qué verás» sale del resumen porque repetía las estrellas. Galería de fotos del
+    parque: pendiente de T20 (fotos de cada parque).
+  - T38: en el Serengeti, el Masái Mara y el Kruger, los alojamientos van por zona (centro aproximado de cada una,
+    escrito a mano en `zonasParque.ts`; cada alojamiento a la más cercana) y la zona donde suele estar la migración
+    ese mes sale abierta y marcada; sus centros, en el mapa. Seis a la vista por zona.
+  - T43: en la ficha de especie, cada parque con su paisaje en miniatura, barra de observaciones y los 12 meses
+    con el elegido resaltado; orden por observaciones, buena época ese mes o entrada más barata. Las miniaturas de
+    Commons, a 120 px: Wikimedia solo sirve tamaños estándar y 160 daba error.

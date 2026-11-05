@@ -8,6 +8,7 @@ import { type DatosEspecies, useDatosNavegador } from "@/features/safaris/useDat
 import { MESES } from "@/lib/fechas";
 import { buenaEpoca, type FilaIndice, nivelFrecuencia } from "@/features/safaris/modelo";
 import { useParametrosUrl } from "@/lib/almacen";
+import { useMesElegido } from "@/lib/mes";
 
 /** Parques ordenados por cuántas de las especies elegidas tienen, buena época en el mes y facilidad media. */
 function ordenar(datos: DatosEspecies | null, indice: Map<string, FilaIndice> | null, elegidas: number[], mes: number) {
@@ -45,7 +46,7 @@ export default function QueVer({ mesHoy }: { mesHoy: number }) {
   const [verTodas, setVerTodas] = useState(false);
   const [parametros, actualizar] = useParametrosUrl();
   const elegidas = (parametros.get("ver") ?? "").split(",").filter(Boolean).map(Number);
-  const mes = parametros.has("mes") ? Number(parametros.get("mes")) : mesHoy;
+  const [mes, cambiarMes] = useMesElegido(mesHoy);
 
   function alternar(clave: number) {
     const nuevas = elegidas.includes(clave)
@@ -61,7 +62,7 @@ export default function QueVer({ mesHoy }: { mesHoy: number }) {
   const nombre = new Map(datos.especies.map((e) => [e.clave, e.nombre]));
   const visibles = verTodas ? datos.especies : datos.especies.slice(0, 18);
   return (
-    <section className="seccion que-ver" aria-labelledby="que-ver-titulo">
+    <section className="seccion que-ver" id="que-ver" aria-labelledby="que-ver-titulo">
       <h2 id="que-ver-titulo">¿Qué quieres ver y cuándo?</h2>
       <p className="nota-pie">Elige hasta {MAX_ELEGIDAS} animales y el mes de tu viaje.</p>
       <div className="chips-especies" role="group" aria-label="Animales">
@@ -88,7 +89,7 @@ export default function QueVer({ mesHoy }: { mesHoy: number }) {
       </div>
       <label className="campo campo-mes">
         <span className="rotulo">Mes del viaje</span>
-        <select value={mes} onChange={(e) => actualizar({ mes: e.target.value })}>
+        <select value={mes} onChange={(e) => cambiarMes(Number(e.target.value))}>
           {MESES.map((m, i) => (
             <option key={m} value={i}>
               {m}

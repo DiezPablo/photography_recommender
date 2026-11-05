@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { MESES } from "@/lib/fechas";
 import { escribirAlmacen, useAlmacen, useParametrosUrl } from "@/lib/almacen";
+import { useMesElegido } from "@/lib/mes";
 import {
   calcular,
   type ClaveIncluye,
@@ -60,7 +61,7 @@ export default function Presupuesto({ mesHoy }: { mesHoy: number }) {
   const [copiado, setCopiado] = useState(false);
 
   const personas = Math.max(1, Number(parametros.get("personas") ?? 2) || 2);
-  const mes = parametros.has("mes") ? Number(parametros.get("mes")) : mesHoy;
+  const [mes, cambiarMes] = useMesElegido(mesHoy);
   const crudas = leerEtapas(parametros.get("p"));
   // los vuelos que trae el planificador, si no los has cambiado tú
   const vuelosUrl = parametros.has("vuelos") ? Number(parametros.get("vuelos")) : null;
@@ -106,7 +107,7 @@ export default function Presupuesto({ mesHoy }: { mesHoy: number }) {
           <Numero etiqueta="Personas" valor={personas} min={1} onCambio={(v) => actualizar({ personas: String(v) })} />
           <label className="campo">
             <span className="rotulo">Mes</span>
-            <select value={mes} onChange={(e) => actualizar({ mes: e.target.value })}>
+            <select value={mes} onChange={(e) => cambiarMes(Number(e.target.value))}>
               {MESES.map((m, i) => (
                 <option key={m} value={i}>
                   {m}

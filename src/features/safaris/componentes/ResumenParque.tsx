@@ -1,7 +1,8 @@
 // Resumen al principio de la ficha: las cinco preguntas de quien elige parque (cuándo, qué verá, cuánto cuesta
 // entrar, cómo se llega y con quién ir), cada una con su enlace al detalle. Antes había que bajar 10 000 px.
 import Link from "next/link";
-import { MESES, rangoMeses } from "@/lib/fechas";
+import EpocaMes from "./EpocaMes";
+import { rangoMeses } from "@/lib/fechas";
 import { asociacionDe } from "@/features/safaris/asociaciones";
 import { nombreAeropuerto, type ParqueMundo } from "@/features/safaris/modelo";
 import { TASAS } from "@/features/safaris/tasas";
@@ -24,6 +25,7 @@ export default function ResumenParque({
   mundo,
   pais,
   motivo,
+  conEspecies = true,
 }: {
   id: string;
   /** mejor época, meses 1-12 */
@@ -37,8 +39,9 @@ export default function ResumenParque({
   pais?: string | null;
   /** de dónde sale la época en los parques sin temporada escrita a mano */
   motivo?: string | null;
+  /** en la ficha de los destacados las especies van en el veredicto del mes y en «Qué se ve» */
+  conEspecies?: boolean;
 }) {
-  const ahora = epoca?.includes(mesHoy + 1);
   const tasa = TASAS[id];
   const intl = mundo?.llegar.aeropuertos.find((a) => a.internacional) ?? mundo?.llegar.aeropuertos[0];
   const cercano = mundo?.llegar.aeropuertos.find((a) => a !== intl && a.km < (intl?.km ?? 0));
@@ -52,29 +55,27 @@ export default function ResumenParque({
           <dd>
             {epoca?.length ? rangoMeses(epoca) : "Sin una estación marcada"}
             {motivo && <small>{motivo}</small>}
-            {epoca?.length ? (
-              <small className={ahora ? "en-temporada" : "fuera-temporada"}>
-                {ahora ? `${MESES[mesHoy]}: buena época` : `${MESES[mesHoy]}: fuera de temporada`}
-              </small>
-            ) : null}
+            {epoca?.length ? <EpocaMes epoca={epoca} mesHoy={mesHoy} /> : null}
           </dd>
         </div>
-        <div>
-          <dt>Qué verás</dt>
-          <dd>
-            {especies.length ? (
-              especies.slice(0, 4).map((e, i) => (
-                <span key={e.nombre}>
-                  {i > 0 && ", "}
-                  {e.href ? <Link href={e.href}>{e.nombre}</Link> : e.nombre}
-                  {e.nivel && <span className="nivel-mes"> ({e.nivel})</span>}
-                </span>
-              ))
-            ) : (
-              <a href="#lo-que-se-ve">Ver especies ↓</a>
-            )}
-          </dd>
-        </div>
+        {conEspecies && (
+          <div>
+            <dt>Qué verás</dt>
+            <dd>
+              {especies.length ? (
+                especies.slice(0, 4).map((e, i) => (
+                  <span key={e.nombre}>
+                    {i > 0 && ", "}
+                    {e.href ? <Link href={e.href}>{e.nombre}</Link> : e.nombre}
+                    {e.nivel && <span className="nivel-mes"> ({e.nivel})</span>}
+                  </span>
+                ))
+              ) : (
+                <a href="#lo-que-se-ve">Ver especies ↓</a>
+              )}
+            </dd>
+          </div>
+        )}
         <div>
           <dt>Entrada</dt>
           <dd>

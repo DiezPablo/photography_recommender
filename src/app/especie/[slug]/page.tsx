@@ -17,6 +17,8 @@ import {
 } from "@/features/safaris/datos";
 import { fechaLocal } from "@/lib/sol";
 import { eventosDeEspecie } from "@/features/safaris/eventos";
+import ParquesEspecie from "@/features/safaris/componentes/ParquesEspecie";
+import { TASAS } from "@/features/safaris/tasas";
 import { EnlaceFuente, textoMeses } from "@/features/safaris/componentes/Fenomenos";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -48,7 +50,6 @@ export default async function PaginaEspecieSafari({ params }: Props) {
   const parques = e.parques
     .map((x) => ({ ...x, p: getParque(x.id)!, mes: recientes?.parques[x.id]?.estrella[String(e.taxon)] ?? 0 }))
     .filter((x) => x.p && x.n >= MIN_OBS);
-  const max = Math.max(1, ...parques.map((x) => x.n));
   const destacados = new Set(parques.map((x) => x.id));
   const mundo = parquesMundoDe(e.cientifico).filter((x) => !destacados.has(x.p.id) && x.n >= MIN_OBS);
   const paises = cargarMundo()?.paises ?? {};
@@ -107,22 +108,22 @@ export default async function PaginaEspecieSafari({ params }: Props) {
         )}
         <section className="seccion">
           <h2 className="rotulo">Mejores parques</h2>
-          <ol className="zonas-especie">
-            {parques.map((x) => (
-              <li key={x.id}>
-                <span className="barra-especie" style={{ width: `${(x.n / max) * 100}%` }} aria-hidden />
-                <Link href={`/parque/${x.id}`}>
-                  <b>{x.p.nombre}</b>
-                </Link>{" "}
-                <small>
-                  ({x.p.pais}) · {x.n.toLocaleString("es-ES")} observaciones
-                  {x.mes > 0 && ` · ${x.mes} en el último mes`} · mejor en{" "}
-                  {x.p.meses.length === 12 ? "todo el año" : x.p.meses.map((m) => MESES[m - 1]).join(", ")}
-                  {x.p.meses.includes(mesHoy + 1) && " · ahora es buena época"}
-                </small>
-              </li>
-            ))}
-          </ol>
+          <ParquesEspecie
+            mesHoy={mesHoy}
+            filas={parques.map((x) => ({
+              id: x.id,
+              nombre: x.p.nombre,
+              pais: x.p.pais,
+              n: x.n,
+              recientes: x.mes,
+              meses: x.p.meses,
+              frecuencia: x.p.frecuencia?.[String(e.taxon)],
+              // el paisaje del parque (la foto de la especie sería la misma en todas las filas), en miniatura
+              // Wikimedia solo sirve tamaños estándar (120, 250, 330, 500, 960…): 160 da error
+              foto: x.p.foto?.url.replace(/\/\d+px-/, "/120px-") ?? null,
+              usdDia: TASAS[x.id]?.usdDia || null,
+            }))}
+          />
         </section>
         <section className="seccion">
           <MapaEventos

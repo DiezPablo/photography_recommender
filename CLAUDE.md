@@ -23,7 +23,7 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
     lleva además mamíferos, reptiles y anfibios de iNaturalist (`inat_espana`). `--espana-actividad espana.json`:
     hora de actividad por especie (altura del sol en cada observación de iNaturalist) → `espana_actividad.json`,
     workflow `espana_actividad.yml`, semanal.
-- Web Next.js 16 (App Router) en `src/`: `app/` (`/`, `/parque/[id]`, `/especies`, `/especie/[slug]`, `/guia`, `/comparar`, `/migracion`,
+- Web Next.js 16 (App Router) en `src/`: `app/` (`/`, `/buscar` (y `/buscar.json` para el buscador de la cabecera), `/parque/[id]`, `/especies`, `/especie/[slug]`, `/guia`, `/comparar`, `/migracion`,
   `/planificar`, `/presupuesto`, `/viaje`, `/safari-en/[mes|país]`, `/espana` (luz, tiempo y especies por
   cuadrícula de 10 km; buscador de lugares y «Cerca de aquí»), `/espana/lugar/[id]` (ficha de cada lugar,
   ISR; fenómenos escritos a mano en `features/espana/fenomenos.ts`), `/espana/mis-especies` (lista de vistas, solo
@@ -34,7 +34,8 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
   navegador), `/espana/normas` (ley citada, drones y parques nacionales; `features/espana/normas.ts`). Sin conexión:
   `public/sw.js` (páginas de red y, sin cobertura, la copia; «Guardar sin conexión»); `.ics` por parque y `/migracion.ics`,
   `/recientes.xml`, `sitemap.xml`),
-  `features/safaris` (componentes, modelo, `datos.ts` solo servidor), `ui/` (mapa Leaflet, iconos, `Navegacion.tsx`: dos mundos, «Safaris» y «España», con conmutador en la cabecera y
+  `features/safaris` (componentes, modelo, `datos.ts` solo servidor; `veredicto.ts`, `zonasParque.ts`, `gruposFauna.ts`),
+  el mes del viaje en `lib/mes.ts` (URL `?mes=marzo` y navegador, selector en la cabecera), `ui/` (mapa Leaflet, iconos, `Navegacion.tsx`: dos mundos, «Safaris» y «España», con conmutador en la cabecera y
   menú y barra del móvil propios de cada uno; `FotoGrande.tsx`), `lib/`
   (`datos.ts`: lee `datos/*.gz`; `almacen.ts`; `fechas.ts`), `estilos/` (01-11 heredados de Rasante; el aspecto
   propio, guía de campo editorial, en `01-tokens.css` y `12-diseno.css`, que va la última).

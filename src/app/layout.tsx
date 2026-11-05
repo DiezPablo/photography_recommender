@@ -2,6 +2,8 @@ import RegistrarSW from "@/ui/RegistrarSW";
 import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono, Newsreader } from "next/font/google";
 import Link from "next/link";
+import BuscadorGlobal from "@/ui/BuscadorGlobal";
+import SelectorMes from "@/ui/SelectorMes";
 import { Suspense } from "react";
 import { SITIO } from "@/lib/sitio";
 import { BarraInferior, MenuPrincipal, Mundos } from "@/ui/Navegacion";
@@ -45,6 +47,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Mundos />
               <MenuPrincipal />
             </Suspense>
+            <Suspense fallback={null}>
+              <SelectorMes />
+            </Suspense>
+            <BuscadorGlobal />
           </div>
         </header>
         <div id="contenido">{children}</div>

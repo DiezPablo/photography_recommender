@@ -18,17 +18,19 @@ import BotonComparar from "@/features/safaris/componentes/BotonComparar";
 import ResumenParque from "@/features/safaris/componentes/ResumenParque";
 import FrecuenciaAvistamientos from "@/features/safaris/componentes/FrecuenciaAvistamientos";
 import IndiceFicha from "@/features/safaris/componentes/IndiceFicha";
+import VeredictoMes from "@/features/safaris/componentes/VeredictoMes";
+import Alojamientos, { type GrupoAlojamientos } from "@/features/safaris/componentes/Alojamientos";
+import { ZONAS_PARQUE, zonaDe, zonasRecomendadas } from "@/features/safaris/zonasParque";
+import { veredictos } from "@/features/safaris/veredicto";
 import FichaMundo from "@/features/safaris/componentes/FichaMundo";
 import OrganizaViaje from "@/features/safaris/componentes/OrganizaViaje";
 import VistoAhora from "@/features/safaris/componentes/VistoAhora";
 import {
-  nivelFrecuencia,
   cargarMundo,
   cargarRecientes,
   exclusionesDe,
   fotoFauna,
   cargarSafaris,
-  enlaceResenas,
   urlWeb,
   especiePorTaxon,
   getParque,
@@ -72,7 +74,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /** alojamientos a la vista; el resto, plegados */
-const VISIBLES = 6;
 
 const GRUPOS: [string, string, number][] = [
   ["Mammalia", "Mamíferos", 15],
@@ -100,6 +101,19 @@ export default async function PaginaParque({ params }: Props) {
   const conFicha = datos.especies.map((e) => e.taxon);
   const respaldo = (recientes?.mamiferos ?? []).map((m) => ({ ...m, foto: null }));
   const alojamientos = p.alojamientos ?? [];
+  // por zona en los parques grandes (Serengeti, Masái Mara, Kruger), en el orden de las zonas
+  const zonas = ZONAS_PARQUE[p.id];
+  const gruposAlojamiento: GrupoAlojamientos[] = zonas
+    ? zonas.map((z) => ({ nombre: z.nombre, nota: z.nota, lista: alojamientos.filter((a) => zonaDe(p.id, a) === z) }))
+    : [{ nombre: null, lista: alojamientos }];
+  const filasFrecuencia = estrella
+    .filter((e) => p.frecuencia?.[String(e.taxon)])
+    .map((e) => ({
+      nombre: nombreTaxon(e),
+      href: `/especie/${slugEspecie(e)}`,
+      meses: p.frecuencia![String(e.taxon)],
+      muestra: p.muestra?.[String(e.taxon)],
+    }));
   const puntos = [
     { id: p.id, nombre: p.nombre, lat: p.lat, lon: p.lon, radio_km: p.radio_km, categoria: "fauna", href: null },
     ...alojamientos.map((a) => ({
@@ -110,6 +124,15 @@ export default async function PaginaParque({ params }: Props) {
       radio_km: 0.3,
       categoria: "otono",
       href: urlWeb(a.web) ?? `https://www.openstreetmap.org/${a.osm}`,
+    })),
+    ...(zonas ?? []).map((z) => ({
+      id: `zona-${z.nombre}`,
+      nombre: `Zona: ${z.nombre}`,
+      lat: z.lat,
+      lon: z.lon,
+      radio_km: 12,
+      categoria: "fauna",
+      href: null,
     })),
   ];
   return (
@@ -174,11 +197,11 @@ export default async function PaginaParque({ params }: Props) {
       <IndiceFicha
         secciones={[
           ["resumen", "Resumen"],
-          ["que-se-ve", "Qué se ve"],
           ["cuando", "Cuándo ir"],
-          ["mapa", "Mapa"],
+          ["que-se-ve", "Qué se ve"],
           ["organiza", "Organizar"],
           ...(alojamientos.length ? ([["dormir", "Dónde dormir"]] as [string, string][]) : []),
+          ["mapa", "Mapa"],
         ]}
       />
 
@@ -187,94 +210,78 @@ export default async function PaginaParque({ params }: Props) {
         id={p.id}
         epoca={p.meses}
         mesHoy={mesHoy}
-        especies={estrella
-          .map((e) => {
-            // con frecuencia por mes, ordenadas por lo probable que es verlas este mes
-            const f = p.frecuencia?.[String(e.taxon)]?.[mesHoy];
-            const n = nivelFrecuencia(f);
-            return {
-              nombre: nombreTaxon(e),
-              n: f ?? (p.conteo_estrella?.[String(e.taxon)] ?? 0) / 1000,
-              href: `/especie/${slugEspecie(e)}`,
-              nivel: n.clave === "sin-datos" ? undefined : n.texto,
-            };
-          })
-          .sort((a, b) => b.n - a.n)}
+        especies={[]}
         tasaTexto={p.tasa}
         mundo={enMundo}
         pais={p.pais}
+        conEspecies={false}
       />
 
-      {estrella.length > 0 && (
-        <section className="seccion" id="que-se-ve">
-          <h2 className="rotulo">Especies estrella</h2>
-          <ul className="rejilla-especies rejilla-estrella">
-            {estrella.map((e) => {
-              const n = p.conteo_estrella?.[String(e.taxon)] ?? 0;
-              const mes = recientes?.estrella[String(e.taxon)] ?? 0;
-              return (
-                <li key={e.taxon} className="tarjeta-especie">
-                  {e.foto ? (
-                    <span className="con-credito">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={e.foto.url}
-                        alt={`${nombreTaxon(e)} (foto de iNaturalist)`}
-                        loading="lazy"
-                        className={esNd(e.foto) ? "foto-nd" : undefined}
-                      />
-                      <Credito foto={e.foto} />
-                    </span>
-                  ) : (
-                    <span className="sin-foto" aria-hidden />
-                  )}
-                  <div>
-                    <h3>
-                      <Link href={`/especie/${slugEspecie(e)}`}>{nombreTaxon(e)}</Link>
-                    </h3>
-                    <p>
-                      <i>{e.cientifico}</i>
-                    </p>
-                    <p className="meta">
-                      {n.toLocaleString("es-ES")} observaciones aquí
-                      {mes > 0 && ` · ${mes} en el último mes`}
-                    </p>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
+      <VeredictoMes meses={veredictos(p, filasFrecuencia)} mesHoy={mesHoy} />
 
-      <FrecuenciaAvistamientos
-        mesHoy={mesHoy}
-        filas={estrella
-          .filter((e) => p.frecuencia?.[String(e.taxon)])
-          .map((e) => ({
-            nombre: nombreTaxon(e),
-            href: `/especie/${slugEspecie(e)}`,
-            meses: p.frecuencia![String(e.taxon)],
-            muestra: p.muestra?.[String(e.taxon)],
-          }))}
-      />
+      <section className="seccion" id="cuando">
+        <h2 className="rotulo">Cuándo ir</h2>
+        <AnoSafari p={p} mesActual={mesHoy} />
+        <AvisoCierre id={p.id} mesHoy={mesHoy} />
+        <Fenomenos parque={p.id} mesHoy={mesHoy} />
+        <TemporadaVerde p={p} mesActual={mesHoy} />
+        <p className="nota-pie">
+          Temporada: la recomendada para ver fauna. Mamíferos vistos: observaciones de iNaturalist por mes (reflejan
+          también cuándo va más gente). Clima: climatología de la NASA (POWER).
+        </p>
+        <Suscribir
+          ruta={`/parque/${p.id}/calendario.ics`}
+          texto="Cada año, la buena época en tu calendario y un aviso dos meses antes para reservar."
+        />
+      </section>
 
-      <div className="ficha-grid">
-        <section className="seccion" id="cuando">
-          <h2 className="rotulo">Cuándo ir</h2>
-          <AnoSafari p={p} mesActual={mesHoy} />
-          <AvisoCierre id={p.id} mesHoy={mesHoy} />
-          <Fenomenos parque={p.id} mesHoy={mesHoy} />
-          <TemporadaVerde p={p} mesActual={mesHoy} />
-          <p className="nota-pie">
-            Temporada: la recomendada para ver fauna. Mamíferos vistos: observaciones de iNaturalist por mes (reflejan
-            también cuándo va más gente). Clima: climatología de la NASA (POWER).
-          </p>
-          <Suscribir
-            ruta={`/parque/${p.id}/calendario.ics`}
-            texto="Cada año, la buena época en tu calendario y un aviso dos meses antes para reservar."
-          />
-        </section>
+      <div className="capa" id="que-se-ve">
+        <h2 className="titulo-capa">Qué se ve</h2>
+        {estrella.length > 0 && (
+          <section className="seccion">
+            <h3 className="rotulo">Especies estrella</h3>
+            <ul className="rejilla-especies rejilla-estrella">
+              {estrella.map((e) => {
+                const n = p.conteo_estrella?.[String(e.taxon)] ?? 0;
+                const mes = recientes?.estrella[String(e.taxon)] ?? 0;
+                return (
+                  <li key={e.taxon} className="tarjeta-especie">
+                    {e.foto ? (
+                      <span className="con-credito">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={e.foto.url}
+                          alt={`${nombreTaxon(e)} (foto de iNaturalist)`}
+                          loading="lazy"
+                          className={esNd(e.foto) ? "foto-nd" : undefined}
+                        />
+                        <Credito foto={e.foto} />
+                      </span>
+                    ) : (
+                      <span className="sin-foto" aria-hidden />
+                    )}
+                    <div>
+                      <h3>
+                        <Link href={`/especie/${slugEspecie(e)}`}>{nombreTaxon(e)}</Link>
+                      </h3>
+                      <p>
+                        <i>{e.cientifico}</i>
+                      </p>
+                      <p className="meta">
+                        {n.toLocaleString("es-ES")} observaciones aquí
+                        {mes > 0 && ` · ${mes} en el último mes`}
+                      </p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
+        <FrecuenciaAvistamientos mesHoy={mesHoy} filas={filasFrecuencia} />
+        {enMundo && mundo && <CincoGrandes p={enMundo} mundo={mundo} />}
+
         <VistoAhora
           lat={p.lat}
           lon={p.lon}
@@ -284,41 +291,59 @@ export default async function PaginaParque({ params }: Props) {
           excluir={exclusionesDe(p.id)}
           reglas={reglasNombres()}
         />
+        {p.especies && (
+          <details className="seccion plegable" id="lo-que-se-ve">
+            <summary className="rotulo">Lo que más se ve (todas las especies)</summary>
+            <div className="grupos-safari">
+              {GRUPOS.map(([g, titulo, max]) =>
+                p.especies?.[g]?.length ? (
+                  <div key={g}>
+                    <h3>{titulo}</h3>
+                    <ol className="lista-especies-safari">
+                      {p.especies[g].slice(0, max).map((e) => (
+                        <li key={e.taxon}>
+                          {conFicha.includes(e.taxon) ? (
+                            // por el taxón, no por el nombre: iNaturalist y el catálogo usan sinónimos distintos
+                            // (Phoeniconaias / Phoenicopterus minor) y salían dos fichas
+                            <Link href={`/especie/${slugEspecie(especiePorTaxon(e.taxon) ?? e)}`}>
+                              {nombreTaxon(e)}
+                            </Link>
+                          ) : (
+                            nombreTaxon(e)
+                          )}{" "}
+                          <small>{e.n?.toLocaleString("es-ES")}</small>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                ) : null,
+              )}
+            </div>
+            <p className="nota-pie">
+              Especies con más observaciones verificadas en iNaturalist en unos {p.radio_km} km alrededor.
+            </p>
+          </details>
+        )}
       </div>
 
-      {p.especies && (
-        <details className="seccion plegable" id="lo-que-se-ve">
-          <summary className="rotulo">Lo que más se ve (todas las especies)</summary>
-          <div className="grupos-safari">
-            {GRUPOS.map(([g, titulo, max]) =>
-              p.especies?.[g]?.length ? (
-                <div key={g}>
-                  <h3>{titulo}</h3>
-                  <ol className="lista-especies-safari">
-                    {p.especies[g].slice(0, max).map((e) => (
-                      <li key={e.taxon}>
-                        {conFicha.includes(e.taxon) ? (
-                          // por el taxón, no por el nombre: iNaturalist y el catálogo usan sinónimos distintos
-                          // (Phoeniconaias / Phoenicopterus minor) y salían dos fichas
-                          <Link href={`/especie/${slugEspecie(especiePorTaxon(e.taxon) ?? e)}`}>{nombreTaxon(e)}</Link>
-                        ) : (
-                          nombreTaxon(e)
-                        )}{" "}
-                        <small>{e.n?.toLocaleString("es-ES")}</small>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              ) : null,
-            )}
-          </div>
-          <p className="nota-pie">
-            Especies con más observaciones verificadas en iNaturalist en unos {p.radio_km} km alrededor.
-          </p>
-        </details>
-      )}
+      <div className="capa">
+        <h2 className="titulo-capa">Organizar el viaje</h2>
+        {enMundo && mundo && (
+          <OrganizaViaje
+            p={enMundo}
+            pais={
+              (enMundo.pais ? mundo.paises[enMundo.pais] : undefined) ?? {
+                nombre: p.pais,
+                continente: p.continente,
+                moneda: null,
+                idiomas: [],
+              }
+            }
+            nombre={p.nombre}
+            conAlojamientos={alojamientos.length === 0}
+          />
+        )}
 
-      <div className="ficha-grid">
         <details className="seccion plegable">
           <summary className="rotulo">Tasas, permisos y reservas</summary>
           <h2 className="rotulo">Tasas y permisos</h2>
@@ -346,80 +371,23 @@ export default async function PaginaParque({ params }: Props) {
             </li>
           </ul>
         </details>
-        <section className="seccion" id="mapa">
-          <h2 className="rotulo">Mapa</h2>
-          <MapaEventos eventos={puntos} etiqueta={`Mapa de ${p.nombre}`} mundo />
-        </section>
       </div>
-
-      {enMundo && mundo && <CincoGrandes p={enMundo} mundo={mundo} />}
-
-      {enMundo && mundo && (
-        <OrganizaViaje
-          p={enMundo}
-          pais={
-            (enMundo.pais ? mundo.paises[enMundo.pais] : undefined) ?? {
-              nombre: p.pais,
-              continente: p.continente,
-              moneda: null,
-              idiomas: [],
-            }
-          }
-          nombre={p.nombre}
-          conAlojamientos={alojamientos.length === 0}
-        />
-      )}
 
       {alojamientos.length > 0 && (
         <section className="seccion" id="dormir">
           <h2 className="rotulo">Dónde dormir</h2>
-          <ul className="lista-alojamientos">
-            {alojamientos.slice(0, VISIBLES).map((a) => (
-              <li key={a.osm}>
-                <b>{a.nombre}</b> <small>{a.tipo}</small>
-                <span className="enlaces">
-                  {urlWeb(a.web) && (
-                    <a href={urlWeb(a.web)!} target="_blank" rel="noopener">
-                      Web y reservas ↗
-                    </a>
-                  )}
-                  {a.telefono && <a href={`tel:${a.telefono.split(";")[0]}`}>{a.telefono.split(";")[0]}</a>}
-                  <a href={enlaceResenas(a)} target="_blank" rel="noopener">
-                    Reseñas ↗
-                  </a>
-                </span>
-              </li>
-            ))}
-          </ul>
-          {alojamientos.length > VISIBLES && (
-            <details className="mas-alojamientos">
-              <summary>Ver {alojamientos.length - VISIBLES} más</summary>
-              <ul className="lista-alojamientos">
-                {alojamientos.slice(VISIBLES).map((a) => (
-                  <li key={a.osm}>
-                    <b>{a.nombre}</b> <small>{a.tipo}</small>
-                    <span className="enlaces">
-                      {urlWeb(a.web) && (
-                        <a href={urlWeb(a.web)!} target="_blank" rel="noopener">
-                          Web y reservas ↗
-                        </a>
-                      )}
-                      {a.telefono && <a href={`tel:${a.telefono.split(";")[0]}`}>{a.telefono.split(";")[0]}</a>}
-                      <a href={enlaceResenas(a)} target="_blank" rel="noopener">
-                        Reseñas ↗
-                      </a>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </details>
-          )}
+          <Alojamientos grupos={gruposAlojamiento} recomendadas={zonasRecomendadas(p.id)} mesHoy={mesHoy} />
           <p className="nota-pie">
             Lodges, campamentos y hoteles con nombre en OpenStreetMap dentro del parque o cerca. No cobramos comisión ni
             hay alojamientos patrocinados; las reseñas se abren en Google Maps.
           </p>
         </section>
       )}
+
+      <section className="seccion" id="mapa">
+        <h2 className="rotulo">Mapa</h2>
+        <MapaEventos eventos={puntos} etiqueta={`Mapa de ${p.nombre}`} mundo />
+      </section>
 
       {enMundo && mundo && <CombinaCon p={enMundo} mundo={mundo} nombre={p.nombre} />}
 

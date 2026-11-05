@@ -11,6 +11,8 @@ import { POR_TU_CUENTA } from "@/features/safaris/paises";
 import { EDAD_MINIMA, SIN_MALARIA } from "@/features/safaris/familias";
 import { esDestino, buenaEpoca, CONTINENTES, type FilaIndice } from "@/features/safaris/modelo";
 import { useParametrosUrl } from "@/lib/almacen";
+import SelectorEspecie, { type OpcionEspecie } from "@/ui/SelectorEspecie";
+import { useMesElegido } from "@/lib/mes";
 
 const POR_PAGINA = 30;
 const EN_MAPA = 300;
@@ -25,8 +27,8 @@ export default function ExploradorSafaris({
   fotos,
   iniciales = [],
 }: {
-  /** especies estrella: clave de GBIF y nombre */
-  especies: { clave: number; nombre: string }[];
+  /** especies estrella: clave de GBIF, nombre, grupo y miniatura */
+  especies: OpcionEspecie[];
   mesHoy: number;
   /** fotos de los destacados (del catálogo curado), por id */
   fotos: Record<string, string>;
@@ -47,7 +49,7 @@ export default function ExploradorSafaris({
   const cuenta = parametros.get("cuenta") ?? "";
   // con niños: solo destacados sin malaria y sin edad mínima
   const ninos = parametros.get("ninos") === "1";
-  const mes = parametros.has("mes") ? Number(parametros.get("mes")) : mesHoy;
+  const [mes, cambiarMes] = useMesElegido(mesHoy);
 
   useEffect(() => {
     fetch("/datos/safaris_indice.json")
@@ -96,7 +98,7 @@ export default function ExploradorSafaris({
   );
 
   return (
-    <div className="explorador-safaris">
+    <div className="explorador-safaris" id="explorar">
       <div className="seccion filtros-fauna" role="search">
         <label className="campo">
           <span className="rotulo">Buscar</span>
@@ -113,7 +115,7 @@ export default function ExploradorSafaris({
         <div className="campos">
           <label className="campo">
             <span className="rotulo">Cuándo vas</span>
-            <select value={mes} onChange={(e) => actualizar({ mes: e.target.value })}>
+            <select value={mes} onChange={(e) => cambiarMes(Number(e.target.value))}>
               {MESES.map((m, i) => (
                 <option key={m} value={i}>
                   {m}
@@ -131,17 +133,13 @@ export default function ExploradorSafaris({
               ))}
             </select>
           </label>
-          <label className="campo">
-            <span className="rotulo">Qué quieres ver</span>
-            <select value={especie} onChange={(e) => actualizar({ especie: e.target.value })}>
-              <option value="">Cualquier especie</option>
-              {especies.map((e) => (
-                <option key={e.clave} value={e.clave}>
-                  {e.nombre}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className="campo">
+            <SelectorEspecie
+              opciones={especies}
+              valor={especie ? Number(especie) : null}
+              onCambio={(c) => actualizar({ especie: c === null ? null : String(c) })}
+            />
+          </div>
           <label className="campo">
             <span className="rotulo">Cómo quieres ir</span>
             <select value={cuenta} onChange={(e) => actualizar({ cuenta: e.target.value || null })}>

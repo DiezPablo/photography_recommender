@@ -5,6 +5,7 @@ import Link from "next/link";
 import { IconoAvion, IconoCoche } from "@/ui/Iconos";
 import { MESES } from "@/lib/fechas";
 import { escribirAlmacen, useParametrosUrl } from "@/lib/almacen";
+import { useMesElegido } from "@/lib/mes";
 import { esDestino, MAX_COMPARAR, nivelFrecuencia } from "@/features/safaris/modelo";
 import { MIGRACION } from "@/features/safaris/migracion";
 import { facilidades, planificar, type Plan, type Ritmo, RITMOS, type Tramo } from "@/features/safaris/planificar";
@@ -55,7 +56,7 @@ export default function Planificador({ mesHoy, paisesIniciales = [] }: { mesHoy:
   // «dias» en enlaces antiguos: noches = días - 1
   const crudo = parametros.get("noches") ?? (parametros.has("dias") ? String(Number(parametros.get("dias")) - 1) : "6");
   const noches = Math.min(MAX_NOCHES, Math.max(1, Number(crudo) || 6));
-  const mes = parametros.has("mes") ? Number(parametros.get("mes")) : mesHoy;
+  const [mes, cambiarMes] = useMesElegido(mesHoy);
   const ritmo = RITMOS.includes(parametros.get("ritmo") as Ritmo) ? (parametros.get("ritmo") as Ritmo) : "normal";
   const elegidas = (parametros.get("ver") ?? "").split(",").filter(Boolean).map(Number);
   const conNinos = parametros.get("ninos") === "1";
@@ -86,7 +87,7 @@ export default function Planificador({ mesHoy, paisesIniciales = [] }: { mesHoy:
           </label>
           <label className="campo">
             <span className="rotulo">Mes del viaje</span>
-            <select value={mes} onChange={(e) => actualizar({ mes: e.target.value })}>
+            <select value={mes} onChange={(e) => cambiarMes(Number(e.target.value))}>
               {MESES.map((m, i) => (
                 <option key={m} value={i}>
                   {m}
@@ -169,7 +170,7 @@ export default function Planificador({ mesHoy, paisesIniciales = [] }: { mesHoy:
         </label>
         <label className="campo">
           <span className="rotulo">Mes del viaje</span>
-          <select value={mes} onChange={(e) => actualizar({ mes: e.target.value })}>
+          <select value={mes} onChange={(e) => cambiarMes(Number(e.target.value))}>
             {MESES.map((m, i) => (
               <option key={m} value={i}>
                 {m}

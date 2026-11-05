@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { etiquetaWeb, nombreAeropuerto } from "@/features/safaris/modelo";
 import { textoCredito } from "@/ui/Credito";
-import { INICIALES, MESES } from "@/lib/fechas";
+import { INICIALES, MESES, mesDeParametro } from "@/lib/fechas";
 import { fechaLocal } from "@/lib/sol";
 import AnadirComparar from "@/features/safaris/componentes/AnadirComparar";
 import {
@@ -44,7 +44,8 @@ export default async function PaginaComparar({ searchParams }: Props) {
   const q = await searchParams;
   const ids = [...new Set((q.p ?? "").split(",").filter(Boolean))].slice(0, MAX_COMPARAR);
   const mesHoy = Number(fechaLocal(new Date()).slice(5, 7)) - 1;
-  const mes = q.mes !== undefined && Number(q.mes) >= 0 && Number(q.mes) <= 11 ? Number(q.mes) : mesHoy;
+  // «marzo» o el número (0-11): el mes elegido en la cabecera viaja con el nombre
+  const mes = mesDeParametro(q.mes) ?? mesHoy;
   const mundo = cargarMundo();
   const catalogo = cargarSafaris();
   const parques = ids.map(getParqueMundo).filter((p): p is ParqueMundo => p !== undefined);

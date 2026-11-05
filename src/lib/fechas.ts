@@ -47,3 +47,12 @@ export function rangoMeses(meses: number[]): string {
   }
   return tramos.join(", ");
 }
+
+/** Mes de un parámetro de URL: «marzo», «Marzo» o «2» → 2 (0-11); cualquier otra cosa → null. */
+export function mesDeParametro(v: string | null | undefined): number | null {
+  if (v == null || v === "") return null;
+  const i = MESES.indexOf(v.toLowerCase());
+  if (i >= 0) return i;
+  const n = Number(v);
+  return Number.isInteger(n) && n >= 0 && n < 12 ? n : null;
+}

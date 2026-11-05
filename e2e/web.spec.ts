@@ -70,7 +70,8 @@ test("safaris: buscar por mes y especie, ficha de parque y especie", async ({ pa
   await expect(mara).toContainText("Buena época en agosto");
   await page.screenshot({ path: `${CAPTURAS}/safaris-${info.project.name}.png` });
   await mara.getByRole("link").click();
-  await expect(page).toHaveURL(/\/parque\/masai-mara$/);
+  // el mes elegido viaja en la URL (?mes=agosto)
+  await expect(page).toHaveURL(/\/parque\/masai-mara(\?mes=agosto)?$/);
   await expect(page.locator(".ano-safari").first()).toBeVisible();
   await expect(page.locator(".visto-ahora")).toBeVisible();
   await expect(page.locator(".mapa-caja[data-listo=si]").first()).toBeVisible();
@@ -78,8 +79,8 @@ test("safaris: buscar por mes y especie, ficha de parque y especie", async ({ pa
   await page.screenshot({ path: `${CAPTURAS}/safari-parque-${info.project.name}.png`, fullPage: true });
   // de una especie estrella a su página con los parques donde se ve
   await page.locator(".tarjeta-especie h3 a", { hasText: "León" }).first().click();
-  await expect(page).toHaveURL(/\/especie\/panthera-leo$/);
-  await expect(page.locator(".zonas-especie li").first()).toBeVisible();
+  await expect(page).toHaveURL(/\/especie\/panthera-leo(\?mes=agosto)?$/);
+  await expect(page.locator(".parques-especie li").first()).toBeVisible();
   await page.goto("/guia");
   await expect(page.locator("#operador")).toBeVisible();
   expect(errores).toEqual([]);
@@ -122,7 +123,7 @@ test("qué ver y cuándo: elegir especies y mes da parques con esas especies", a
   await grupo.getByRole("button", { name: "León", exact: true }).click();
   await grupo.getByRole("button", { name: "Guepardo", exact: true }).click();
   await page.locator(".campo-mes select").selectOption("7");
-  await expect(page).toHaveURL(/ver=.*mes=7|mes=7.*ver=/);
+  await expect(page).toHaveURL(/ver=.*mes=agosto|mes=agosto.*ver=/);
   const primero = page.locator(".resultados-que-ver li").first();
   await expect(primero).toContainText("✓ León");
   await expect(primero).toContainText("✓ Guepardo");
@@ -298,7 +299,7 @@ test("mi viaje: guardar desde el planificador, lista que se recuerda y enlace co
     .catch(() => false);
   test.skip(!hay, "sin datos de safaris");
   await guardar.click();
-  await expect(page).toHaveURL(/\/viaje$/);
+  await expect(page).toHaveURL(/\/viaje(\?mes=agosto)?$/);
   await expect(page.locator("h1")).toHaveText("Mi viaje");
   await expect(page.locator(".etapas-plan > li")).toHaveCount(3);
   await expect(page.locator(".resumen-viaje")).toContainText("8 días, 7 noches");
@@ -696,7 +697,7 @@ test.describe("sin JavaScript", () => {
     await page.goto("/");
     expect(await page.locator(".rejilla-safaris li").count()).toBeGreaterThan(5);
     await page.goto("/planificar");
-    await expect(page.getByLabel("País")).toBeVisible();
+    await expect(page.getByLabel(/^País/)).toBeVisible();
     await expect(page.getByLabel("Noches de safari")).toBeVisible();
     await page.goto("/espana?modo=donde");
     await expect(page.locator(".enlaces-especies button, .nota-pie").first()).toBeVisible();

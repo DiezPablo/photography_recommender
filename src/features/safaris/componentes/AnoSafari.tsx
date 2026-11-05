@@ -10,7 +10,13 @@ export default function AnoSafari({ p, mesActual }: { p: Parque; mesActual: numb
       <div role="row" className="fila-ano cabecera-ano">
         <span role="rowheader" />
         {INICIALES.map((m, i) => (
-          <span role="columnheader" key={i} className={i === mesActual ? "actual" : undefined} title={MESES[i]}>
+          <span
+            role="columnheader"
+            key={i}
+            data-m={i + 1}
+            className={i === mesActual ? "actual" : undefined}
+            title={MESES[i]}
+          >
             {m}
           </span>
         ))}
@@ -21,6 +27,7 @@ export default function AnoSafari({ p, mesActual }: { p: Parque; mesActual: numb
           <span
             role="cell"
             key={m}
+            data-m={i + 1}
             className={p.meses.includes(i + 1) ? "temporada-si" : "temporada-no"}
             title={`${m}: ${p.meses.includes(i + 1) ? "buena época" : "fuera de la mejor época"}`}
           />

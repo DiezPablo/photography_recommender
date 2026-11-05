@@ -5,6 +5,7 @@ import { MIGRACION } from "@/features/safaris/migracion";
 import FotoGrande from "@/ui/FotoGrande";
 import QueVer from "@/features/safaris/componentes/QueVer";
 import ExploradorSafaris from "@/features/safaris/componentes/ExploradorSafaris";
+import EntradasHero from "@/features/safaris/componentes/EntradasHero";
 import {
   cargarMundo,
   cargarRecientes,
@@ -14,7 +15,7 @@ import {
   primerosDelIndice,
   enTemporada,
   especiePorTaxon,
-  nombreEstrella,
+  opcionesEspecie,
   nombreTaxon,
   puntuacionAhora,
   slugEspecie,
@@ -44,9 +45,7 @@ export default function PaginaSafaris() {
   const conFauna = [...ahora, ...parques].map((p) => ({ p, f: fotoFauna(p) })).find((x) => x.f);
   const hero = conFauna?.p ?? ahora.find((p) => p.foto) ?? parques.find((p) => p.foto);
   const fotoHero = conFauna?.f?.foto ?? hero?.foto ?? null;
-  const especies = Object.keys(mundo?.estrella ?? {})
-    .map((k) => ({ clave: Number(k), nombre: nombreEstrella(k) }))
-    .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+  const opciones = opcionesEspecie();
   return (
     <main className="calendario fauna safaris">
       <figure className="portada-hero">
@@ -63,6 +62,7 @@ export default function PaginaSafaris() {
             Los parques y reservas de todo el mundo con lo que se ve cada mes, lo que se ha visto en las últimas semanas
             y cómo organizarlo: rutas, presupuesto y operadores locales, sin intermediarios.
           </p>
+          <EntradasHero opciones={opciones} mesHoy={mesHoy} />
           <div className="acciones">
             <Link href="/planificar">Planifica tu safari</Link>
             <Link href="/migracion">Dónde está la migración</Link>
@@ -164,7 +164,7 @@ export default function PaginaSafaris() {
       {parques.length ? (
         <>
           <ExploradorSafaris
-            especies={especies}
+            especies={opciones}
             mesHoy={mesHoy}
             fotos={Object.fromEntries(parques.filter((p) => p.foto).map((p) => [p.id, p.foto!.url]))}
             iniciales={primerosDelIndice(mesHoy)}

@@ -48,7 +48,13 @@ export default function FrecuenciaAvistamientos({
             <tr>
               <td />
               {INICIALES.map((l, i) => (
-                <th key={i} scope="col" className={i === mesHoy ? "mes-actual" : undefined} title={MESES[i]}>
+                <th
+                  key={i}
+                  scope="col"
+                  data-m={i + 1}
+                  className={i === mesHoy ? "mes-actual" : undefined}
+                  title={MESES[i]}
+                >
                   {l}
                 </th>
               ))}
@@ -64,6 +70,7 @@ export default function FrecuenciaAvistamientos({
                   return (
                     <td
                       key={i}
+                      data-m={i + 1}
                       className={`f-${n.clave}${i === mesHoy ? " mes-actual" : ""}${c?.clave === "baja" ? " confianza-baja" : ""}`}
                       title={`${f.nombre} en ${MESES[i]}: ${n.texto}${c ? ` (${c.texto}: ${f.muestra![i].toLocaleString("es-ES")} ${unidad} del grupo)` : ""}`}
                     >

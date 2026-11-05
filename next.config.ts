@@ -21,6 +21,7 @@ const config: NextConfig = {
     "/parque/[id]/calendario.ics": SAFARIS,
     "/viaje.ics": SAFARIS,
     "/comparar": SAFARIS,
+    "/buscar": [...SAFARIS, "./datos/safaris_indice.json.gz"],
     "/espana/datos/[bloque]": [
       "./datos/espana.json.gz",
       "./datos/espana_recientes.json.gz",

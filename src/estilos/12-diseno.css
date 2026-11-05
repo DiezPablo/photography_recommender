@@ -1958,3 +1958,573 @@ img.foto-nd {
   min-height: 24px;
   padding: 3px 0;
 }
+
+/* Buscador de la cabecera (T28) */
+.cabecera-in {
+  position: relative;
+}
+.buscador-global {
+  position: relative;
+  flex: 0 1 260px;
+  margin-left: auto;
+}
+.buscador-global input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px 0 34px;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: var(--superficie)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23685e50' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 4 4'/%3E%3C/svg%3E")
+    no-repeat 12px center;
+  font: 0.9rem var(--f-cuerpo);
+  color: var(--texto);
+}
+.buscador-resultados {
+  position: absolute;
+  z-index: 1500;
+  top: calc(100% + 6px);
+  right: 0;
+  width: min(420px, calc(100vw - 32px));
+  max-height: 70vh;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.16);
+}
+.buscador-resultados li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.buscador-resultados li[aria-selected="true"],
+.buscador-resultados li:hover {
+  background: var(--superficie-2);
+}
+.buscador-resultados li > span:last-child {
+  display: grid;
+  min-width: 0;
+}
+.buscador-resultados b {
+  font-weight: 600;
+}
+.buscador-resultados small {
+  color: var(--texto-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.buscador-resultados img,
+.buscador-icono {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--superficie-2);
+}
+.buscador-icono {
+  display: grid;
+  place-items: center;
+}
+.buscador-icono::before {
+  font-size: 0.95rem;
+}
+.tipo-parque::before {
+  content: "◎";
+}
+.tipo-pais::before {
+  content: "⚑";
+}
+.tipo-especie::before {
+  content: "🐾";
+}
+.buscador-vacio {
+  cursor: default !important;
+  color: var(--texto-2);
+}
+/* en el móvil: una lupa que al tocarla se abre a todo el ancho bajo la cabecera */
+@media (max-width: 900px) {
+  .buscador-global {
+    position: static;
+    flex: 0 0 36px;
+    margin-left: 0;
+  }
+  .buscador-global input {
+    width: 36px;
+    padding: 0;
+    color: transparent;
+    background-position: center;
+    cursor: pointer;
+  }
+  .buscador-global input::placeholder {
+    color: transparent;
+  }
+  .buscador-global:focus-within input {
+    position: absolute;
+    z-index: 1501;
+    left: 12px;
+    right: 12px;
+    top: calc(100% + 8px);
+    width: auto;
+    height: 44px;
+    padding: 0 12px 0 34px;
+    color: var(--texto);
+    background-position: 12px center;
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.14);
+    cursor: text;
+  }
+  .buscador-global:focus-within input::placeholder {
+    color: var(--texto-3);
+  }
+  .buscador-resultados {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    top: calc(100% + 58px);
+  }
+}
+.buscador-todos {
+  font-size: 0.85rem;
+  color: var(--texto-2);
+  border-top: 1px solid var(--borde);
+  border-radius: 0 !important;
+}
+
+/* Mes elegido (T32): selector en la cabecera y la columna de ese mes resaltada en todos los calendarios */
+.selector-mes select {
+  height: 36px;
+  padding: 0 28px 0 12px;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background-color: var(--superficie);
+  font: 600 0.85rem var(--f-cuerpo);
+  color: var(--texto);
+}
+html[data-mes] .tabla-frecuencia td.mes-actual {
+  outline: none;
+}
+html[data-mes] .tabla-frecuencia thead th.mes-actual,
+html[data-mes] .cabecera-ano .actual {
+  color: var(--texto-3);
+  font-weight: inherit;
+}
+html[data-mes="1"] [data-m="1"],
+html[data-mes="2"] [data-m="2"],
+html[data-mes="3"] [data-m="3"],
+html[data-mes="4"] [data-m="4"],
+html[data-mes="5"] [data-m="5"],
+html[data-mes="6"] [data-m="6"],
+html[data-mes="7"] [data-m="7"],
+html[data-mes="8"] [data-m="8"],
+html[data-mes="9"] [data-m="9"],
+html[data-mes="10"] [data-m="10"],
+html[data-mes="11"] [data-m="11"],
+html[data-mes="12"] [data-m="12"] {
+  outline: 2px solid var(--texto) !important;
+  outline-offset: -1px;
+  color: var(--texto) !important;
+  font-weight: 700;
+}
+@media (max-width: 900px) {
+  .selector-mes select {
+    padding: 0 22px 0 10px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Veredicto del mes (T37) */
+.veredicto-mes {
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-left: 6px solid var(--borde);
+}
+.veredicto-mes h2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 0 0 8px;
+  font: 600 1.35rem var(--f-titulo);
+}
+.veredicto-mes select {
+  font: inherit;
+  border: 0;
+  border-bottom: 2px dashed var(--borde);
+  background: transparent;
+  color: var(--texto);
+  padding: 0 4px;
+}
+.veredicto-mes ul {
+  margin: 0 0 12px;
+  padding-left: 1.1em;
+}
+.veredicto-mes li {
+  margin: 4px 0;
+}
+.nota-excelente {
+  border-left-color: var(--c-fauna);
+}
+.nota-bueno {
+  border-left-color: color-mix(in srgb, var(--c-fauna) 55%, var(--superficie));
+}
+.nota-regular {
+  border-left-color: var(--ocre);
+}
+.nota-malo,
+.nota-cerrado {
+  border-left-color: var(--resta);
+}
+.doce-meses {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3px;
+  margin: 0;
+}
+.doce-meses button {
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  border-bottom: 5px solid var(--borde);
+  border-left: 0;
+  border-radius: 4px;
+  background: var(--superficie-2);
+  font: 600 0.68rem var(--f-cuerpo);
+  color: var(--texto-2);
+  cursor: pointer;
+}
+.doce-meses button.nota-excelente {
+  border-bottom-color: var(--c-fauna);
+}
+.doce-meses button.nota-bueno {
+  border-bottom-color: color-mix(in srgb, var(--c-fauna) 55%, var(--superficie));
+}
+.doce-meses button.nota-regular {
+  border-bottom-color: var(--ocre);
+}
+.doce-meses button.nota-malo,
+.doce-meses button.nota-cerrado {
+  border-bottom-color: var(--resta);
+}
+.doce-meses button[aria-pressed="true"] {
+  background: var(--texto);
+  color: var(--fondo);
+}
+/* capas de la ficha (T37) */
+.titulo-capa {
+  margin: 40px 0 8px;
+  font: 600 1.6rem var(--f-titulo);
+}
+/* alojamientos por zona (T38) */
+.zona-alojamientos {
+  border-top: 1px solid var(--borde);
+  padding: 8px 0;
+}
+.zona-alojamientos summary {
+  cursor: pointer;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.zona-alojamientos.recomendada summary b {
+  color: var(--acento);
+}
+.zona-recomendada {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--acento-suave);
+}
+
+/* Parques de una especie (T43) */
+.orden-parques {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.orden-parques button {
+  min-height: 32px;
+  padding: 4px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: var(--superficie);
+  font: 500 0.85rem var(--f-cuerpo);
+  color: var(--texto);
+  cursor: pointer;
+}
+.orden-parques button[aria-pressed="true"] {
+  background: var(--texto);
+  color: var(--fondo);
+  border-color: var(--texto);
+}
+.parques-especie {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.parques-especie > li {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.parques-especie img,
+.parques-especie .sin-foto {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.parques-especie p {
+  margin: 0;
+}
+.parque-especie-cab small {
+  color: var(--texto-2);
+}
+.chip.en-epoca {
+  margin-left: 6px;
+  background: var(--acento-suave);
+  color: var(--acento);
+}
+.barra-obs {
+  height: 4px;
+  margin: 4px 0 !important;
+  background: var(--superficie-2);
+  border-radius: 2px;
+}
+.barra-obs i {
+  display: block;
+  height: 100%;
+  background: var(--c-fauna);
+  border-radius: 2px;
+}
+.meses-parque {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2px;
+  max-width: 320px;
+  margin-top: 6px;
+}
+.meses-parque span {
+  text-align: center;
+  font: 600 0.62rem var(--f-mono);
+  padding: 2px 0;
+  border-radius: 3px;
+}
+.meses-parque .si {
+  background: var(--c-fauna);
+  color: var(--fondo);
+}
+.meses-parque .no {
+  background: var(--superficie-2);
+  color: var(--texto-3);
+}
+.meses-parque .elegido {
+  outline: 2px solid var(--texto);
+  outline-offset: -1px;
+}
+
+/* Tres entradas del hero (T33) */
+.entradas-hero {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1.2fr;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--superficie);
+  color: var(--texto);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.22);
+  max-width: 920px;
+}
+.entrada-hero {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.entrada-hero .rotulo {
+  color: var(--texto-2);
+}
+.entrada-hero select,
+.entrada-destino input,
+.selector-especie-campo {
+  height: 44px;
+  width: 100%;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: var(--fondo);
+  font: 0.95rem var(--f-cuerpo);
+  color: var(--texto);
+  padding: 0 10px;
+}
+.entrada-destino {
+  display: flex;
+  gap: 6px;
+}
+.entrada-destino button {
+  flex: none;
+  width: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--texto);
+  color: var(--fondo);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.entrada-espana {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--texto-2);
+}
+@media (max-width: 760px) {
+  .entradas-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Selector de especie (T34) */
+.selector-especie {
+  position: relative;
+  display: grid;
+  gap: 4px;
+}
+.selector-especie-campo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+}
+.selector-especie-campo input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+}
+.selector-especie-campo input:focus {
+  outline: none;
+}
+.selector-especie-campo:focus-within {
+  outline: 2px solid var(--acento);
+  outline-offset: 1px;
+}
+.selector-especie-campo img {
+  border-radius: 6px;
+  object-fit: cover;
+}
+.quitar-especie {
+  border: 0;
+  background: transparent;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--texto-2);
+  cursor: pointer;
+  min-width: 32px;
+  min-height: 32px;
+}
+.selector-especie-lista {
+  position: absolute;
+  z-index: 1400;
+  top: 100%;
+  left: 0;
+  right: 0;
+  min-width: min(340px, calc(100vw - 32px));
+  max-height: 60vh;
+  overflow-y: auto;
+  margin-top: 4px;
+  padding: 6px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.16);
+}
+.selector-especie-lista .rotulo {
+  margin: 10px 8px 4px;
+}
+.selector-especie-lista [role="option"] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.selector-especie-lista [role="option"] > span {
+  display: grid;
+}
+.selector-especie-lista [role="option"] small {
+  color: var(--texto-2);
+}
+.selector-especie-lista [role="option"][aria-selected="true"],
+.selector-especie-lista [role="option"]:hover {
+  background: var(--superficie-2);
+}
+.selector-especie-lista .elegida {
+  font-weight: 600;
+}
+.selector-especie-lista img {
+  border-radius: 6px;
+  object-fit: cover;
+}
+@media (max-width: 480px) {
+  .cabecera-in {
+    gap: 8px;
+    padding: 0 12px;
+  }
+  .marca {
+    font-size: 1.3rem;
+  }
+  .marca-sub {
+    display: none;
+  }
+  .mundos a {
+    padding: 4px 9px;
+  }
+  .selector-mes select {
+    height: 34px;
+    padding: 0 18px 0 8px;
+    background-position: right 4px center;
+  }
+  .buscador-global {
+    flex-basis: 34px;
+  }
+  .buscador-global input {
+    width: 34px;
+    height: 34px;
+  }
+}
+.entrada-espana,
+.entrada-espana a {
+  color: var(--texto-2);
+}
+.entrada-espana a {
+  color: var(--texto);
+}
+@media (max-width: 1400px) {
+  .cabecera .marca-sub {
+    display: none;
+  }
+}
+/* nombres de la tabla de probabilidad: 24 px de alto para el dedo */
+.tabla-frecuencia tbody th a {
+  display: inline-block;
+  min-height: 24px;
+  padding: 3px 0;
+}

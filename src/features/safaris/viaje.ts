@@ -4,6 +4,7 @@
 import { escribirAlmacen, useAlmacen } from "@/lib/almacen";
 import { escribirEtapas, leerEtapas } from "@/features/safaris/presupuesto";
 import { fechaValida } from "@/features/safaris/calendario";
+import { mesDeParametro } from "@/lib/fechas";
 
 export const CLAVE_VIAJE = "safaris.viaje";
 export const CLAVE_LISTA = "safaris.lista";
@@ -47,7 +48,7 @@ export function viajeDeUrl(q: URLSearchParams, mesHoy: number): Viaje | null {
   return {
     nombre: q.get("nombre") ?? "Mi safari",
     etapas,
-    mes: q.has("mes") ? Number(q.get("mes")) : mesHoy,
+    mes: mesDeParametro(q.get("mes")) ?? mesHoy,
     personas: Math.max(1, Number(q.get("personas") ?? 2) || 2),
     ver: (q.get("ver") ?? "").split(",").filter(Boolean).map(Number),
     salida: fechaValida(q.get("salida")),

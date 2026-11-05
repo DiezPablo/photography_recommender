@@ -4,6 +4,9 @@ import { nombreComun } from "@/features/safaris/nombres";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { leerDatos } from "@/lib/datos";
+import type { EntradaBusqueda } from "@/lib/busqueda";
+import type { OpcionEspecie } from "@/ui/SelectorEspecie";
+import { grupoFauna } from "@/features/safaris/gruposFauna";
 import type {
   EspecieSafari,
   FilaIndice,
@@ -186,4 +189,65 @@ export function fotoFauna(p: Parque): { foto: FotoSafari; especie: string } | nu
     return { foto: { ...f, url: f.url.replace("/medium.", "/large.") }, especie: nombreTaxonDe(e) };
   }
   return null;
+}
+
+/** Lo que busca el buscador de la cabecera: parques (todos los del índice o, con `todos` falso, solo los destinos de
+ * fauna: el autocompletado pesa 18 KB en vez de 100), especies
+ * (las del catálogo con ficha y el resto de estrellas, que llevan al buscador filtrado) y países. */
+export function entradasBusqueda(todos = true): EntradaBusqueda[] {
+  const salida: EntradaBusqueda[] = [];
+  const indice = cargarIndice();
+  for (const f of indice)
+    if (todos || esDestino(f))
+      salida.push({
+        tipo: "parque",
+        t: f.n,
+        s: f.p ?? undefined,
+        href: `/parque/${f.id}`,
+        w: f.d ? 1.5 : f.nv === "C" ? 0 : 0.5,
+      });
+  const catalogo = cargarSafaris()?.especies ?? [];
+  const conFicha = new Set(catalogo.map((e) => e.cientifico));
+  for (const e of catalogo)
+    salida.push({
+      tipo: "especie",
+      t: nombreTaxonDe(e),
+      s: e.cientifico,
+      href: `/especie/${slugEspecie(e)}`,
+      f: e.foto?.url.replace("/medium.", "/square."),
+      w: 1,
+    });
+  for (const [clave, cientifico] of Object.entries(cargarMundo()?.estrella ?? {}))
+    if (!conFicha.has(cientifico))
+      salida.push({ tipo: "especie", t: nombreEstrella(clave), s: cientifico, href: `/?especie=${clave}`, w: 0.5 });
+  const destacados = paisesDestacados();
+  const conGuia = new Map([...destacados].map(([slug, nombre]) => [nombre, slug]));
+  const paises = new Map<string, number>();
+  for (const f of indice) if (f.p && esDestino(f)) paises.set(f.p, (paises.get(f.p) ?? 0) + 1);
+  for (const [pais, n] of paises)
+    salida.push({
+      tipo: "pais",
+      t: pais,
+      d: `${n} ${n === 1 ? "destino" : "destinos"}`,
+      href: conGuia.has(pais) ? `/safari-en/${conGuia.get(pais)}` : `/?q=${encodeURIComponent(pais)}`,
+      w: conGuia.has(pais) ? 1 : 0.5,
+    });
+  return salida;
+}
+
+/** Las especies estrella para el selector (T34): nombre, grupo y miniatura del catálogo si la tiene. */
+export function opcionesEspecie(): OpcionEspecie[] {
+  const catalogo = new Map((cargarSafaris()?.especies ?? []).map((e) => [e.cientifico, e]));
+  return Object.entries(cargarMundo()?.estrella ?? {})
+    .map(([clave, cientifico]) => {
+      const c = catalogo.get(cientifico);
+      return {
+        clave: Number(clave),
+        nombre: nombreEstrella(clave),
+        cientifico,
+        grupo: grupoFauna(cientifico, c?.grupo),
+        foto: c?.foto?.url.replace("/medium.", "/square.") ?? null,
+      };
+    })
+    .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
 }
