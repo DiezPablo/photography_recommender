@@ -18,6 +18,8 @@ export interface ZonaMigracion {
   parque: string;
   cruces?: boolean;
   partos?: boolean;
+  /** lluvias largas: hay migración, pero el parque está en temporada verde (fuera de su mejor época) */
+  lluvias?: boolean;
 }
 
 export const MIGRACION: ZonaMigracion[] = [
@@ -61,6 +63,7 @@ export const MIGRACION: ZonaMigracion[] = [
     que: "Llegan las lluvias largas y las manadas suben hacia el centro y el oeste en columnas de kilómetros.",
     base: "Seronera y Moru (temporada baja: muchos campamentos cierran)",
     parque: "serengeti",
+    lluvias: true,
   },
   {
     mes: 5,
@@ -71,6 +74,7 @@ export const MIGRACION: ZonaMigracion[] = [
     que: "Época de celo: los machos defienden territorios y las manadas avanzan hacia el corredor occidental.",
     base: "Seronera y corredor occidental",
     parque: "serengeti",
+    lluvias: true,
   },
   {
     mes: 6,

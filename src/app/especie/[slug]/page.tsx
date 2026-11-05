@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { esNd, origenFoto, textoCredito } from "@/ui/Credito";
 import { notFound } from "next/navigation";
 import MapaEventos from "@/ui/mapa/MapaEventos";
 import { MESES } from "@/lib/fechas";
 import {
+  cifras,
   cargarRecientes,
   cargarSafaris,
   getEspecieSafari,
@@ -56,8 +58,21 @@ export default async function PaginaEspecieSafari({ params }: Props) {
         {e.foto && (
           <figure>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={e.foto.url.replace("/medium.", "/large.")} alt={nombreTaxon(e)} />
-            <figcaption>{e.foto.autor} · iNaturalist</figcaption>
+            <img
+              src={e.foto.url.replace("/medium.", "/large.")}
+              alt={nombreTaxon(e)}
+              className={esNd(e.foto) ? "foto-nd" : undefined}
+            />
+            <figcaption>
+              {origenFoto(e.foto) ? (
+                <a href={origenFoto(e.foto)!} target="_blank" rel="noopener">
+                  {textoCredito(e.foto)}
+                </a>
+              ) : (
+                textoCredito(e.foto)
+              )}{" "}
+              · iNaturalist
+            </figcaption>
           </figure>
         )}
         <div>
@@ -67,7 +82,7 @@ export default async function PaginaEspecieSafari({ params }: Props) {
           <h1>{nombreTaxon(e)}</h1>
           <p className="entradilla">
             {parques.length
-              ? `Dónde más se ha observado entre los ${cargarSafaris()?.parques.length} parques de safari, con su mejor época.`
+              ? `Dónde más se ha observado entre los ${cifras().destacados} parques destacados, con su mejor época.`
               : "Hay muy pocas observaciones en los parques de la lista."}
           </p>
         </div>

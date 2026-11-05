@@ -706,3 +706,20 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     reservas», plegados.
   - Resultado (altura en el móvil): portada de safaris 17,9 → 10,8 pantallas; especies 36,7 → 12,9; «Qué veo
     aquí» 7,1 → 4,7; ficha de lugar 8,3 → 4,0.
+- Auditoría externa (05-11-2026), bloque 1 (P0 de datos y confianza):
+  - T06: `safari/recursos/exclusiones.csv` (domésticas en todos los parques y pares imposibles especie-parque,
+    como el rinoceronte blanco en Ngorongoro, Serengeti y Masái Mara) se aplica en el pipeline (`inat.excluida`,
+    en especies y conteos) y en «Visto ahora» del navegador (la ficha pasa la lista leída del mismo CSV). iNaturalist
+    pasa de «verificable» a grado de investigación. En las tarjetas de la portada, primero las especies estrella
+    vistas ese mes (el varano en Komodo: los recientes solo eran mamíferos).
+  - T07: la migración y la temporada del Serengeti se contradecían. El Serengeti queda bueno todo el año salvo
+    las lluvias largas (abril-mayo), que en la migración se marcan como temporada verde; prueba
+    `e2e/coherencia.spec.ts` para que ningún mes de migración caiga fuera de temporada de su parque.
+  - T08: `cifras()` (una sola fuente, al compilar) para destinos, destacados, países y especies con ficha; «0 % de
+    comisión» deja de ser una cifra y pasa a mensaje.
+  - T09: `safari/recursos/webs_oficiales.csv` (autoridad gestora revisada a mano, manda sobre Wikidata) y la
+    etiqueta depende del dominio: «Web oficial» solo para gobiernos y autoridades gestoras; si no, «Más
+    información».
+  - T21: «©» con autor, licencia y enlace a la original en las fotos de especie (tarjetas, ficha, estrellas del
+    parque) y título con el crédito en las miniaturas; las fotos ND no se recortan (`object-fit: contain`). El
+    pipeline ya solo guardaba fotos con licencia Creative Commons.

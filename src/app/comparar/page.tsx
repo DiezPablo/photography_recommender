@@ -3,6 +3,8 @@
 // del mes.
 import type { Metadata } from "next";
 import Link from "next/link";
+import { etiquetaWeb } from "@/features/safaris/modelo";
+import { textoCredito } from "@/ui/Credito";
 import { INICIALES, MESES } from "@/lib/fechas";
 import { fechaLocal } from "@/lib/sol";
 import AnadirComparar from "@/features/safaris/componentes/AnadirComparar";
@@ -210,7 +212,7 @@ export default async function PaginaComparar({ searchParams }: Props) {
                     <th key={p.id} scope="col">
                       {p.foto && (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={p.foto.url} alt="" loading="lazy" />
+                        <img src={p.foto.url} alt={p.nombre} title={textoCredito(p.foto)} loading="lazy" />
                       )}
                       <Link href={`/parque/${p.id}`}>{p.nombre}</Link>
                       <small>{paisDe(p)}</small>
@@ -344,11 +346,11 @@ export default async function PaginaComparar({ searchParams }: Props) {
                 )}
                 {fila("Tipo", (p) => CLASE[p.clase] ?? p.clase)}
                 {fila("Superficie", (p) => (p.area_km2 ? `${p.area_km2.toLocaleString("es-ES")} km²` : "–"))}
-                {fila("Web oficial", (p) => {
+                {fila("Web", (p) => {
                   const w = urlWeb(p.web);
                   return w ? (
                     <a href={w} target="_blank" rel="noopener">
-                      Abrir ↗
+                      {etiquetaWeb(w)} ↗
                     </a>
                   ) : (
                     "–"

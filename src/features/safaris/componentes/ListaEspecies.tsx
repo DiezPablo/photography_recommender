@@ -3,13 +3,15 @@
 // seguidas, 37 pantallas en el móvil.
 import Link from "next/link";
 import { useState } from "react";
+import Credito, { esNd } from "@/ui/Credito";
+import type { FotoSafari } from "@/features/safaris/modelo";
 
 export interface EspecieTarjeta {
   taxon: number;
   nombre: string;
   cientifico: string;
   grupo: string | null;
-  foto: string | null;
+  foto: FotoSafari | null;
   href: string;
   parques: string;
 }
@@ -54,8 +56,17 @@ export default function ListaEspecies({ especies }: { especies: EspecieTarjeta[]
         {lista.map((e) => (
           <li key={e.taxon} className="tarjeta-especie">
             {e.foto ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={e.foto} alt="" loading="lazy" decoding="async" />
+              <span className="con-credito">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={e.foto.url}
+                  alt={e.nombre}
+                  loading="lazy"
+                  decoding="async"
+                  className={esNd(e.foto) ? "foto-nd" : undefined}
+                />
+                <Credito foto={e.foto} />
+              </span>
             ) : (
               <span className="sin-foto" aria-hidden />
             )}

@@ -9,14 +9,16 @@ import {
   cargarMundo,
   cargarRecientes,
   cargarSafaris,
+  cifras,
   enTemporada,
+  especiePorTaxon,
   nombreEstrella,
   nombreTaxon,
   puntuacionAhora,
   slugEspecie,
 } from "@/features/safaris/datos";
 import { fechaLocal } from "@/lib/sol";
-import { esDomestica } from "@/features/safaris/modelo";
+import { esNd, textoCredito } from "@/ui/Credito";
 
 export const metadata: Metadata = {
   title: "Safaris",
@@ -36,8 +38,7 @@ export default function PaginaSafaris() {
   const mundo = cargarMundo();
   // destinos de fauna (niveles A y B); el resto de espacios protegidos solo sale si se busca
   const destinos = (mundo?.parques ?? []).filter((p) => p.nivel !== "C");
-  const total = destinos.length || parques.length;
-  const paisesMundo = new Set(destinos.map((p) => p.pais)).size;
+  const c = cifras();
   // la foto de la portada: el primer destacado en buena época este mes que tenga foto
   const hero = ahora.find((p) => p.foto) ?? parques.find((p) => p.foto);
   const especies = Object.keys(mundo?.estrella ?? {})
@@ -76,22 +77,19 @@ export default function PaginaSafaris() {
 
       <section className="portada-cifras" aria-label="En cifras">
         <p>
-          <b>{total.toLocaleString("es-ES")}</b>
-          <span>destinos de fauna</span>
+          <b>{c.destinos.toLocaleString("es-ES")}</b>
+          <span>destinos de fauna, {c.destacados} de ellos destacados</span>
         </p>
         <p>
-          <b>{paisesMundo || new Set(parques.map((p) => p.pais)).size}</b>
+          <b>{c.paises}</b>
           <span>países</span>
         </p>
         <p>
-          <b>{especies.length}</b>
-          <span>especies emblemáticas, mes a mes</span>
-        </p>
-        <p>
-          <b>0 %</b>
-          <span>de comisión: reservas directamente</span>
+          <b>{c.especies}</b>
+          <span>especies con ficha, mes a mes</span>
         </p>
       </section>
+      <p className="confianza-portada">Sin comisiones: reservas directamente con el parque, el lodge o el operador.</p>
 
       <QueVer mesHoy={mesHoy} />
 
@@ -101,16 +99,28 @@ export default function PaginaSafaris() {
           <ul className="tarjetas-ahora">
             {ahora.map((p) => {
               const r = recientes?.parques[p.id];
-              const top = r?.mamiferos
-                .filter((m) => !esDomestica(m.cientifico))
-                .slice(0, 3)
-                .map((m) => m.nombre ?? m.cientifico);
+              // primero las especies estrella del parque vistas este mes (el varano en Komodo), luego el resto
+              const estrellaVistas = p.estrella
+                .filter((t) => (r?.estrella[String(t)] ?? 0) > 0)
+                .map((t) => especiePorTaxon(t))
+                .filter((e) => e !== undefined)
+                .map((e) => nombreTaxon(e));
+              const top = [
+                ...estrellaVistas,
+                ...(r?.mamiferos ?? []).map((m) => m.nombre ?? m.cientifico).filter((n) => !estrellaVistas.includes(n)),
+              ].slice(0, 3);
               return (
                 <li key={p.id}>
                   <Link href={`/parque/${p.id}`}>
                     {p.foto && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={p.foto.url} alt="" loading="lazy" />
+                      <img
+                        src={p.foto.url}
+                        alt={`${p.nombre} (${p.pais})`}
+                        title={textoCredito(p.foto)}
+                        loading="lazy"
+                        className={esNd(p.foto) ? "foto-nd" : undefined}
+                      />
                     )}
                     <span className="rotulo">{p.pais}</span>
                     <b>{p.nombre}</b>
@@ -132,7 +142,12 @@ export default function PaginaSafaris() {
         <h2>
           En {MESES[mesHoy]}, {MIGRACION[mesHoy].zona}
         </h2>
-        <p>{MIGRACION[mesHoy].que}</p>
+        <p>
+          {MIGRACION[mesHoy].que}
+          {MIGRACION[mesHoy].lluvias
+            ? " Son las lluvias largas: temporada verde, más barata y con pistas embarradas."
+            : ""}
+        </p>
         <p className="enlaces">
           <Link href="/migracion">Ver el mapa y lo visto este mes</Link>
           <Link href="/planificar?pais=Tanzania">Planificar un safari en Tanzania</Link>

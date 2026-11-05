@@ -47,7 +47,10 @@ export default function PaginaMigracion() {
               <tr key={z.mes} className={z.mes === mesHoy + 1 ? "actual" : undefined}>
                 <th scope="row">{MESES[z.mes - 1]}</th>
                 <td>{z.zona}</td>
-                <td>{z.que}</td>
+                <td>
+                  {z.que}
+                  {z.lluvias ? " (lluvias largas: temporada verde)" : ""}
+                </td>
               </tr>
             ))}
           </tbody>

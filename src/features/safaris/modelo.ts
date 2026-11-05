@@ -381,21 +381,16 @@ export function confianza(n: number | null | undefined): Confianza | null {
   return { clave: "baja", texto: "confianza baja" };
 }
 
-// Domésticas y asilvestradas que salen en las fotos de iNaturalist pero no son fauna de safari
-const DOMESTICAS = new Set([
-  "Felis catus",
-  "Canis familiaris",
-  "Canis lupus familiaris",
-  "Bos taurus",
-  "Bos indicus",
-  "Capra hircus",
-  "Ovis aries",
-  "Equus caballus",
-  "Equus asinus",
-  "Sus domesticus",
-  "Gallus gallus",
-  "Gallus gallus domesticus",
-]);
-export function esDomestica(cientifico: string | null | undefined): boolean {
-  return Boolean(cientifico && DOMESTICAS.has(cientifico));
+// Dominios de autoridades gestoras (gobiernos, servicios de parques, ONG que gestionan el parque por contrato)
+const AUTORIDADES =
+  /(\.gov(\.[a-z]{2})?|\.gob\.[a-z]{2}|\.go\.[a-z]{2}|\.gouv\.[a-z]{2}|nps\.gov|parcs\.canada\.ca|sanparks\.org|kznwildlife\.com|parksnorthwest\.co\.za|ugandawildlife\.org|visitrwanda\.com|akagera\.org|africanparks\.org|gorongosa\.org|zimparks\.org\.zw|conaf\.cl|parksaustralia\.gov\.au)$/i;
+
+/** «Web oficial» solo si el dominio es de la autoridad que gestiona el parque; si no, «Más información». */
+export function etiquetaWeb(url: string | null | undefined): string {
+  if (!url) return "Más información";
+  try {
+    return AUTORIDADES.test(new URL(url).hostname.replace(/\.$/, "")) ? "Web oficial" : "Más información";
+  } catch {
+    return "Más información";
+  }
 }

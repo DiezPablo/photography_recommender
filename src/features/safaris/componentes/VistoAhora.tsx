@@ -3,7 +3,6 @@
 // si no responde, se muestra lo que trajo la última actualización de los datos.
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { esDomestica } from "@/features/safaris/modelo";
 import { slugEspecie } from "@/features/safaris/modelo";
 
 interface Fila {
@@ -12,6 +11,8 @@ interface Fila {
   nombre: string | null;
   n: number;
   foto?: string | null;
+  /** autor y licencia de la foto */
+  credito?: string | null;
 }
 
 const DIAS = 30;
@@ -22,6 +23,7 @@ export default function VistoAhora({
   radioKm,
   respaldo,
   conFicha,
+  excluir = [],
 }: {
   lat: number;
   lon: number;
@@ -29,6 +31,8 @@ export default function VistoAhora({
   respaldo: Fila[];
   /** taxones con página propia en /safaris/especie */
   conFicha: number[];
+  /** domésticas y especies imposibles en este parque (exclusiones.csv) */
+  excluir?: string[];
 }) {
   const [filas, setFilas] = useState<Fila[] | null>(null);
   const [directo, setDirecto] = useState(false);
@@ -37,7 +41,7 @@ export default function VistoAhora({
     const desde = new Date(Date.now() - DIAS * 86400000).toISOString().slice(0, 10);
     const url =
       `https://api.inaturalist.org/v1/observations/species_counts?lat=${lat}&lng=${lon}&radius=${radioKm}` +
-      `&d1=${desde}&iconic_taxa=Mammalia,Aves,Reptilia&verifiable=true&locale=es&per_page=12`;
+      `&d1=${desde}&iconic_taxa=Mammalia,Aves,Reptilia&quality_grade=research&locale=es&per_page=15`;
     let vivo = true;
     fetch(url)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
@@ -51,7 +55,7 @@ export default function VistoAhora({
                 id: number;
                 name: string;
                 preferred_common_name?: string;
-                default_photo?: { square_url?: string; license_code?: string };
+                default_photo?: { square_url?: string; license_code?: string; attribution?: string };
               };
             }) => ({
               taxon: r.taxon.id,
@@ -59,6 +63,9 @@ export default function VistoAhora({
               nombre: r.taxon.preferred_common_name ?? null,
               n: r.count,
               foto: r.taxon.default_photo?.license_code ? r.taxon.default_photo.square_url : null,
+              credito: r.taxon.default_photo?.license_code
+                ? `${r.taxon.default_photo.attribution ?? ""} · ${r.taxon.default_photo.license_code.toUpperCase()}`
+                : null,
             }),
           ),
         );
@@ -70,7 +77,9 @@ export default function VistoAhora({
     };
   }, [lat, lon, radioKm, respaldo]);
 
-  const lista = (filas ?? respaldo).filter((f) => !esDomestica(f.cientifico));
+  const lista = (filas ?? respaldo)
+    .filter((f) => !excluir.some((c) => f.cientifico === c || f.cientifico.startsWith(`${c} `)))
+    .slice(0, 12);
   return (
     <section className="seccion visto-ahora">
       <h2 className="rotulo">Visto en los últimos {DIAS} días</h2>
@@ -80,7 +89,14 @@ export default function VistoAhora({
             <li key={f.taxon}>
               {f.foto ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={f.foto} alt="" width={40} height={40} loading="lazy" />
+                <img
+                  src={f.foto}
+                  alt={f.nombre ?? f.cientifico}
+                  title={f.credito ?? undefined}
+                  width={40}
+                  height={40}
+                  loading="lazy"
+                />
               ) : (
                 <span className="sin-foto" aria-hidden />
               )}

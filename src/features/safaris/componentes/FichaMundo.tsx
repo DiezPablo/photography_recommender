@@ -10,7 +10,7 @@ import MapaEventos from "@/ui/mapa/MapaEventos";
 import { INICIALES, MESES } from "@/lib/fechas";
 import { CincoGrandes, CombinaCon } from "@/features/safaris/componentes/ComplementosSafari";
 import BotonComparar from "./BotonComparar";
-import { nombreEstrella } from "@/features/safaris/datos";
+import { exclusionesDe, nombreEstrella } from "@/features/safaris/datos";
 import ResumenParque from "./ResumenParque";
 import IndiceFicha from "./IndiceFicha";
 import OrganizaViaje from "@/features/safaris/componentes/OrganizaViaje";
@@ -209,7 +209,14 @@ export default function FichaMundo({
             />
           )}
         </section>
-        <VistoAhora lat={p.lat} lon={p.lon} radioKm={p.radio_km} respaldo={[]} conFicha={[]} />
+        <VistoAhora
+          lat={p.lat}
+          lon={p.lon}
+          radioKm={p.radio_km}
+          respaldo={[]}
+          conFicha={[]}
+          excluir={exclusionesDe(p.id)}
+        />
       </div>
 
       <section className="seccion">

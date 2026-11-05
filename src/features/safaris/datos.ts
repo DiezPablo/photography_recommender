@@ -1,5 +1,7 @@
 // Lectura de public/datos/safaris.json y safaris_recientes.json (solo servidor).
 import "server-only";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { leerDatos } from "@/lib/datos";
 import type { EspecieSafari, Mundo, Parque, ParqueMundo, Recientes, Safaris } from "@/features/safaris/modelo";
 import { capitalizar, paisesDe, slugEspecie, slugTexto } from "@/features/safaris/modelo";
@@ -73,4 +75,35 @@ export function nombreEstrella(clave: number | string): string {
 export function paisesDestacados(): Map<string, string> {
   const nombres = (cargarSafaris()?.parques ?? []).flatMap(paisesDe).sort((a, b) => a.localeCompare(b, "es"));
   return new Map(nombres.map((n) => [slugTexto(n), n]));
+}
+
+let exclusiones: { parque: string; cientifico: string }[] | undefined;
+/** Especies que no se enseñan en un parque (safari/recursos/exclusiones.csv, la misma lista que usa el pipeline):
+ * domésticas en todos y pares imposibles (errores de identificación). */
+export function exclusionesDe(parque: string): string[] {
+  if (!exclusiones) {
+    const texto = readFileSync(path.join(process.cwd(), "safari", "recursos", "exclusiones.csv"), "utf8");
+    exclusiones = texto
+      .trim()
+      .split("\n")
+      .slice(1)
+      .map((l) => {
+        const [p, c] = l.split(",");
+        return { parque: p, cientifico: c };
+      });
+  }
+  return exclusiones.filter((x) => x.parque === "*" || x.parque === parque).map((x) => x.cientifico);
+}
+
+/** Las cifras que se citan en la web, de una sola fuente (al compilar): parques destacados (escritos a mano),
+ * destinos de fauna en total (niveles A y B del catálogo mundial), países y especies con ficha. */
+export function cifras(): { destacados: number; destinos: number; paises: number; especies: number } {
+  const parques = cargarSafaris()?.parques ?? [];
+  const destinos = (cargarMundo()?.parques ?? []).filter((p) => p.nivel !== "C");
+  return {
+    destacados: parques.length,
+    destinos: destinos.length || parques.length,
+    paises: new Set((destinos.length ? destinos : parques).map((p) => p.pais)).size,
+    especies: cargarSafaris()?.especies.length ?? 0,
+  };
 }

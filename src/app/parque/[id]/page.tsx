@@ -24,6 +24,7 @@ import {
   nivelFrecuencia,
   cargarMundo,
   cargarRecientes,
+  exclusionesDe,
   cargarSafaris,
   enlaceResenas,
   urlWeb,
@@ -35,6 +36,8 @@ import {
   TEXTO_TIPO,
 } from "@/features/safaris/datos";
 import { fechaLocal } from "@/lib/sol";
+import { etiquetaWeb } from "@/features/safaris/modelo";
+import Credito, { esNd } from "@/ui/Credito";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -127,7 +130,7 @@ export default async function PaginaParque({ params }: Props) {
             <BotonComparar id={p.id} />
             {p.web && (
               <a href={p.web} target="_blank" rel="noopener">
-                Web oficial ↗
+                {etiquetaWeb(p.web)} ↗
               </a>
             )}
             {p.es && (
@@ -202,8 +205,16 @@ export default async function PaginaParque({ params }: Props) {
               return (
                 <li key={e.taxon} className="tarjeta-especie">
                   {e.foto ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={e.foto.url} alt="" loading="lazy" />
+                    <span className="con-credito">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={e.foto.url}
+                        alt={`${nombreTaxon(e)} (foto de iNaturalist)`}
+                        loading="lazy"
+                        className={esNd(e.foto) ? "foto-nd" : undefined}
+                      />
+                      <Credito foto={e.foto} />
+                    </span>
                   ) : (
                     <span className="sin-foto" aria-hidden />
                   )}
@@ -254,7 +265,14 @@ export default async function PaginaParque({ params }: Props) {
             texto="Cada año, la buena época en tu calendario y un aviso dos meses antes para reservar."
           />
         </section>
-        <VistoAhora lat={p.lat} lon={p.lon} radioKm={p.radio_km} respaldo={respaldo} conFicha={conFicha} />
+        <VistoAhora
+          lat={p.lat}
+          lon={p.lon}
+          radioKm={p.radio_km}
+          respaldo={respaldo}
+          conFicha={conFicha}
+          excluir={exclusionesDe(p.id)}
+        />
       </div>
 
       {p.especies && (
@@ -299,7 +317,7 @@ export default async function PaginaParque({ params }: Props) {
               <b>Entrada y permisos:</b>{" "}
               {p.web ? (
                 <a href={p.web} target="_blank" rel="noopener">
-                  web oficial del parque ↗
+                  {etiquetaWeb(p.web) === "Web oficial" ? "web oficial del parque" : "web del parque"} ↗
                 </a>
               ) : (
                 "en la autoridad de parques del país"

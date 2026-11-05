@@ -6,8 +6,11 @@ Commons (las «todos los derechos reservados» no se publican).
 
 from __future__ import annotations
 
+import csv
 import json
 import time
+from functools import cache
+from pathlib import Path
 
 import requests
 
@@ -47,7 +50,31 @@ def _get(ruta: str, params: dict, cache: CacheJson = CACHE) -> dict:
 
 
 def _zona(p: dict) -> dict:
-    return {"lat": p["lat"], "lng": p["lon"], "radius": p["radio_km"], "verifiable": "true"}
+    # solo grado de investigación (identificación confirmada por la comunidad): con «verificable» entraban errores
+    # como el rinoceronte blanco en el Ngorongoro
+    return {"lat": p["lat"], "lng": p["lon"], "radius": p["radio_km"], "quality_grade": "research"}
+
+
+EXCLUSIONES = Path(__file__).resolve().parent / "recursos" / "exclusiones.csv"
+
+
+@cache
+def _exclusiones() -> dict[str, set[str]]:
+    salida: dict[str, set[str]] = {}
+    with EXCLUSIONES.open(encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            salida.setdefault(r["parque"], set()).add(r["cientifico"])
+    return salida
+
+
+def excluida(parque: str | None, cientifico: str | None) -> bool:
+    """Domésticas (en todos los parques) y pares imposibles especie-parque (fuera de su área: errores de
+    identificación), de recursos/exclusiones.csv."""
+    if not cientifico:
+        return False
+    sp = " ".join(cientifico.split()[:2])
+    e = _exclusiones()
+    return sp in e.get("*", set()) or cientifico in e.get("*", set()) or sp in e.get(parque or "", set())
 
 
 def foto(t: dict) -> dict | None:
@@ -84,7 +111,11 @@ def especies(p: dict, grupo: str, n: int, desde: str | None = None, cache: Cache
     if desde:
         params["d1"] = desde
     d = _get("observations/species_counts", params, cache)
-    return [{**ficha_taxon(r["taxon"]), "n": r["count"]} for r in d.get("results", [])]
+    return [
+        {**ficha_taxon(r["taxon"]), "n": r["count"]}
+        for r in d.get("results", [])
+        if not excluida(p.get("id"), r["taxon"].get("name"))
+    ]
 
 
 def conteos(p: dict, taxones: list[int], desde: str | None = None, cache: CacheJson = CACHE) -> dict[int, int]:
@@ -99,6 +130,8 @@ def conteos(p: dict, taxones: list[int], desde: str | None = None, cache: CacheJ
     salida: dict[int, int] = {}
     for r in d.get("results", []):
         t = r["taxon"]
+        if excluida(p.get("id"), t.get("name")):
+            continue
         # una subespecie cuenta para la especie pedida
         clave = t["id"] if t["id"] in pedidos else next((a for a in t.get("ancestor_ids", []) if a in pedidos), None)
         if clave is not None:

@@ -65,6 +65,17 @@ def frecuencias(p: dict, taxones: list[dict]) -> tuple[dict[str, list[int | None
     return salida, muestras
 
 
+WEBS_OFICIALES = Path(__file__).resolve().parent / "recursos" / "webs_oficiales.csv"
+
+
+def webs_oficiales() -> dict[str, tuple[str, str]]:
+    """recursos/webs_oficiales.csv: la web de la autoridad que gestiona cada parque destacado."""
+    import csv
+
+    with WEBS_OFICIALES.open(encoding="utf-8") as f:
+        return {r["parque"]: (r["web"], r["autoridad"]) for r in csv.DictReader(f)}
+
+
 def calcular(parques: list[dict], con_clima: bool = True, con_alojamientos: bool = True) -> dict:
     estrella = taxones_estrella(parques)
     ids = [t["taxon"] for t in estrella.values()]
@@ -84,6 +95,10 @@ def calcular(parques: list[dict], con_clima: bool = True, con_alojamientos: bool
     for i, p in enumerate(parques):
         x = {**p, **{k: v for k, v in (wd.get(p["wikidata"]) or {}).items()}}
         x["estrella"] = [estrella[c]["taxon"] for c in p["estrella"] if c in estrella]
+        # la web de la autoridad gestora, revisada a mano, manda sobre la de Wikidata (a veces es una agencia)
+        oficial = webs_oficiales().get(p["id"])
+        if oficial:
+            x["web"], x["autoridad"] = oficial
         try:
             x["especies"] = {g: inat.especies(p, g, n) for g, n in GRUPOS}
             cuenta = inat.conteos(p, ids)

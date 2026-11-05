@@ -1856,3 +1856,32 @@ blockquote {
 .mas-espana small {
   color: var(--texto-2);
 }
+.confianza-portada {
+  text-align: center;
+  color: var(--texto-2);
+  font-size: 0.9rem;
+  margin: 4px 0 16px;
+}
+
+/* Créditos de fotos y fotos sin obras derivadas (ND): no se recortan */
+.con-credito {
+  position: relative;
+}
+.credito {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  min-width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: rgb(0 0 0 / 0.55);
+  color: #fff;
+  font: 600 0.75rem var(--f-cuerpo);
+  text-decoration: none;
+}
+img.foto-nd {
+  object-fit: contain !important;
+  background: var(--superficie-2);
+}
