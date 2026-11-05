@@ -26,13 +26,6 @@ export default function PaginaGuiaSafari() {
       <header className="titular">
         <p className="rotulo">Guía</p>
         <h1>Cómo organizar un safari</h1>
-        <nav className="pestanas" aria-label="Safaris">
-          <Link href="/">Parques</Link>
-          <Link href="/especies">Especies</Link>
-          <Link href="/guia" aria-current="page">
-            Cómo organizarlo
-          </Link>
-        </nav>
         <p className="entradilla">
           Lo que conviene decidir antes de reservar. Esta web no vende viajes ni cobra comisiones: los enlaces llevan a
           webs oficiales, lodges y operadores, para reservar directamente con ellos.

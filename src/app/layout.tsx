@@ -2,8 +2,9 @@ import RegistrarSW from "@/ui/RegistrarSW";
 import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono, Newsreader } from "next/font/google";
 import Link from "next/link";
+import { Suspense } from "react";
 import { SITIO } from "@/lib/sitio";
-import { BarraInferior, MenuPrincipal } from "@/ui/Navegacion";
+import { BarraInferior, MenuPrincipal, Mundos } from "@/ui/Navegacion";
 import "./globals.css";
 
 // Tipografías autoalojadas en el build (sin peticiones a Google desde el navegador)
@@ -40,11 +41,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/" className="marca" aria-label="Safaris, inicio">
               Safaris<span className="marca-sub">atlas de fauna</span>
             </Link>
-            <MenuPrincipal />
+            <Suspense fallback={null}>
+              <Mundos />
+              <MenuPrincipal />
+            </Suspense>
           </div>
         </header>
         <div id="contenido">{children}</div>
-        <BarraInferior />
+        <Suspense fallback={null}>
+          <BarraInferior />
+        </Suspense>
         <footer className="pie">
           <div className="pie-in">
             <div className="pie-marca">

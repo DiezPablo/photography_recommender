@@ -380,3 +380,22 @@ export function confianza(n: number | null | undefined): Confianza | null {
   if (n >= 100) return { clave: "media", texto: "confianza media" };
   return { clave: "baja", texto: "confianza baja" };
 }
+
+// Domésticas y asilvestradas que salen en las fotos de iNaturalist pero no son fauna de safari
+const DOMESTICAS = new Set([
+  "Felis catus",
+  "Canis familiaris",
+  "Canis lupus familiaris",
+  "Bos taurus",
+  "Bos indicus",
+  "Capra hircus",
+  "Ovis aries",
+  "Equus caballus",
+  "Equus asinus",
+  "Sus domesticus",
+  "Gallus gallus",
+  "Gallus gallus domesticus",
+]);
+export function esDomestica(cientifico: string | null | undefined): boolean {
+  return Boolean(cientifico && DOMESTICAS.has(cientifico));
+}

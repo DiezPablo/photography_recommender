@@ -66,13 +66,21 @@ export default function InicioEspana({ hoy }: { hoy: string }) {
         </section>
       </div>
 
-      <p className="enlaces-inicio">
-        <Link href="/espana/mapa">Mapa de fauna →</Link> · <Link href="/espana/hides">Hides y salidas guiadas →</Link> ·{" "}
-        <Link href="/espana/rarezas">Rarezas de esta semana →</Link> ·{" "}
-        <Link href="/espana/mis-especies">Mis especies vistas →</Link> ·{" "}
-        <Link href="/espana/diario">Mi diario de salidas →</Link> ·{" "}
-        <Link href="/espana/normas">Normas y código ético →</Link>
-      </p>
+      <nav className="mas-espana" aria-label="Más">
+        {[
+          ["/espana/mapa", "Mapa de fauna", "Lugares, hides y dónde se ve cada especie"],
+          ["/espana/hides", "Hides y salidas", "Para fotografiar o ver con guía"],
+          ["/espana/rarezas", "Rarezas", "Lo raro visto esta semana"],
+          ["/espana/mis-especies", "Mis especies", "Las que has visto"],
+          ["/espana/diario", "Mi diario", "Tus salidas"],
+          ["/espana/normas", "Normas", "Ley, drones y código ético"],
+        ].map(([href, titulo, texto]) => (
+          <Link key={href} href={href}>
+            <b>{titulo}</b>
+            <small>{texto}</small>
+          </Link>
+        ))}
+      </nav>
 
       {ahora.length > 0 && (
         <section className="seccion">

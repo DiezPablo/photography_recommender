@@ -22,6 +22,7 @@ import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
 import { actividadPorDefecto, puntuar, type Puntuacion } from "@/features/espana/puntuacion";
 import ElegirLugar from "@/features/espana/ElegirLugar";
 import LuzYMar from "@/features/espana/LuzYMar";
+import ResumenDia from "@/features/espana/ResumenDia";
 import BotonVista from "@/features/espana/BotonVista";
 import { useVistas } from "@/features/espana/vistas";
 import { factorFotografia } from "@/features/espana/fotografia";
@@ -320,125 +321,28 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
         </label>
       </section>
 
+      <ResumenDia
+        mejor={
+          mejor
+            ? {
+                hora: mejor.hora.slice(11, 16),
+                momento: TEXTO_MOMENTO[mejor.momento],
+                lluvia: mejor.probLluvia,
+                viento: Math.round(mejor.rachas),
+                direccion: mejor.direccion ?? null,
+              }
+            : null
+        }
+        tiempoCargado={Boolean(tiempo)}
+        especies={visibles.slice(0, 5).map((e) => ({ clave: e.clave, nombre: e.nombre }))}
+        lugar={nombreSitio}
+      />
+
       <FenomenosEspana
         fenomenos={fenomenosCerca(lat, lon, radio, mes + 1)}
         mesHoy={mes}
         titulo={`Qué pasa en ${MESES[mes]} cerca de aquí`}
       />
-
-      <section className="seccion" aria-labelledby="luz-titulo">
-        <h2 className="rotulo" id="luz-titulo">
-          Luz
-        </h2>
-        <LuzYMar lat={lat} lon={lon} fecha={fecha} />
-        <p className="nota-pie">
-          Luna: {fasesLuna.nombre}, {Math.round(fasesLuna.iluminada * 100)} % iluminada
-          {fasesLuna.iluminada < 0.2
-            ? " · noche oscura: buena para fotografía nocturna y mamíferos que evitan la luz"
-            : fasesLuna.iluminada > 0.85
-              ? " · noche clara: siluetas y paisaje nocturno con luz de luna"
-              : ""}
-          .
-        </p>
-        <dl className="luz-dia">
-          <div>
-            <dt>Hora azul</dt>
-            <dd>{franja(luz.azulManana)}</dd>
-          </div>
-          <div>
-            <dt>Hora dorada</dt>
-            <dd>{franja(luz.doradaManana)}</dd>
-          </div>
-          <div>
-            <dt>Salida y puesta</dt>
-            <dd>
-              {hora(luz.amanecer)} · {hora(luz.atardecer)}
-            </dd>
-          </div>
-          <div>
-            <dt>Hora dorada</dt>
-            <dd>{franja(luz.doradaTarde)}</dd>
-          </div>
-          <div>
-            <dt>Hora azul</dt>
-            <dd>{franja(luz.azulTarde)}</dd>
-          </div>
-        </dl>
-      </section>
-
-      <section className="seccion" aria-labelledby="tiempo-titulo" aria-live="polite">
-        <h2 className="rotulo" id="tiempo-titulo">
-          Tiempo{" "}
-          {tiempo && (
-            <span className={`etiqueta-tiempo ${tiempo.tipo}`}>
-              {tiempo.tipo === "prevision" ? "previsión" : `climatología ${tiempo.desde}-${tiempo.hasta}`}
-            </span>
-          )}
-        </h2>
-        {errorTiempo && <p className="nota-pie">No se pudo consultar Open-Meteo.</p>}
-        {!tiempo && !errorTiempo && <p className="nota-pie">Consultando Open-Meteo…</p>}
-        {tiempo?.tipo === "climatologia" && (
-          <p>
-            Faltan más de 16 días: lo normal esos días del año en {tiempo.desde}-{tiempo.hasta} fue{" "}
-            <b>{tiempo.diasLluvia} % de días con lluvia</b>, nubosidad media del {tiempo.nubes} % y viento máximo de{" "}
-            {tiempo.vientoMax} km/h. La previsión se podrá consultar 16 días antes.
-          </p>
-        )}
-        {tiempo?.tipo === "prevision" && (
-          <>
-            {mejores.length > 0 && (
-              <p className="aviso-plan">
-                <b>Mejores franjas:</b>{" "}
-                {mejores
-                  .map(
-                    (h) =>
-                      `${h.hora.slice(11, 16)} (${TEXTO_MOMENTO[h.momento]}${h.tiempo < 1 ? ", con lluvia o viento" : ""})`,
-                  )
-                  .join(" · ")}
-              </p>
-            )}
-            <div className="tabla-desliza">
-              <table className="tabla-comparar tabla-tiempo">
-                <thead>
-                  <tr>
-                    <th scope="col">Hora</th>
-                    <th scope="col">Nubes bajas</th>
-                    <th scope="col">Medias</th>
-                    <th scope="col">Altas</th>
-                    <th scope="col">Lluvia</th>
-                    <th scope="col">Viento</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {horas
-                    .filter((h) => h.momento !== "noche")
-                    .map((h) => (
-                      <tr key={h.hora} className={`momento-${h.momento}`}>
-                        <th scope="row">
-                          {h.hora.slice(11, 16)} <small>{TEXTO_MOMENTO[h.momento]}</small>
-                        </th>
-                        <td>{h.nubesBajas} %</td>
-                        <td>{h.nubesMedias} %</td>
-                        <td>{h.nubesAltas} %</td>
-                        <td>{h.probLluvia ?? "–"} %</td>
-                        <td>
-                          {h.direccion !== null && h.direccion !== undefined ? `${rumbo(h.direccion)} ` : ""}
-                          {Math.round(h.rachas)} km/h
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-            {mejor?.direccion !== null && mejor?.direccion !== undefined && (
-              <p className="nota-pie">
-                En la mejor franja el viento viene del {rumbo(mejor.direccion)}: con mamíferos, acércate de cara al
-                viento (desde el {rumbo(mejor.direccion)}) para que no te huelan.
-              </p>
-            )}
-          </>
-        )}
-      </section>
 
       <section className="seccion" aria-labelledby="especies-titulo" aria-live="polite">
         <h2 className="rotulo" id="especies-titulo">
@@ -489,22 +393,22 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                   <li key={e.clave}>
                     <details>
                       <summary>
-                        <b>{e.nombre}</b> <i>{e.cientifico}</i> <span className={`f-texto-${n.clave}`}>{n.texto}</span>
-                        {e.estado === "invasora" && <small className="etiqueta-invasora"> invasora</small>}
-                        {hayVistas && !vistas[e.clave] && <small className="etiqueta-nueva"> nueva para ti</small>}
-                        <BotonVista clave={e.clave} especie={{ n: e.nombre, c: e.cientifico, clase: e.clase }} />
-                        {e.ultima && (
-                          <small className="visto-reciente">
-                            {" "}
-                            · vista el {fechaCorta(e.ultima.f)}
-                            {e.ultima.l ? ` en ${e.ultima.l.replace(/--/g, " · ")}` : ""}
-                          </small>
-                        )}
+                        <span className="fila-especie">
+                          <b>{e.nombre}</b>
+                          <span className={`chip f-texto-${n.clave}`}>{n.texto}</span>
+                          {e.estado === "invasora" && <span className="chip etiqueta-invasora">invasora</span>}
+                          {hayVistas && !vistas[e.clave] && <span className="chip etiqueta-nueva">nueva para ti</span>}
+                        </span>
                         <span className="notas-especie">
-                          verla {Math.round(e.nota.verla * 10)}/10 · fotografiarla{" "}
-                          {Math.round(e.nota.fotografiarla * 10)}/10
+                          Verla {Math.round(e.nota.verla * 10)}/10 · foto {Math.round(e.nota.fotografiarla * 10)}/10
+                          {e.ultima && <span className="visto-reciente"> · vista el {fechaCorta(e.ultima.f)}</span>}
                         </span>
                       </summary>
+                      <p className="cabeza-desglose">
+                        <i>{e.cientifico}</i>{" "}
+                        <BotonVista clave={e.clave} especie={{ n: e.nombre, c: e.cientifico, clase: e.clase }} />
+                        {e.ultima?.l && <small> · última vez en {e.ultima.l.replace(/--/g, " · ")}</small>}
+                      </p>
                       <ul className="desglose">
                         {e.nota.factores.map((f) => (
                           <li key={f.clave}>
@@ -545,6 +449,123 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
           </>
         )}
       </section>
+
+      <details className="seccion detalles-dia">
+        <summary className="rotulo">Luz, mar y tiempo hora a hora</summary>
+        <section className="seccion" aria-labelledby="luz-titulo">
+          <h2 className="rotulo" id="luz-titulo">
+            Luz
+          </h2>
+          <LuzYMar lat={lat} lon={lon} fecha={fecha} />
+          <p className="nota-pie">
+            Luna: {fasesLuna.nombre}, {Math.round(fasesLuna.iluminada * 100)} % iluminada
+            {fasesLuna.iluminada < 0.2
+              ? " · noche oscura: buena para fotografía nocturna y mamíferos que evitan la luz"
+              : fasesLuna.iluminada > 0.85
+                ? " · noche clara: siluetas y paisaje nocturno con luz de luna"
+                : ""}
+            .
+          </p>
+          <dl className="luz-dia">
+            <div>
+              <dt>Hora azul</dt>
+              <dd>{franja(luz.azulManana)}</dd>
+            </div>
+            <div>
+              <dt>Hora dorada</dt>
+              <dd>{franja(luz.doradaManana)}</dd>
+            </div>
+            <div>
+              <dt>Salida y puesta</dt>
+              <dd>
+                {hora(luz.amanecer)} · {hora(luz.atardecer)}
+              </dd>
+            </div>
+            <div>
+              <dt>Hora dorada</dt>
+              <dd>{franja(luz.doradaTarde)}</dd>
+            </div>
+            <div>
+              <dt>Hora azul</dt>
+              <dd>{franja(luz.azulTarde)}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section className="seccion" aria-labelledby="tiempo-titulo" aria-live="polite">
+          <h2 className="rotulo" id="tiempo-titulo">
+            Tiempo{" "}
+            {tiempo && (
+              <span className={`etiqueta-tiempo ${tiempo.tipo}`}>
+                {tiempo.tipo === "prevision" ? "previsión" : `climatología ${tiempo.desde}-${tiempo.hasta}`}
+              </span>
+            )}
+          </h2>
+          {errorTiempo && <p className="nota-pie">No se pudo consultar Open-Meteo.</p>}
+          {!tiempo && !errorTiempo && <p className="nota-pie">Consultando Open-Meteo…</p>}
+          {tiempo?.tipo === "climatologia" && (
+            <p>
+              Faltan más de 16 días: lo normal esos días del año en {tiempo.desde}-{tiempo.hasta} fue{" "}
+              <b>{tiempo.diasLluvia} % de días con lluvia</b>, nubosidad media del {tiempo.nubes} % y viento máximo de{" "}
+              {tiempo.vientoMax} km/h. La previsión se podrá consultar 16 días antes.
+            </p>
+          )}
+          {tiempo?.tipo === "prevision" && (
+            <>
+              {mejores.length > 0 && (
+                <p className="aviso-plan">
+                  <b>Mejores franjas:</b>{" "}
+                  {mejores
+                    .map(
+                      (h) =>
+                        `${h.hora.slice(11, 16)} (${TEXTO_MOMENTO[h.momento]}${h.tiempo < 1 ? ", con lluvia o viento" : ""})`,
+                    )
+                    .join(" · ")}
+                </p>
+              )}
+              <div className="tabla-desliza">
+                <table className="tabla-comparar tabla-tiempo">
+                  <thead>
+                    <tr>
+                      <th scope="col">Hora</th>
+                      <th scope="col">Nubes bajas</th>
+                      <th scope="col">Medias</th>
+                      <th scope="col">Altas</th>
+                      <th scope="col">Lluvia</th>
+                      <th scope="col">Viento</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {horas
+                      .filter((h) => h.momento !== "noche")
+                      .map((h) => (
+                        <tr key={h.hora} className={`momento-${h.momento}`}>
+                          <th scope="row">
+                            {h.hora.slice(11, 16)} <small>{TEXTO_MOMENTO[h.momento]}</small>
+                          </th>
+                          <td>{h.nubesBajas} %</td>
+                          <td>{h.nubesMedias} %</td>
+                          <td>{h.nubesAltas} %</td>
+                          <td>{h.probLluvia ?? "–"} %</td>
+                          <td>
+                            {h.direccion !== null && h.direccion !== undefined ? `${rumbo(h.direccion)} ` : ""}
+                            {Math.round(h.rachas)} km/h
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+              {mejor?.direccion !== null && mejor?.direccion !== undefined && (
+                <p className="nota-pie">
+                  En la mejor franja el viento viene del {rumbo(mejor.direccion)}: con mamíferos, acércate de cara al
+                  viento (desde el {rumbo(mejor.direccion)}) para que no te huelan.
+                </p>
+              )}
+            </>
+          )}
+        </section>
+      </details>
     </>
   );
 }

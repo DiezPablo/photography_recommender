@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import ListaEspecies from "@/features/safaris/componentes/ListaEspecies";
 import { cargarSafaris, getParque, nombreTaxon, slugEspecie } from "@/features/safaris/datos";
 
 export const metadata: Metadata = {
@@ -14,44 +14,25 @@ export default function PaginaEspeciesSafari() {
       <header className="titular">
         <p className="rotulo">{especies.length} especies · iNaturalist</p>
         <h1>Animales y dónde verlos</h1>
-        <nav className="pestanas" aria-label="Safaris">
-          <Link href="/">Parques</Link>
-          <Link href="/especies" aria-current="page">
-            Especies
-          </Link>
-          <Link href="/guia">Cómo organizarlo</Link>
-        </nav>
         <p className="entradilla">
           Para cada especie, los parques donde más se ha observado. Elige el animal y luego la época.
         </p>
       </header>
-      <ul className="rejilla-especies">
-        {especies.map((e) => (
-          <li key={e.taxon} className="tarjeta-especie">
-            {e.foto ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={e.foto.url} alt="" loading="lazy" decoding="async" />
-            ) : (
-              <span className="sin-foto" aria-hidden />
-            )}
-            <div>
-              <h3>
-                <Link href={`/especie/${slugEspecie(e)}`}>{nombreTaxon(e)}</Link>
-              </h3>
-              <p>
-                <i>{e.cientifico}</i>
-              </p>
-              <p className="meta">
-                {e.parques
-                  .slice(0, 3)
-                  .map((x) => getParque(x.id)?.nombre)
-                  .filter(Boolean)
-                  .join(", ") || "Pocas observaciones en los parques"}
-              </p>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <ListaEspecies
+        especies={especies.map((e) => ({
+          taxon: e.taxon,
+          nombre: nombreTaxon(e),
+          cientifico: e.cientifico,
+          grupo: e.grupo,
+          foto: e.foto?.url ?? null,
+          href: `/especie/${slugEspecie(e)}`,
+          parques: e.parques
+            .slice(0, 3)
+            .map((x) => getParque(x.id)?.nombre)
+            .filter(Boolean)
+            .join(", "),
+        }))}
+      />
     </main>
   );
 }

@@ -18,6 +18,16 @@ export const dynamic = "force-dynamic";
 
 type Props = { searchParams: Promise<{ modo?: string; lat?: string; zona?: string }> };
 
+const TITULOS: Record<string, [string, string]> = {
+  inicio: [
+    "Fauna en España",
+    "Qué ver cerca de casa, dónde encontrar cada especie y cuándo ir, con la luz y el tiempo.",
+  ],
+  aqui: ["Qué veo aquí", "Las especies probables en un lugar y un día, con la luz y el tiempo para fotografiar."],
+  finde: ["Este finde", "Los mejores sitios cerca de ti para el sábado y el domingo."],
+  donde: ["Dónde ver una especie", "Elige una especie: dónde y en qué meses es más fácil."],
+};
+
 export default async function PaginaEspana({ searchParams }: Props) {
   const q = await searchParams;
   const modo = q.modo;
@@ -29,33 +39,10 @@ export default async function PaginaEspana({ searchParams }: Props) {
   const hoy = fechaLocal(new Date());
   return (
     <main className="calendario safaris espana">
-      <header className="titular">
-        <p className="rotulo">
-          <Link href="/">Safaris</Link> · España
-        </p>
-        <h1>Fauna en España</h1>
-        <p className="entradilla">
-          Qué es probable ver en un lugar y un día, con la luz y el tiempo para fotografiar; o, al revés, dónde y cuándo
-          ver una especie.
-        </p>
+      <header className="titular titular-compacto">
+        <h1>{TITULOS[inicio ? "inicio" : donde ? "donde" : finde ? "finde" : "aqui"][0]}</h1>
+        <p className="entradilla">{TITULOS[inicio ? "inicio" : donde ? "donde" : finde ? "finde" : "aqui"][1]}</p>
       </header>
-      <nav className="pestanas-espana" aria-label="Modo">
-        <Link href="/espana" aria-current={inicio ? "page" : undefined}>
-          Inicio
-        </Link>
-        <Link href="/espana?modo=aqui" aria-current={aqui ? "page" : undefined}>
-          ¿Qué veo aquí?
-        </Link>
-        <Link href="/espana?modo=finde" aria-current={finde ? "page" : undefined}>
-          Este finde
-        </Link>
-        <Link href="/espana?modo=donde" aria-current={donde ? "page" : undefined}>
-          ¿Dónde veo…?
-        </Link>
-      </nav>
-      <p className="enlace-mis-especies">
-        <Link href="/espana/mis-especies">Mis especies vistas →</Link>
-      </p>
       {inicio ? (
         <InicioEspana hoy={hoy} />
       ) : donde ? (
@@ -65,11 +52,15 @@ export default async function PaginaEspana({ searchParams }: Props) {
       ) : (
         <PlanificadorEspana hoy={hoy} />
       )}
-      <p className="nota-pie">
-        Luz: posición del sol calculada aquí. Tiempo: Open-Meteo (previsión hasta 16 días; más allá, el archivo ERA5 de
-        los diez últimos años). Especies: GBIF por cuadrícula europea de 10 km, como frecuencia relativa en su grupo (no
-        es una probabilidad: refleja también dónde y cuándo va la gente). Las especies sensibles solo por zonas.
-      </p>
+      <details className="fuentes">
+        <summary>De dónde salen los datos</summary>
+        <p className="nota-pie">
+          Luz: posición del sol calculada aquí. Tiempo y mareas: Open-Meteo (previsión hasta 16 días; más allá, lo
+          normal en los diez últimos años). Especies: GBIF por cuadrícula de 10 km (cuánto se ve cada especie respecto a
+          las de su grupo) y, para las aves, eBird (en qué parte de las listas sale). Recientes: eBird e iNaturalist.
+          Las especies sensibles, solo por zonas.
+        </p>
+      </details>
     </main>
   );
 }

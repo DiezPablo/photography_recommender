@@ -5,6 +5,15 @@ import { MESES } from "@/lib/fechas";
 import MapaEventos from "@/ui/mapa/MapaEventos";
 import TarjetaHide from "@/features/espana/TarjetaHide";
 import { HIDES, TEXTO_TIPO, type Hide } from "@/features/espana/hides";
+import { useUbicacionGuardada } from "@/features/espana/ubicacion";
+
+function distancia(a: { lat: number; lon: number }, b: { lat: number; lon: number }) {
+  const r = Math.PI / 180;
+  const x =
+    Math.sin(((b.lat - a.lat) * r) / 2) ** 2 +
+    Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(((b.lon - a.lon) * r) / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(x));
+}
 
 const sinTildes = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
@@ -15,6 +24,7 @@ export default function CatalogoHides({ claves }: { claves: Record<string, strin
   const mes = p.get("mes") ? Number(p.get("mes")) : null;
   const clase = p.get("clase") ?? "";
   const tipos = [...new Set(HIDES.map((h) => h.tipo))];
+  const guardada = useUbicacionGuardada();
   const t = sinTildes(q.trim());
   const lista = HIDES.filter(
     (h: Hide) =>
@@ -25,7 +35,10 @@ export default function CatalogoHides({ claves }: { claves: Record<string, strin
       (!tipo || h.tipo === tipo) &&
       (!clase || h.clase === clase) &&
       (mes === null || !h.meses.length || h.meses.includes(mes)),
-  );
+  )
+    // con tu ubicación guardada, de más cerca a más lejos
+    .map((h) => ({ h, km: guardada ? Math.round(distancia(guardada, h)) : undefined }))
+    .sort((a, b) => (a.km ?? 0) - (b.km ?? 0));
   return (
     <>
       <section className="seccion formulario-plan">
@@ -71,7 +84,7 @@ export default function CatalogoHides({ claves }: { claves: Record<string, strin
       </section>
       <MapaEventos
         etiqueta="Zonas de los hides y salidas"
-        eventos={lista.map((h) => ({
+        eventos={lista.map(({ h }) => ({
           id: h.id,
           nombre: `${h.nombre} (${h.operador})`,
           lat: h.lat,
@@ -82,11 +95,12 @@ export default function CatalogoHides({ claves }: { claves: Record<string, strin
         }))}
       />
       <p className="nota-pie">
-        {lista.length} resultados. Los círculos marcan la zona (municipio o comarca), no el hide.
+        {lista.length} resultados{guardada ? `, de más cerca a más lejos de ${guardada.nombre ?? "tu punto"}` : ""}. Los
+        círculos marcan la zona (municipio o comarca), no el hide.
       </p>
       <ul className="lista-hides">
-        {lista.map((h) => (
-          <TarjetaHide key={h.id} h={h} claves={claves} />
+        {lista.map(({ h, km }) => (
+          <TarjetaHide key={h.id} h={h} km={km} claves={claves} />
         ))}
       </ul>
     </>

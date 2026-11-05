@@ -16,6 +16,7 @@ import {
   slugEspecie,
 } from "@/features/safaris/datos";
 import { fechaLocal } from "@/lib/sol";
+import { esDomestica } from "@/features/safaris/modelo";
 
 export const metadata: Metadata = {
   title: "Safaris",
@@ -100,7 +101,10 @@ export default function PaginaSafaris() {
           <ul className="tarjetas-ahora">
             {ahora.map((p) => {
               const r = recientes?.parques[p.id];
-              const top = r?.mamiferos.slice(0, 3).map((m) => m.nombre ?? m.cientifico);
+              const top = r?.mamiferos
+                .filter((m) => !esDomestica(m.cientifico))
+                .slice(0, 3)
+                .map((m) => m.nombre ?? m.cientifico);
               return (
                 <li key={p.id}>
                   <Link href={`/parque/${p.id}`}>

@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import MapaEventos from "@/ui/mapa/MapaEventos";
-import FrecuenciaAvistamientos from "@/features/safaris/componentes/FrecuenciaAvistamientos";
+import CalendarioPorGrupo from "@/features/espana/CalendarioPorGrupo";
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
 import ListaRarezas from "@/features/espana/ListaRarezas";
 import GuardarSinConexion from "@/features/espana/GuardarSinConexion";
@@ -73,6 +73,7 @@ export default async function PaginaLugar({ params }: Props) {
   const sol = direccionesSol(hoy, l.lat, l.lon);
   const espana = cargarEspana();
   const cita = espana?.fuente?.cita;
+  const probables = filas.filter((f) => (f.meses[mesHoy] ?? 0) >= 5).length;
   const nombreEs = new Map(Object.values(espana?.especies ?? {}).map((x) => [x.c, x.n]));
   const enlace = l.id.startsWith("eb-")
     ? { href: `https://ebird.org/hotspot/${l.id.slice(3)}`, texto: "Ficha en eBird" }
@@ -87,9 +88,9 @@ export default async function PaginaLugar({ params }: Props) {
         </p>
         <h1>{l.n}</h1>
         <p className="entradilla">
-          {l.e ? `${l.e} especies de aves vistas aquí en eBird. ` : ""}Qué se ve cada mes en sus{" "}
-          {celdas === 1 ? "cuadrícula" : `${celdas} cuadrículas`} de 10 km
-          {l.z ? " (las que toca su contorno de la Red Natura 2000)" : ""}, con datos de GBIF.
+          {probables} especies probables en {MESES[mesHoy]}
+          {l.e ? ` · ${l.e} aves vistas en eBird` : ""}
+          {fenomenos.some((f) => f.meses.includes(mesHoy + 1)) ? " · hay un fenómeno de temporada ahora" : ""}
         </p>
         <p className="enlaces-lugar">
           <Link
@@ -98,18 +99,17 @@ export default async function PaginaLugar({ params }: Props) {
           >
             Qué veo aquí un día concreto, con luz y tiempo →
           </Link>{" "}
-          <a href={`https://www.openstreetmap.org/directions?to=${l.lat}%2C${l.lon}`} target="_blank" rel="noopener">
-            Cómo llegar ↗
-          </a>{" "}
-          <GuardarSinConexion />
-          {enlace && (
-            <>
-              {" · "}
+          <span className="enlaces-secundarios">
+            <a href={`https://www.openstreetmap.org/directions?to=${l.lat}%2C${l.lon}`} target="_blank" rel="noopener">
+              Cómo llegar ↗
+            </a>
+            {enlace && (
               <a href={enlace.href} target="_blank" rel="noopener">
                 {enlace.texto} ↗
               </a>
-            </>
-          )}
+            )}
+            <GuardarSinConexion />
+          </span>
         </p>
       </header>
 
@@ -137,37 +137,23 @@ export default async function PaginaLugar({ params }: Props) {
         ]}
       />
 
-      <section className="seccion">
-        <h2 className="rotulo">Hoy, para fotografiar</h2>
-        <LuzYMar lat={l.lat} lon={l.lon} fecha={hoy} />
-      </section>
-
       <FenomenosEspana fenomenos={fenomenos} mesHoy={mesHoy} />
 
-      {GRUPOS.map(([clase, titulo]) => {
-        const fs = filas.filter((f) => f.clase === clase);
-        if (!fs.length) return null;
-        return (
-          <div key={clase}>
-            <FrecuenciaAvistamientos
-              titulo={`${titulo}: qué se ve cada mes`}
-              mesHoy={mesHoy}
-              unidad="observaciones"
-              filas={fs.map((f) => ({
-                nombre: f.nombre,
-                href: `/espana/especie/${f.clave}`,
-                meses: f.meses,
-                muestra: f.muestra,
-              }))}
-            />
-          </div>
-        );
-      })}
+      <CalendarioPorGrupo
+        mesHoy={mesHoy}
+        grupos={GRUPOS.map(([clase, titulo]) => ({
+          clase,
+          titulo,
+          filas: filas
+            .filter((f) => f.clase === clase)
+            .map((f) => ({ nombre: f.nombre, href: `/espana/especie/${f.clave}`, meses: f.meses, muestra: f.muestra })),
+        })).filter((g) => g.filas.length)}
+      />
       {!filas.length && <p className="nota-pie">Aún no hay datos de especies para este lugar.</p>}
 
       {recientes.length > 0 && (
-        <section className="seccion">
-          <h2 className="rotulo">Visto estos días cerca</h2>
+        <details className="seccion plegable">
+          <summary className="rotulo">Visto estos días cerca ({recientes.length})</summary>
           <ul className="lista-recientes">
             {recientes.map((o) => (
               <li key={`${o.c}-${o.f}`}>
@@ -188,7 +174,7 @@ export default async function PaginaLugar({ params }: Props) {
             última de cada especie en la provincia) y mamíferos, reptiles y anfibios de{" "}
             <a href="https://www.inaturalist.org">iNaturalist</a> (sin especies sensibles).
           </p>
-        </section>
+        </details>
       )}
 
       {hides.length > 0 && (
@@ -205,9 +191,14 @@ export default async function PaginaLugar({ params }: Props) {
         </section>
       )}
 
+      <details className="seccion plegable">
+        <summary className="rotulo">Luz y mareas hoy</summary>
+        <LuzYMar lat={l.lat} lon={l.lon} fecha={hoy} />
+      </details>
+
       {rarezas.length > 0 && (
-        <section className="seccion">
-          <h2 className="rotulo">Rarezas a menos de 30 km esta semana</h2>
+        <details className="seccion plegable">
+          <summary className="rotulo">Rarezas a menos de 30 km esta semana ({rarezas.length})</summary>
           <ListaRarezas
             obs={rarezas}
             claves={Object.fromEntries(rarezas.map((o) => [o.c, claveDe(o.c)]))}
@@ -217,12 +208,12 @@ export default async function PaginaLugar({ params }: Props) {
             Observaciones notables de <a href="https://ebird.org">eBird</a>.{" "}
             <Link href="/espana/rarezas">Todas las de España →</Link>
           </p>
-        </section>
+        </details>
       )}
 
       {rutas.length > 0 && (
-        <section className="seccion">
-          <h2 className="rotulo">Rutas de senderismo cerca</h2>
+        <details className="seccion plegable">
+          <summary className="rotulo">Rutas de senderismo cerca ({rutas.length})</summary>
           <ul className="lista-lugares">
             {rutas.map((x) => (
               <li key={x.id}>
@@ -236,12 +227,12 @@ export default async function PaginaLugar({ params }: Props) {
             ))}
           </ul>
           <p className="nota-pie">Rutas señalizadas de OpenStreetMap (ODbL).</p>
-        </section>
+        </details>
       )}
 
       {cerca.length > 0 && (
-        <section className="seccion">
-          <h2 className="rotulo">Otros lugares cerca</h2>
+        <details className="seccion plegable">
+          <summary className="rotulo">Otros lugares cerca ({cerca.length})</summary>
           <ul className="lista-lugares">
             {cerca.map((c) => (
               <li key={c.id}>
@@ -253,7 +244,7 @@ export default async function PaginaLugar({ params }: Props) {
               </li>
             ))}
           </ul>
-        </section>
+        </details>
       )}
 
       <p className="nota-pie">

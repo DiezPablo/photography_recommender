@@ -3,6 +3,7 @@
 // si no responde, se muestra lo que trajo la última actualización de los datos.
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { esDomestica } from "@/features/safaris/modelo";
 import { slugEspecie } from "@/features/safaris/modelo";
 
 interface Fila {
@@ -69,7 +70,7 @@ export default function VistoAhora({
     };
   }, [lat, lon, radioKm, respaldo]);
 
-  const lista = filas ?? respaldo;
+  const lista = (filas ?? respaldo).filter((f) => !esDomestica(f.cientifico));
   return (
     <section className="seccion visto-ahora">
       <h2 className="rotulo">Visto en los últimos {DIAS} días</h2>

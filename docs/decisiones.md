@@ -686,3 +686,23 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   comunes siempre aparecen), así que no distingue. Se añaden al informe la calibración en toda España (por bandas
   de % previsto, el % visto en 2025, ponderado por listas) y la correlación de rangos de Spearman en cada zona,
   detección de eBird frente al ‰ de GBIF, contra la detección de 2025.
+- Revisión de UX (05-11-2026). Diagnóstico en el móvil: dos productos (safaris del mundo y fauna en España)
+  mezclados en un menú; cabecera de /espana con título, entradilla, 4 pestañas en tres líneas y un enlace suelto
+  antes del contenido; todo al mismo nivel (4 tablas de frecuencia, tiempo por horas, listas) sin resumen; listas
+  larguísimas (especies 37 pantallas); jerga visible («‰ de su grupo», «cuadrículas»). Cambios:
+  - Navegación en dos mundos: conmutador «Safaris / España» junto a la marca; menú y barra inferior propios de
+    cada mundo (España: Inicio, Aquí, Finde, Especies, Mapa; escritorio, también Hides) y a la derecha «Mi viaje» o
+    «Lo mío». `useSearchParams` dentro de `Suspense` para marcar la sección activa.
+  - /espana: sin pestañas (las lleva el menú), título y una línea por sección; las fuentes, plegadas. La portada
+    agrupa lo secundario (mapa, hides, rarezas, mis especies, diario, normas) en teselas.
+  - «Qué veo aquí»: resumen arriba (mejor momento con lluvia y viento; las cinco más probables), después la lista
+    (cada fila: nombre, nivel, «verla/foto»; el científico y el botón «la he visto», en el desglose) y la luz, el
+    mar y el tiempo por horas plegados.
+  - Ficha de lugar: datos clave en la entradilla en vez de jerga; una tabla con pestañas por grupo y las 10 más
+    frecuentes («ver las N»); recientes, rarezas, rutas, luz y otros lugares, plegados con su número.
+  - Especies del mundo: buscador y filtro por grupo, dos columnas en el móvil, sin pestañas duplicadas.
+  - Portada de safaris: foto más baja en el móvil; fuera los animales domésticos de «Visto este mes».
+  - Hides: de más cerca a más lejos de tu ubicación guardada. Ficha de parque: «Lo que más se ve» y «Tasas y
+    reservas», plegados.
+  - Resultado (altura en el móvil): portada de safaris 17,9 → 10,8 pantallas; especies 36,7 → 12,9; «Qué veo
+    aquí» 7,1 → 4,7; ficha de lugar 8,3 → 4,0.

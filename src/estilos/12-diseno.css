@@ -1687,3 +1687,172 @@ blockquote {
   margin: 8px 0;
   padding: 2px 12px;
 }
+
+/* Conmutador de mundos (Safaris / España), junto a la marca */
+.mundos {
+  display: inline-flex;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  padding: 2px;
+  background: var(--superficie);
+}
+.mundos a {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font: 600 0.85rem var(--f-cuerpo);
+  color: var(--texto-2);
+  text-decoration: none;
+}
+.mundos a[aria-current="page"] {
+  background: var(--texto);
+  color: var(--fondo);
+}
+@media (max-width: 900px) {
+  .cabecera-in {
+    justify-content: space-between;
+    gap: 12px;
+  }
+}
+
+/* Cabecera compacta de las secciones de España: el menú ya dice dónde estás */
+.titular-compacto {
+  padding-top: 20px;
+  padding-bottom: 8px;
+}
+.titular-compacto h1 {
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  margin-bottom: 4px;
+}
+.titular-compacto .entradilla {
+  font-size: 1rem;
+  margin: 0;
+}
+.fuentes {
+  margin: 24px 0;
+}
+.fuentes summary {
+  cursor: pointer;
+  color: var(--texto-3);
+  font-size: 0.85rem;
+}
+
+/* España: resumen del día y detalle plegado */
+.resumen-dia {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px 24px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: var(--superficie);
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+.resumen-dia p {
+  margin: 0;
+}
+.dato-grande {
+  font: 600 1.6rem/1.2 var(--f-titulo);
+}
+.dato-grande small {
+  font: 400 0.9rem var(--f-cuerpo);
+  color: var(--texto-2);
+}
+.detalles-dia > summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+.fila-especie {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+}
+.chip {
+  font-size: 0.75rem;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+.lista-especies-espana .notas-especie {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--texto-2);
+  margin-left: 0;
+}
+.cabeza-desglose {
+  margin: 6px 0 2px;
+}
+
+/* Secciones plegables y enlaces secundarios */
+.plegable > summary {
+  cursor: pointer;
+  padding: 10px 0;
+  border-top: 1px solid var(--borde);
+}
+.plegable[open] > summary {
+  margin-bottom: 8px;
+}
+.enlaces-secundarios {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  align-items: center;
+}
+
+/* Especies del mundo: buscador, filtro y dos columnas en el móvil */
+.filtros-especies {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 16px;
+}
+.filtros-especies input {
+  width: 100%;
+  max-width: 420px;
+  padding: 10px 12px;
+  font: inherit;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--superficie);
+}
+@media (max-width: 600px) {
+  .rejilla-especies {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .rejilla-especies .tarjeta-especie i {
+    display: none;
+  }
+  .rejilla-especies .tarjeta-especie h3 {
+    font-size: 0.95rem;
+  }
+}
+
+/* Portada de safaris: en el móvil, la foto no ocupa dos pantallas */
+@media (max-width: 700px) {
+  .portada-hero {
+    min-height: min(58vh, 520px);
+  }
+  .portada-hero-texto .entradilla {
+    font-size: 1rem;
+  }
+}
+.mas-espana {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  margin: 8px 0 20px;
+}
+.mas-espana a {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--texto);
+  background: var(--superficie);
+}
+.mas-espana small {
+  color: var(--texto-2);
+}

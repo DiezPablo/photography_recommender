@@ -258,10 +258,8 @@ export default async function PaginaParque({ params }: Props) {
       </div>
 
       {p.especies && (
-        <section className="seccion">
-          <h2 className="rotulo" id="lo-que-se-ve">
-            Lo que más se ve
-          </h2>
+        <details className="seccion plegable" id="lo-que-se-ve">
+          <summary className="rotulo">Lo que más se ve (todas las especies)</summary>
           <div className="grupos-safari">
             {GRUPOS.map(([g, titulo, max]) =>
               p.especies?.[g]?.length ? (
@@ -286,11 +284,12 @@ export default async function PaginaParque({ params }: Props) {
           <p className="nota-pie">
             Especies con más observaciones verificadas en iNaturalist en unos {p.radio_km} km alrededor.
           </p>
-        </section>
+        </details>
       )}
 
       <div className="ficha-grid">
-        <section className="seccion">
+        <details className="seccion plegable">
+          <summary className="rotulo">Tasas, permisos y reservas</summary>
           <h2 className="rotulo">Tasas y permisos</h2>
           <p>{p.tasa ?? "Las tasas cambian a menudo: consúltalas en la web oficial del parque antes de reservar."}</p>
           {p.tasa && <p className="nota-pie">Orientativo: comprueba la tarifa vigente en la web oficial.</p>}
@@ -315,7 +314,7 @@ export default async function PaginaParque({ params }: Props) {
               <b>Operador o guía:</b> mira <Link href="/guia#operador">cómo elegir un operador de safari</Link>.
             </li>
           </ul>
-        </section>
+        </details>
         <section className="seccion" id="mapa">
           <h2 className="rotulo">Mapa</h2>
           <MapaEventos eventos={puntos} etiqueta={`Mapa de ${p.nombre}`} mundo />

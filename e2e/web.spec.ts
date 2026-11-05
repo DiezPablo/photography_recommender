@@ -528,7 +528,10 @@ test("calendario de fenómenos: ficha, página del mes, especie y .ics", async (
 
 test("fauna en España: luz, tiempo y especies (o aviso sin datos)", async ({ page }) => {
   await page.goto("/espana?zona=gallocanta&fecha=2026-11-08");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Fauna en España");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Qué veo aquí");
+  await expect(page.locator(".resumen-dia")).toContainText("Mejor momento");
+  // la luz y el tiempo por horas van plegados debajo
+  await page.getByText("Luz, mar y tiempo hora a hora").click();
   await expect(page.locator(".luz-dia")).toContainText("Hora dorada");
   await expect(page.locator(".luz-dia")).toContainText(/\d{2}:\d{2}/);
   const especies = page.locator("section", { hasText: "Qué es probable ver en noviembre" });
@@ -537,7 +540,7 @@ test("fauna en España: luz, tiempo y especies (o aviso sin datos)", async ({ pa
 
 test("fauna en España al revés: dónde veo una especie (o aviso sin datos)", async ({ page, request }) => {
   await page.goto("/espana?modo=donde");
-  await expect(page.getByRole("link", { name: "¿Dónde veo…?" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Dónde ver una especie");
   const lista = (await (await request.get("/espana/especies.json")).json()) as { especies: { k: string; n: string }[] };
   if (!lista.especies.length) {
     await expect(page.getByText("Aún no hay datos de especies para España")).toBeVisible();
@@ -586,7 +589,7 @@ test("fauna en España: lugar que no existe da 404", async ({ request }) => {
 
 test("fauna en España: este finde cerca", async ({ page }) => {
   await page.goto("/espana?modo=finde&lat=37.390&lon=-5.990&lugar=Sevilla&km=50");
-  await expect(page.getByRole("link", { name: "Este finde" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Este finde");
   await expect(page.locator(".lista-finde li, .nota-pie").first()).toBeVisible({ timeout: 20000 });
 });
 
@@ -663,4 +666,19 @@ test("fauna en España: normas y código ético", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Normas y código ético");
   await expect(page.locator("blockquote").first()).toContainText("molestar o inquietar");
   expect(await page.locator("a[href*='miteco.gob.es']").count()).toBe(17);
+});
+
+test("navegación en dos mundos: el conmutador y el menú cambian con la sección", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator(".mundos a", { hasText: "Safaris" })).toHaveAttribute("aria-current", "page");
+  await page.locator(".mundos a", { hasText: "España" }).click();
+  await expect(page).toHaveURL(/\/espana$/);
+  await expect(page.locator(".mundos a", { hasText: "España" })).toHaveAttribute("aria-current", "page");
+  // la barra del móvil o el menú de escritorio enseñan las secciones de España
+  await expect(
+    page
+      .locator(".barra-inferior a, .menu a")
+      .filter({ hasText: /Finde|Este finde/ })
+      .first(),
+  ).toBeAttached();
 });

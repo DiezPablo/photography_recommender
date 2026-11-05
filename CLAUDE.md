@@ -34,7 +34,8 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
   navegador), `/espana/normas` (ley citada, drones y parques nacionales; `features/espana/normas.ts`). Sin conexión:
   `public/sw.js` (páginas de red y, sin cobertura, la copia; «Guardar sin conexión»); `.ics` por parque y `/migracion.ics`,
   `/recientes.xml`, `sitemap.xml`),
-  `features/safaris` (componentes, modelo, `datos.ts` solo servidor), `ui/` (mapa Leaflet, iconos, `Navegacion.tsx`, `FotoGrande.tsx`), `lib/`
+  `features/safaris` (componentes, modelo, `datos.ts` solo servidor), `ui/` (mapa Leaflet, iconos, `Navegacion.tsx`: dos mundos, «Safaris» y «España», con conmutador en la cabecera y
+  menú y barra del móvil propios de cada uno; `FotoGrande.tsx`), `lib/`
   (`datos.ts`: lee `datos/*.gz`; `almacen.ts`; `fechas.ts`), `estilos/` (01-11 heredados de Rasante; el aspecto
   propio, guía de campo editorial, en `01-tokens.css` y `12-diseno.css`, que va la última).
   Los 65 destacados se generan en el build; el resto, al visitarlos (ISR) con los `.gz` en la función.
