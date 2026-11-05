@@ -885,3 +885,7 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   - T22 quedó hecho con T19 (campo `posicion` en las fotos elegidas).
 - Bloque 5 completo. Pendiente, por falta de fuentes que se puedan citar: tarifas de otras cadenas en el Serengeti
   y el Ngorongoro (T16) y hacia dónde mira cada hide de España (T27).
+- 05-11-2026: los commits automáticos (version.json de cada publicación y el informe de viabilidad de España) se
+  hacen con la API de contenidos de GitHub (`.github/scripts/subir_fichero.sh`) en vez de `git commit` dentro de
+  Actions: GitHub los firma y salen como verificados. El script fusiona las huellas de version.json con las de main
+  y reintenta si otro workflow publica a la vez (409), como hacía antes el bucle de `git push`.

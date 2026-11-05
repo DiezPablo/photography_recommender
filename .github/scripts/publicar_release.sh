@@ -37,23 +37,6 @@ info = {"actualizado": datetime.datetime.now(datetime.timezone.utc).isoformat(ti
         "ficheros": {f.split("/")[-1]: hashlib.sha1(open(f, "rb").read()).hexdigest()[:12] for f in ficheros}}
 json.dump(info, open(salida, "w"), indent=1)
 PY
-git config user.name "github-actions"
-git config user.email "github-actions@users.noreply.github.com"
-for intento in 1 2 3 4 5; do
-  git fetch -q origin main
-  git reset -q --hard origin/main
-  mkdir -p public/datos
-  # se conservan las huellas de los ficheros que no se publican ahora (p. ej. spots.geojson en una actualización diaria)
-  python3 - "$tmp" public/datos/version.json <<'PY'
-import json, sys, os
-nuevo = json.load(open(sys.argv[1]))
-viejo = json.load(open(sys.argv[2])) if os.path.exists(sys.argv[2]) else {"ficheros": {}}
-viejo.get("ficheros", {}).update(nuevo["ficheros"])
-json.dump({"actualizado": nuevo["actualizado"], "ficheros": viejo.get("ficheros", {})}, open(sys.argv[2], "w"), indent=1)
-PY
-  git add public/datos/version.json
-  git commit -q -m "$mensaje"
-  if git push -q origin HEAD:main; then echo "Publicado: $mensaje"; exit 0; fi
-  sleep $((intento * 5))
-done
-echo "No se pudo publicar tras 5 intentos"; exit 1
+# el commit de version.json, con la API (firmado por GitHub, verificado): subir_fichero.sh fusiona las huellas con
+# las de main y reintenta si otro workflow publica a la vez
+FUSIONAR=1 "$(dirname "$0")/subir_fichero.sh" public/datos/version.json "$mensaje" "$tmp"

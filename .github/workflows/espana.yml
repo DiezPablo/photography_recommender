@@ -76,10 +76,8 @@ jobs:
       - name: Informe de viabilidad
         run: |
           [ -s docs/espana-viabilidad.md ] || { echo "Sin informe (¿faltan los secretos de GBIF?)"; exit 0; }
-          git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-          git add docs/espana-viabilidad.md
-          git diff --cached --quiet || { git commit -m "Viabilidad de España ($(date -u +%Y-%m-%d))"; git pull -q --rebase origin main; git push; }
+          # con la API: el commit sale firmado por GitHub (verificado); no hace nada si el informe no cambió
+          .github/scripts/subir_fichero.sh docs/espana-viabilidad.md "Viabilidad de España ($(date -u +%Y-%m-%d))"
 
       - name: Publicar
         run: |
