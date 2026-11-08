@@ -1,0 +1,729 @@
+/* La carta de España (rediseño B): un mapa topográfico con la fauna sobreimpresa en magenta, como la tinta de
+   imprenta que se añade encima de un mapa oficial. Papel casi blanco, tinta casi negra, un solo color de dato
+   (magenta) y el del sol (naranja). Esquinas de 2-4 px, sin cápsulas. Tipografía: Archivo (estrecha en los rótulos,
+   con su eje de anchura) y las cifras en monoespaciada, para que las columnas cuadren. */
+
+.carta {
+  --carta-papel: #fcfcfa;
+  --carta-papel-2: #f1f1ec;
+  --carta-tinta: #1f2420;
+  --carta-tinta-2: #4d544e;
+  --carta-tinta-3: #6b726c;
+  --carta-linea: #d6d8d2;
+  --carta-magenta: #b0126a;
+  --carta-agua: #3e7fb3;
+  --carta-sol: #d9821e;
+  --carta-sol-texto: #7a4410;
+  --carta-filtro: saturate(0.55) contrast(0.96) brightness(1.03);
+  --carta-ancho-panel: 400px;
+  --carta-arriba: 64px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--carta-ancho-panel);
+  height: calc(100dvh - var(--carta-arriba));
+  min-height: 520px;
+  background: var(--carta-papel);
+  color: var(--carta-tinta);
+  font-family: var(--f-cuerpo);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) .carta {
+    --carta-papel: #151816;
+    --carta-papel-2: #1e2220;
+    --carta-tinta: #e9ebe6;
+    --carta-tinta-2: #bfc4bd;
+    --carta-tinta-3: #9aa198;
+    --carta-linea: #343a36;
+    --carta-magenta: #e0479b;
+    --carta-sol: #f0a04a;
+    --carta-sol-texto: #f6c58e;
+    --carta-filtro: saturate(0.5) brightness(0.78) contrast(1.05);
+  }
+}
+:root[data-tema="oscuro"] .carta {
+  --carta-papel: #151816;
+  --carta-papel-2: #1e2220;
+  --carta-tinta: #e9ebe6;
+  --carta-tinta-2: #bfc4bd;
+  --carta-tinta-3: #9aa198;
+  --carta-linea: #343a36;
+  --carta-magenta: #e0479b;
+  --carta-sol: #f0a04a;
+  --carta-sol-texto: #f6c58e;
+  --carta-filtro: saturate(0.5) brightness(0.78) contrast(1.05);
+}
+
+.carta-mapa {
+  position: relative;
+  min-height: 0;
+  background: var(--carta-papel-2);
+  isolation: isolate;
+}
+.carta-mapa .capa-base {
+  filter: var(--carta-filtro);
+}
+.carta .leaflet-container {
+  background: var(--carta-papel-2);
+  font-family: var(--f-cuerpo);
+}
+.carta .leaflet-control-zoom a,
+.carta .boton-satelite {
+  border-radius: 2px;
+}
+
+/* Sobreimpresión: fauna, rayado de poca muestra, cuadrícula elegida y sol */
+.carta path.celda-fauna {
+  fill: var(--carta-magenta);
+}
+.carta-mapa[data-cerca] path.celda-fauna {
+  opacity: 0.6;
+}
+.carta path.celda-rayada {
+  fill: url(#carta-rayado);
+}
+.carta path.celda-elegida {
+  stroke: var(--carta-tinta);
+  stroke-dasharray: none;
+}
+.carta path.rayo-sol {
+  stroke: var(--carta-sol);
+  stroke-dasharray: 7 5;
+}
+.carta path.rayo-dorada {
+  stroke: var(--carta-sol);
+  stroke-opacity: 0.7;
+  stroke-dasharray: 2 4;
+}
+.carta .rotulo-sol span {
+  position: absolute;
+  top: -9px;
+  white-space: nowrap;
+  font: 500 12px/1 var(--f-mono);
+  color: var(--carta-sol-texto);
+  text-shadow:
+    0 0 3px var(--carta-papel),
+    0 0 3px var(--carta-papel),
+    0 0 3px var(--carta-papel);
+}
+.carta .rotulo-sol.este span {
+  left: 8px;
+}
+.carta .rotulo-sol.oeste span {
+  right: 8px;
+}
+.carta path.lugar-espacio {
+  fill: var(--carta-papel);
+  stroke: var(--carta-tinta);
+  fill-opacity: 1;
+}
+.carta path.lugar-ebird {
+  fill: var(--carta-tinta-3);
+  stroke: var(--carta-papel);
+  fill-opacity: 1;
+}
+
+/* Panel */
+.carta-panel {
+  position: relative;
+  overflow-y: auto;
+  border-left: 1px solid var(--carta-linea);
+  padding: 20px 20px 32px;
+  display: grid;
+  align-content: start;
+  gap: 20px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.carta-asa {
+  display: none;
+}
+.carta-titulo {
+  margin: 0;
+  font: 650 28px/1.1 var(--f-cuerpo);
+  font-stretch: 88%;
+  letter-spacing: -0.01em;
+}
+.carta-titulo-mes {
+  font-weight: 400;
+  color: var(--carta-tinta-2);
+}
+.carta-h2,
+.ficha-celda-h3 {
+  margin: 0 0 8px;
+  font: 600 16px/1.25 var(--f-cuerpo);
+}
+.carta .cifra {
+  /* la .cifra general (02-base.css) es la nota grande de la portada: aquí, solo monoespaciada y del tamaño del texto */
+  font: 400 0.93em/inherit var(--f-mono);
+  font-variation-settings: normal;
+  letter-spacing: 0;
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.carta .num {
+  text-align: right;
+}
+
+.carta-campo {
+  display: grid;
+  gap: 4px;
+  position: relative;
+}
+.carta-campo label,
+.carta fieldset legend {
+  font: 500 14px/1.3 var(--f-cuerpo);
+  color: var(--carta-tinta-2);
+  padding: 0;
+}
+.carta-campo input {
+  font: 400 16px/1.2 var(--f-cuerpo);
+  padding: 10px 12px;
+  border: 1px solid var(--carta-tinta-3);
+  border-radius: 3px;
+  background: var(--carta-papel);
+  color: var(--carta-tinta);
+  min-height: 44px;
+}
+.carta-campo input:focus-visible,
+.carta button:focus-visible {
+  outline: 2px solid var(--carta-magenta);
+  outline-offset: 2px;
+}
+.carta-opciones {
+  position: absolute;
+  z-index: 5;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  background: var(--carta-papel);
+  border: 1px solid var(--carta-tinta-3);
+  border-radius: 3px;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.12);
+}
+.carta-opciones button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 8px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--carta-linea);
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.carta-opciones li:last-child button {
+  border-bottom: 0;
+}
+.carta-opciones button:hover {
+  background: var(--carta-papel-2);
+}
+.carta-opciones i {
+  grid-column: 1;
+  color: var(--carta-tinta-3);
+  font-size: 13px;
+}
+.carta-opciones .cifra {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-size: 12px;
+  color: var(--carta-tinta-3);
+}
+.carta-elegida {
+  margin: 4px 0 0;
+  color: var(--carta-tinta-2);
+}
+.carta .boton-texto {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--carta-tinta);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Tira de meses: con especie, cada botón lleva su barra (‰ en España ese mes) */
+.carta fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.carta-meses {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2px;
+}
+.carta-meses legend {
+  margin-bottom: 6px;
+}
+.leyenda-curva {
+  color: var(--carta-tinta-3);
+  font-weight: 400;
+}
+.carta-meses button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
+  height: 52px;
+  padding: 0;
+  border: 1px solid var(--carta-linea);
+  border-radius: 2px;
+  background: var(--carta-papel);
+  color: var(--carta-tinta-2);
+  cursor: pointer;
+  overflow: hidden;
+}
+.carta-meses .barra-mes {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  bottom: 20px;
+  max-height: calc(100% - 22px);
+  background: var(--carta-magenta);
+  opacity: 0.45;
+}
+.carta-meses .inicial-mes {
+  position: relative;
+  font: 500 12px/20px var(--f-mono);
+  text-align: center;
+  border-top: 1px solid var(--carta-linea);
+}
+.carta-meses button[aria-pressed="true"] {
+  border-color: var(--carta-tinta);
+  color: var(--carta-tinta);
+  box-shadow: inset 0 0 0 1px var(--carta-tinta);
+}
+.carta-meses button[aria-pressed="true"] .barra-mes {
+  opacity: 1;
+}
+.carta-meses button[aria-pressed="true"] .inicial-mes {
+  background: var(--carta-tinta);
+  color: var(--carta-papel);
+}
+
+/* Resumen de la especie y lo que sube */
+.tabla-tramos,
+.tabla-celda {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tabla-tramos caption {
+  text-align: left;
+  font: 600 16px/1.25 var(--f-cuerpo);
+  margin-bottom: 8px;
+}
+.tabla-tramos th,
+.tabla-tramos td,
+.tabla-celda th,
+.tabla-celda td {
+  padding: 5px 0;
+  border-bottom: 1px solid var(--carta-linea);
+  font-weight: 400;
+  text-align: left;
+  vertical-align: baseline;
+}
+.tabla-tramos td.num,
+.tabla-celda td.num,
+.tabla-celda th.num {
+  text-align: right;
+  padding-left: 12px;
+}
+.muestra-tramo {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  vertical-align: -2px;
+  margin-right: 6px;
+  background: var(--carta-magenta);
+}
+.lista-mejores,
+.lista-sube {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--carta-linea);
+}
+.lista-mejores button,
+.lista-sube button {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 1px solid var(--carta-linea);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.lista-mejores button:hover,
+.lista-sube button:hover {
+  background: var(--carta-papel-2);
+}
+.lista-mejores .muestra,
+.lista-mejores .cod,
+.lista-sube .cifra {
+  color: var(--carta-tinta-3);
+  font-size: 13px;
+}
+.lista-mejores .cod {
+  margin-left: auto;
+  font-family: var(--f-mono);
+}
+.lista-sube b {
+  font-weight: 600;
+  flex: 1 1 100%;
+}
+
+/* Capas */
+.carta-capas {
+  display: grid;
+  gap: 6px;
+}
+.carta-capas label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  cursor: pointer;
+}
+.carta-capas input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--carta-tinta);
+}
+.muestra-capa {
+  width: 18px;
+  height: 12px;
+  border: 1px solid var(--carta-tinta-3);
+}
+.muestra-capa.capa-fauna {
+  background: var(--carta-magenta);
+  border-color: var(--carta-magenta);
+}
+.muestra-capa.capa-fiabilidad {
+  background: repeating-linear-gradient(45deg, var(--carta-tinta-2) 0 1.3px, transparent 1.3px 4.5px);
+}
+.muestra-capa.capa-luz {
+  border: 0;
+  height: 0;
+  border-top: 2.5px dashed var(--carta-sol);
+}
+.muestra-capa.capa-lugares {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--carta-tinta);
+  background: var(--carta-papel);
+}
+
+.nota-celda {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--carta-tinta-3);
+}
+
+/* Ficha de cuadrícula */
+.ficha-celda {
+  display: grid;
+  gap: 14px;
+  padding-top: 16px;
+  border-top: 2px solid var(--carta-tinta);
+}
+.ficha-celda-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+}
+.ficha-celda h2 {
+  margin: 0;
+  font: 650 23px/1.15 var(--f-cuerpo);
+  font-stretch: 90%;
+}
+.ficha-celda-sub {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--carta-tinta-3);
+}
+.boton-cerrar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: -8px -10px 0 0;
+  border: 0;
+  background: none;
+  color: var(--carta-tinta);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+.ficha-celda-elegida {
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--carta-magenta);
+  background: var(--carta-papel-2);
+}
+.tabla-celda thead th {
+  font-size: 12px;
+  color: var(--carta-tinta-3);
+}
+
+.tabla-celda caption {
+  text-align: left;
+  font-weight: 600;
+  padding: 6px 0 2px;
+}
+.tabla-celda caption .cifra {
+  font-weight: 400;
+}
+.tabla-celda[data-fiabilidad="poca"] tbody,
+.tabla-celda[data-fiabilidad="ninguna"] tbody {
+  color: var(--carta-tinta-3);
+}
+.enlace-especie {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--carta-linea);
+  text-underline-offset: 3px;
+}
+.enlace-especie:hover {
+  text-decoration-color: currentColor;
+}
+.grupo-especie {
+  font-size: 12px;
+  color: var(--carta-tinta-3);
+}
+.lista-recientes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  columns: 2;
+  column-gap: 16px;
+}
+.lista-recientes li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 3px 0;
+  break-inside: avoid;
+}
+.lista-recientes .cifra {
+  color: var(--carta-tinta-3);
+  font-size: 12px;
+}
+.ficha-celda-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+.ficha-celda-acciones a {
+  color: var(--carta-tinta);
+  text-underline-offset: 3px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+.cita {
+  font-size: 12px;
+}
+
+/* Franja del día */
+.franja-dia {
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+.franja-titulo {
+  font: 600 16px/1.25 var(--f-cuerpo);
+  margin-bottom: 4px;
+}
+.franja-titulo::first-letter {
+  text-transform: uppercase;
+}
+.franja-prevision svg {
+  display: block;
+  width: 100%;
+  height: 40px;
+}
+.franja-prevision .nube {
+  fill: var(--carta-tinta-3);
+  opacity: 0.28;
+}
+.franja-prevision .nube-baja {
+  fill: var(--carta-tinta-2);
+  opacity: 0.7;
+}
+.franja-prevision .lluvia {
+  fill: var(--carta-agua);
+}
+.franja-prevision .racha {
+  fill: none;
+  stroke: var(--carta-sol);
+  stroke-width: 2;
+}
+.franja-cielo {
+  position: relative;
+  height: 22px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.franja-cielo span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+.cielo-noche {
+  background: #1b2433;
+}
+.cielo-azul {
+  background: #3f5f93;
+}
+.cielo-dorada {
+  background: #e7a446;
+}
+.cielo-dia {
+  background: #cfe0ee;
+}
+.franja-cielo .marca-sol {
+  width: 2px;
+  margin-left: -1px;
+  background: var(--carta-papel);
+}
+.franja-horas {
+  position: relative;
+  height: 16px;
+  font: 400 11px/16px var(--f-mono);
+  color: var(--carta-tinta-3);
+}
+.franja-horas span {
+  position: absolute;
+  transform: translateX(-50%);
+}
+.franja-horas span:first-child {
+  transform: none;
+}
+.franja-horas span:last-child {
+  transform: translateX(-100%);
+}
+.franja-datos {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px 16px;
+  margin: 6px 0 0;
+}
+.franja-datos div:nth-child(3) {
+  text-align: right;
+}
+.franja-datos dt {
+  font-size: 12px;
+  color: var(--carta-tinta-3);
+}
+.franja-datos dd {
+  margin: 0;
+  font-size: 14px;
+}
+.franja-nota {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--carta-tinta-3);
+}
+
+/* Móvil y tableta: el mapa a pantalla y el panel como hoja desde abajo, sobre la barra de navegación */
+@media (max-width: 900px) {
+  .carta {
+    --carta-arriba: 56px;
+    --carta-abajo: calc(58px + env(safe-area-inset-bottom));
+    display: block;
+    height: calc(100dvh - var(--carta-arriba) - var(--carta-abajo));
+    min-height: 420px;
+    position: relative;
+  }
+  .carta-mapa {
+    height: 100%;
+  }
+  .carta-panel {
+    position: fixed;
+    z-index: 900;
+    left: 0;
+    right: 0;
+    bottom: var(--carta-abajo);
+    max-height: 36dvh;
+    display: flex;
+    flex-direction: column;
+    border-left: 0;
+    border-top: 1px solid var(--carta-linea);
+    border-radius: 4px 4px 0 0;
+    background: var(--carta-papel);
+    box-shadow: 0 -6px 20px rgb(0 0 0 / 0.14);
+    padding: 4px 16px 24px;
+    gap: 16px;
+    transition: max-height 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .carta[data-hoja="alta"] .carta-panel {
+    max-height: 64dvh;
+  }
+  /* con una cuadrícula elegida, su ficha va lo primero de la hoja */
+  .carta-panel > * {
+    flex: none;
+  }
+  .carta-panel > .ficha-celda {
+    order: -1;
+    padding-top: 0;
+    border-top: 0;
+  }
+  .carta-asa {
+    order: -2;
+  }
+  .carta-asa {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    width: calc(100% + 32px);
+    margin: 0 -16px;
+    height: 28px;
+    border: 0;
+    background: var(--carta-papel);
+    cursor: pointer;
+  }
+  .carta-asa::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin: 0 auto;
+    border-radius: 2px;
+    background: var(--carta-tinta-3);
+  }
+  .carta-titulo {
+    font-size: 23px;
+  }
+}
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .carta-panel {
+    transition: none;
+  }
+}

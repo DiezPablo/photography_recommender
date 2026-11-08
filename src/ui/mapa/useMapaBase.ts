@@ -22,7 +22,14 @@ export interface MapaBase {
   nuevaCapa: () => LayerGroup;
 }
 
-export function useMapaBase(opciones: MapOptions = {}): MapaBase {
+/** Mapa de fondo: «osm» (OpenStreetMap estándar) o «ign» (Mapa Topográfico Nacional del IGN, solo España, con
+ * OpenStreetMap debajo para lo que queda fuera). */
+export type Fondo = "osm" | "ign";
+
+const IGN_MTN =
+  "https://www.ign.es/wmts/mapa-raster?layer=MTN&style=default&tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix={z}&TileCol={x}&TileRow={y}";
+
+export function useMapaBase(opciones: MapOptions = {}, fondo: Fondo = "osm"): MapaBase {
   const caja = useRef<HTMLDivElement>(null);
   const mapa = useRef<LMap | null>(null);
   const leaflet = useRef<Leaflet | null>(null);
@@ -43,6 +50,15 @@ export function useMapaBase(opciones: MapOptions = {}): MapaBase {
         className: "capa-base",
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }).addTo(m);
+      // el MTN del IGN (WMTS público, CC BY 4.0) encima, recortado a España
+      if (fondo === "ign")
+        L.tileLayer(IGN_MTN, {
+          maxZoom: 18,
+          minZoom: 5,
+          bounds: L.latLngBounds([27.4, -18.5], [44, 4.6]),
+          className: "capa-base capa-ign",
+          attribution: 'Mapa: <a href="https://www.ign.es">IGN</a> (CC BY 4.0)',
+        }).addTo(m);
       // sin la bandera de colores del prefijo (rompería el modo noche)
       m.attributionControl.setPrefix('<a href="https://leafletjs.com">Leaflet</a>');
       m.on("moveend", () => setVista((v) => v + 1));

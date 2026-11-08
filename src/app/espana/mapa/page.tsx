@@ -1,27 +1,15 @@
-// Explorador de fauna en España: mapa con lugares, hides, fenómenos y el mapa de calor de una especie por mes.
-import type { Metadata } from "next";
-import Link from "next/link";
-import MapaExplorador from "@/features/espana/MapaExplorador";
-import { fechaLocal } from "@/lib/sol";
+// El explorador en mapa se unió a la carta de /espana (rediseño B, 11-2026): los enlaces antiguos llevan allí con la
+// especie (?k=) y el mes (?mes=0-11).
+import { permanentRedirect } from "next/navigation";
+import { MESES } from "@/lib/fechas";
 
-export const metadata: Metadata = {
-  title: "Mapa de fauna en España",
-  description:
-    "Explora en el mapa espacios protegidos, observatorios, hides y dónde se ve cada especie cada mes en España.",
-};
+type Props = { searchParams: Promise<{ k?: string; mes?: string }> };
 
-export const dynamic = "force-dynamic";
-
-export default function PaginaMapa() {
-  return (
-    <main className="calendario safaris espana">
-      <header className="titular">
-        <p className="rotulo">
-          <Link href="/">Safaris</Link> · <Link href="/espana">España</Link>
-        </p>
-        <h1>Mapa de fauna</h1>
-      </header>
-      <MapaExplorador hoy={fechaLocal(new Date())} />
-    </main>
-  );
+export default async function PaginaMapa({ searchParams }: Props) {
+  const q = await searchParams;
+  const p = new URLSearchParams();
+  if (q.k && /^\d+$/.test(q.k)) p.set("especie", q.k);
+  const mes = Number(q.mes);
+  if (q.mes && Number.isInteger(mes) && mes >= 0 && mes < 12) p.set("mes", MESES[mes]);
+  permanentRedirect(p.size ? `/espana?${p}` : "/espana");
 }

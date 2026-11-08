@@ -889,3 +889,31 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   hacen con la API de contenidos de GitHub (`.github/scripts/subir_fichero.sh`) en vez de `git commit` dentro de
   Actions: GitHub los firma y salen como verificados. El script fusiona las huellas de version.json con las de main
   y reintenta si otro workflow publica a la vez (409), como hacía antes el bucle de `git push`.
+- 08-11-2026, rediseño B, fase 1 (la carta de España). Se eligió el concepto B de los tres que se compararon con los
+  datos reales de Gallocanta: un mapa topográfico con la fauna sobreimpresa. `/espana` sin modo es ahora la carta
+  (`features/carta/`); «Cerca de mí», «Este finde» y «Buscar especie» siguen con su modo y los enlaces antiguos
+  con `lat` y `lon` siguen abriendo «Cerca de mí». `/espana/mapa` redirige a la carta (308) con la especie y el mes.
+  - Fondo: el Mapa Topográfico Nacional del IGN (WMTS público, CC BY 4.0) con OpenStreetMap debajo para lo que queda
+    fuera de España, desaturado para que el dato se lea encima. Porque los fotógrafos de fauna se orientan por
+    relieve, ríos y caminos, y el MTN es la referencia que ya conocen.
+  - Un solo color de dato, magenta (la tinta que se añade a los mapas oficiales), en cinco tramos de ‰ (los mismos
+    50/20/5/1 del resto de la web). Porque varios colores obligaban a leer una leyenda para cada capa.
+  - Rayado donde la muestra (registros del grupo ese mes y los vecinos) es menor de 100. Porque la frecuencia y la
+    confianza son cosas distintas (auditoría) y así se ven a la vez sin mezclarlas en un número.
+  - Ficha de cuadrícula: lo registrado por grupos, cada grupo con su muestra y su fiabilidad (sólido ≥ 300, medio
+    100-299, poca muestra 30-99), y eBird (% de listas) en las aves. Porque ordenar todo junto por ‰ ponía el corzo
+    (553 ‰ sobre pocos registros de mamíferos) por encima de la grulla en Gallocanta en noviembre.
+  - «Lo que más sube en el mes» sin especie elegida: especies en 150 cuadrículas o más cuyo ‰ en España ese mes es
+    al menos 1,5 veces su media del año y 3 ‰ o más (`especiesPorMes`). Con 40 cuadrículas salían murciélagos y
+    cetáceos con muy pocos registros; con 150, el cuco y el ruiseñor en abril y la grulla en noviembre y enero.
+  - La luz del día elegido sobre el mapa (rumbo del sol al salir y al ponerse y el de la luz dorada, desde la
+    cuadrícula) y en la ficha una franja de 24 h con el cielo según la altura del sol y la previsión por horas de
+    Open-Meteo (o lo normal en esos días si faltan más de 16).
+  - Todo el estado en la URL (`especie`, `mes`, `fecha`, `celda`, `c` = centro, `z`, `sin` = capas apagadas), para
+    que cada pregunta se haga sola y se comparta. El centro va en `c` y no en `lat`/`lon` para no chocar con los
+    enlaces antiguos.
+  - Móvil: el mapa a pantalla y el panel como hoja desde abajo; al elegir una cuadrícula la hoja sube y su ficha
+    va lo primero, y el mapa la deja en el hueco de arriba.
+  - Tipografía y forma: Archivo (ya cargada) y las cifras en IBM Plex Mono para que las columnas cuadren; esquinas
+    de 2-4 px, sin cápsulas ni rótulos en mayúsculas. Los tokens de la carta van en `13-carta.css` y solo valen
+    dentro de `.carta`; pasarlos al resto de la web es la fase 2.

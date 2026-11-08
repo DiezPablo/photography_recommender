@@ -14,9 +14,6 @@ test("España: menú propio con rarezas y diario, y marca general", async ({ pag
   const menu = page.getByRole("navigation", { name: /Secciones|Menú|principal/i }).first();
   void menu;
   await expect(page.locator(".mas-espana, header").first()).toBeVisible();
-  await page.goto("/espana");
-  await expect(page.locator(".mas-espana a")).toHaveCount(6);
-  await expect(page.locator(".mas-espana .icono-tarjeta").first()).toBeVisible();
 });
 
 test("Mis especies: estado vacío con acción y copia en JSON que se recupera", async ({ page }) => {

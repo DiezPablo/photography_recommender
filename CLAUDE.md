@@ -24,13 +24,14 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
     hora de actividad por especie (altura del sol en cada observación de iNaturalist) → `espana_actividad.json`,
     workflow `espana_actividad.yml`, semanal.
 - Web Next.js 16 (App Router) en `src/`: `app/` (`/`, `/buscar` (y `/buscar.json` para el buscador de la cabecera), `/parque/[id]`, `/especies`, `/especie/[slug]`, `/guia`, `/comparar`, `/migracion`,
-  `/planificar`, `/presupuesto`, `/viaje`, `/safari-en/[mes|país]`, `/espana` (luz, tiempo y especies por
-  cuadrícula de 10 km; buscador de lugares y «Cerca de aquí»), `/espana/lugar/[id]` (ficha de cada lugar,
+  `/planificar`, `/presupuesto`, `/viaje`, `/safari-en/[mes|país]`, `/espana` (sin modo, la carta: mapa del IGN con la
+  fauna por cuadrícula de 10 km, fiabilidad, luz y ficha de cuadrícula, en `features/carta/`, estado en la URL; con
+  `modo=aqui|finde|donde`, «Cerca de mí», «Este finde» y «Buscar especie»), `/espana/lugar/[id]` (ficha de cada lugar,
   ISR; fenómenos escritos a mano en `features/espana/fenomenos.ts`), `/espana/mis-especies` (lista de vistas, solo
   en el navegador), `/espana/hides` (hides y salidas guiadas escritos a mano en `features/espana/hides.ts`;
   propuestas con la plantilla de incidencia `propon-hide.yml`), `/espana/rarezas` (notables de eBird),
   `/espana/especie/[clave]` (ficha de especie, ISR; consejos y dificultad de fotografía en
-  `features/espana/fotografia.ts`), `/espana/mapa` (explorador con capas y mapa de calor por especie), `/espana/diario` (salidas, en el
+  `features/espana/fotografia.ts`), `/espana/mapa` (redirige a la carta), `/espana/diario` (salidas, en el
   navegador), `/espana/normas` (ley citada, drones y parques nacionales; `features/espana/normas.ts`). Sin conexión:
   `public/sw.js` (páginas de red y, sin cobertura, la copia; «Guardar sin conexión»); `.ics` por parque y `/migracion.ics`,
   `/recientes.xml`, `sitemap.xml`),

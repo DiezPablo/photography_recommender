@@ -1,7 +1,8 @@
 // «¿Dónde veo esta especie?» en España: sus celdas de 10 km, de más a menos frecuente en el mes (?mes=0-11) o en
 // su mejor mes, con el espacio protegido más cercano, la curva del año y el tamaño de muestra; con ?celdas=1, todas
-// sus cuadrículas con el ‰ (mapa de calor).
-import { cargarEspana, celdasDeEspecie, lugaresDe } from "@/features/espana/datos";
+// sus cuadrículas con el ‰ y la muestra (mapa de calor y fiabilidad de la carta) y la curva
+// del año en España.
+import { cargarEspana, celdasDeEspecie, curvaEspecie, lugaresDe } from "@/features/espana/datos";
 
 export const dynamicParams = true;
 
@@ -16,7 +17,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ clave: s
   // ?celdas=1: todas sus cuadrículas con el ‰, para el mapa de calor del explorador
   if (new URL(req.url).searchParams.get("celdas"))
     return Response.json(
-      { especie: e.especies[clave], celdas: celdasDeEspecie(clave, mes) },
+      { especie: e.especies[clave], celdas: celdasDeEspecie(clave, mes), curva: curvaEspecie(clave).meses },
       { headers: { "Cache-Control": "public, max-age=86400" } },
     );
   return Response.json(

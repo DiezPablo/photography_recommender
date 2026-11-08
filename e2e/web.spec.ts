@@ -608,20 +608,6 @@ test("fauna en España: mi lista de especies vistas", async ({ page }) => {
   await expect(page.getByText("Aún no has marcado ninguna")).toBeVisible();
 });
 
-test("fauna en España: portada con las tres entradas", async ({ page }) => {
-  await page.goto("/espana");
-  await expect(page.getByRole("heading", { name: "Cerca de mí, ahora" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Este finde" })).toBeVisible();
-  await page.getByRole("link", { name: "Buscar una especie" }).click();
-  await expect(page).toHaveURL(/modo=donde/);
-});
-
-test("fauna en España: se empieza por una ciudad, sin pedir la ubicación", async ({ page }) => {
-  await page.goto("/espana");
-  await page.locator(".ciudades-espana").getByRole("link", { name: "Sevilla" }).click();
-  await expect(page).toHaveURL(/modo=aqui.*lugar=Sevilla/);
-});
-
 test("fauna en España: rarezas de la semana", async ({ page }) => {
   await page.goto("/espana/rarezas");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Rarezas esta semana");
@@ -650,12 +636,6 @@ test("fauna en España: ficha de una especie", async ({ page, request }) => {
   await expect(page.locator(".tabla-frecuencia:visible, .frecuencia-mes:visible").first()).toBeVisible();
   await expect(page.locator(".fenomenos")).toContainText("Gallocanta");
   await expect(page.locator("section", { hasText: "Para fotografiarla" })).toContainText("cm");
-});
-
-test("fauna en España: mapa explorador", async ({ page }) => {
-  await page.goto("/espana/mapa");
-  await expect(page.locator(".mapa-explorador[data-listo=si]")).toBeVisible({ timeout: 15000 });
-  await expect(page.getByLabel("Hides y salidas")).toBeChecked();
 });
 
 test("fauna en España: diario de salidas (añadir y borrar)", async ({ page }) => {

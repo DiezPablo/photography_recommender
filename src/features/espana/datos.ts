@@ -432,18 +432,25 @@ export function claveDe(cientifico: string): string | null {
   return clavePorCientifico.get(cientifico.split(" ").slice(0, 2).join(" ")) ?? null;
 }
 
-/** Las cuadrículas donde se registra la especie con su ‰ del mes (0-11) o del mejor mes: para el mapa de calor. */
-export function celdasDeEspecie(clave: string, mes: number | null): [string, number, number, number][] {
+/** Las cuadrículas donde se registra la especie con su ‰ del mes (0-11) o del mejor mes, y la muestra detrás: las
+ * observaciones de su grupo ese mes con los vecinos (la misma base que la frecuencia). Para el mapa de calor y para la
+ * capa de fiabilidad de la carta. [celda, lat, lon, ‰, muestra] */
+export function celdasDeEspecie(clave: string, mes: number | null): [string, number, number, number, number][] {
   const e = cargarEspana();
   if (!e) return [];
-  const salida: [string, number, number, number][] = [];
+  const clase = e.especies[clave]?.clase ?? "Aves";
+  const salida: [string, number, number, number, number][] = [];
   for (const [c, d] of Object.entries(e.celdas)) {
     const meses = d.e[clave];
     if (!meses || !/^10kmE\d+N\d+$/.test(c)) continue;
-    const v = mes === null ? Math.max(0, ...meses.map((x) => x ?? 0)) : (meses[mes] ?? 0);
+    const mejor = meses.reduce<number>((a, x, i) => ((x ?? 0) > (meses[a] ?? 0) ? i : a), 0);
+    const m = mes === null ? mejor : mes;
+    const v = meses[m] ?? 0;
     if (v <= 0) continue;
+    const base = d.m[clase] ?? [];
+    const muestra = [m - 1, m, m + 1].reduce((a, i) => a + (base[(i + 12) % 12] ?? 0), 0);
     const [lat, lon] = centroCelda(c);
-    salida.push([c, Math.round(lat * 1000) / 1000, Math.round(lon * 1000) / 1000, v]);
+    salida.push([c, Math.round(lat * 1000) / 1000, Math.round(lon * 1000) / 1000, v, muestra]);
   }
   return salida;
 }
@@ -541,4 +548,44 @@ export function listaEspeciesEspana(): EspecieEnLista[] {
     .filter((x) => x.celdas > 0)
     .sort((a, b) => b.celdas - a.celdas);
   return listaEspecies;
+}
+
+export interface EspecieDelMes {
+  k: string;
+  n: string | null;
+  c: string | null;
+  clase: string | null;
+  /** ‰ de su grupo en España ese mes y la media del año */
+  mes: number;
+  media: number;
+  celdas: number;
+}
+let delMes: EspecieDelMes[][] | undefined;
+/** Las especies que más suben en un mes respecto a su media del año en toda España (en al menos 150 cuadrículas y
+ * con ‰ ≥ 3 ese mes): lo que toca ver ahora, medido con la misma frecuencia que la carta. Los doce meses de una vez,
+ * una vez por proceso. */
+export function especiesPorMes(max = 8): EspecieDelMes[][] {
+  if (delMes) return delMes;
+  const meses: EspecieDelMes[][] = Array.from({ length: 12 }, () => []);
+  for (const x of listaEspeciesEspana()) {
+    if (x.celdas < 150 || x.estado) continue;
+    const curva = curvaEspecie(x.k).meses;
+    const conDato = curva.filter((m): m is number => m !== null);
+    if (conDato.length < 10) continue;
+    const media = conDato.reduce((a, b) => a + b, 0) / conDato.length;
+    curva.forEach((v, i) => {
+      if (v === null || v < 3 || v < 1.5 * media) return;
+      meses[i].push({
+        k: x.k,
+        n: x.n,
+        c: x.c,
+        clase: x.clase,
+        mes: v,
+        media: Math.round(media * 10) / 10,
+        celdas: x.celdas,
+      });
+    });
+  }
+  delMes = meses.map((m) => m.sort((a, b) => b.mes / b.media - a.mes / a.media).slice(0, max));
+  return delMes;
 }

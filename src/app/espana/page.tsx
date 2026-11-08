@@ -1,18 +1,18 @@
-// Fauna en España (docs/especificacion-fauna.md), en dos sentidos: «¿Qué veo aquí?» (un lugar y un día → luz,
-// tiempo, mejores franjas y especies probables) y «¿Dónde veo…?» (una especie → dónde y cuándo).
+// Fauna en España (docs/especificacion-fauna.md). Sin modo, la carta (mapa con la fauna por cuadrícula, la luz y la
+// ficha de cada cuadrícula); «¿Qué veo aquí?» (un lugar y un día → luz, tiempo, mejores franjas y especies), «¿Dónde
+// veo…?» (una especie → lista de lugares y meses) y «Este finde» siguen con su modo.
 import type { Metadata } from "next";
-import Link from "next/link";
 import PlanificadorEspana from "@/features/espana/PlanificadorEspana";
 import DondeVerEspecie from "@/features/espana/DondeVerEspecie";
 import FindeEspana from "@/features/espana/FindeEspana";
-import { listaEspeciesEspana } from "@/features/espana/datos";
-import InicioEspana from "@/features/espana/InicioEspana";
+import CartaEspana from "@/features/carta/CartaEspana";
+import { especiesPorMes, listaEspeciesEspana } from "@/features/espana/datos";
 import { fechaLocal } from "@/lib/sol";
 
 export const metadata: Metadata = {
-  title: "Fauna en España: qué ver, dónde y cuándo",
+  title: "Fauna en España: dónde y cuándo, en el mapa",
   description:
-    "Qué especies es probable ver en un lugar y un día, con la luz y el tiempo, o dónde y cuándo ver una especie en España.",
+    "Mapa de España por cuadrícula de 10 km: cuánto se registra cada especie cada mes (GBIF y eBird), con la muestra detrás, la luz del día y el tiempo.",
 };
 
 export const dynamic = "force-dynamic";
@@ -20,10 +20,6 @@ export const dynamic = "force-dynamic";
 type Props = { searchParams: Promise<{ modo?: string; lat?: string; zona?: string }> };
 
 const TITULOS: Record<string, [string, string]> = {
-  inicio: [
-    "Fauna en España",
-    "Qué ver cerca de casa, dónde encontrar cada especie y cuándo ir, con la luz y el tiempo.",
-  ],
   aqui: ["Cerca de mí", "Las especies probables en un lugar y un día, con la luz y el tiempo para fotografiar."],
   finde: ["Este finde", "Los mejores sitios cerca de ti para el sábado y el domingo."],
   donde: ["Dónde ver una especie", "Elige una especie: dónde y en qué meses es más fácil."],
@@ -36,17 +32,20 @@ export default async function PaginaEspana({ searchParams }: Props) {
   const finde = modo === "finde";
   // sin modo ni punto, la portada; los enlaces antiguos (?lat=…, ?zona=…) siguen abriendo «¿Qué veo aquí?»
   const inicio = !modo && !q.lat && !q.zona;
-  const aqui = !inicio && !donde && !finde;
   const hoy = fechaLocal(new Date());
+  if (inicio)
+    return (
+      <main className="carta-pagina">
+        <CartaEspana hoy={hoy} delMes={especiesPorMes()} />
+      </main>
+    );
   return (
     <main className="calendario safaris espana">
       <header className="titular titular-compacto">
-        <h1>{TITULOS[inicio ? "inicio" : donde ? "donde" : finde ? "finde" : "aqui"][0]}</h1>
-        <p className="entradilla">{TITULOS[inicio ? "inicio" : donde ? "donde" : finde ? "finde" : "aqui"][1]}</p>
+        <h1>{TITULOS[donde ? "donde" : finde ? "finde" : "aqui"][0]}</h1>
+        <p className="entradilla">{TITULOS[donde ? "donde" : finde ? "finde" : "aqui"][1]}</p>
       </header>
-      {inicio ? (
-        <InicioEspana hoy={hoy} />
-      ) : donde ? (
+      {donde ? (
         <DondeVerEspecie hoy={hoy} inicial={listaEspeciesEspana()} />
       ) : finde ? (
         <FindeEspana hoy={hoy} />

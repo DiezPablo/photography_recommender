@@ -59,8 +59,8 @@ const SAFARIS: Seccion[] = [
 const ESPANA: Seccion[] = [
   {
     href: "/espana",
-    texto: "Inicio",
-    Icono: IconoBrujula,
+    texto: "Mapa",
+    Icono: IconoRuta,
     activa: (r, q) => r === "/espana" && modo(q) === "inicio",
     movil: true,
   },
@@ -88,8 +88,13 @@ const ESPANA: Seccion[] = [
     activa: (r, q) => r.startsWith("/espana/especie") || (r === "/espana" && modo(q) === "donde"),
     movil: true,
   },
-  { href: "/espana/mapa", texto: "Mapa", Icono: IconoRuta, activa: (r) => r.startsWith("/espana/mapa"), movil: true },
-  { href: "/espana/hides", texto: "Hides", Icono: IconoHuella, activa: (r) => r.startsWith("/espana/hides") },
+  {
+    href: "/espana/hides",
+    texto: "Hides",
+    Icono: IconoHuella,
+    activa: (r) => r.startsWith("/espana/hides"),
+    movil: true,
+  },
   {
     href: "/espana/rarezas",
     texto: "Rarezas",
