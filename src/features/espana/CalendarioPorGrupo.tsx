@@ -30,7 +30,6 @@ export default function CalendarioPorGrupo({
               role="tab"
               className="quitar"
               aria-selected={g.clase === actual.clase}
-              aria-pressed={g.clase === actual.clase}
               onClick={() => {
                 setGrupo(g.clase);
                 setTodas(false);

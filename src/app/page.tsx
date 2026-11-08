@@ -8,7 +8,6 @@ import ExploradorSafaris from "@/features/safaris/componentes/ExploradorSafaris"
 import EntradasHero from "@/features/safaris/componentes/EntradasHero";
 import { listaEspeciesEspana } from "@/features/espana/datos";
 import {
-  cargarMundo,
   cargarRecientes,
   cargarSafaris,
   cifras,
@@ -19,7 +18,6 @@ import {
   opcionesEspecie,
   nombreTaxon,
   puntuacionAhora,
-  slugEspecie,
 } from "@/features/safaris/datos";
 import { fechaLocal } from "@/lib/sol";
 import { esNd, origenFoto, textoCredito } from "@/ui/Credito";
@@ -40,7 +38,6 @@ export default function PaginaSafaris() {
     .filter((p) => enTemporada(p, mesHoy))
     .sort((a, b) => puntuacionAhora(b, mesHoy, recientes) - puntuacionAhora(a, mesHoy, recientes))
     .slice(0, 6);
-  const mundo = cargarMundo();
   const c = cifras();
   // la foto de la portada: el primer destacado en buena época este mes que tenga foto
   // la cabecera: un animal (especie estrella) del primer destacado en buena época que tenga foto

@@ -113,8 +113,8 @@ export default async function PaginaEspecie({ params }: Props) {
 
       {deteccion && (
         <p className="nota-pie">
-          En eBird sale en el {deteccion.pct.map((p, i) => (p === null ? null : `${p} %`))[mesHoy] ?? "–"} de las listas
-          de España en {MESES[mesHoy]}; su mejor mes,{" "}
+          En eBird sale en el {deteccion.pct.map((p) => (p === null ? null : `${p} %`))[mesHoy] ?? "–"} de las listas de
+          España en {MESES[mesHoy]}; su mejor mes,{" "}
           {MESES[deteccion.pct.reduce<number>((a, v, i) => ((v ?? 0) > (deteccion.pct[a] ?? 0) ? i : a), 0)]} (
           {Math.max(...deteccion.pct.map((v) => v ?? 0))} %). En los mejores sitios el porcentaje es mucho mayor.
         </p>

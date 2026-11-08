@@ -1491,7 +1491,7 @@ body {
   flex-wrap: wrap;
   gap: 0.4rem;
 }
-.filtro-grupos button[aria-pressed="true"] {
+.filtro-grupos button[aria-selected="true"] {
   background: var(--acento);
   color: var(--superficie);
 }

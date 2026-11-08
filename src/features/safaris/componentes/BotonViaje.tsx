@@ -7,7 +7,6 @@ import { useMesElegido } from "@/lib/mes";
 
 export default function BotonViaje({
   id,
-  nombre,
   noches,
   mesHoy,
 }: {

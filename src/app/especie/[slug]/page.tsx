@@ -3,7 +3,6 @@ import Link from "next/link";
 import { esNd, origenFoto, textoCredito } from "@/ui/Credito";
 import { notFound } from "next/navigation";
 import MapaEventos from "@/ui/mapa/MapaEventos";
-import { MESES } from "@/lib/fechas";
 import {
   cifras,
   cargarRecientes,

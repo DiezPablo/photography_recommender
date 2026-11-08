@@ -61,7 +61,7 @@ export default async function PaginaLugar({ params }: Props) {
   if (!l) notFound();
   const hoy = fechaLocal(new Date());
   const mesHoy = Number(hoy.slice(5, 7)) - 1;
-  const { filas, celdas } = calendarioLugar(l);
+  const { filas } = calendarioLugar(l);
   const recientes = recientesLugar(l).slice(0, 25);
   const fenomenos = fenomenosCerca(l.lat, l.lon, l.r);
   const cerca = lugaresCerca(l.lat, l.lon, mesHoy, 9)

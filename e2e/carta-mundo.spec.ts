@@ -35,7 +35,10 @@ test("carta del mundo: el león, su tabla de tramos y la ficha del Serengeti", a
 
 test("carta del mundo: la ficha de un parque enlaza al mapa", async ({ page }) => {
   await page.goto("/parque/serengeti");
-  await expect(page.getByRole("link", { name: "En el mapa", exact: true })).toHaveAttribute("href", "/mapa?parque=serengeti");
+  await expect(page.getByRole("link", { name: "En el mapa", exact: true })).toHaveAttribute(
+    "href",
+    "/mapa?parque=serengeti",
+  );
 });
 
 test("carta del parque: zonas del Serengeti con la de la migración en agosto", async ({ page }) => {
