@@ -39,17 +39,19 @@ echo "Subidos: $*"
 # cambiaron ese día: la versión de un fichero en una fecha es la de la release más reciente anterior que lo tenga
 # (o la de «datos», si ninguna lo tiene). Un fallo aquí no impide la publicación.
 version="datos-$(date -u +%Y-%m-%d)"
-{
-  gh release view "$version" >/dev/null 2>&1 || \
-    gh release create "$version" --title "Datos del $(date -u +%d-%m-%Y)" --prerelease --latest=false \
-      --notes "Copia de los ficheros publicados ese día (comprimidos). Se guardan las 6 últimas.
+if ! gh release view "$version" >/dev/null 2>&1; then
+  gh release create "$version" --title "Datos del $(date -u +%d-%m-%Y)" --prerelease --latest=false \
+    --notes "Copia de los ficheros publicados ese día (comprimidos). Se guardan las 6 últimas.
 
-$NOTAS"
-  gh release upload "$version" $(printf '%s.gz ' "$@") --clobber
-  gh api "repos/${GITHUB_REPOSITORY}/releases?per_page=100" --jq '.[].tag_name' \
-    | grep -E '^datos-[0-9]{4}-[0-9]{2}-[0-9]{2}$' | sort -r | tail -n +7 \
-    | while read -r viejo; do gh release delete "$viejo" --yes --cleanup-tag; done
-} || echo "Aviso: no se pudo guardar la versión $version"
+$NOTAS" >/dev/null || echo "Aviso: no se pudo crear la release $version"
+fi
+gh release upload "$version" $(printf '%s.gz ' "$@") --clobber || echo "Aviso: no se pudo subir a $version"
+viejas=$(gh api "repos/${GITHUB_REPOSITORY}/releases?per_page=100" --jq '.[].tag_name' \
+  | { grep -E '^datos-[0-9]{4}-[0-9]{2}-[0-9]{2}$' || true; } | sort -r | tail -n +7) \
+  || { echo "Aviso: no se pudieron listar las versiones"; viejas=""; }
+for viejo in $viejas; do
+  gh release delete "$viejo" --yes --cleanup-tag || echo "Aviso: no se pudo borrar $viejo"
+done
 
 tmp=$(mktemp)
 python3 - "$tmp" "$@" <<'PY'
