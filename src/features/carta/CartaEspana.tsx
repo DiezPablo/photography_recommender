@@ -57,10 +57,7 @@ export default function CartaEspana({ hoy, delMes }: { hoy: string; delMes: Espe
   const estado = useMemo(() => leerEstado(q, hoy), [q, hoy]);
   const cambiar = (c: Partial<EstadoCarta>) => actualizar(parametros({ ...estado, ...c }, hoy));
   const encendida = (c: Capa) => !estado.apagadas.includes(c);
-  const { caja, mapa, leaflet, listo, vista, nuevaCapa } = useMapaBase(
-    { scrollWheelZoom: true, zoomSnap: 0.5, minZoom: 5 },
-    "ign",
-  );
+  const { caja, mapa, leaflet, listo, vista, nuevaCapa } = useMapaBase({ scrollWheelZoom: true, minZoom: 4 }, "ign");
 
   const [lista, setLista] = useState<EspecieLista[]>([]);
   const [busqueda, setBusqueda] = useState("");

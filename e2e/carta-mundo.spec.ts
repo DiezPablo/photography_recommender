@@ -25,7 +25,7 @@ test("carta del mundo: el león, su tabla de tramos y la ficha del Serengeti", a
   await page.getByRole("searchbox", { name: "Mamífero" }).fill("león");
   await page.locator(".carta-opciones button", { hasText: "Panthera leo" }).click();
   await expect(page).toHaveURL(new RegExp(`especie=${leon}`));
-  await expect(page.locator(".tabla-tramos caption")).toContainText("entre los 12 mamíferos más registrados");
+  await expect(page.locator(".tabla-tramos caption")).toContainText(/entre los \d+ mamíferos más registrados/);
   await page.goto(`/mapa?mes=agosto&especie=${leon}&parque=serengeti`);
   const ficha = page.locator(".ficha-celda");
   await expect(ficha.getByRole("heading", { level: 2 })).toHaveText("Serengeti");
@@ -35,5 +35,15 @@ test("carta del mundo: el león, su tabla de tramos y la ficha del Serengeti", a
 
 test("carta del mundo: la ficha de un parque enlaza al mapa", async ({ page }) => {
   await page.goto("/parque/serengeti");
-  await expect(page.getByRole("link", { name: "En el mapa" })).toHaveAttribute("href", "/mapa?parque=serengeti");
+  await expect(page.getByRole("link", { name: "En el mapa", exact: true })).toHaveAttribute("href", "/mapa?parque=serengeti");
+});
+
+test("carta del parque: zonas del Serengeti con la de la migración en agosto", async ({ page }) => {
+  await page.goto("/parque/serengeti?mes=agosto");
+  const carta = page.locator("#mapa .carta-parque");
+  await expect(carta.locator(".carta-mapa[data-listo=si]")).toBeVisible({ timeout: 15000 });
+  await expect(carta.locator(".tabla-zonas caption")).toHaveText("Zonas del parque en agosto");
+  // en agosto la migración está en el norte (cruces del Mara)
+  await expect(carta.locator('.tabla-zonas tr[data-recomendada="si"]')).toContainText("Norte");
+  await expect(carta.locator("path.zona-recomendada")).toHaveCount(1);
 });

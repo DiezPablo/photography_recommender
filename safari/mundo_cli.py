@@ -24,6 +24,10 @@ from safari.refinar import puntuacion, refinar
 
 _ERRORES = (requests.RequestException, KeyError, ValueError, RuntimeError)
 EXTERIORES = "https://www.exteriores.gob.es/"
+# Mamíferos que se guardan de cada parque (los más registrados): la carta del mundo (/mapa) solo encuentra una
+# especie en los parques donde está en la lista. Eran 12 hasta el 08-11-2026; GBIF ya da hasta 200 en la misma
+# petición (`mundo.gbif`), así que subir el corte solo cuesta tamaño (unos 2 MB más sin comprimir) y nombres comunes.
+MAX_MAMIFEROS = 40
 
 
 def _en_paralelo(funcion, elementos, hilos: int, etiqueta: str):
@@ -181,7 +185,8 @@ def calcular(hilos: int = 4, osm_max: int = 1500, limite: int | None = None) -> 
                 ),
                 "obs": g["obs"],
                 "n_mamiferos": len(g["especies"]),
-                "mamiferos": g["especies"][:15],
+                # unos pocos de margen: después se quitan los domésticos
+                "mamiferos": g["especies"][: MAX_MAMIFEROS + 5],
                 "estrella": {str(k): n for k, n in g["especies"] if k in estrella},
                 "meses": g["meses"],
                 "puntuacion": puntuacion(
@@ -246,7 +251,7 @@ def calcular(hilos: int = 4, osm_max: int = 1500, limite: int | None = None) -> 
     # fuera los animales domésticos de las listas
     domesticos = {int(k) for k, e in especies.items() if e["c"] in mundo.DOMESTICOS}
     for p in parques:
-        p["mamiferos"] = [e for e in p["mamiferos"] if e[0] not in domesticos][:12]
+        p["mamiferos"] = [e for e in p["mamiferos"] if e[0] not in domesticos][:MAX_MAMIFEROS]
         p["aves"] = [e for e in p["aves"] if e[0] not in domesticos]
     return refinar(
         {

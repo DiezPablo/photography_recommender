@@ -7,7 +7,9 @@ import { Frescura } from "@/ui/Frescura";
 import AvisoCierre from "@/features/safaris/componentes/AvisoCierre";
 import { REVISADO, practicoDe } from "@/features/safaris/paises";
 import FotoGrande from "@/ui/FotoGrande";
-import MapaEventos from "@/ui/mapa/MapaEventos";
+import CartaParque from "@/features/carta/CartaParque";
+import { aeropuertosCarta } from "@/features/carta/aeropuertos";
+import { ZONAS_PARQUE, zonasRecomendadas } from "@/features/safaris/zonasParque";
 import { INICIALES, MESES } from "@/lib/fechas";
 import { CincoGrandes, CombinaCon } from "@/features/safaris/componentes/ComplementosSafari";
 import BotonComparar from "./BotonComparar";
@@ -27,6 +29,9 @@ import {
   TEXTO_MOTIVO,
   urlWeb,
 } from "@/features/safaris/modelo";
+
+/** Mamíferos que se listan en la ficha (los datos guardan hasta 40 por parque para la carta del mundo). */
+const EN_FICHA = 12;
 
 function Barras({ valores, clase, titulo }: { valores: number[]; clase?: string; titulo: (v: number) => string }) {
   const max = Math.max(1, ...valores);
@@ -59,18 +64,6 @@ export default function FichaMundo({
   const estrella = Object.entries(p.estrella)
     .filter(([, n]) => n >= 3)
     .sort((a, b) => b[1] - a[1]);
-  const puntos = [
-    { id: p.id, nombre: p.nombre, lat: p.lat, lon: p.lon, radio_km: p.radio_km, categoria: "fauna", href: null },
-    ...(p.osm?.alojamientos ?? []).map((a) => ({
-      id: a.osm ?? `${a.lat},${a.lon}`,
-      nombre: `${a.nombre} (${a.tipo})`,
-      lat: a.lat,
-      lon: a.lon,
-      radio_km: 0.3,
-      categoria: "otono",
-      href: urlWeb(a.web) ?? (a.osm ? `https://www.openstreetmap.org/${a.osm}` : null),
-    })),
-  ];
   return (
     <main className="ficha evento cat-fauna safari">
       <header className={`ficha-hero${p.foto ? "" : " sin-foto"}`}>
@@ -144,7 +137,9 @@ export default function FichaMundo({
                 return { nombre: nombreEstrella(k), n, href: slug ? `/especie/${slug}` : undefined };
               })
             : // sin especies estrella (Madagascar, islas…): los mamíferos más vistos
-              p.mamiferos.map(([k, n]) => ({ nombre: nombreEspecieMundo(mundo, k, reglasNombres()), n }))
+              p.mamiferos
+                .slice(0, EN_FICHA)
+                .map(([k, n]) => ({ nombre: nombreEspecieMundo(mundo, k, reglasNombres()), n }))
         }
         mundo={p}
         pais={pais?.nombre}
@@ -232,7 +227,7 @@ export default function FichaMundo({
         <div className="grupos-safari">
           {(
             [
-              ["Mamíferos", p.mamiferos],
+              ["Mamíferos", p.mamiferos.slice(0, EN_FICHA)],
               ["Aves", p.aves],
             ] as const
           ).map(([titulo, lista]) =>
@@ -264,7 +259,24 @@ export default function FichaMundo({
 
       <section className="seccion" id="mapa">
         <h2 className="rotulo">Mapa</h2>
-        <MapaEventos eventos={puntos} etiqueta={`Mapa de ${p.nombre}`} mundo />
+        <CartaParque
+          id={p.id}
+          nombre={p.nombre}
+          lat={p.lat}
+          lon={p.lon}
+          radioKm={p.radio_km}
+          zonas={ZONAS_PARQUE[p.id] ?? []}
+          recomendadas={zonasRecomendadas(p.id)}
+          alojamientos={(p.osm?.alojamientos ?? []).map((a) => ({
+            nombre: a.nombre,
+            tipo: a.tipo ?? "alojamiento",
+            lat: a.lat,
+            lon: a.lon,
+            href: urlWeb(a.web) ?? (a.osm ? `https://www.openstreetmap.org/${a.osm}` : null),
+          }))}
+          aeropuertos={aeropuertosCarta(p.llegar?.aeropuertos ?? [])}
+          mesHoy={mesHoy}
+        />
       </section>
 
       <Frescura

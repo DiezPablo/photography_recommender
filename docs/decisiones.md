@@ -954,3 +954,14 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   - La ficha de parque (destacados y del mundo) y la de especie enlazan a la carta. Las fichas completas de parque y
     las demás páginas de safaris siguen con su estructura, ya con los tokens de la fase 2.
   - Icono propio para «Mapa» en los dos mundos (hoja con cuadrícula); Planificar tenía el mismo de ruta.
+- 08-11-2026, después de la fase 3:
+  - Mamíferos por parque: el pipeline guardaba los 12 más registrados de cada parque y la carta del mundo no
+    encontraba las especies escasas. Sube a 40 (`MAX_MAMIFEROS` en `safari/mundo_cli.py`): GBIF ya da hasta 200 en la
+    misma petición (caché), así que solo cuesta unos 2 MB más sin comprimir en `safaris_mundo.json` y los nombres
+    comunes de las especies nuevas. La ficha de parque del mundo sigue listando 12; la carta dice cuántos guarda cada
+    parque leyendo los datos publicados (12 hasta que corra el workflow, 40 después).
+  - Carta del parque (`features/carta/CartaParque.tsx`) en vez del mapa genérico, en las fichas de los destacados y
+    del mundo: zona del parque, zonas escritas a mano (Serengeti, Masái Mara, Kruger…) con la más cercana a la
+    migración en el mes elegido en magenta, alojamientos de OSM y los tres aeropuertos más cercanos, con la leyenda
+    como tabla al lado (debajo en el móvil). En agosto, en el Serengeti, sale el norte (cruces del Mara).
+  - Las tres cartas, con zoom entero: con medio paso (0,5) las teselas escaladas dejaban juntas blancas.

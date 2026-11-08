@@ -11,7 +11,6 @@ import { TASAS } from "@/features/safaris/tasas";
 import { REVISADO, practicoDe } from "@/features/safaris/paises";
 import FotoGrande from "@/ui/FotoGrande";
 import { notFound, permanentRedirect } from "next/navigation";
-import MapaEventos from "@/ui/mapa/MapaEventos";
 import AnoSafari from "@/features/safaris/componentes/AnoSafari";
 import { CincoGrandes, CombinaCon } from "@/features/safaris/componentes/ComplementosSafari";
 import BotonComparar from "@/features/safaris/componentes/BotonComparar";
@@ -25,6 +24,8 @@ import Fotografia from "@/features/safaris/componentes/Fotografia";
 import { FOTOGRAFIA } from "@/features/safaris/fotografiaParques";
 import Alojamientos, { type GrupoAlojamientos } from "@/features/safaris/componentes/Alojamientos";
 import { ZONAS_PARQUE, zonaDe, zonasRecomendadas } from "@/features/safaris/zonasParque";
+import CartaParque from "@/features/carta/CartaParque";
+import { aeropuertosCarta } from "@/features/carta/aeropuertos";
 import { veredictos } from "@/features/safaris/veredicto";
 import FichaMundo from "@/features/safaris/componentes/FichaMundo";
 import OrganizaViaje from "@/features/safaris/componentes/OrganizaViaje";
@@ -137,27 +138,6 @@ export default async function PaginaParque({ params }: Props) {
       meses: p.frecuencia![String(e.taxon)],
       muestra: p.muestra?.[String(e.taxon)],
     }));
-  const puntos = [
-    { id: p.id, nombre: p.nombre, lat: p.lat, lon: p.lon, radio_km: p.radio_km, categoria: "fauna", href: null },
-    ...alojamientos.map((a) => ({
-      id: a.osm,
-      nombre: `${a.nombre} (${a.tipo})`,
-      lat: a.lat,
-      lon: a.lon,
-      radio_km: 0.3,
-      categoria: "otono",
-      href: urlWeb(a.web) ?? `https://www.openstreetmap.org/${a.osm}`,
-    })),
-    ...(zonas ?? []).map((z) => ({
-      id: `zona-${z.nombre}`,
-      nombre: `Zona: ${z.nombre}`,
-      lat: z.lat,
-      lon: z.lon,
-      radio_km: 12,
-      categoria: "fauna",
-      href: null,
-    })),
-  ];
   return (
     <main className="ficha evento cat-fauna safari">
       <header className={`ficha-hero${fotoHero ? "" : " sin-foto"}`}>
@@ -449,7 +429,24 @@ export default async function PaginaParque({ params }: Props) {
 
       <section className="seccion" id="mapa">
         <h2 className="rotulo">Mapa</h2>
-        <MapaEventos eventos={puntos} etiqueta={`Mapa de ${p.nombre}`} mundo />
+        <CartaParque
+          id={p.id}
+          nombre={p.nombre}
+          lat={p.lat}
+          lon={p.lon}
+          radioKm={p.radio_km}
+          zonas={zonas ?? []}
+          recomendadas={zonasRecomendadas(p.id)}
+          alojamientos={alojamientos.map((a) => ({
+            nombre: a.nombre,
+            tipo: a.tipo,
+            lat: a.lat,
+            lon: a.lon,
+            href: urlWeb(a.web) ?? `https://www.openstreetmap.org/${a.osm}`,
+          }))}
+          aeropuertos={aeropuertosCarta(enMundo?.llegar.aeropuertos ?? [])}
+          mesHoy={mesHoy}
+        />
       </section>
 
       {enMundo && mundo && <CombinaCon p={enMundo} mundo={mundo} nombre={p.nombre} />}

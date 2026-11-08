@@ -74,7 +74,7 @@ test("safaris: buscar por mes y especie, ficha de parque y especie", async ({ pa
   await expect(page).toHaveURL(/\/parque\/masai-mara(\?mes=agosto)?$/);
   await expect(page.locator(".ano-safari").first()).toBeVisible();
   await expect(page.locator(".visto-ahora")).toBeVisible();
-  await expect(page.locator(".mapa-caja[data-listo=si]").first()).toBeVisible();
+  await expect(page.locator(".carta-parque .carta-mapa[data-listo=si]").first()).toBeVisible();
   await esperarTeselas(page);
   await page.screenshot({ path: `${CAPTURAS}/safari-parque-${info.project.name}.png`, fullPage: true });
   // de una especie estrella a su página con los parques donde se ve

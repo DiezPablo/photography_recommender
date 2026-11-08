@@ -45,13 +45,14 @@ export default function CartaMundo({ hoy }: { hoy: string }) {
   const encendida = (c: Capa) => (c === "todos" ? q.get("con") === "todos" : !apagadas.includes(c));
   const { caja, mapa, leaflet, listo, nuevaCapa } = useMapaBase({
     scrollWheelZoom: true,
-    zoomSnap: 0.5,
     minZoom: 2,
     worldCopyJump: true,
   });
 
   const [indice, setIndice] = useState<FilaIndice[]>([]);
   const [lista, setLista] = useState<EspecieMundo[]>([]);
+  // cuántos mamíferos guarda cada parque (12 en los datos antiguos, 40 en los nuevos)
+  const [maximo, setMaximo] = useState(12);
   const [busqueda, setBusqueda] = useState("");
   const [hojaAlta, setHojaAlta] = useState(false);
   const [datos, setDatos] = useState<{ clave: string; parques: ParqueEspecie[] }>();
@@ -64,7 +65,10 @@ export default function CartaMundo({ hoy }: { hoy: string }) {
       .catch(() => setIndice([]));
     fetch("/mapa/especies.json")
       .then((r) => (r.ok ? r.json() : { especies: [] }))
-      .then((d: { especies: EspecieMundo[] }) => setLista(d.especies))
+      .then((d: { especies: EspecieMundo[]; maximo?: number }) => {
+        setLista(d.especies);
+        if (d.maximo) setMaximo(d.maximo);
+      })
       .catch(() => setLista([]));
   }, []);
 
@@ -269,7 +273,7 @@ export default function CartaMundo({ hoy }: { hoy: string }) {
           )}
           {elegida && (
             <p className="carta-elegida">
-              <i>{elegida.c}</i> · entre los 12 mamíferos más registrados de {elegida.parques} parques{" "}
+              <i>{elegida.c}</i> · entre los {maximo} mamíferos más registrados de {elegida.parques} parques{" "}
               <button type="button" className="boton-texto" onClick={() => elegirEspecie(null)}>
                 Quitar
               </button>
@@ -312,7 +316,7 @@ export default function CartaMundo({ hoy }: { hoy: string }) {
               <>
                 <table className="tabla-tramos">
                   <caption>
-                    {conEspecie.length.toLocaleString("es-ES")} parques donde está entre los 12 mamíferos más
+                    {conEspecie.length.toLocaleString("es-ES")} parques donde está entre los {maximo} mamíferos más
                     registrados
                   </caption>
                   <tbody>
@@ -390,7 +394,7 @@ export default function CartaMundo({ hoy }: { hoy: string }) {
         <p className="nota-celda">
           ‰: de cada mil registros de mamíferos del parque en GBIF (todo el año), cuántos son de la especie. Mide lo que
           se registra, que depende de quién va y qué apunta: no es la probabilidad de verla. De cada parque se guardan
-          sus 12 mamíferos más registrados: una especie más escasa puede estar aunque no salga. Los parques sin la
+          sus {maximo} mamíferos más registrados: una especie más escasa puede estar aunque no salga. Los parques sin la
           especie o fuera de temporada, solo con el contorno. Mapa: OpenStreetMap.
         </p>
       </aside>

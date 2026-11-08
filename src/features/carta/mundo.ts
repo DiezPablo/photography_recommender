@@ -1,6 +1,6 @@
 // Datos de la carta del mundo (solo servidor), de safaris_mundo.json: los mamíferos registrados en cada parque (GBIF,
-// todo el año). El pipeline guarda solo los 12 más registrados de cada parque, así que una especie sale en los
-// parques donde está entre esos 12. La frecuencia es el ‰ de todos los registros de mamíferos del parque (`obs`) que
+// todo el año). El pipeline guarda los más registrados de cada parque (12 hasta el 08-11-2026, ahora 40:
+// `MAX_MAMIFEROS` en safari/mundo_cli.py), así que una especie sale en los parques donde está en esa lista. La frecuencia es el ‰ de todos los registros de mamíferos del parque (`obs`) que
 // son de la especie, y esa es la muestra. No hay frecuencia por mes en los 3400 parques: el mes marca la temporada
 // recomendada (época seca o la del catálogo).
 import "server-only";
@@ -16,7 +16,7 @@ export interface EspecieMundo {
 }
 
 let especies: EspecieMundo[] | undefined;
-/** Los mamíferos que están entre los 12 más registrados de algún parque, de más a menos parques. */
+/** Los mamíferos que están en la lista de algún parque, de más a menos parques. */
 export function especiesMundo(): EspecieMundo[] {
   if (especies) return especies;
   const m = cargarMundo();
@@ -58,7 +58,7 @@ export interface FichaParqueCarta {
   clase: string;
   foto: { url: string; web: string | null; autor: string | null; licencia: string | null } | null;
   muestra: number;
-  /** los mamíferos más registrados (hasta 12): [clave, nombre, registros, ‰] */
+  /** los mamíferos más registrados (los 12 primeros): [clave, nombre, registros, ‰] */
   mamiferos: [string, string, number, number][];
   /** registros de mamíferos por mes (GBIF) y lluvia por mes (NASA POWER) */
   meses: number[];
@@ -108,4 +108,11 @@ export function fichaParque(id: string): FichaParqueCarta | null {
 /** Clave de GBIF de un mamífero del mundo por su nombre científico (para enlazar a la carta), si está en algún parque. */
 export function claveMundo(cientifico: string): string | null {
   return especiesMundo().find((e) => e.c === cientifico)?.k ?? null;
+}
+
+let maximo: number | undefined;
+/** Cuántos mamíferos guarda como mucho cada parque en los datos publicados (para decirlo en la carta). */
+export function mamiferosPorParque(): number {
+  maximo ??= Math.max(0, ...(cargarMundo()?.parques ?? []).map((p) => p.mamiferos.length));
+  return maximo;
 }
