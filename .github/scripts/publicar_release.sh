@@ -29,6 +29,21 @@ gzip -kf9 "$@"
 gh release upload datos "$@" $(printf '%s.gz ' "$@") --clobber
 echo "Subidos: $*"
 
+# Versiones (decisión de la auditoría, 08-11-2026): los .gz de lo publicado cada día van también a la release
+# «datos-AAAA-MM-DD», para comparar y volver atrás; se guardan las 6 últimas. Cada una tiene solo los ficheros que
+# cambiaron ese día: la versión de un fichero en una fecha es la de la release más reciente anterior que lo tenga
+# (o la de «datos», si ninguna lo tiene). Un fallo aquí no impide la publicación.
+version="datos-$(date -u +%Y-%m-%d)"
+{
+  gh release view "$version" >/dev/null 2>&1 || \
+    gh release create "$version" --title "Datos del $(date -u +%d-%m-%Y)" --prerelease --latest=false \
+      --notes "Copia de los ficheros publicados ese día (comprimidos). Se guardan las 6 últimas."
+  gh release upload "$version" $(printf '%s.gz ' "$@") --clobber
+  gh api "repos/${GITHUB_REPOSITORY}/releases?per_page=100" --jq '.[].tag_name' \
+    | grep -E '^datos-[0-9]{4}-[0-9]{2}-[0-9]{2}$' | sort -r | tail -n +7 \
+    | while read -r viejo; do gh release delete "$viejo" --yes --cleanup-tag; done
+} || echo "Aviso: no se pudo guardar la versión $version"
+
 tmp=$(mktemp)
 python3 - "$tmp" "$@" <<'PY'
 import hashlib, json, sys, datetime

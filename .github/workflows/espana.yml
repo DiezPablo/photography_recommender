@@ -1,9 +1,13 @@
 # Fauna en España: una descarga SQL de GBIF (recuentos por celda de 10 km, especie, año y mes) → espana.json y el
-# informe de viabilidad (docs/espana-viabilidad.md). A mano mientras se prueba; necesita los secretos
-# GBIF_USUARIO y GBIF_CLAVE (sin ellos no hace nada). La descarga se guarda en la caché para no repetirla.
+# informe de viabilidad (docs/espana-viabilidad.md). Trimestral (decisión de la auditoría, 08-11-2026: los datos de
+# GBIF cambian poco y cada ejecución son horas de Actions), con descarga nueva; a mano, reutiliza la de la caché salvo
+# que se pida otra. Necesita los secretos GBIF_USUARIO y GBIF_CLAVE (sin ellos no hace nada).
 name: España
 
 on:
+  schedule:
+    # el día 1 de enero, abril, julio y octubre
+    - cron: "17 3 1 1,4,7,10 *"
   workflow_dispatch:
     inputs:
       nueva_descarga:
@@ -50,7 +54,7 @@ jobs:
           restore-keys: espana-v1-
 
       - name: Descarga nueva
-        if: ${{ inputs.nueva_descarga }}
+        if: ${{ inputs.nueva_descarga || github.event_name == 'schedule' }}
         run: rm -f cache/espana_filas.json.gz
 
       - name: Diagnóstico
@@ -64,7 +68,7 @@ jobs:
       - name: Frecuencia de detección de eBird (aves)
         if: ${{ !inputs.diagnostico }}
         run: |
-          [ "${{ inputs.nueva_descarga }}" = "true" ] && rm -f cache/espana_ebird.json.gz || true
+          [ "${{ inputs.nueva_descarga }}" = "true" ] || [ "${{ github.event_name }}" = "schedule" ] && rm -f cache/espana_ebird.json.gz || true
           python -m safari --espana-ebird
 
       - uses: actions/cache/save@v6

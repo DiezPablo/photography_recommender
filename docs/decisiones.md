@@ -974,3 +974,9 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     conmutador «Safaris / España» apunta a `/safaris` y `/`. `/espana` sin modo y `/espana/mapa` redirigen a `/` con
     sus parámetros. Los enlaces antiguos a la portada de safaris (`/?ver=`, `/?q=`, `/?ninos=`… o `/?especie=` con una
     especie que no es de España) redirigen a `/safaris` con los mismos parámetros.
+  - D5, `espana.yml` trimestral: el día 1 de enero, abril, julio y octubre, con descarga nueva de GBIF y eBird (a
+    mano sigue reutilizando la de la caché salvo que se pida otra).
+  - D6, versiones de los datos: `publicar_release.sh` copia los `.gz` de lo publicado cada día en la release
+    `datos-AAAA-MM-DD` y borra las que pasan de 6. Cada versión guarda solo lo que cambió ese día: la versión de un
+    fichero en una fecha es la de la release más reciente anterior que lo tenga (o la de `datos`). Un fallo al
+    guardar la versión no para la publicación. Unos 77 MB de datos en total: el coste en almacenamiento es pequeño.
