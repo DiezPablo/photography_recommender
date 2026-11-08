@@ -1022,3 +1022,10 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     quita (quitar «Buscar especie» de España y las comparativas fijas de países, juntar los cuatro bloques de
     «cuándo ir» de la ficha de parque y un solo buscador de especie).
   - D9, uso comercial: no se toca; decide el usuario.
+  - D3, corrección tras la primera ejecución (08-11-2026): con el círculo del mismo radio, que tiene el 78,5 % de la
+    superficie de la caja, salían 2943 parques con fauna en vez de 3525 (los umbrales se calibraron con la caja).
+    La protección de `no_empeora.py` lo paró y no se publicó. Los parques que solo cuenta GBIF usan ahora el círculo
+    de la misma superficie que la caja (radio × 2/√π, unas 1,13 veces); los destacados conservan su radio, el de
+    iNaturalist. Los contornos de Wikidata son pocos (unos 7 de cada 300 parques de nivel A o B tienen P3896) y sus
+    enlaces llevan «+» por espacio, que no se leía: solo salía 1 parque con contorno. Corregido. Para más contornos
+    harían falta los límites de OpenStreetMap, con muchas más peticiones a Overpass: queda para más adelante.

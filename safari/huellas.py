@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import math
 from itertools import pairwise
-from urllib.parse import unquote
+from urllib.parse import unquote_plus
 
 from safari import commons
 
@@ -92,7 +92,8 @@ def contorno_wkt(geo: dict, max_puntos: int = MAX_PUNTOS) -> str | None:
 
 def titulo_commons(url: str) -> str | None:
     """«http://commons.wikimedia.org/data/main/Data:Parque.map» → «Data:Parque.map»."""
-    texto = unquote(url)
+    # Wikidata escribe los espacios como «+» («Data:Anamalai+Tiger+Reserve.map»)
+    texto = unquote_plus(url)
     i = texto.find("Data:")
     return texto[i:].replace("_", " ") if i >= 0 else None
 

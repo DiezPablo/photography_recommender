@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import gzip
 import json
+import math
 import time
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
@@ -108,7 +109,11 @@ def calcular(hilos: int = 4, osm_max: int = 1500, limite: int | None = None) -> 
     cands = mundo.candidatos()
     qids_curados = {c["wikidata"]: c for c in curados if c["wikidata"]}
     lista = [
-        {"qid": q, **x, "radio_km": mundo.radio_km(x["area_m2"], x["clase"])}
+        # el círculo con la misma superficie que la caja de antes (radio × 2/√π): los umbrales de fauna
+        # (`MIN_ESPECIES`, `MIN_OBS`) se calibraron con la caja, y con el círculo del mismo radio, el 78,5 % de su
+        # superficie, se quedaban fuera 580 de 3525 parques (08-11-2026). Los destacados conservan su radio, el mismo
+        # que usa iNaturalist.
+        {"qid": q, **x, "radio_km": round(mundo.radio_km(x["area_m2"], x["clase"]) * 2 / math.sqrt(math.pi), 1)}
         for q, x in cands.items()
         if q not in qids_curados
     ][:limite]

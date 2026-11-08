@@ -52,6 +52,9 @@ def test_contorno_de_varios_poligonos_toma_el_mayor():
 def test_titulo_de_commons():
     url = "http://commons.wikimedia.org/data/main/Data:Parque_Nacional_de_Do%C3%B1ana.map"
     assert huellas.titulo_commons(url) == "Data:Parque Nacional de Doñana.map"
+    assert huellas.titulo_commons("http://commons.wikimedia.org/data/main/Data:Anamalai+Tiger+Reserve.map") == (
+        "Data:Anamalai Tiger Reserve.map"
+    )
     assert huellas.titulo_commons("http://ejemplo.org/x") is None
 
 
