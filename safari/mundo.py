@@ -21,6 +21,7 @@ import unicodedata
 
 import requests
 
+from safari import huellas
 from safari.comun.cache import CacheJson
 from safari.comun.red import sesion
 
@@ -160,10 +161,31 @@ def caja(lat: float, lon: float, r_km: float) -> dict:
     }
 
 
-def conteo_taxon(lat: float, lon: float, r_km: float, taxon: int) -> int:
+def zona(lat: float, lon: float, r_km: float, forma: str | None = None) -> dict:
+    """Los parámetros de GBIF de la huella del parque: su contorno, si lo hay, o el círculo de `r_km` (el mismo que
+    usa iNaturalist); la caja de antes solo si el círculo cruza el antimeridiano (safari/huellas.py)."""
+    wkt = forma or huellas.circulo_wkt(lat, lon, r_km)
+    return {"geometry": wkt} if wkt else caja(lat, lon, r_km)
+
+
+def _de_cache(params: dict, lat: float, lon: float, r_km: float, prefijo: str):
+    """Lo guardado para la huella nueva o, mientras no esté y no quede tiempo, lo de la caja de antes: así el cambio
+    de huella (08-11-2026) se hace por tandas sin que los parques sin consultar desaparezcan de lo publicado."""
+    clave = prefijo + repr(sorted(params.items()))
+    guardado = CACHE.leer(clave)
+    if guardado is None and sin_tiempo() and "geometry" in params:
+        antes = {k: v for k, v in params.items() if k != "geometry"} | caja(lat, lon, r_km)
+        guardado = CACHE.leer(prefijo + repr(sorted(antes.items())))
+        # marcado, para no llamarlo «contorno» ni «círculo» mientras es la caja de antes
+        if isinstance(guardado, dict):
+            guardado = {**guardado, "antigua": True}
+    return clave, guardado
+
+
+def conteo_taxon(lat: float, lon: float, r_km: float, taxon: int, forma: str | None = None) -> int:
     """Observaciones de un taxón concreto en la zona (para restar los perros del «lobo»)."""
     params = {
-        **caja(lat, lon, r_km),
+        **zona(lat, lon, r_km, forma),
         "taxonKey": taxon,
         "year": f"{DESDE_ANO},2030",
         "occurrenceStatus": "PRESENT",
@@ -171,8 +193,7 @@ def conteo_taxon(lat: float, lon: float, r_km: float, taxon: int) -> int:
         "basisOfRecord": ["HUMAN_OBSERVATION", "MACHINE_OBSERVATION"],
         "limit": 0,
     }
-    clave = "gbif-n:" + repr(sorted(params.items()))
-    n = CACHE.leer(clave)
+    clave, n = _de_cache(params, lat, lon, r_km, "gbif-n:")
     if n is None and sin_tiempo():
         return 0
     if n is None:
@@ -183,10 +204,10 @@ def conteo_taxon(lat: float, lon: float, r_km: float, taxon: int) -> int:
     return n
 
 
-def gbif(lat: float, lon: float, r_km: float, clase_gbif: int, n: int = 200) -> dict | None:
-    """Observaciones, especies (clave, n) y meses de una clase (mamíferos o aves) en la zona."""
+def gbif(lat: float, lon: float, r_km: float, clase_gbif: int, n: int = 200, forma: str | None = None) -> dict | None:
+    """Observaciones, especies (clave, n) y meses de una clase (mamíferos o aves) en la huella del parque."""
     params = {
-        **caja(lat, lon, r_km),
+        **zona(lat, lon, r_km, forma),
         "classKey": clase_gbif,
         "year": f"{DESDE_ANO},2030",
         "occurrenceStatus": "PRESENT",
@@ -198,8 +219,7 @@ def gbif(lat: float, lon: float, r_km: float, clase_gbif: int, n: int = 200) -> 
         "speciesKey.facetLimit": n,
         "month.facetLimit": 12,
     }
-    clave = "gbif:" + repr(sorted(params.items()))
-    guardado = CACHE.leer(clave)
+    clave, guardado = _de_cache(params, lat, lon, r_km, "gbif:")
     if guardado is None and sin_tiempo():
         return None
     if guardado is None:
@@ -237,12 +257,13 @@ def slug(texto: str) -> str:
 
 
 def detalles(qids: list[str], lote: int = 250) -> dict[str, dict]:
-    """Nombre (es/en), foto, web, Wikipedia en español, categoría UICN, Patrimonio Mundial y WDPA."""
+    """Nombre (es/en), foto, web, Wikipedia en español, categoría UICN, Patrimonio Mundial, WDPA y el mapa del contorno
+    en Commons (P3896)."""
     salida: dict[str, dict] = {}
     for i in range(0, len(qids), lote):
         valores = " ".join(f"wd:{q}" for q in qids[i : i + lote])
         filas = _sparql(
-            f"""SELECT ?x ?es ?en ?img ?web ?wiki ?iucnl ?wdpa ?unesco WHERE {{
+            f"""SELECT ?x ?es ?en ?img ?web ?wiki ?iucnl ?wdpa ?unesco ?forma WHERE {{
               VALUES ?x {{ {valores} }}
               OPTIONAL {{ ?x rdfs:label ?es FILTER(lang(?es) = "es") }}
               OPTIONAL {{ ?x rdfs:label ?en FILTER(lang(?en) = "en") }}
@@ -252,11 +273,12 @@ def detalles(qids: list[str], lote: int = 250) -> dict[str, dict]:
               OPTIONAL {{ ?x wdt:P814 ?iucn. ?iucn rdfs:label ?iucnl FILTER(lang(?iucnl) = "es") }}
               OPTIONAL {{ ?x wdt:P809 ?wdpa }}
               OPTIONAL {{ ?x wdt:P1435 wd:Q9259. BIND(true AS ?unesco) }}
+              OPTIONAL {{ ?x wdt:P3896 ?forma }}
             }}"""
         )
         for b in filas:
             d = salida.setdefault(_qid(b["x"]["value"]), {})
-            for campo in ("es", "en", "img", "web", "wiki", "iucnl", "wdpa", "unesco"):
+            for campo in ("es", "en", "img", "web", "wiki", "iucnl", "wdpa", "unesco", "forma"):
                 if campo in b and campo not in d:
                     d[campo] = b[campo]["value"]
     return salida

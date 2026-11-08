@@ -16,7 +16,7 @@ from pathlib import Path
 
 import requests
 
-from safari import entorno, limpieza, mundo, practico
+from safari import entorno, huellas, limpieza, mundo, practico
 from safari import gbif as gbif_nombres
 from safari.catalogo import cargar
 from safari.comun.ficheros import escribir_json
@@ -28,6 +28,20 @@ EXTERIORES = "https://www.exteriores.gob.es/"
 # especie en los parques donde está en la lista. Eran 12 hasta el 08-11-2026; GBIF ya da hasta 200 en la misma
 # petición (`mundo.gbif`), así que subir el corte solo cuesta tamaño (unos 2 MB más sin comprimir) y nombres comunes.
 MAX_MAMIFEROS = 40
+
+
+def _sin_perros(x: dict, g: dict) -> dict:
+    """El «lobo» sin los perros: GBIF los junta en la misma especie; se restan los de la subespecie doméstica."""
+    for especie, domestica in mundo.SUBESPECIE_DOMESTICA.items():
+        if not any(e[0] == especie for e in g["especies"]):
+            continue
+        try:
+            perros = mundo.conteo_taxon(x["lat"], x["lon"], x["radio_km"], domestica, x.get("forma"))
+        except _ERRORES:
+            perros = 0
+        g = {**g, "especies": [e if e[0] != especie else [especie, max(0, e[1] - perros)] for e in g["especies"]]}
+        g["especies"] = sorted([e for e in g["especies"] if e[1] > 0], key=lambda e: -e[1])
+    return g
 
 
 def _en_paralelo(funcion, elementos, hilos: int, etiqueta: str):
@@ -119,24 +133,38 @@ def calcular(hilos: int = 4, osm_max: int = 1500, limite: int | None = None) -> 
     for x, g in zip(lista, mam, strict=True):
         if g is None:
             continue
-        # el «lobo» sin los perros
-        for especie, domestica in mundo.SUBESPECIE_DOMESTICA.items():
-            fila = next((e for e in g["especies"] if e[0] == especie), None)
-            if fila:
-                try:
-                    perros = mundo.conteo_taxon(x["lat"], x["lon"], x["radio_km"], domestica)
-                except _ERRORES:
-                    perros = 0
-                g = {
-                    **g,
-                    "especies": [e if e[0] != especie else [especie, max(0, e[1] - perros)] for e in g["especies"]],
-                }
-                g["especies"] = sorted([e for e in g["especies"] if e[1] > 0], key=lambda e: -e[1])
+        g = _sin_perros(x, g)
         if x.get("destacado") or (len(g["especies"]) >= mundo.MIN_ESPECIES and g["obs"] >= mundo.MIN_OBS):
             elegidos.append({**x, "mam": g})
     print(f"  {len(elegidos)} parques con fauna", flush=True)
 
     det = mundo.detalles([x["qid"] for x in elegidos if x["qid"]])
+    # el contorno real (P3896, un mapa de Commons) donde lo hay: la fauna se vuelve a contar dentro de él, con la
+    # misma huella para todas las fuentes (safari/huellas.py); sin respuesta aún, se queda la del círculo
+    try:
+        formas = huellas.contornos([d["forma"] for d in det.values() if d.get("forma")])
+    except _ERRORES as e:
+        print(f"  sin contornos de Commons: {e}", flush=True)
+        formas = {}
+    # los destacados no: también se cuentan en iNaturalist, cuya API solo admite círculos, y las dos fuentes han de
+    # usar la misma zona
+    con_forma = [
+        x for x in elegidos if not x.get("destacado") and formas.get(det.get(x["qid"] or "", {}).get("forma", ""))
+    ]
+    print(f"  {len(con_forma)} parques con contorno; GBIF dentro de él…", flush=True)
+    for x in con_forma:
+        x["forma"] = formas[det[x["qid"]]["forma"]]
+    nuevos = _en_paralelo(
+        lambda x: mundo.gbif(x["lat"], x["lon"], x["radio_km"], mundo.MAMIFEROS, forma=x["forma"]),
+        con_forma,
+        hilos,
+        "GBIF",
+    )
+    for x, g in zip(con_forma, nuevos, strict=True):
+        if g is not None:
+            x["mam"] = _sin_perros(x, g)
+        else:
+            x.pop("forma")
     paises = mundo.paises([x["pais"] for x in elegidos if x["pais"]])
     paises_salida = {
         q: {
@@ -184,6 +212,8 @@ def calcular(hilos: int = 4, osm_max: int = 1500, limite: int | None = None) -> 
                     {},
                 ),
                 "obs": g["obs"],
+                "huella": "caja" if g.get("antigua") else "contorno" if x.get("forma") else "círculo",
+                "_forma": x.get("forma"),
                 "n_mamiferos": len(g["especies"]),
                 # unos pocos de margen: después se quitan los domésticos
                 "mamiferos": g["especies"][: MAX_MAMIFEROS + 5],
@@ -197,7 +227,12 @@ def calcular(hilos: int = 4, osm_max: int = 1500, limite: int | None = None) -> 
     parques = quitar_duplicados(parques)
     print(f"  {len(parques)} parques tras quitar duplicados; aves, clima y cómo llegar…", flush=True)
 
-    aves = _en_paralelo(lambda p: mundo.gbif(p["lat"], p["lon"], p["radio_km"], mundo.AVES, 40), parques, hilos, "aves")
+    aves = _en_paralelo(
+        lambda p: mundo.gbif(p["lat"], p["lon"], p["radio_km"], mundo.AVES, 40, forma=p["_forma"]),
+        parques,
+        hilos,
+        "aves",
+    )
     # nombres comunes antes que la lluvia y OSM, y sin límite de tiempo (peticiones rápidas): si se quedaban para el
     # final, al agotarse el tiempo la ficha salía con «Especie 5219461»
     claves = {k for p in parques for k, _ in p["mamiferos"]}
@@ -222,6 +257,7 @@ def calcular(hilos: int = 4, osm_max: int = 1500, limite: int | None = None) -> 
         p["epoca"] = practico.epoca(p["lat"], p.get("temporada"), p["lluvia_mm"], p["meses"])
         p["llegar"] = aeropuertos.llegar(p["lat"], p["lon"], p["radio_km"], paises.get(p["pais"] or "", {}).get("iso"))
         p["foto"] = fotos.get(p.pop("img")) if p.get("img") else p.pop("img", None)
+        p.pop("_forma", None)
 
     # nivel de cada parque (A destacados, B destinos de fauna, C el resto): decide qué se pide a OSM
     refinar({"paises": paises_salida, "estrella": {str(k): c for k, c in estrella.items()}, "parques": parques})

@@ -996,3 +996,11 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     pasa de 80 a 62 para dejar los mismos 491 parques. En «Cerca de mí», la confianza va al lado de las notas de
     verla y fotografiarla, no solo en el desglose; el ‰ de la nota sigue rebajado con poca muestra (es la mejor
     estimación del potencial), y la confianza se dice aparte.
+  - D3, huella de cada parque: GBIF contaba en una caja de latitud y longitud e iNaturalist en un círculo. Ahora GBIF
+    usa el mismo círculo (`geometry` en WKT, `safari/huellas.py`) y, en los parques que tienen contorno en Wikidata
+    (P3896, un mapa de Commons), el contorno real simplificado a 80 vértices, sin tope de radio. El tope de 40 km se
+    queda para los círculos: protege de superficies mal escritas en Wikidata (Alvão, 72 km² escrito 72 027). Los 65
+    destacados siguen con el círculo, porque iNaturalist (su otra fuente) no admite contornos. Transición: cambiar
+    la huella invalida la caché de GBIF; mientras un parque no tenga la consulta nueva y no quede tiempo, se usa la
+    de la caja guardada, para que no desaparezca de lo publicado, y su `huella` dice «caja» hasta que se recalcule
+    (con `--minutos 270` diarios, unos días). Cada parque publica su `huella`: «contorno», «círculo» o «caja».
