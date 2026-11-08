@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-08T18:18:06+00:00",
+ "actualizado": "2026-11-08T18:25:05+00:00",
  "ficheros": {
   "safaris_recientes.json": "3d8a1d0d024d",
   "safaris.json": "1f77e1ca083b",
@@ -13,6 +13,6 @@
   "espana_actividad.json": "768f6bb801d8",
   "espana_rutas.json": "bca2ba676f8d",
   "espana_rarezas.json": "93383e205363",
-  "espana_ebird.json": "a427abfd007e"
+  "espana_ebird.json": "c0b8f395d051"
  }
 }
