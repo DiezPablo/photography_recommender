@@ -18,6 +18,10 @@ on:
         description: "Solo consultas de prueba pequeñas (Gallocanta) para ver qué filtro vacía la descarga"
         type: boolean
         default: false
+      aceptar_evaluacion:
+        description: "Publicar aunque la evaluación empeore más de un 5 % (cambio de algoritmo aceptado a sabiendas)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -61,8 +65,11 @@ jobs:
         if: ${{ inputs.diagnostico }}
         run: python -m safari --espana-diagnostico
 
-      - name: GBIF y estacionalidad
+      # para (y no publica) si la evaluación empeora más de un 5 % frente a la línea base (decisión D10)
+      - name: GBIF, estacionalidad y evaluación
         if: ${{ !inputs.diagnostico }}
+        env:
+          ACEPTAR_EVALUACION: ${{ inputs.aceptar_evaluacion && '1' || '' }}
         run: python -m safari --espana
 
       - name: Frecuencia de detección de eBird (aves)
@@ -82,6 +89,12 @@ jobs:
           [ -s docs/espana-viabilidad.md ] || { echo "Sin informe (¿faltan los secretos de GBIF?)"; exit 0; }
           # con la API: el commit sale firmado por GitHub (verificado); no hace nada si el informe no cambió
           .github/scripts/subir_fichero.sh docs/espana-viabilidad.md "Viabilidad de España ($(date -u +%Y-%m-%d))"
+          # la evaluación de este cálculo y, la primera vez (o al aceptar un cambio), la línea base
+          [ -s docs/espana-evaluacion.json ] && .github/scripts/subir_fichero.sh docs/espana-evaluacion.json "Evaluación de España ($(date -u +%Y-%m-%d))" || true
+          if [ -s docs/espana-evaluacion-base.json ] && { [ "${{ inputs.aceptar_evaluacion }}" = "true" ] || ! git ls-files --error-unmatch docs/espana-evaluacion-base.json >/dev/null 2>&1; }; then
+            [ "${{ inputs.aceptar_evaluacion }}" = "true" ] && cp docs/espana-evaluacion.json /tmp/e.json && python3 -c "import json;json.dump(json.load(open('/tmp/e.json'))['grupos'],open('docs/espana-evaluacion-base.json','w'),indent=1)"
+            .github/scripts/subir_fichero.sh docs/espana-evaluacion-base.json "Línea base de la evaluación de España ($(date -u +%Y-%m-%d))"
+          fi
 
       - name: Publicar
         run: |

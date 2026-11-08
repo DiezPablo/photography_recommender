@@ -10,6 +10,8 @@ import { ZONAS_ESPANA, type BloqueEspana, type LugarFauna, type ObsReciente } fr
 
 export interface Espana {
   generado: string;
+  /** lo que más sube cada mes, calculado en el pipeline (safari/espana/cli.py, sube_por_mes): [[clave, ‰, media]] */
+  sube?: [string, number, number][][];
   fuente?: { cita?: string };
   especies: BloqueEspana["especies"];
   celdas: BloqueEspana["celdas"];
@@ -566,6 +568,19 @@ let delMes: EspecieDelMes[][] | undefined;
  * una vez por proceso. */
 export function especiesPorMes(max = 8): EspecieDelMes[][] {
   if (delMes) return delMes;
+  // desde el 08-11-2026 lo calcula el pipeline (con pruebas); aquí solo se ponen los nombres. Con datos anteriores,
+  // el cálculo de antes
+  const e = cargarEspana();
+  if (e?.sube) {
+    const lista = new Map(listaEspeciesEspana().map((x) => [x.k, x]));
+    delMes = e.sube.map((mes) =>
+      mes.flatMap(([k, v, media]) => {
+        const x = lista.get(k);
+        return x ? [{ k, n: x.n, c: x.c, clase: x.clase, mes: v, media, celdas: x.celdas }] : [];
+      }),
+    );
+    return delMes;
+  }
   const meses: EspecieDelMes[][] = Array.from({ length: 12 }, () => []);
   for (const x of listaEspeciesEspana()) {
     if (x.celdas < 150 || x.estado) continue;

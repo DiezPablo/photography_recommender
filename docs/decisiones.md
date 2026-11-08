@@ -1004,3 +1004,17 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     la huella invalida la caché de GBIF; mientras un parque no tenga la consulta nueva y no quede tiempo, se usa la
     de la caja guardada, para que no desaparezca de lo publicado, y su `huella` dice «caja» hasta que se recalcule
     (con `--minutos 270` diarios, unos días). Cada parque publica su `huella`: «contorno», «círculo» o «caja».
+  - D10, evaluación con umbral del 5 %: el backtest anterior (cuántas de las 20 especies más frecuentes se veían al
+    año siguiente) daba 1,0 en todas las zonas y no distinguía un modelo bueno de uno malo. `safari/espana/
+    evaluacion.py` predice, con 2015 a N-1, qué especies se registran en cada cuadrícula, grupo y mes del año N y mide
+    el AUC (probabilidad de que una especie registrada quede por encima de una que no), frente a un modelo ingenuo
+    sin meses. Va en `python -m safari --espana`: la primera vez guarda la línea base
+    (`docs/espana-evaluacion-base.json`); después, si algún grupo empeora más de un 5 %, para y el workflow no
+    publica, salvo que se lance a mano con «aceptar_evaluacion» (cambio aceptado a sabiendas, que pasa a ser la nueva
+    línea base). Cada cálculo deja su resultado en `docs/espana-evaluacion.json`.
+  - D7, primera parte: «lo que más sube en el mes» de la carta se calcula en el pipeline (`sube_por_mes` en
+    `safari/espana/cli.py`, con prueba) y va en `espana.json`; la web solo pone los nombres (y lo calcula como antes
+    mientras los datos publicados no lo traigan). Quedan en TypeScript, para siguientes partes: la puntuación de
+    «Cerca de mí» (depende del día y del tiempo, y tiene que quedarse en el navegador), el orden de parques por mes
+    de safaris (depende de lo visto en 30 días) y los rankings de «Este finde»; la evaluación de D10 está pensada
+    para medir también esos cuando pasen a Python.

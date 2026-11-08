@@ -12,12 +12,13 @@ from __future__ import annotations
 
 import gzip
 import json
+import os
 from collections import defaultdict
 from datetime import date
 from pathlib import Path
 
 from safari.comun.ficheros import escribir_json
-from safari.espana import gbif_descarga, nombres
+from safari.espana import evaluacion, gbif_descarga, nombres
 from safari.espana.estacionalidad import backtest, estacionalidad, ranking
 from safari.espana.zonas import ZONAS, celdas
 from safari.frecuencia import muestra
@@ -136,6 +137,61 @@ def informe(filas: list[dict], meta: dict, nombre_de) -> str:
     return "\n".join(lineas)
 
 
+def sube_por_mes(celdas_: dict, especies: dict, max_n: int = 8) -> list[list[list]]:
+    """Las especies que más suben cada mes respecto a su media del año en toda España (en 150 cuadrículas o más, con
+    3 ‰ o más ese mes y al menos 1,5 veces su media): «lo que más sube» de la carta. Antes se calculaba en la web
+    (`especiesPorMes`); aquí, con pruebas, en el pipeline (decisión D7 de la auditoría, 08-11-2026). La curva de cada
+    especie es la de la web: su ‰ en cada cuadrícula ponderado por la muestra de su grupo allí."""
+    suma: dict[str, list[float]] = defaultdict(lambda: [0.0] * 12)
+    peso: dict[str, list[float]] = defaultdict(lambda: [0.0] * 12)
+    n_celdas: dict[str, int] = defaultdict(int)
+    for c in celdas_.values():
+        for k, meses in c["e"].items():
+            clase = (especies.get(k) or {}).get("clase") or "Aves"
+            base = c["m"].get(clase, [0] * 12)
+            n_celdas[k] += 1
+            for i, v in enumerate(meses):
+                if v is not None:
+                    suma[k][i] += v * base[i]
+                    peso[k][i] += base[i]
+    meses_sube: list[list[tuple[float, str, int, float]]] = [[] for _ in range(12)]
+    for k, n in n_celdas.items():
+        e = especies.get(k) or {}
+        if n < 150 or e.get("estado"):
+            continue
+        curva = [round(suma[k][i] / peso[k][i]) if peso[k][i] else None for i in range(12)]
+        con_dato = [v for v in curva if v is not None]
+        if len(con_dato) < 10:
+            continue
+        media = sum(con_dato) / len(con_dato)
+        for i, v in enumerate(curva):
+            if v is not None and v >= 3 and v >= 1.5 * media:
+                meses_sube[i].append((v / media, k, v, round(media, 1)))
+    # [[clave, ‰ ese mes, media del año], …] por mes, de más a menos subida
+    return [[[k, v, m] for _, k, v, m in sorted(xs, reverse=True)[:max_n]] for xs in meses_sube]
+
+
+def evaluar_y_vigilar(filas: list[dict]) -> dict:
+    """Evaluación del último año completo (safari/espana/evaluacion.py). Con línea base, se para si algún grupo
+    empeora más de un 5 % (salvo ACEPTAR_EVALUACION=1, para aceptar a sabiendas un cambio); sin ella, esta pasa a
+    ser la línea base."""
+    ultimo = max(f["anio"] for f in filas) - 1
+    ev = evaluacion.evaluar(filas, ultimo)
+    print(f"España, evaluación {ultimo}: {json.dumps(ev)}", flush=True)
+    Path("docs/espana-evaluacion.json").write_text(
+        json.dumps({"anio": ultimo, "grupos": ev}, indent=1, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    base = evaluacion.leer_base()
+    if base is None:
+        evaluacion.BASE.write_text(json.dumps(ev, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+        print("  sin línea base: esta pasa a serlo", flush=True)
+    elif problemas := evaluacion.comparar(ev, base):
+        print("  empeora más de un 5 %: " + "; ".join(problemas), flush=True)
+        if not os.environ.get("ACEPTAR_EVALUACION"):
+            raise SystemExit("España: la evaluación empeora más de un 5 % respecto a la línea base; no se publica")
+    return ev
+
+
 def main(salida: Path = Path("public/datos/espana.json"), descargar: bool = True) -> None:
     r = cargar_filas(descargar)
     if r is None:
@@ -143,6 +199,7 @@ def main(salida: Path = Path("public/datos/espana.json"), descargar: bool = True
         return
     filas, meta = r
     print(f"España: {len(filas)} filas", flush=True)
+    evaluar_y_vigilar(filas)
     celdas_ = por_celda(filas)
     claves = sorted({int(k) for c in celdas_.values() for k in c["e"]})
     clase_de = {f["especie"]: CLASE_NOMBRE.get(f["clase"], str(f["clase"])) for f in filas}
@@ -184,6 +241,7 @@ def main(salida: Path = Path("public/datos/espana.json"), descargar: bool = True
             },
             "especies": especies,
             "celdas": celdas_,
+            "sube": sube_por_mes(celdas_, especies),
         },
     )
     Path("docs/espana-viabilidad.md").write_text(informe(filas, meta, nombre_de), encoding="utf-8")
