@@ -63,9 +63,11 @@ NO_NATURALEZA = re.compile(
 COMUNES = {"Tachyglossus aculeatus", "Macropus fuliginosus", "Phascolarctos cinereus"}
 
 
-def puntuacion(n_especies: int, obs: int, n_estrella: int = 0) -> float:
-    """Más peso a las especies emblemáticas (lo que se va a ver en un safari) que a la riqueza total."""
-    return round(25 * n_estrella + min(n_especies, 80) * math.log10(obs + 10) / 2, 1)
+def puntuacion(n_especies: int, n_estrella: int = 0) -> float:
+    """Potencial de fauna: más peso a las especies emblemáticas (lo que se va a ver en un safari) que a la riqueza
+    total. No entra el número de observaciones (decisión D2 de la auditoría, 08-11-2026): es la muestra, la confianza
+    del dato, y va aparte (`obs`, «o» en el índice); antes sumaba log10(obs) y premiaba los parques más visitados."""
+    return round(25 * n_estrella + min(n_especies, 80), 1)
 
 
 def nativos(curados: list[dict] | None = None) -> dict[str, set[str]]:
@@ -208,7 +210,7 @@ def refinar(datos: dict, curados: list[dict] | None = None) -> dict:
         elif cont:
             p["estrella"] = {k: n for k, n in p["estrella"].items() if cont in areas.get(cientifico.get(k, ""), {cont})}
         n_estrella = sum(1 for n in p["estrella"].values() if n >= MIN_OBS_ESTRELLA)
-        p["puntuacion"] = puntuacion(p["n_mamiferos"], p["obs"], n_estrella)
+        p["puntuacion"] = puntuacion(p["n_mamiferos"], n_estrella)
         p["nivel"] = nivel(p, cientifico)
         # la limpieza de OSM también sobre lo ya publicado (el refinado diario no vuelve a pedir nada a OSM)
         if p.get("osm"):

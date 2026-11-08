@@ -66,7 +66,8 @@ export function CincoGrandes({
 export function CombinaCon({ p, mundo, nombre }: { p: ParqueMundo; mundo: Mundo; nombre: string }) {
   const propia = epocaDe(p);
   const cerca = mundo.parques
-    .filter((x) => x.id !== p.id && x.puntuacion >= 80 && x.nivel !== "C")
+    // 62 con el potencial sin la muestra (D2, 08-11-2026): deja los mismos 491 parques que 80 con la nota de antes
+    .filter((x) => x.id !== p.id && x.puntuacion >= 62 && x.nivel !== "C")
     .map((x) => {
       const km = distanciaKm(p, x);
       const comun = propia.filter((m) => epocaDe(x).includes(m));

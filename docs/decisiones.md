@@ -989,3 +989,10 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     cada publicación). La web de eBird bloquea la lectura automática de sus condiciones (403): el resumen sale de su
     centro de ayuda y de copias indexadas, y conviene que el usuario las lea. Si algún día hay uso comercial (D9),
     estos ficheros necesitan permiso escrito del Cornell Lab.
+  - D2, potencial y confianza por separado: la nota de cada parque del mundo (`puntuacion`, «s» del índice) deja de
+    sumar log10(observaciones), que premiaba los parques más visitados: ahora es solo potencial (25 por especie
+    estrella con 5 registros o más, más las especies de mamíferos hasta 80). La muestra va aparte («o» en el índice)
+    y las tarjetas del explorador la enseñan con su confianza («11.627 registros (confianza alta)»). «Combina con»
+    pasa de 80 a 62 para dejar los mismos 491 parques. En «Cerca de mí», la confianza va al lado de las notas de
+    verla y fotografiarla, no solo en el desglose; el ‰ de la nota sigue rebajado con poca muestra (es la mejor
+    estimación del potencial), y la confianza se dice aparte.

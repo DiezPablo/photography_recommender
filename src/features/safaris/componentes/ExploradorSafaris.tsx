@@ -9,7 +9,7 @@ import { MESES } from "@/lib/fechas";
 import { buscarZonas } from "@/features/safaris/zonas";
 import { POR_TU_CUENTA } from "@/features/safaris/paises";
 import { EDAD_MINIMA, SIN_MALARIA } from "@/features/safaris/familias";
-import { esDestino, buenaEpoca, CONTINENTES, type FilaIndice } from "@/features/safaris/modelo";
+import { esDestino, buenaEpoca, confianza, CONTINENTES, type FilaIndice } from "@/features/safaris/modelo";
 import { useParametrosUrl } from "@/lib/almacen";
 import { FOTOGRAFIA, type FotografiaParque } from "@/features/safaris/fotografiaParques";
 import SelectorEspecie, { type OpcionEspecie } from "@/ui/SelectorEspecie";
@@ -334,8 +334,15 @@ export default function ExploradorSafaris({
                     <Link href={`/parque/${f.id}`}>{f.n}</Link>
                   </h3>
                   <p className="meta">
-                    {f.p ?? "—"} · {f.m >= 200 ? "200+" : f.m} especies de mamíferos
+                    {f.p ? `${f.p} · ` : ""}
+                    {f.m >= 200 ? "200+" : f.m} especies de mamíferos
                     {f.d && " · destacado"}
+                    {f.o !== undefined && (
+                      <span className="confianza-parque">
+                        {" "}
+                        · {f.o.toLocaleString("es-ES")} registros ({confianza(f.o)?.texto ?? "muy poca muestra"})
+                      </span>
+                    )}
                   </p>
                   <p className={epoca ? "en-temporada" : "fuera-temporada"}>
                     {epoca

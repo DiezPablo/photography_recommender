@@ -190,7 +190,7 @@ def calcular(hilos: int = 4, osm_max: int = 1500, limite: int | None = None) -> 
                 "estrella": {str(k): n for k, n in g["especies"] if k in estrella},
                 "meses": g["meses"],
                 "puntuacion": puntuacion(
-                    len(g["especies"]), g["obs"], sum(1 for k, n in g["especies"] if k in estrella and n >= 5)
+                    len(g["especies"]), sum(1 for k, n in g["especies"] if k in estrella and n >= 5)
                 ),
             }
         )
@@ -306,6 +306,8 @@ def indice(datos: dict) -> list[dict]:
                 "lo": p["lon"],
                 "r": p["radio_km"],
                 "s": p["puntuacion"],
+                # la muestra (observaciones de mamíferos): la confianza, aparte del potencial
+                "o": p.get("obs", 0),
                 "m": p["n_mamiferos"],
                 "e": [int(k) for k in p["estrella"]],
                 "nv": p.get("nivel", "C"),

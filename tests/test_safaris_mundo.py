@@ -95,8 +95,10 @@ def test_duplicados_e_indice():
     assert [p["id"] for p in sin] == ["a", "c"]  # el de la misma zona sobra; uno lejos con el mismo nombre, no
     filas = indice({"parques": sin, "paises": {"Q258": {"nombre": "Sudáfrica", "continente": "África"}}})
     assert filas[0]["p"] == "Sudáfrica" and filas[0]["c"] == "África"
-    assert puntuacion(90, 1000) > puntuacion(50, 1000)
-    assert puntuacion(40, 1000, n_estrella=8) > puntuacion(200, 50000, n_estrella=1)  # el safari, no los murciélagos
+    assert puntuacion(90) > puntuacion(50)
+    assert puntuacion(40, n_estrella=8) > puntuacion(200, n_estrella=1)  # el safari, no los murciélagos
+    # el potencial no depende de cuántas observaciones hay detrás (eso es la confianza, aparte)
+    assert puntuacion(60, n_estrella=3) == puntuacion(60, n_estrella=3)
 
 
 def test_todos_los_parques_tienen_epoca():

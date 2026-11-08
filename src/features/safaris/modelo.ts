@@ -264,6 +264,8 @@ export interface FilaIndice {
   em?: MotivoEpoca | null;
   /** A destacados, B destinos de fauna, C el resto de espacios protegidos (ocultos por defecto) */
   nv?: Nivel;
+  /** observaciones de mamíferos detrás (la muestra: la confianza, aparte del potencial `s`) */
+  o?: number;
 }
 
 export type Nivel = "A" | "B" | "C";

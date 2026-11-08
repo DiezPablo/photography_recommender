@@ -402,7 +402,8 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                           {hayVistas && !vistas[e.clave] && <span className="chip etiqueta-nueva">nueva para ti</span>}
                         </span>
                         <span className="notas-especie">
-                          Verla {Math.round(e.nota.verla * 10)}/10 · foto {Math.round(e.nota.fotografiarla * 10)}/10
+                          Verla {Math.round(e.nota.verla * 10)}/10 · foto {Math.round(e.nota.fotografiarla * 10)}/10 ·{" "}
+                          <span className={`confianza-${c?.clave ?? "ninguna"}`}>{c?.texto ?? "muy poca muestra"}</span>
                           {e.ultima && <span className="visto-reciente"> · vista el {fechaCorta(e.ultima.f)}</span>}
                         </span>
                       </summary>
