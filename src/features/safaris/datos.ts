@@ -247,7 +247,13 @@ export function entradasBusqueda(todos = true): EntradaBusqueda[] {
     });
   for (const [clave, cientifico] of Object.entries(cargarMundo()?.estrella ?? {}))
     if (!conFicha.has(cientifico))
-      salida.push({ tipo: "especie", t: nombreEstrella(clave), s: cientifico, href: `/?especie=${clave}`, w: 0.5 });
+      salida.push({
+        tipo: "especie",
+        t: nombreEstrella(clave),
+        s: cientifico,
+        href: `/safaris?especie=${clave}`,
+        w: 0.5,
+      });
   const destacados = paisesDestacados();
   const conGuia = new Map([...destacados].map(([slug, nombre]) => [nombre, slug]));
   const paises = new Map<string, number>();
@@ -257,7 +263,7 @@ export function entradasBusqueda(todos = true): EntradaBusqueda[] {
       tipo: "pais",
       t: pais,
       d: `${n} ${n === 1 ? "destino" : "destinos"}`,
-      href: conGuia.has(pais) ? `/safari-en/${conGuia.get(pais)}` : `/?q=${encodeURIComponent(pais)}`,
+      href: conGuia.has(pais) ? `/safari-en/${conGuia.get(pais)}` : `/safaris?q=${encodeURIComponent(pais)}`,
       w: conGuia.has(pais) ? 1 : 0.5,
     });
   return salida;

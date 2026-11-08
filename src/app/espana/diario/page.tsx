@@ -17,7 +17,7 @@ export default function PaginaDiario() {
     <main className="calendario safaris espana">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/espana">España</Link> · <Link href="/espana/mis-especies">Mis especies</Link>
+          <Link href="/">España</Link> · <Link href="/espana/mis-especies">Mis especies</Link>
         </p>
         <h1>Mi diario de salidas</h1>
       </header>

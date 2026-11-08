@@ -15,7 +15,7 @@ export default function PaginaPresupuesto() {
     <main className="calendario safaris presupuesto">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/">Safaris</Link> · presupuesto
+          <Link href="/safaris">Safaris</Link> · presupuesto
         </p>
         <h1>Presupuesto sin sorpresas</h1>
         <p className="entradilla">

@@ -16,7 +16,7 @@ export default function PaginaPlanificar() {
     <main className="calendario safaris planificar">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/">Safaris</Link> · planificador
+          <Link href="/safaris">Safaris</Link> · planificador
         </p>
         <h1>Planifica tu ruta</h1>
         <p className="entradilla">

@@ -28,15 +28,15 @@ interface Seccion {
   movil?: boolean;
 }
 
-const enEspana = (r: string) => r.startsWith("/espana");
+const enEspana = (r: string) => r === "/" || r.startsWith("/espana");
 const modo = (q: URLSearchParams) => q.get("modo") ?? (q.has("lat") || q.has("zona") ? "aqui" : "inicio");
 
 const SAFARIS: Seccion[] = [
   {
-    href: "/",
+    href: "/safaris",
     texto: "Destinos",
     Icono: IconoBrujula,
-    activa: (r) => r === "/" || r.startsWith("/parque"),
+    activa: (r) => r === "/safaris" || r.startsWith("/parque"),
     movil: true,
   },
   { href: "/mapa", texto: "Mapa", Icono: IconoCarta, activa: (r) => r.startsWith("/mapa"), movil: true },
@@ -59,10 +59,10 @@ const SAFARIS: Seccion[] = [
 
 const ESPANA: Seccion[] = [
   {
-    href: "/espana",
+    href: "/",
     texto: "Mapa",
     Icono: IconoCarta,
-    activa: (r, q) => r === "/espana" && modo(q) === "inicio",
+    activa: (r, q) => r === "/" || (r === "/espana" && modo(q) === "inicio"),
     movil: true,
   },
   {
@@ -121,10 +121,10 @@ export function Mundos() {
   const { espana } = useNav();
   return (
     <nav className="mundos" aria-label="Sección de la web">
-      <Link href="/" aria-current={espana ? undefined : "page"}>
+      <Link href="/safaris" aria-current={espana ? undefined : "page"}>
         Safaris
       </Link>
-      <Link href="/espana" aria-current={espana ? "page" : undefined}>
+      <Link href="/" aria-current={espana ? "page" : undefined}>
         España
       </Link>
     </nav>

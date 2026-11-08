@@ -26,7 +26,7 @@ export default async function PaginaBuscar({ searchParams }: Props) {
       {q && !resultados.length && (
         <p>
           Nada con «{q}». Prueba con otro nombre (también en inglés o el científico) o{" "}
-          <Link href="/">explora todos los destinos</Link>.
+          <Link href="/safaris">explora todos los destinos</Link>.
         </p>
       )}
       {resultados.length > 0 && (

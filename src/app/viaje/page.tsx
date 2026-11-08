@@ -15,7 +15,7 @@ export default function PaginaViaje() {
     <main className="calendario safaris viaje">
       <header className="titular">
         <p className="rotulo no-imprimir">
-          <Link href="/">Safaris</Link> · mi viaje
+          <Link href="/safaris">Safaris</Link> · mi viaje
         </p>
         <h1>Mi viaje</h1>
       </header>

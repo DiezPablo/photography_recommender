@@ -21,7 +21,7 @@ export default function PaginaRarezas() {
     <main className="calendario safaris espana">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/espana">España</Link>
+          <Link href="/">España</Link>
         </p>
         <h1>Rarezas esta semana</h1>
         <p className="entradilla">

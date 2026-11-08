@@ -174,7 +174,7 @@ export default async function PaginaComparar({ searchParams }: Props) {
     <main className="calendario safaris comparar">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/">Safaris</Link> · hasta {MAX_COMPARAR} parques
+          <Link href="/safaris">Safaris</Link> · hasta {MAX_COMPARAR} parques
         </p>
         <h1>Comparar parques{parques.length ? ` en ${nombreMes}` : ""}</h1>
         <p className="entradilla">

@@ -1,186 +1,40 @@
+// Portada (decisión de la auditoría, 08-11-2026): la carta de España, la parte más útil de la web. Los safaris
+// están en /safaris; los enlaces antiguos a la portada de safaris (con ?ver=, ?q=, ?continente=… o una especie que
+// no es una clave de GBIF) se llevan allí con sus parámetros.
 import type { Metadata } from "next";
-import Link from "next/link";
-import { MESES } from "@/lib/fechas";
-import { MIGRACION } from "@/features/safaris/migracion";
-import FotoGrande from "@/ui/FotoGrande";
-import QueVer from "@/features/safaris/componentes/QueVer";
-import ExploradorSafaris from "@/features/safaris/componentes/ExploradorSafaris";
-import EntradasHero from "@/features/safaris/componentes/EntradasHero";
-import { listaEspeciesEspana } from "@/features/espana/datos";
-import {
-  cargarRecientes,
-  cargarSafaris,
-  cifras,
-  fotoFauna,
-  primerosDelIndice,
-  enTemporada,
-  especiePorTaxon,
-  opcionesEspecie,
-  nombreTaxon,
-  puntuacionAhora,
-} from "@/features/safaris/datos";
+import { redirect } from "next/navigation";
+import CartaEspana from "@/features/carta/CartaEspana";
+import { especiesPorMes, listaEspeciesEspana } from "@/features/espana/datos";
 import { fechaLocal } from "@/lib/sol";
-import { esNd, origenFoto, textoCredito } from "@/ui/Credito";
-import { fuenteImagen } from "@/lib/imagenes";
 
 export const metadata: Metadata = {
-  title: "Safaris",
+  title: { absolute: "Atlas de fauna · dónde y cuándo ver cada animal en España y en el mundo" },
   description:
-    "Parques de safari de todo el mundo: cuándo ir, qué especies se ven (y qué se ha visto este mes), tipos de safari, tasas, alojamientos y consejos.",
+    "Mapa de España por cuadrícula de 10 km: cuánto se registra cada especie cada mes (GBIF y eBird), con la muestra detrás, la luz del día y el tiempo. Y los parques de safari del mundo.",
 };
 
-export default function PaginaSafaris() {
-  const datos = cargarSafaris();
-  const recientes = cargarRecientes();
-  const mesHoy = Number(fechaLocal(new Date()).slice(5, 7)) - 1;
-  const parques = datos?.parques ?? [];
-  const ahora = parques
-    .filter((p) => enTemporada(p, mesHoy))
-    .sort((a, b) => puntuacionAhora(b, mesHoy, recientes) - puntuacionAhora(a, mesHoy, recientes))
-    .slice(0, 6);
-  const c = cifras();
-  // la foto de la portada: el primer destacado en buena época este mes que tenga foto
-  // la cabecera: un animal (especie estrella) del primer destacado en buena época que tenga foto
-  const conFauna = [...ahora, ...parques].map((p) => ({ p, f: fotoFauna(p) })).find((x) => x.f);
-  const hero = conFauna?.p ?? ahora.find((p) => p.foto) ?? parques.find((p) => p.foto);
-  const fotoHero = conFauna?.f?.foto ?? hero?.foto ?? null;
-  const opciones = opcionesEspecie();
-  // ejemplos para quien llega por primera vez (T36)
-  const tigre = opciones.find((o) => o.cientifico === "Panthera tigris");
-  const grulla = listaEspeciesEspana().find((e) => e.c === "Grus grus");
+export const dynamic = "force-dynamic";
+
+/** Los parámetros que entiende la carta; cualquier otro es de la portada antigua de safaris. */
+const DE_LA_CARTA = new Set(["especie", "mes", "fecha", "celda", "c", "z", "sin"]);
+
+type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
+
+export default async function Portada({ searchParams }: Props) {
+  const q = await searchParams;
+  const claves = Object.keys(q);
+  const especie = typeof q.especie === "string" ? q.especie : null;
+  // ?especie= también lo usaba la portada de safaris (clave de GBIF de un mamífero del mundo): si no es una especie
+  // de España, es un enlace antiguo de safaris
+  const deSafaris = especie !== null && !listaEspeciesEspana().some((e) => e.k === especie);
+  if (claves.some((k) => !DE_LA_CARTA.has(k)) || deSafaris) {
+    const p = new URLSearchParams();
+    for (const [k, v] of Object.entries(q)) for (const x of [v ?? []].flat()) p.append(k, x);
+    redirect(`/safaris?${p}`);
+  }
   return (
-    <main className="calendario fauna safaris">
-      <figure className="portada-hero">
-        {fotoHero && (
-          <FotoGrande
-            src={fotoHero.url}
-            posicion={fotoHero.posicion}
-            alt={conFauna?.f ? `${conFauna.f.especie}, especie estrella de ${conFauna.p.nombre}` : hero?.nombre}
-          />
-        )}
-        <div className="portada-hero-texto">
-          <h1>Dónde y cuándo ver cada animal</h1>
-          <p>
-            Los parques y reservas de todo el mundo con lo que se ve cada mes, lo que se ha visto en las últimas semanas
-            y cómo organizarlo: rutas, presupuesto y operadores locales, sin intermediarios.
-          </p>
-          <EntradasHero opciones={opciones} mesHoy={mesHoy} />
-          <p className="ejemplos-hero">
-            Para empezar: {tigre && <Link href={`/?especie=${tigre.clave}&mes=marzo#explorar`}>Tigres en marzo</Link>}
-            <Link href="/?ninos=1#explorar">Safari sin malaria con niños</Link>
-            {grulla && <Link href={`/espana/especie/${grulla.k}`}>Grullas en España</Link>}
-          </p>
-          <div className="acciones">
-            <Link href="/planificar">Planifica tu safari</Link>
-            <Link href="/migracion">Dónde está la migración</Link>
-          </div>
-        </div>
-        {fotoHero && hero && (
-          <figcaption>
-            {conFauna?.f ? `${conFauna.f.especie} · ${hero.nombre}` : hero.nombre} ·{" "}
-            {origenFoto(fotoHero) ? (
-              <a href={origenFoto(fotoHero)!} rel="noopener">
-                {textoCredito(fotoHero)}
-              </a>
-            ) : (
-              textoCredito(fotoHero)
-            )}
-          </figcaption>
-        )}
-      </figure>
-
-      <QueVer mesHoy={mesHoy} />
-
-      {parques.length ? (
-        <>
-          <ExploradorSafaris
-            especies={opciones}
-            mesHoy={mesHoy}
-            fotos={Object.fromEntries(parques.filter((p) => p.foto).map((p) => [p.id, p.foto!.url]))}
-            iniciales={primerosDelIndice(mesHoy)}
-          />
-        </>
-      ) : (
-        <p>Los safaris aún no están disponibles.</p>
-      )}
-      {ahora.length > 0 && (
-        <section className="seccion">
-          <h2>En buena época ahora, en {MESES[mesHoy]}</h2>
-          <ul className="tarjetas-ahora">
-            {ahora.map((p) => {
-              const r = recientes?.parques[p.id];
-              // primero las especies estrella del parque vistas este mes (el varano en Komodo), luego el resto
-              const estrellaVistas = p.estrella
-                .filter((t) => (r?.estrella[String(t)] ?? 0) > 0)
-                .map((t) => especiePorTaxon(t))
-                .filter((e) => e !== undefined)
-                .map((e) => nombreTaxon(e));
-              const top = [
-                ...estrellaVistas,
-                ...(r?.mamiferos ?? []).map((m) => m.nombre ?? m.cientifico).filter((n) => !estrellaVistas.includes(n)),
-              ].slice(0, 3);
-              return (
-                <li key={p.id}>
-                  <Link href={`/parque/${p.id}`}>
-                    {p.foto && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        {...fuenteImagen(p.foto.url, "(max-width: 600px) 50vw, (max-width: 1100px) 33vw, 240px")}
-                        width={500}
-                        height={333}
-                        alt={`${p.nombre} (${p.pais})`}
-                        title={textoCredito(p.foto)}
-                        loading="lazy"
-                        className={esNd(p.foto) ? "foto-nd" : undefined}
-                      />
-                    )}
-                    <span className="rotulo">{p.pais}</span>
-                    <b>{p.nombre}</b>
-                    {top?.length ? <small>Visto este mes: {top.join(", ")}</small> : null}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-          <p className="enlaces">
-            <Link href={`/safari-en/${MESES[mesHoy]}`}>Todos los parques en su mejor época en {MESES[mesHoy]} →</Link>
-            <Link href="/safari-en">Otros meses y países →</Link>
-          </p>
-        </section>
-      )}
-
-      <section className="seccion franja-migracion">
-        <p className="rotulo">La gran migración</p>
-        <h2>
-          En {MESES[mesHoy]}, {MIGRACION[mesHoy].zona}
-        </h2>
-        <p>
-          {MIGRACION[mesHoy].que}
-          {MIGRACION[mesHoy].lluvias
-            ? " Son las lluvias largas: temporada verde, más barata y con pistas embarradas."
-            : ""}
-        </p>
-        <p className="enlaces">
-          <Link href="/migracion">Ver el mapa y lo visto este mes</Link>
-          <Link href="/planificar?pais=Tanzania">Planificar un safari en Tanzania</Link>
-        </p>
-      </section>
-
-      <section className="portada-cifras" aria-label="En cifras">
-        <p>
-          <b>{c.destinos.toLocaleString("es-ES")}</b>
-          <span>destinos de fauna, {c.destacados} de ellos destacados</span>
-        </p>
-        <p>
-          <b>{c.paises}</b>
-          <span>países</span>
-        </p>
-        <p>
-          <b>{c.especies}</b>
-          <span>especies con ficha, mes a mes</span>
-        </p>
-      </section>
-      <p className="confianza-portada">Sin comisiones: reservas directamente con el parque, el lodge o el operador.</p>
+    <main className="carta-pagina">
+      <CartaEspana hoy={fechaLocal(new Date())} delMes={especiesPorMes()} />
     </main>
   );
 }

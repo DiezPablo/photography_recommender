@@ -2,7 +2,7 @@
 import { expect, test } from "@playwright/test";
 
 test("buscador: cómo ir en botones, filtro de fotografía y sugerencia si no hay resultados", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/safaris");
   await expect(page.locator(".rejilla-safaris li").first()).toBeVisible();
   await page.getByRole("button", { name: "Por mi cuenta (turismo)" }).click();
   await expect(page).toHaveURL(/cuenta=turismo/);
@@ -20,7 +20,7 @@ test("buscador: cómo ir en botones, filtro de fotografía y sugerencia si no ha
 });
 
 test("portada: ejemplos para empezar", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/safaris");
   await expect(page.locator(".ejemplos-hero")).toContainText("Safari sin malaria con niños");
   await page.locator(".ejemplos-hero").getByRole("link", { name: "Safari sin malaria con niños" }).click();
   await expect(page).toHaveURL(/ninos=1/);

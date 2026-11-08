@@ -251,7 +251,7 @@ export default function Planificador({ mesHoy, paisesIniciales = [] }: { mesHoy:
         {plan.sinCubrir.length > 0 && (
           <p className="aviso-plan">
             Sin cubrir en {pais}: {plan.sinCubrir.map((k) => nombre.get(k)).join(", ")}. Prueba con más noches o mira en{" "}
-            <Link href={`/?ver=${plan.sinCubrir.join(",")}&mes=${mes}`}>qué parques del mundo se ven</Link>.
+            <Link href={`/safaris?ver=${plan.sinCubrir.join(",")}&mes=${mes}`}>qué parques del mundo se ven</Link>.
           </p>
         )}
         <ol className="etapas-plan">

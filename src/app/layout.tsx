@@ -67,12 +67,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <nav aria-label="Mapa del sitio">
               <p>Descubrir</p>
-              <Link href="/">Destinos</Link>
+              <Link href="/safaris">Destinos</Link>
               <Link href="/especies">Animales</Link>
               <Link href="/safari-en">Calendario</Link>
               <Link href="/migracion">La gran migración</Link>
               <Link href="/temporada-verde">Temporada verde</Link>
-              <Link href="/espana">España</Link>
+              <Link href="/">España</Link>
               <a href="/recientes.xml">Lo visto, por RSS</a>
             </nav>
             <nav aria-label="Organizar">

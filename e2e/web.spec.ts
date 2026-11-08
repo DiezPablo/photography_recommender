@@ -60,7 +60,7 @@ test("safaris: buscar por mes y especie, ficha de parque y especie", async ({ pa
     "aún no se han publicado los safaris",
   );
   const errores = vigilar(page);
-  await page.goto("/");
+  await page.goto("/safaris");
   await expect(page.locator("h1")).toHaveText("Dónde y cuándo ver cada animal");
   await expect(page.locator(".rejilla-safaris li").first()).toBeVisible();
   // en agosto, el Masái Mara (la migración) está en temporada
@@ -113,7 +113,7 @@ test("safaris del mundo: ficha de un parque fuera del catálogo con cómo llegar
 
 test("qué ver y cuándo: elegir especies y mes da parques con esas especies", async ({ page }, info) => {
   const errores = vigilar(page);
-  await page.goto("/");
+  await page.goto("/safaris");
   const grupo = page.getByRole("group", { name: "Animales" });
   const visible = await grupo
     .waitFor({ timeout: 10000 })
@@ -200,7 +200,7 @@ test("planificador: noches repartidas como un operador (4 noches en Tanzania no 
 });
 
 test("buscar zonas que no son parques: Ndutu lleva al Ngorongoro", async ({ page }) => {
-  await page.goto("/?q=ndutu");
+  await page.goto("/safaris?q=ndutu");
   const zona = page.locator(".zonas-busqueda li").first();
   const hay = await zona
     .waitFor({ timeout: 10000 })
@@ -260,7 +260,7 @@ test("ficha de parque: resumen arriba con época, especies, entrada, cómo llega
 });
 
 test("buscador: por defecto solo destinos de fauna; los demás espacios, a petición o buscándolos", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/safaris");
   const casilla = page.getByLabel(/espacios protegidos más/);
   const hay = await casilla
     .waitFor({ timeout: 10000 })
@@ -281,7 +281,7 @@ test("frecuencia de avistamientos por mes en un destacado y en «qué ver»", as
   // la migración: ñus muy frecuentes en los registros de agosto, con la cifra
   await expect(tabla.locator('td[title^="Ñu en agosto: muy frecuente ("]')).toHaveCount(1);
   await page.locator(".frecuencia").screenshot({ path: `${CAPTURAS}/${info.project.name}-frecuencia.png` });
-  await page.goto("/?ver=5219404&mes=7");
+  await page.goto("/safaris?ver=5219404&mes=7");
   const mara = page.locator(".resultados-que-ver li", { hasText: "Masái Mara" });
   await expect(mara).toContainText(/muy frecuente \(\d+ ‰\)/);
 });
@@ -331,7 +331,7 @@ test("lo práctico del país y safari por tu cuenta", async ({ page }) => {
   await expect(organiza).toContainText(/amanece hacia las \d\d:\d\d/);
   await page.goto("/guia#paises");
   await expect(page.locator(".tabla-paises tbody tr")).toHaveCount(23);
-  await page.goto("/?cuenta=turismo");
+  await page.goto("/safaris?cuenta=turismo");
   const lista = page.locator(".rejilla-safaris li");
   const hay = await lista
     .first()
@@ -658,10 +658,10 @@ test("fauna en España: normas y código ético", async ({ page }) => {
 });
 
 test("navegación en dos mundos: el conmutador y el menú cambian con la sección", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/safaris");
   await expect(page.locator(".mundos a", { hasText: "Safaris" })).toHaveAttribute("aria-current", "page");
   await page.locator(".mundos a", { hasText: "España" }).click();
-  await expect(page).toHaveURL(/\/espana$/);
+  await expect(page).toHaveURL(/\/$/);
   await expect(page.locator(".mundos a", { hasText: "España" })).toHaveAttribute("aria-current", "page");
   // la barra del móvil o el menú de escritorio enseñan las secciones de España
   await expect(
@@ -676,7 +676,7 @@ test.describe("sin JavaScript", () => {
   test.use({ javaScriptEnabled: false });
 
   test("se ven la lista de parques, el formulario del planificador y las especies de España", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/safaris");
     expect(await page.locator(".rejilla-safaris li").count()).toBeGreaterThan(5);
     await page.goto("/planificar");
     await expect(page.getByLabel(/^País/)).toBeVisible();

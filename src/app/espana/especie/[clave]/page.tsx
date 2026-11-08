@@ -78,7 +78,7 @@ export default async function PaginaEspecie({ params }: Props) {
     <main className="calendario safaris espana">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/espana">España</Link> · {GRUPO[e.clase ?? ""] ?? "Especie"}
+          <Link href="/">España</Link> · {GRUPO[e.clase ?? ""] ?? "Especie"}
         </p>
         <h1>{nombre}</h1>
         <p className="entradilla">

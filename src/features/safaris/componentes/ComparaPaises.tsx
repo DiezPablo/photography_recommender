@@ -85,7 +85,7 @@ export default function ComparaPaises({ a, b, mes }: { a: string; b: string; mes
     <main className="calendario safaris respuesta">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/">Safaris</Link> · <Link href="/safari-en">Comparativas</Link>
+          <Link href="/safaris">Safaris</Link> · <Link href="/safari-en">Comparativas</Link>
         </p>
         <h1>
           {x.nombre} o {y.nombre} en {nombreMes}

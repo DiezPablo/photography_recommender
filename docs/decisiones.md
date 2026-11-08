@@ -970,3 +970,7 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     registros por una probabilidad. Ahora «muy frecuente / frecuente / ocasional / escaso / raro» (en los registros),
     con la cifra al lado: «frecuente (32 ‰)» (`textoFrecuencia` en `features/safaris/modelo.ts`). Mismos umbrales
     (50/20/5/1 ‰). Las frases («Qué es probable ver») pasan a «Qué se registra más».
+  - D11, portada: `/` es la carta de España (la parte más útil); la portada de safaris pasa a `/safaris` y el
+    conmutador «Safaris / España» apunta a `/safaris` y `/`. `/espana` sin modo y `/espana/mapa` redirigen a `/` con
+    sus parámetros. Los enlaces antiguos a la portada de safaris (`/?ver=`, `/?q=`, `/?ninos=`… o `/?especie=` con una
+    especie que no es de España) redirigen a `/safaris` con los mismos parámetros.

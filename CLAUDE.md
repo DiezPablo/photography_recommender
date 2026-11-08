@@ -23,9 +23,9 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
     lleva además mamíferos, reptiles y anfibios de iNaturalist (`inat_espana`). `--espana-actividad espana.json`:
     hora de actividad por especie (altura del sol en cada observación de iNaturalist) → `espana_actividad.json`,
     workflow `espana_actividad.yml`, semanal.
-- Web Next.js 16 (App Router) en `src/`: `app/` (`/`, `/buscar` (y `/buscar.json` para el buscador de la cabecera), `/parque/[id]`, `/especies`, `/especie/[slug]`, `/guia`, `/comparar`, `/migracion`,
+- Web Next.js 16 (App Router) en `src/`: `app/` (`/` (la carta de España; los enlaces antiguos con parámetros de safaris van a `/safaris`), `/safaris` (portada de safaris), `/buscar` (y `/buscar.json` para el buscador de la cabecera), `/parque/[id]`, `/especies`, `/especie/[slug]`, `/guia`, `/comparar`, `/migracion`,
   `/planificar`, `/presupuesto`, `/viaje`, `/safari-en/[mes|país]`, `/mapa` (la carta de safaris: parques
-  del mundo, temporada por mes y ‰ de cada mamífero; `features/carta/CartaMundo.tsx` y `mundo.ts`), `/espana` (sin modo, la carta: mapa del IGN con la
+  del mundo, temporada por mes y ‰ de cada mamífero; `features/carta/CartaMundo.tsx` y `mundo.ts`), `/espana` (sin modo redirige a `/`, la carta: mapa del IGN con la
   fauna por cuadrícula de 10 km, fiabilidad, luz y ficha de cuadrícula, en `features/carta/`, estado en la URL; con
   `modo=aqui|finde|donde`, «Cerca de mí», «Este finde» y «Buscar especie»), `/espana/lugar/[id]` (ficha de cada lugar,
   ISR; fenómenos escritos a mano en `features/espana/fenomenos.ts`), `/espana/mis-especies` (lista de vistas, solo

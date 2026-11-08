@@ -5,7 +5,7 @@ export default function NoEncontrado() {
     <main className="prosa">
       <h1>No encontrado</h1>
       <p>
-        Ese spot o día no existe (los spots se actualizan cada mes). <Link href="/">Volver al ranking</Link>.
+        Esa página no existe o ha cambiado de dirección. <Link href="/">Volver al inicio</Link>.
       </p>
     </main>
   );

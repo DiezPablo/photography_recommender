@@ -18,7 +18,7 @@ export default function PaginaMigracion() {
     <main className="calendario safaris">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/">Safaris</Link> · Serengeti (Tanzania) y Masái Mara (Kenia)
+          <Link href="/safaris">Safaris</Link> · Serengeti (Tanzania) y Masái Mara (Kenia)
         </p>
         <h1>La gran migración, mes a mes</h1>
         <p className="entradilla">

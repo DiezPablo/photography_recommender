@@ -20,7 +20,7 @@ export default function EntradasHero({ opciones, mesHoy }: { opciones: OpcionEsp
   return (
     <form
       className="entradas-hero"
-      action="/#explorar"
+      action="/safaris#explorar"
       method="get"
       onSubmit={(e) => {
         e.preventDefault();
@@ -76,7 +76,7 @@ export default function EntradasHero({ opciones, mesHoy }: { opciones: OpcionEsp
         </span>
       </label>
       <p className="entrada-espana">
-        ¿Más cerca? <Link href="/espana">Fauna en España →</Link>
+        ¿Más cerca? <Link href="/">Fauna en España →</Link>
       </p>
     </form>
   );

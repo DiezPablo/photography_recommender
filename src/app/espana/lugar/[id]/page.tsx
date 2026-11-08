@@ -84,7 +84,7 @@ export default async function PaginaLugar({ params }: Props) {
     <main className="calendario safaris espana">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/espana">España</Link> · {l.t}
+          <Link href="/">España</Link> · {l.t}
         </p>
         <h1>{l.n}</h1>
         <p className="entradilla">

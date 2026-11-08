@@ -16,7 +16,7 @@ export default function IndiceRespuestas() {
     <main className="calendario safaris respuesta">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/">Safaris</Link> · Cuándo y adónde
+          <Link href="/safaris">Safaris</Link> · Cuándo y adónde
         </p>
         <h1>Calendario: cuándo ir</h1>
         <p className="entradilla">

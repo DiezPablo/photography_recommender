@@ -57,7 +57,7 @@ export default async function PaginaEspecieSafari({ params }: Props) {
   return (
     <main className="ficha evento cat-fauna especie">
       <nav className="migas rotulo" aria-label="Migas">
-        <Link href="/">Destinos</Link>
+        <Link href="/safaris">Destinos</Link>
         <Link href="/especies">Animales</Link>
       </nav>
       <header className="ficha-cab cabecera-especie">

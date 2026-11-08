@@ -5,8 +5,8 @@ import type { Metadata } from "next";
 import PlanificadorEspana from "@/features/espana/PlanificadorEspana";
 import DondeVerEspecie from "@/features/espana/DondeVerEspecie";
 import FindeEspana from "@/features/espana/FindeEspana";
-import CartaEspana from "@/features/carta/CartaEspana";
-import { especiesPorMes, listaEspeciesEspana } from "@/features/espana/datos";
+import { redirect } from "next/navigation";
+import { listaEspeciesEspana } from "@/features/espana/datos";
 import { fechaLocal } from "@/lib/sol";
 
 export const metadata: Metadata = {
@@ -17,7 +17,9 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-type Props = { searchParams: Promise<{ modo?: string; lat?: string; zona?: string }> };
+type Props = {
+  searchParams: Promise<Record<string, string | string[] | undefined> & { modo?: string; lat?: string; zona?: string }>;
+};
 
 const TITULOS: Record<string, [string, string]> = {
   aqui: [
@@ -36,12 +38,12 @@ export default async function PaginaEspana({ searchParams }: Props) {
   // sin modo ni punto, la portada; los enlaces antiguos (?lat=…, ?zona=…) siguen abriendo «¿Qué veo aquí?»
   const inicio = !modo && !q.lat && !q.zona;
   const hoy = fechaLocal(new Date());
-  if (inicio)
-    return (
-      <main className="carta-pagina">
-        <CartaEspana hoy={hoy} delMes={especiesPorMes()} />
-      </main>
-    );
+  // la carta está en la portada (/) desde el 08-11-2026: los enlaces a /espana sin modo van allí con sus parámetros
+  if (inicio) {
+    const p = new URLSearchParams();
+    for (const [k, v] of Object.entries(q)) for (const x of [v ?? []].flat()) p.append(k, x);
+    redirect(p.size ? `/?${p}` : "/");
+  }
   return (
     <main className="calendario safaris espana">
       <header className="titular titular-compacto">

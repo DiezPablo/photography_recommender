@@ -33,7 +33,7 @@ test("funciones puras: mes de la URL, zonas, grupos y veredicto", () => {
 });
 
 test("el mes elegido se conserva al ir a una ficha y cambia su veredicto", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/safaris");
   const selector = page.getByRole("combobox", { name: "Mes del viaje" }).or(page.getByLabel("Mes del viaje")).first();
   await page.locator(".selector-mes select").selectOption("7");
   await expect(page).toHaveURL(/mes=agosto/);
@@ -72,7 +72,7 @@ test("ficha de especie: parques con barra de meses y orden por buena época", as
 });
 
 test("portada: «Tengo un animal» con buscador y grupos lleva a «¿Qué quieres ver?»", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/safaris");
   const animal = page.getByRole("combobox", { name: "Tengo un animal" });
   await animal.click();
   await expect(page.getByRole("group", { name: "Felinos" }).first()).toBeVisible();

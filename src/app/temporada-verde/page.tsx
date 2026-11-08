@@ -24,7 +24,7 @@ export default function PaginaTemporadaVerde() {
     <main className="calendario safaris respuesta">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/">Safaris</Link> · Cuándo ir
+          <Link href="/safaris">Safaris</Link> · Cuándo ir
         </p>
         <h1>Temporada verde: cuánto se ahorra y qué se pierde</h1>
         <p className="entradilla">

@@ -95,7 +95,7 @@ function PaginaMes({ mes }: { mes: number }) {
     <main className="calendario safaris respuesta">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/">Safaris</Link> · Cuándo ir
+          <Link href="/safaris">Safaris</Link> · Cuándo ir
         </p>
         <h1>Safari en {nombreMes}: dónde ir</h1>
         <p className="entradilla">
@@ -228,7 +228,7 @@ function PaginaPais({ clave, pais }: { clave: string; pais: string }) {
     <main className="calendario safaris respuesta">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/">Safaris</Link> · Países
+          <Link href="/safaris">Safaris</Link> · Países
         </p>
         <h1>Safari en {pais}</h1>
         <p className="entradilla">

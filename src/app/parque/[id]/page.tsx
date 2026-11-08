@@ -150,7 +150,7 @@ export default async function PaginaParque({ params }: Props) {
         )}
         <div className="ficha-hero-texto">
           <nav className="migas rotulo" aria-label="Migas">
-            <Link href="/">Destinos</Link>
+            <Link href="/safaris">Destinos</Link>
             <span>{p.continente}</span>
             <span>{p.pais}</span>
           </nav>

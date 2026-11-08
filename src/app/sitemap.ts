@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const destacados = new Set((safaris?.parques ?? []).map((p) => p.id));
   return [
     url("/", 1),
+    url("/safaris", 0.9),
     ...["/especies", "/migracion", "/safari-en", "/temporada-verde", "/guia", "/planificar", "/presupuesto"].map((r) =>
       url(r, 0.8),
     ),
