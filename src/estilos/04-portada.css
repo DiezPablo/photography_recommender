@@ -120,7 +120,7 @@
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  border-radius: 999px;
+  border-radius: var(--radio-s);
   font: 600 0.86rem var(--f-cuerpo);
   color: var(--texto);
   text-decoration: none;
@@ -182,8 +182,7 @@
 }
 .alm-esquina {
   font: 600 0.62rem var(--f-cuerpo);
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
+  text-transform: none;
   color: var(--texto-3);
   align-self: end;
   padding: 0 0 6px 4px;

@@ -164,7 +164,8 @@ export default function DondeVerEspecie({ hoy, inicial }: { hoy: string; inicial
           </h2>
           {elegida && (
             <p>
-              <Link href={`/espana/especie/${elegida.k}`}>Ficha de la especie →</Link>{" "}
+              <Link href={`/espana/especie/${elegida.k}`}>Ficha de la especie</Link> ·{" "}
+              <Link href={`/espana?especie=${elegida.k}${mes === null ? "" : `&mes=${MESES[mes]}`}`}>En el mapa</Link>{" "}
               <BotonVista clave={elegida.k} especie={{ n: nombre(elegida), c: elegida.c, clase: elegida.clase }} />
             </p>
           )}

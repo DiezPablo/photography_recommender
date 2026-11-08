@@ -917,3 +917,20 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   - Tipografía y forma: Archivo (ya cargada) y las cifras en IBM Plex Mono para que las columnas cuadren; esquinas
     de 2-4 px, sin cápsulas ni rótulos en mayúsculas. Los tokens de la carta van en `13-carta.css` y solo valen
     dentro de `.carta`; pasarlos al resto de la web es la fase 2.
+- 08-11-2026, rediseño B, fase 2 (sistema global y páginas de España):
+  - Los tokens de la carta pasan a `01-tokens.css` para toda la web: papel #fcfcfa, tinta #1f2420, magenta #b0126a
+    como color de dato y de lo destacado (las variables `--ocre` y `--c-fauna` lo apuntan), naranja del sol; en
+    oscuro, #151816 y magenta #e0479b. Contrastes AA medidos: texto secundario 5,75:1 sobre el papel, magenta 6,51:1
+    (oscuro: 6,75:1 y 4,72:1). `13-carta.css` ya no duplica colores: toma los globales.
+  - Fuera la serif (Newsreader deja de descargarse): títulos en Archivo seminegra y estrecha (eje de anchura),
+    `h1` de 2 a 2,9 rem. Porque la serif sobre papel claro es una de las combinaciones de la lista negra y la carta
+    ya demostraba que Archivo sola basta.
+  - Esquinas: `--radio` 4 px, `--radio-m` 3, `--radio-s` 2; las 28 cápsulas (999px) y los 36 radios fijos de 5-16 px
+    pasan a los tokens. Los rótulos en mayúsculas espaciadas (10 reglas de `dt`, `th`, etiquetas) pasan a minúscula.
+  - Fuera los iconos decorativos del buscador (la huella, la bandera, el círculo): el tipo ya va escrito al lado.
+    Fuera el antetítulo «Atlas de fauna · mes» de la portada (repetía la marca) y la miga «Safaris» en las páginas
+    de España (era el otro mundo, no el padre).
+  - La ficha de especie de España y «Buscar especie» llevan a la carta con la especie («Verla en el mapa»); la lista
+    de sitios queda como segunda opción.
+  - Pendiente de decisión del usuario (auditoría): el vocabulario «muy probable / probable» que sigue en la ficha de
+    especie y en «Cerca de mí»; la carta no lo usa.

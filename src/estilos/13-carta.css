@@ -4,15 +4,16 @@
    con su eje de anchura) y las cifras en monoespaciada, para que las columnas cuadren. */
 
 .carta {
-  --carta-papel: #fcfcfa;
-  --carta-papel-2: #f1f1ec;
-  --carta-tinta: #1f2420;
-  --carta-tinta-2: #4d544e;
-  --carta-tinta-3: #6b726c;
-  --carta-linea: #d6d8d2;
-  --carta-magenta: #b0126a;
+  /* desde la fase 2 salen de los tokens globales (01-tokens.css), que son los de la carta */
+  --carta-papel: var(--fondo);
+  --carta-papel-2: var(--superficie-2);
+  --carta-tinta: var(--texto);
+  --carta-tinta-2: var(--texto-2);
+  --carta-tinta-3: var(--texto-3);
+  --carta-linea: var(--borde);
+  --carta-magenta: var(--c-fauna);
   --carta-agua: #3e7fb3;
-  --carta-sol: #d9821e;
+  --carta-sol: var(--sol);
   --carta-sol-texto: #7a4410;
   --carta-filtro: saturate(0.55) contrast(0.96) brightness(1.03);
   --carta-ancho-panel: 400px;
@@ -28,27 +29,11 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-tema="claro"]) .carta {
-    --carta-papel: #151816;
-    --carta-papel-2: #1e2220;
-    --carta-tinta: #e9ebe6;
-    --carta-tinta-2: #bfc4bd;
-    --carta-tinta-3: #9aa198;
-    --carta-linea: #343a36;
-    --carta-magenta: #e0479b;
-    --carta-sol: #f0a04a;
     --carta-sol-texto: #f6c58e;
     --carta-filtro: saturate(0.5) brightness(0.78) contrast(1.05);
   }
 }
 :root[data-tema="oscuro"] .carta {
-  --carta-papel: #151816;
-  --carta-papel-2: #1e2220;
-  --carta-tinta: #e9ebe6;
-  --carta-tinta-2: #bfc4bd;
-  --carta-tinta-3: #9aa198;
-  --carta-linea: #343a36;
-  --carta-magenta: #e0479b;
-  --carta-sol: #f0a04a;
   --carta-sol-texto: #f6c58e;
   --carta-filtro: saturate(0.5) brightness(0.78) contrast(1.05);
 }

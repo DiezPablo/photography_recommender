@@ -1,19 +1,20 @@
-/* Safaris — tokens. Una guía de campo: papel arena, tinta casi negra, verde acacia como acento y ocre para lo
-   destacado. Titulares en serif editorial (Newsreader), texto en grotesca (Archivo). Claro u oscuro según el
-   sistema. */
+/* Atlas de fauna — tokens (rediseño B, 11-2026): los de la carta para toda la web. Papel casi blanco, tinta casi
+   negra, un solo color de dato (magenta, la tinta que se sobreimprime en los mapas) y el naranja del sol. Todo en
+   Archivo (títulos estrechos con su eje de anchura) y las cifras en monoespaciada. Esquinas de 2-4 px. Claro u
+   oscuro según el sistema. Los nombres de las variables vienen de antes (--ocre ya no es ocre: es lo destacado). */
 
 :root {
-  --fondo: #f3eee4;
-  --superficie: #fbf8f2;
-  --superficie-2: #ebe4d6;
-  --borde: #ddd3c2;
-  --texto: #1d1a15;
-  --texto-2: #574f43;
-  --texto-3: #685e50;
-  --acento: #2f4b36;
-  --acento-suave: #dfe6da;
-  --enlace: #1d1a15;
-  --sol: #e3a020;
+  --fondo: #fcfcfa;
+  --superficie: #ffffff;
+  --superficie-2: #f1f1ec;
+  --borde: #d6d8d2;
+  --texto: #1f2420;
+  --texto-2: #4d544e;
+  --texto-3: #5f6660;
+  --acento: #1f2420;
+  --acento-suave: #e9ebe5;
+  --enlace: #1f2420;
+  --sol: #d9821e;
   --luna: #5d6b88;
   --vl: #6a4fb3;
   --suma: #2c7a4b;
@@ -28,12 +29,12 @@
   --tinte-regular: color-mix(in srgb, var(--n-regular) 30%, var(--fondo));
   --tinte-buena: color-mix(in srgb, var(--n-buena) 38%, var(--fondo));
   --sombra: none;
-  --sombra-alta: 0 12px 32px rgb(40 30 15 / 14%);
-  --radio: 10px;
-  --radio-m: 8px;
-  --radio-s: 5px;
+  --sombra-alta: 0 8px 24px rgb(20 25 22 / 14%);
+  --radio: 4px;
+  --radio-m: 3px;
+  --radio-s: 2px;
   --cristal: color-mix(in srgb, var(--fondo) 78%, transparent);
-  --mapa-filtro: grayscale(0.85) contrast(0.92) brightness(1.04);
+  --mapa-filtro: saturate(0.55) contrast(0.96) brightness(1.03);
   --foto-filtro: none;
   --cielo-noche: #22283a;
   --cielo-azul: #4f6b99;
@@ -48,14 +49,14 @@
   --t-blanco: #fff;
   --c-flora: #c4568a;
   --c-otono: #c8611c;
-  --c-fauna: #2f4b36;
-  --ocre: #b46a22;
-  --ocre-suave: #f1dfc6;
+  --c-fauna: #b0126a;
+  --ocre: #b0126a;
+  --ocre-suave: #f6e3ee;
   --c-paisaje: #2f7f86;
   --c-agua: #2f6fb0;
   --c-nieve: #7d8fa8;
   --f-cuerpo: var(--f-ui), "Helvetica Neue", Arial, sans-serif;
-  --f-titulo: var(--f-serif), Georgia, "Times New Roman", serif;
+  --f-titulo: var(--f-cuerpo);
   --f-datos: var(--f-mono), ui-monospace, "SF Mono", Menlo, monospace;
   --ancho: 1240px;
   color-scheme: light;
@@ -63,20 +64,20 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-tema="claro"]) {
-    --fondo: #13120f;
-    --superficie: #1b1915;
-    --superficie-2: #26231d;
-    --borde: #34302a;
-    --texto: #eee8dc;
-    --texto-2: #b5ac9c;
-    --texto-3: #968c7b;
-    --acento: #9cc0a2;
-    --acento-suave: #1f2c22;
-    --enlace: #eee8dc;
-    --c-fauna: #9cc0a2;
-    --ocre: #e0a25c;
-    --ocre-suave: #3a2a16;
-    --sol: #f2a541;
+    --fondo: #151816;
+    --superficie: #1b1f1c;
+    --superficie-2: #232825;
+    --borde: #343a36;
+    --texto: #e9ebe6;
+    --texto-2: #bfc4bd;
+    --texto-3: #9aa198;
+    --acento: #e9ebe6;
+    --acento-suave: #262b28;
+    --enlace: #e9ebe6;
+    --c-fauna: #e0479b;
+    --ocre: #e0479b;
+    --ocre-suave: #3a1a2b;
+    --sol: #f0a04a;
     --luna: #a9b7d6;
     --vl: #a98bf0;
     --suma: #5fc48a;
@@ -101,20 +102,20 @@
 }
 
 :root[data-tema="oscuro"] {
-  --fondo: #13120f;
-  --superficie: #1b1915;
-  --superficie-2: #26231d;
-  --borde: #34302a;
-  --texto: #eee8dc;
-  --texto-2: #b5ac9c;
-  --texto-3: #968c7b;
-  --acento: #9cc0a2;
-  --acento-suave: #1f2c22;
-  --enlace: #eee8dc;
-  --c-fauna: #9cc0a2;
-  --ocre: #e0a25c;
-  --ocre-suave: #3a2a16;
-  --sol: #f2a541;
+  --fondo: #151816;
+  --superficie: #1b1f1c;
+  --superficie-2: #232825;
+  --borde: #343a36;
+  --texto: #e9ebe6;
+  --texto-2: #bfc4bd;
+  --texto-3: #9aa198;
+  --acento: #e9ebe6;
+  --acento-suave: #262b28;
+  --enlace: #e9ebe6;
+  --c-fauna: #e0479b;
+  --ocre: #e0479b;
+  --ocre-suave: #3a1a2b;
+  --sol: #f0a04a;
   --luna: #a9b7d6;
   --vl: #a98bf0;
   --suma: #5fc48a;

@@ -113,7 +113,7 @@ export default function BuscadorGlobal() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={r.f} alt="" width={32} height={32} loading="lazy" />
               ) : (
-                <span className={`buscador-icono tipo-${r.tipo}`} aria-hidden />
+                <span className="buscador-icono" aria-hidden />
               )}
               <span>
                 <b>{r.t}</b>

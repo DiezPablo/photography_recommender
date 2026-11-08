@@ -1,6 +1,6 @@
 import RegistrarSW from "@/ui/RegistrarSW";
 import type { Metadata, Viewport } from "next";
-import { Archivo, IBM_Plex_Mono, Newsreader } from "next/font/google";
+import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import Link from "next/link";
 import BuscadorGlobal from "@/ui/BuscadorGlobal";
 import SelectorMes from "@/ui/SelectorMes";
@@ -11,7 +11,6 @@ import "./globals.css";
 
 // Tipografías autoalojadas en el build (sin peticiones a Google desde el navegador)
 const ui = Archivo({ subsets: ["latin"], variable: "--f-ui", display: "swap", axes: ["wdth"] });
-const serif = Newsreader({ subsets: ["latin"], variable: "--f-serif", display: "swap", style: ["normal", "italic"] });
 const mono = IBM_Plex_Mono({ subsets: ["latin"], variable: "--f-mono", display: "swap", weight: ["400", "500"] });
 
 export const metadata: Metadata = {
@@ -26,14 +25,14 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f3eee4" },
-    { media: "(prefers-color-scheme: dark)", color: "#13120f" },
+    { media: "(prefers-color-scheme: light)", color: "#fcfcfa" },
+    { media: "(prefers-color-scheme: dark)", color: "#151816" },
   ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" suppressHydrationWarning className={`${ui.variable} ${serif.variable} ${mono.variable}`}>
+    <html lang="es" suppressHydrationWarning className={`${ui.variable} ${mono.variable}`}>
       <body>
         <a href="#contenido" className="saltar">
           Ir al contenido

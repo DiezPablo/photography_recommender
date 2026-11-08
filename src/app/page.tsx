@@ -62,7 +62,6 @@ export default function PaginaSafaris() {
           />
         )}
         <div className="portada-hero-texto">
-          <p className="rotulo">Atlas de fauna · {MESES[mesHoy]}</p>
           <h1>Dónde y cuándo ver cada animal</h1>
           <p>
             Los parques y reservas de todo el mundo con lo que se ve cada mes, lo que se ha visto en las últimas semanas

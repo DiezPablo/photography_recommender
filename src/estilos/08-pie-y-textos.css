@@ -67,8 +67,7 @@
 }
 .prosa th {
   font: 600 0.7rem var(--f-cuerpo);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  text-transform: none;
   color: var(--texto-3);
   white-space: nowrap;
 }
@@ -108,8 +107,7 @@
 }
 .marcador-aciertos dt {
   font: 600 0.72rem var(--f-cuerpo);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  text-transform: none;
   color: var(--texto-3);
 }
 .marcador-aciertos dd {

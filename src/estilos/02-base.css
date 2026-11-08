@@ -41,7 +41,7 @@ p {
 :focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: var(--radio);
 }
 .sr {
   position: absolute;
@@ -77,8 +77,7 @@ details.dia,
 /* Rótulo: etiqueta pequeña en versalitas (sans); la mono queda para cifras y datos */
 .rotulo {
   font: 600 0.7rem/1.4 var(--f-cuerpo);
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
+  text-transform: none;
   color: var(--texto-3);
 }
 h2.rotulo,

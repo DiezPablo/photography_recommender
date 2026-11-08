@@ -78,7 +78,7 @@ export default async function PaginaEspecie({ params }: Props) {
     <main className="calendario safaris espana">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/">Safaris</Link> · <Link href="/espana">España</Link> · {GRUPO[e.clase ?? ""] ?? "Especie"}
+          <Link href="/espana">España</Link> · {GRUPO[e.clase ?? ""] ?? "Especie"}
         </p>
         <h1>{nombre}</h1>
         <p className="entradilla">
@@ -87,9 +87,10 @@ export default async function PaginaEspecie({ params }: Props) {
         </p>
         <p>
           <BotonVista clave={clave} especie={{ n: nombre, c: e.c, clase: e.clase ?? null }} />{" "}
-          <Link className="boton" href={`/espana?modo=donde&k=${clave}`}>
-            Mapa: dónde verla cada mes →
-          </Link>
+          <Link className="boton" href={`/espana?especie=${clave}`}>
+            Verla en el mapa
+          </Link>{" "}
+          <Link href={`/espana?modo=donde&k=${clave}`}>Lista de sitios</Link>
         </p>
         {e.estado === "invasora" && (
           <p className="aviso-plan">Especie exótica invasora (Catálogo español): no es fauna autóctona.</p>

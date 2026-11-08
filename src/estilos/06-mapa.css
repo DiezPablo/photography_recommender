@@ -44,7 +44,7 @@
   background: color-mix(in srgb, var(--superficie) 80%, transparent) !important;
   color: var(--texto-3) !important;
   font: 0.64rem var(--f-cuerpo);
-  border-radius: 8px 0 0 0;
+  border-radius: var(--radio) 0 0 0;
 }
 .leaflet-control-attribution a {
   color: var(--texto-2) !important;
@@ -88,7 +88,7 @@
 .boton-satelite {
   font: 600 0.8rem var(--f-cuerpo);
   padding: 7px 12px;
-  border-radius: 999px;
+  border-radius: var(--radio-s);
   border: 1px solid var(--borde);
   background: var(--superficie);
   color: var(--texto);

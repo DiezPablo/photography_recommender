@@ -14,7 +14,7 @@ export default function PaginaMisEspecies() {
     <main className="calendario safaris espana">
       <header className="titular">
         <p className="rotulo">
-          <Link href="/">Safaris</Link> · <Link href="/espana">España</Link>
+          <Link href="/espana">España</Link>
         </p>
         <h1>Mis especies</h1>
       </header>
