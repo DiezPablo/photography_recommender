@@ -1,6 +1,6 @@
 # Viabilidad de la fauna en España (GBIF por cuadrícula de 10 km)
 
-Generado el 04-11-2026 con `python -m safari --espana`. Descarga GBIF 0026105-261023074918325 (DOI 10.15468/dl.up9m6q, 11641928 registros agregados).
+Generado el 08-11-2026 con `python -m safari --espana`. Descarga GBIF 0026105-261023074918325 (DOI 10.15468/dl.up9m6q, 11641928 registros agregados).
 
 ## Doñana (22 celdas, 20 km)
 
