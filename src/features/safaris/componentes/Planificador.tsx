@@ -6,7 +6,7 @@ import { IconoAvion, IconoCoche } from "@/ui/Iconos";
 import { MESES } from "@/lib/fechas";
 import { escribirAlmacen, useParametrosUrl } from "@/lib/almacen";
 import { useMesElegido } from "@/lib/mes";
-import { esDestino, MAX_COMPARAR, nivelFrecuencia } from "@/features/safaris/modelo";
+import { esDestino, MAX_COMPARAR, textoFrecuencia } from "@/features/safaris/modelo";
 import { MIGRACION } from "@/features/safaris/migracion";
 import { facilidades, planificar, type Plan, type Ritmo, RITMOS, type Tramo } from "@/features/safaris/planificar";
 import { useDatosNavegador } from "@/features/safaris/useDatosNavegador";
@@ -132,14 +132,14 @@ export default function Planificador({ mesHoy, paisesIniciales = [] }: { mesHoy:
   const vuelos = [...plan.etapas.map((e) => e.traslado), plan.entrada?.vuelta].filter((t) => t?.volar).length;
   const zonaMigracion = MIGRACION[mes];
 
-  /** Las especies estrella muy probables o probables ese mes en el parque (frecuencia de los destacados). */
+  /** Las especies estrella muy frecuentes o frecuentes en los registros ese mes en el parque (frecuencia de los destacados). */
   function destacadasMes(id: string): string[] {
     return Object.entries(datos!.frecuencia?.[id] ?? {})
       .map(([k, meses]) => ({ k: Number(k), v: meses[mes] }))
       .filter((x) => x.v !== null && x.v >= 20 && nombre.has(x.k))
       .sort((a, b) => b.v! - a.v!)
       .slice(0, 4)
-      .map((x) => `${nombre.get(x.k)} (${nivelFrecuencia(x.v).texto})`);
+      .map((x) => `${nombre.get(x.k)} (${textoFrecuencia(x.v)})`);
   }
 
   function alternar(clave: number) {

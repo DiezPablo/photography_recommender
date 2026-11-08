@@ -1,4 +1,4 @@
-// Lo esencial del día en un vistazo: la mejor hora con su tiempo y las especies más probables. El detalle (luz,
+// Lo esencial del día en un vistazo: la mejor hora con su tiempo y las especies que más se registran. El detalle (luz,
 // mareas, tiempo por horas, desglose de cada especie) va debajo.
 import Link from "next/link";
 import { rumbo } from "@/lib/sol";
@@ -36,7 +36,7 @@ export default function ResumenDia({
         )}
       </div>
       <div>
-        <p className="rotulo">Lo más probable</p>
+        <p className="rotulo">Lo que más se registra</p>
         {especies.length ? (
           <p>
             {especies.map((e, i) => (

@@ -1,5 +1,5 @@
 // Comparador de parques: hasta 4 lado a lado para decidir. Para el mes elegido: quién gana en cada cosa (fauna,
-// llegada, coste, temporada), qué es probable ver en cada uno y lo práctico. Dinámica: depende de los parques y
+// llegada, coste, temporada), qué se registra más en cada uno y lo práctico. Dinámica: depende de los parques y
 // del mes.
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -16,6 +16,7 @@ import {
   idActual,
   confianza,
   nivelFrecuencia,
+  textoFrecuencia,
   nombreEstrella,
   slugEspecie,
 } from "@/features/safaris/datos";
@@ -31,7 +32,7 @@ import { fuenteImagen } from "@/lib/imagenes";
 export const metadata: Metadata = {
   title: "Comparar parques",
   description:
-    "Compara parques de safari para un mes: qué animales es probable ver, mejor época, lluvia, cómo llegar, tasas, temporada verde y lo práctico.",
+    "Compara parques de safari para un mes: qué animales se registran más, mejor época, lluvia, cómo llegar, tasas, temporada verde y lo práctico.",
 };
 
 type Props = { searchParams: Promise<{ p?: string; mes?: string }> };
@@ -301,7 +302,7 @@ export default async function PaginaComparar({ searchParams }: Props) {
                                   return c ? `${c.texto} (${muestraDe(p, k)} fotos del grupo)` : undefined;
                                 })()}
                               >
-                                {nivel.texto}
+                                {textoFrecuencia(f)}
                                 {confianza(muestraDe(p, k))?.clave === "baja" ? " (pocos datos)" : ""}
                               </span>
                             ) : (

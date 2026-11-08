@@ -11,7 +11,7 @@ import {
 import { CONSULTADO, ahorro, indicePrecios } from "@/features/safaris/temporadaVerde";
 import { lista } from "@/features/safaris/respuestas";
 
-const ORDEN: NivelFrecuencia["clave"][] = ["raro", "dificil", "posible", "probable", "muy-probable"];
+const ORDEN: NivelFrecuencia["clave"][] = ["raro", "escaso", "ocasional", "frecuente", "muy-frecuente"];
 
 /** Qué cambia entre dos meses en las especies estrella: las que se mantienen y las que bajan de nivel. */
 export function cambiosEspecies(p: Parque, barato: number, caro: number) {

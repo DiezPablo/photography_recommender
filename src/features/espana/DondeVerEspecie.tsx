@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParametrosUrl } from "@/lib/almacen";
 import { MESES, rangoMeses } from "@/lib/fechas";
-import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
+import { confianza, nivelFrecuencia, textoFrecuencia } from "@/features/safaris/modelo";
 import MapaEventos from "@/ui/mapa/MapaEventos";
 import BotonVista from "@/features/espana/BotonVista";
 import TarjetaHide from "@/features/espana/TarjetaHide";
@@ -233,7 +233,7 @@ export default function DondeVerEspecie({ hoy, inicial }: { hoy: string; inicial
                         l.lugar && l.lugar.km > 0 && l.lugar.km < 15 && <small> (a {l.lugar.km} km)</small>
                       )}{" "}
                       <span className={`f-texto-${n.clave}`}>
-                        {n.texto} en {MESES[m]}
+                        {textoFrecuencia(l.meses[m])} en {MESES[m]}
                       </span>
                       {c && <small className={`confianza-${c.clave}`}> · {c.texto}</small>}
                       <br />

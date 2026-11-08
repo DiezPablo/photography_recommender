@@ -278,12 +278,12 @@ test("frecuencia de avistamientos por mes en un destacado y en «qué ver»", as
   await page.goto("/parque/masai-mara");
   const tabla = page.locator(".tabla-frecuencia");
   test.skip(!(await tabla.count()), "datos sin frecuencia por mes");
-  // la migración: ñus muy probables en agosto
-  await expect(tabla.locator('td[title^="Ñu en agosto: muy probable"]')).toHaveCount(1);
+  // la migración: ñus muy frecuentes en los registros de agosto, con la cifra
+  await expect(tabla.locator('td[title^="Ñu en agosto: muy frecuente ("]')).toHaveCount(1);
   await page.locator(".frecuencia").screenshot({ path: `${CAPTURAS}/${info.project.name}-frecuencia.png` });
   await page.goto("/?ver=5219404&mes=7");
   const mara = page.locator(".resultados-que-ver li", { hasText: "Masái Mara" });
-  await expect(mara).toContainText("muy probable");
+  await expect(mara).toContainText(/muy frecuente \(\d+ ‰\)/);
 });
 
 test("mi viaje: guardar desde el planificador, lista que se recuerda y enlace compartido", async ({
@@ -492,7 +492,7 @@ test("comparador por mes: quién gana en cada cosa y nivel de las especies", asy
   await expect(page.locator(".ganador", { hasText: "En su mejor época en agosto" })).toContainText("Masái Mara");
   await expect(page.locator(".ganador", { hasText: "Entrada más barata" })).toBeVisible();
   const leon = page.locator(".comparador tbody tr", { hasText: "León" });
-  await expect(leon).toContainText("probable");
+  await expect(leon).toContainText(/frecuente \(\d+ ‰\)/);
   await page.getByRole("navigation", { name: "Mes del viaje" }).getByRole("link", { name: "marzo" }).click();
   await expect(page).toHaveURL(/mes=2/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Comparar parques en marzo");
@@ -536,7 +536,7 @@ test("fauna en España: luz, tiempo y especies (o aviso sin datos)", async ({ pa
   await page.getByText("Luz, mar y tiempo hora a hora").click();
   await expect(page.locator(".luz-dia")).toContainText("Hora dorada");
   await expect(page.locator(".luz-dia")).toContainText(/\d{2}:\d{2}/);
-  const especies = page.locator("section", { hasText: "Qué es probable ver en noviembre" });
+  const especies = page.locator("section", { hasText: "Qué se registra más en noviembre" });
   await expect(especies.locator(".lista-especies-espana li, .nota-pie").first()).toBeVisible({ timeout: 15000 });
 });
 

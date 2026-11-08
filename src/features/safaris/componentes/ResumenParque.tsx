@@ -12,7 +12,7 @@ export interface EspecieResumen {
   nombre: string;
   n: number;
   href?: string;
-  /** lo probable que es verla este mes («muy probable»…), en los destacados */
+  /** cuánto se registra este mes («muy frecuente (63 ‰)»…), en los destacados */
   nivel?: string;
 }
 

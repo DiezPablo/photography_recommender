@@ -88,7 +88,7 @@ export default async function PaginaLugar({ params }: Props) {
         </p>
         <h1>{l.n}</h1>
         <p className="entradilla">
-          {probables} especies probables en {MESES[mesHoy]}
+          {probables} especies frecuentes en los registros de {MESES[mesHoy]}
           {l.e ? ` · ${l.e} aves vistas en eBird` : ""}
           {fenomenos.some((f) => f.meses.includes(mesHoy + 1)) ? " · hay un fenómeno de temporada ahora" : ""}
         </p>

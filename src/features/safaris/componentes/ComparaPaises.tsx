@@ -1,5 +1,5 @@
 // «Kenia o Tanzania en agosto»: los dos países lado a lado ese mes, con datos y sin veredicto inventado. Cuántos
-// de sus parques están en su mejor época, qué es probable ver, la lluvia, dónde está la migración y lo práctico.
+// de sus parques están en su mejor época, qué se registra más, la lluvia, dónde está la migración y lo práctico.
 import Link from "next/link";
 import { MESES } from "@/lib/fechas";
 import { cargarSafaris, enTemporada, paisesDe, paisesDestacados, type Parque } from "@/features/safaris/datos";
@@ -22,7 +22,7 @@ function lado(slug: string, mes: number): Lado {
   const parques = (cargarSafaris()?.parques ?? []).filter((p) => paisesDe(p).includes(nombre));
   const enEpoca = parques.filter((p) => enTemporada(p, mes));
   const lluvias = parques.map((p) => p.clima?.lluvia_mm[mes]).filter((x): x is number => typeof x === "number");
-  // lo probable en cualquiera de sus parques, de más parques a menos
+  // lo frecuente en los registros de cualquiera de sus parques, de más parques a menos
   const cuenta = new Map<string, number>();
   for (const p of parques) for (const e of probables(p, mes)) cuenta.set(e, (cuenta.get(e) ?? 0) + 1);
   return {
@@ -63,7 +63,10 @@ export default function ComparaPaises({ a, b, mes }: { a: string; b: string; mes
         </>
       ),
     ],
-    ["Probable ese mes", (l) => (l.especies.length ? lista(l.especies.slice(0, 8)) : "Sin datos de frecuencia")],
+    [
+      "Frecuente en los registros ese mes",
+      (l) => (l.especies.length ? lista(l.especies.slice(0, 8)) : "Sin datos de frecuencia"),
+    ],
     ["Lluvia media", (l) => (l.lluvia !== null ? `${l.lluvia} mm en el mes (media de sus parques)` : "Sin datos")],
     ["Visado", (l) => practicoDe(l.nombre)?.visado.texto ?? "Consúltalo en Exteriores"],
     ["Malaria", (l) => practicoDe(l.nombre)?.malaria ?? "Consúltalo en Sanidad"],
@@ -124,9 +127,9 @@ export default function ComparaPaises({ a, b, mes }: { a: string; b: string; mes
           </table>
         </div>
         <p className="nota-pie">
-          Mejor época: la recomendada para cada parque. Probable: especies con al menos un 2 % de las fotos de su grupo
-          ese mes en iNaturalist. Lluvia: climatología de la NASA (POWER). Visados y salud revisados a mano: confírmalos
-          antes de viajar.
+          Mejor época: la recomendada para cada parque. Frecuente: especies con al menos un 2 % (20 ‰) de las fotos de
+          su grupo ese mes en iNaturalist. Lluvia: climatología de la NASA (POWER). Visados y salud revisados a mano:
+          confírmalos antes de viajar.
         </p>
       </section>
 
@@ -142,7 +145,7 @@ export default function ComparaPaises({ a, b, mes }: { a: string; b: string; mes
                 <li key={p.id}>
                   <Link href={`/parque/${p.id}`}>{p.nombre}</Link>:{" "}
                   {enTemporada(p, mes) ? "en su mejor época" : "fuera de su mejor época"}
-                  {ver.length ? `; probable ${lista(ver.slice(0, 4))}` : ""}.
+                  {ver.length ? `; frecuentes ${lista(ver.slice(0, 4))}` : ""}.
                 </li>
               );
             })}

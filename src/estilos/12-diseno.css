@@ -420,7 +420,7 @@ select.boton {
   color: var(--ocre);
 }
 .barra-facilidad i,
-.f-muy-probable,
+.f-muy-frecuente,
 .mini-ano i.si {
   background: var(--acento);
 }
@@ -1260,12 +1260,12 @@ body {
   height: 100%;
   background: var(--acento);
 }
-.comparador .f-texto-muy-probable,
-.comparador .f-texto-probable {
+.comparador .f-texto-muy-frecuente,
+.comparador .f-texto-frecuente {
   color: var(--c-fauna);
   font-weight: 600;
 }
-.comparador .f-texto-dificil,
+.comparador .f-texto-escaso,
 .comparador .f-texto-raro {
   color: var(--texto-3);
 }
@@ -2587,24 +2587,24 @@ html[data-mes="12"] [data-m="12"] {
   color: var(--fondo);
   font-size: 0.7rem;
 }
-.tabla-frecuencia td.f-muy-probable::after,
-.leyenda-frecuencia i.f-muy-probable::after {
+.tabla-frecuencia td.f-muy-frecuente::after,
+.leyenda-frecuencia i.f-muy-frecuente::after {
   content: "●";
   font-size: 0.95rem;
 }
-.tabla-frecuencia td.f-probable::after,
-.leyenda-frecuencia i.f-probable::after {
+.tabla-frecuencia td.f-frecuente::after,
+.leyenda-frecuencia i.f-frecuente::after {
   content: "●";
   font-size: 0.7rem;
   color: var(--texto);
 }
-.tabla-frecuencia td.f-posible::after,
-.leyenda-frecuencia i.f-posible::after {
+.tabla-frecuencia td.f-ocasional::after,
+.leyenda-frecuencia i.f-ocasional::after {
   content: "•";
   color: var(--texto);
 }
-.tabla-frecuencia td.f-dificil::after,
-.leyenda-frecuencia i.f-dificil::after {
+.tabla-frecuencia td.f-escaso::after,
+.leyenda-frecuencia i.f-escaso::after {
   content: "·";
   color: var(--texto-2);
 }

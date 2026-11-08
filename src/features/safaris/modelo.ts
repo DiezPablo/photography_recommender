@@ -346,18 +346,25 @@ export function limpiarNombre(n: string): string {
 // ---- Frecuencia de avistamientos (‰ de las fotos de su grupo ese mes): niveles para la web
 
 export interface NivelFrecuencia {
-  clave: "muy-probable" | "probable" | "posible" | "dificil" | "raro" | "sin-datos";
+  clave: "muy-frecuente" | "frecuente" | "ocasional" | "escaso" | "raro" | "sin-datos";
   texto: string;
 }
 
 /** Umbrales calibrados con el Mara y Kruger: el león es ~100 ‰, el leopardo 20-50 ‰, el rinoceronte negro ~10 ‰. */
 export function nivelFrecuencia(permil: number | null | undefined): NivelFrecuencia {
   if (permil === null || permil === undefined) return { clave: "sin-datos", texto: "sin datos" };
-  if (permil >= 50) return { clave: "muy-probable", texto: "muy probable" };
-  if (permil >= 20) return { clave: "probable", texto: "probable" };
-  if (permil >= 5) return { clave: "posible", texto: "posible" };
-  if (permil >= 1) return { clave: "dificil", texto: "difícil" };
-  return { clave: "raro", texto: "muy raro" };
+  if (permil >= 50) return { clave: "muy-frecuente", texto: "muy frecuente" };
+  if (permil >= 20) return { clave: "frecuente", texto: "frecuente" };
+  if (permil >= 5) return { clave: "ocasional", texto: "ocasional" };
+  if (permil >= 1) return { clave: "escaso", texto: "escaso" };
+  return { clave: "raro", texto: "raro" };
+}
+
+/** La palabra y la cifra (decisión de la auditoría, 08-11-2026): «frecuente (32 ‰)». La palabra se lee rápido; la
+ * cifra recuerda que es lo que se registra (‰ de su grupo), no la probabilidad de verla. */
+export function textoFrecuencia(permil: number | null | undefined): string {
+  const n = nivelFrecuencia(permil);
+  return permil === null || permil === undefined ? n.texto : `${n.texto} (${Math.round(permil)} ‰)`;
 }
 
 /** «Sudáfrica» → «sudafrica»: para direcciones como /safari-en/sudafrica. */

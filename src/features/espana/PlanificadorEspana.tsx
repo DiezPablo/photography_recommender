@@ -1,6 +1,6 @@
 "use client";
 // Fauna en España para un lugar y un día: luz (horas dorada y azul), tiempo (previsión o climatología, diciendo
-// cuál), las mejores franjas y, cuando haya datos de GBIF, las especies probables ese mes con dos notas (verla y
+// cuál), las mejores franjas y, cuando haya datos de GBIF, las especies que más se registran ese mes con dos notas (verla y
 // fotografiarla) y su desglose. Todo en el navegador: Open-Meteo sin clave y los datos de la cuadrícula por bloques.
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -18,7 +18,7 @@ import {
   type HoraTiempo,
   type Prevision,
 } from "@/lib/tiempo";
-import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
+import { confianza, nivelFrecuencia, textoFrecuencia } from "@/features/safaris/modelo";
 import { actividadPorDefecto, puntuar, type Puntuacion } from "@/features/espana/puntuacion";
 import ElegirLugar from "@/features/espana/ElegirLugar";
 import LuzYMar from "@/features/espana/LuzYMar";
@@ -347,7 +347,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
 
       <section className="seccion" aria-labelledby="especies-titulo" aria-live="polite">
         <h2 className="rotulo" id="especies-titulo">
-          Qué es probable ver en {MESES[mes]}
+          Qué se registra más en {MESES[mes]}
         </h2>
         {bloques === null && <Esqueleto alto={400} />}
         {bloques === "sin-datos" && (
@@ -396,7 +396,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                       <summary>
                         <span className="fila-especie">
                           <b>{e.nombre}</b>
-                          <span className={`chip f-texto-${n.clave}`}>{n.texto}</span>
+                          <span className={`chip f-texto-${n.clave}`}>{textoFrecuencia(e.permil)}</span>
                           {e.estado === "invasora" && <span className="chip etiqueta-invasora">invasora</span>}
                           {hayVistas && !vistas[e.clave] && <span className="chip etiqueta-nueva">nueva para ti</span>}
                         </span>

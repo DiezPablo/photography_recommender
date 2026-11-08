@@ -20,7 +20,10 @@ export const dynamic = "force-dynamic";
 type Props = { searchParams: Promise<{ modo?: string; lat?: string; zona?: string }> };
 
 const TITULOS: Record<string, [string, string]> = {
-  aqui: ["Cerca de mí", "Las especies probables en un lugar y un día, con la luz y el tiempo para fotografiar."],
+  aqui: [
+    "Cerca de mí",
+    "Las especies que más se registran en un lugar y un día, con la luz y el tiempo para fotografiar.",
+  ],
   finde: ["Este finde", "Los mejores sitios cerca de ti para el sábado y el domingo."],
   donde: ["Dónde ver una especie", "Elige una especie: dónde y en qué meses es más fácil."],
 };

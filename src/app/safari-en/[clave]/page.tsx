@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (mes >= 0)
     return {
       title: `Safari en ${MESES[mes]}: dónde ir`,
-      description: `Los parques del mundo en su mejor época en ${MESES[mes]}, qué animales es más probable ver ese mes y dónde está la gran migración.`,
+      description: `Los parques del mundo en su mejor época en ${MESES[mes]}, qué animales se registran más ese mes y dónde está la gran migración.`,
       alternates: { canonical: `/safari-en/${clave}` },
     };
   const pareja = parejaDe(clave);
@@ -65,7 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const [a, b, m] = pareja.map((x) => (typeof x === "string" ? paisesDestacados().get(x) : MESES[x]));
     return {
       title: `${a} o ${b} en ${m}: ¿dónde ir de safari?`,
-      description: `${a} y ${b} en ${m}, lado a lado: parques en su mejor época, qué animales es probable ver, la lluvia, la migración, visados y malaria.`,
+      description: `${a} y ${b} en ${m}, lado a lado: parques en su mejor época, qué animales se registran más, la lluvia, la migración, visados y malaria.`,
       alternates: { canonical: `/safari-en/${clave}` },
     };
   }
@@ -134,7 +134,7 @@ function PaginaMes({ mes }: { mes: number }) {
                       <Link href={`/parque/${p.id}`}>{p.nombre}</Link> <small>{p.pais}</small>
                     </h3>
                     <p>
-                      {ver.length ? `Muy probable o probable en ${nombreMes}: ${lista(ver.slice(0, 6))}. ` : ""}
+                      {ver.length ? `Frecuentes en los registros de ${nombreMes}: ${lista(ver.slice(0, 6))}. ` : ""}
                       Mejor época: {rango(p.meses)}.
                     </p>
                   </li>

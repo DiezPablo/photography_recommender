@@ -1798,16 +1798,16 @@ textarea.solicitud {
   outline: 2px solid var(--texto);
   outline-offset: -1px;
 }
-.f-muy-probable {
+.f-muy-frecuente {
   background: var(--c-fauna);
 }
-.f-probable {
+.f-frecuente {
   background: color-mix(in srgb, var(--c-fauna) 60%, var(--superficie));
 }
-.f-posible {
+.f-ocasional {
   background: color-mix(in srgb, var(--c-fauna) 30%, var(--superficie));
 }
-.f-dificil {
+.f-escaso {
   background: color-mix(in srgb, var(--c-fauna) 10%, var(--superficie));
 }
 .f-raro {
@@ -1833,8 +1833,8 @@ textarea.solicitud {
 .especies-ok .nivel {
   color: var(--texto-2);
 }
-.especies-ok .f-texto-muy-probable,
-.especies-ok .f-texto-probable {
+.especies-ok .f-texto-muy-frecuente,
+.especies-ok .f-texto-frecuente {
   color: var(--c-fauna);
   font-weight: 600;
 }
@@ -1885,8 +1885,8 @@ textarea.solicitud {
 .tabla-ver td {
   font-size: 0.9rem;
 }
-.tabla-ver td.f-texto-muy-probable,
-.tabla-ver td.f-texto-probable,
+.tabla-ver td.f-texto-muy-frecuente,
+.tabla-ver td.f-texto-frecuente,
 .tabla-ver td.si {
   color: var(--c-fauna);
   font-weight: 600;

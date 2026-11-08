@@ -26,7 +26,7 @@ test("funciones puras: mes de la URL, zonas, grupos y veredicto", () => {
   } as never;
   const v = veredictos(p, [{ nombre: "León", meses: Array(12).fill(60) }]);
   expect(v[7].nota).toBe("excelente");
-  expect(v[7].detalles.join(" ")).toContain("Muy probable: león");
+  expect(v[7].detalles.join(" ")).toContain("Muy frecuente en los registros: león");
   expect(v[7].detalles.join(" ")).toContain("Migración");
   expect(v[3].nota).toBe("regular");
   expect(v[3].detalles.join(" ")).toContain("Fuera de la mejor época");

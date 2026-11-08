@@ -35,11 +35,11 @@ export function clavePareja(a: string, b: string, mes: number): string {
   return `${a}-o-${b}-en-${MESES[mes]}`;
 }
 
-/** Especies estrella probables ese mes (frecuencia ≥ 20 ‰), de más a menos. */
+/** Especies estrella frecuentes en los registros ese mes (≥ 20 ‰), de más a menos. */
 export function probables(p: Parque, mes: number): string[] {
   return Object.entries(p.frecuencia ?? {})
     .map(([t, f]) => ({ e: especiePorTaxon(Number(t)), f: f[mes] ?? 0 }))
-    .filter((x) => x.e && nivelFrecuencia(x.f).clave.includes("probable"))
+    .filter((x) => x.e && nivelFrecuencia(x.f).clave.includes("frecuente"))
     .sort((a, b) => b.f - a.f)
     .map((x) => nombreTaxon(x.e!).toLowerCase());
 }

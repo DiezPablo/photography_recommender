@@ -1,6 +1,6 @@
 // Veredicto de cada mes en la ficha de un parque (T37): una frase hecha con los datos que ya hay (temporada
 // escrita a mano, frecuencia de las especies estrella, migración, cierres, precio de los lodges y lluvia).
-// «Noviembre: buen mes. Muy probable: león y guepardo; probable: leopardo. Migración: este del parque. Lodges un
+// «Noviembre: buen mes. Muy frecuente en los registros: león y guepardo; frecuente: leopardo. Migración: este del parque. Lodges un
 // 35 % más baratos que en temporada alta. Lluvias cortas (95 mm).» Puro: servidor y navegador.
 import { MESES } from "@/lib/fechas";
 import { cierreEn, TEXTO_TIPO_CIERRE } from "@/features/safaris/cierres";
@@ -52,14 +52,14 @@ export function veredictos(p: Parque, especies: { nombre: string; meses: (number
     const porNivel = new Map<string, string[]>();
     for (const e of especies) {
       const n = nivelFrecuencia(e.meses[i]);
-      if (n.clave === "muy-probable" || n.clave === "probable")
+      if (n.clave === "muy-frecuente" || n.clave === "frecuente")
         porNivel.set(n.texto, [...(porNivel.get(n.texto) ?? []), e.nombre.toLowerCase()]);
     }
-    const muy = porNivel.get("muy probable") ?? [];
-    const prob = porNivel.get("probable") ?? [];
+    const muy = porNivel.get("muy frecuente") ?? [];
+    const prob = porNivel.get("frecuente") ?? [];
     const especiesTexto = [
-      muy.length ? `Muy probable: ${lista(muy.slice(0, 4))}` : "",
-      prob.length ? `${muy.length ? "probable" : "Probable"}: ${lista(prob.slice(0, 3))}` : "",
+      muy.length ? `Muy frecuente en los registros: ${lista(muy.slice(0, 4))}` : "",
+      prob.length ? `${muy.length ? "frecuente" : "Frecuente en los registros"}: ${lista(prob.slice(0, 3))}` : "",
     ].filter(Boolean);
     if (especiesTexto.length) detalles.push(especiesTexto.join("; "));
 

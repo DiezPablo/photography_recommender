@@ -965,3 +965,8 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     migración en el mes elegido en magenta, alojamientos de OSM y los tres aeropuertos más cercanos, con la leyenda
     como tabla al lado (debajo en el móvil). En agosto, en el Serengeti, sale el norte (cruces del Mara).
   - Las tres cartas, con zoom entero: con medio paso (0,5) las teselas escaladas dejaban juntas blancas.
+- 08-11-2026, decisiones de la auditoría aprobadas por el usuario («hazlo con tus recomendaciones»):
+  - D1, vocabulario: fuera «muy probable / probable / posible / difícil / muy raro», que hacían pasar la frecuencia de
+    registros por una probabilidad. Ahora «muy frecuente / frecuente / ocasional / escaso / raro» (en los registros),
+    con la cifra al lado: «frecuente (32 ‰)» (`textoFrecuencia` en `features/safaris/modelo.ts`). Mismos umbrales
+    (50/20/5/1 ‰). Las frases («Qué es probable ver») pasan a «Qué se registra más».

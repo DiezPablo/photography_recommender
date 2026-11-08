@@ -8,7 +8,7 @@ import { useState } from "react";
 import { MESES } from "@/lib/fechas";
 import { escribirAlmacen, useAlmacen, useParametrosUrl } from "@/lib/almacen";
 import CampoNumero from "@/ui/CampoNumero";
-import { nivelFrecuencia } from "@/features/safaris/modelo";
+import { nivelFrecuencia, textoFrecuencia } from "@/features/safaris/modelo";
 import { trasladoEn } from "@/features/safaris/planificar";
 import { calcular, SUPUESTOS_INICIALES, type Supuestos } from "@/features/safaris/presupuesto";
 import { useDatosNavegador } from "@/features/safaris/useDatosNavegador";
@@ -338,7 +338,7 @@ export default function MiViaje({ mesHoy }: { mesHoy: number }) {
                       const visto = facil(k, e.id) > 0 || e.f?.e.includes(k);
                       return (
                         <td key={e.id} className={n ? `f-texto-${n.clave}` : visto ? "si" : "no"}>
-                          {n && n.clave !== "sin-datos" ? n.texto : visto ? "se ve" : "–"}
+                          {n && n.clave !== "sin-datos" ? textoFrecuencia(f![v.mes]) : visto ? "se ve" : "–"}
                         </td>
                       );
                     })}

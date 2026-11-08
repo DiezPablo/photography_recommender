@@ -3,14 +3,14 @@
 // con el nivel en texto y en puntos, no solo en color.
 import { MESES } from "@/lib/fechas";
 import { useMesElegido } from "@/lib/mes";
-import { nivelFrecuencia } from "@/features/safaris/modelo";
+import { nivelFrecuencia, textoFrecuencia } from "@/features/safaris/modelo";
 import type { FilaFrecuencia } from "./FrecuenciaAvistamientos";
 
 export const PUNTOS: Record<string, string> = {
-  "muy-probable": "●●●●",
-  probable: "●●●",
-  posible: "●●",
-  dificil: "●",
+  "muy-frecuente": "●●●●",
+  frecuente: "●●●",
+  ocasional: "●●",
+  escaso: "●",
   raro: "○",
   "sin-datos": "–",
 };
@@ -39,7 +39,7 @@ export default function FrecuenciaMes({ filas, mesHoy }: { filas: FilaFrecuencia
                 <span aria-hidden className="puntos">
                   {PUNTOS[n.clave]}
                 </span>{" "}
-                {n.texto}
+                {textoFrecuencia(f.meses[mes])}
               </span>
             </li>
           );

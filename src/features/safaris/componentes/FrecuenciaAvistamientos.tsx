@@ -2,7 +2,7 @@
 // (iNaturalist) frente a las de su grupo, en cinco niveles. La pregunta número uno de los foros.
 import Link from "next/link";
 import { INICIALES, MESES } from "@/lib/fechas";
-import { confianza, nivelFrecuencia } from "@/features/safaris/modelo";
+import { confianza, nivelFrecuencia, textoFrecuencia } from "@/features/safaris/modelo";
 import FrecuenciaMes from "./FrecuenciaMes";
 
 export interface FilaFrecuencia {
@@ -74,9 +74,9 @@ export default function FrecuenciaAvistamientos({
                       key={i}
                       data-m={i + 1}
                       className={`f-${n.clave}${i === mesHoy ? " mes-actual" : ""}${c?.clave === "baja" ? " confianza-baja" : ""}`}
-                      title={`${f.nombre} en ${MESES[i]}: ${n.texto}${c ? ` (${c.texto}: ${f.muestra![i].toLocaleString("es-ES")} ${unidad} del grupo)` : ""}`}
+                      title={`${f.nombre} en ${MESES[i]}: ${textoFrecuencia(v)}${c ? ` (${c.texto}: ${f.muestra![i].toLocaleString("es-ES")} ${unidad} del grupo)` : ""}`}
                     >
-                      <span className="sr">{`${MESES[i]}: ${n.texto}`}</span>
+                      <span className="sr">{`${MESES[i]}: ${textoFrecuencia(v)}`}</span>
                     </td>
                   );
                 })}
@@ -104,7 +104,7 @@ export default function FrecuenciaAvistamientos({
         ))}
         {base && (
           <span>
-            <i className="f-posible confianza-baja" /> pocos datos (confianza baja)
+            <i className="f-ocasional confianza-baja" /> pocos datos (confianza baja)
           </span>
         )}
       </p>
