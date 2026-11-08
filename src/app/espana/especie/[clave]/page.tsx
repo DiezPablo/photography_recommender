@@ -7,6 +7,7 @@ import FrecuenciaAvistamientos from "@/features/safaris/componentes/FrecuenciaAv
 import FenomenosEspana from "@/features/espana/FenomenosEspana";
 import TarjetaHide from "@/features/espana/TarjetaHide";
 import BotonVista from "@/features/espana/BotonVista";
+import CitaEbird from "@/features/espana/citaEbird";
 import { fenomenosDe } from "@/features/espana/fenomenos";
 import { hidesDe } from "@/features/espana/hides";
 import { fotografiaDe } from "@/features/espana/fotografia";
@@ -116,7 +117,8 @@ export default async function PaginaEspecie({ params }: Props) {
           En eBird sale en el {deteccion.pct.map((p) => (p === null ? null : `${p} %`))[mesHoy] ?? "–"} de las listas de
           España en {MESES[mesHoy]}; su mejor mes,{" "}
           {MESES[deteccion.pct.reduce<number>((a, v, i) => ((v ?? 0) > (deteccion.pct[a] ?? 0) ? i : a), 0)]} (
-          {Math.max(...deteccion.pct.map((v) => v ?? 0))} %). En los mejores sitios el porcentaje es mucho mayor.
+          {Math.max(...deteccion.pct.map((v) => v ?? 0))} %). En los mejores sitios el porcentaje es mucho mayor.{" "}
+          <CitaEbird />
         </p>
       )}
 

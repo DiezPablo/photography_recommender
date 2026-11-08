@@ -8,6 +8,7 @@ import { MESES } from "@/lib/fechas";
 import { bloque, celda as celdaDe, centroCelda } from "@/lib/rejilla";
 import type { BloqueEspana } from "@/features/espana/zonas";
 import FranjaDia from "@/features/carta/FranjaDia";
+import CitaEbird from "@/features/espana/citaEbird";
 import { fiabilidad, TEXTO_FIABILIDAD } from "@/features/carta/estado";
 
 const POR_GRUPO = 6;
@@ -210,7 +211,8 @@ export default function FichaCelda({
             ‰ grupo: de cada mil registros de su grupo (aves, mamíferos…) en la cuadrícula ese mes y los vecinos,
             cuántos son de la especie (GBIF). Mide lo que se registra, que depende de quién va y qué apunta: no es la
             probabilidad de verla. En gris, los grupos con menos de 100 registros.
-            {listas >= 10 ? ` eBird: % de las ${listas} listas completas de ${MESES[mes]} en que sale.` : ""}
+            {listas >= 10 ? ` eBird: % de las ${listas} listas completas de ${MESES[mes]} en que sale. ` : ""}
+            {listas >= 10 && <CitaEbird />}
           </p>
 
           {recientes.length > 0 && (

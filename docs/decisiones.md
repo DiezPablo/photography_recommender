@@ -980,3 +980,12 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     `datos-AAAA-MM-DD` y borra las que pasan de 6. Cada versión guarda solo lo que cambió ese día: la versión de un
     fichero en una fecha es la de la release más reciente anterior que lo tenga (o la de `datos`). Un fallo al
     guardar la versión no para la publicación. Unos 77 MB de datos en total: el coste en almacenamiento es pequeño.
+  - D4, eBird: la frecuencia de detección (% de listas, `espana_ebird.json`) no sale de la API sino del conjunto
+    «EOD – eBird Observation Dataset» en GBIF, con licencia CC BY 4.0 (comprobado en la API de GBIF el 08-11-2026):
+    se puede publicar citándolo, y ahora se cita con su DOI donde se muestra (`features/espana/citaEbird.tsx`). Lo
+    que viene de la API de eBird (vistas recientes, rarezas, puntos de observación) se rige por las condiciones de
+    eBird: uso no comercial, citar a eBird y al Cornell Lab, y los datos derivados han de ir con esas condiciones;
+    las notas de la release `datos` las llevan (`.github/scripts/notas_datos.md`, que `publicar_release.sh` pone en
+    cada publicación). La web de eBird bloquea la lectura automática de sus condiciones (403): el resumen sale de su
+    centro de ayuda y de copias indexadas, y conviene que el usuario las lea. Si algún día hay uso comercial (D9),
+    estos ficheros necesitan permiso escrito del Cornell Lab.

@@ -23,8 +23,13 @@ then
   echo "Sin cambios en $*: no se publica (ni se despliega)"
   exit 0
 fi
+# condiciones de las fuentes (eBird pide que los datos derivados vayan con sus condiciones; decisión D4 de la
+# auditoría, 08-11-2026)
+NOTAS="$(cat "$(dirname "$0")/notas_datos.md")"
 gh release view datos >/dev/null 2>&1 || \
-  gh release create datos --title "Datos de safaris" --notes "Ficheros que publica GitHub Actions (se sobrescriben en cada actualización)." --prerelease
+  gh release create datos --title "Datos de safaris" --notes "$NOTAS" --prerelease
+# las notas, al día también en la release que ya existía
+gh release edit datos --notes "$NOTAS" >/dev/null || true
 gzip -kf9 "$@"
 gh release upload datos "$@" $(printf '%s.gz ' "$@") --clobber
 echo "Subidos: $*"
@@ -37,7 +42,9 @@ version="datos-$(date -u +%Y-%m-%d)"
 {
   gh release view "$version" >/dev/null 2>&1 || \
     gh release create "$version" --title "Datos del $(date -u +%d-%m-%Y)" --prerelease --latest=false \
-      --notes "Copia de los ficheros publicados ese día (comprimidos). Se guardan las 6 últimas."
+      --notes "Copia de los ficheros publicados ese día (comprimidos). Se guardan las 6 últimas.
+
+$NOTAS"
   gh release upload "$version" $(printf '%s.gz ' "$@") --clobber
   gh api "repos/${GITHUB_REPOSITORY}/releases?per_page=100" --jq '.[].tag_name' \
     | grep -E '^datos-[0-9]{4}-[0-9]{2}-[0-9]{2}$' | sort -r | tail -n +7 \

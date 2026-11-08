@@ -31,6 +31,7 @@ import FenomenosEspana from "@/features/espana/FenomenosEspana";
 import { fenomenosCerca } from "@/features/espana/fenomenos";
 import { ZONAS_ESPANA, type BloqueEspana, type ObsReciente } from "@/features/espana/zonas";
 import Esqueleto from "@/ui/Esqueleto";
+import CitaEbird from "@/features/espana/citaEbird";
 
 const RADIOS = [5, 10, 20, 30];
 const MAX_ESPECIES = 30;
@@ -439,6 +440,11 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
               })}
             </ol>
             {cita && <p className="nota-pie">{cita}</p>}
+            {especies.some((e) => e.clase === "Aves") && (
+              <p className="nota-pie">
+                <CitaEbird />
+              </p>
+            )}
             {hayRecientes && (
               <p className="nota-pie">
                 Visto en los últimos 30 días: aves de <a href="https://ebird.org">eBird</a> (Cornell Lab of Ornithology,
