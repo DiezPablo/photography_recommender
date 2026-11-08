@@ -1018,3 +1018,7 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     «Cerca de mí» (depende del día y del tiempo, y tiene que quedarse en el navegador), el orden de parques por mes
     de safaris (depende de lo visto en 30 días) y los rankings de «Este finde»; la evaluación de D10 está pensada
     para medir también esos cuando pasen a Python.
+  - D8, páginas repetidas: propuesta en `docs/propuesta-paginas.md`, pendiente de que el usuario apruebe qué se
+    quita (quitar «Buscar especie» de España y las comparativas fijas de países, juntar los cuatro bloques de
+    «cuándo ir» de la ficha de parque y un solo buscador de especie).
+  - D9, uso comercial: no se toca; decide el usuario.
