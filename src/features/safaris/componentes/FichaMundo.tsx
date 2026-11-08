@@ -96,6 +96,7 @@ export default function FichaMundo({
             {p.obs.toLocaleString("es-ES")} observaciones de mamíferos registradas desde 2010.
           </p>
           <p className="enlaces">
+            <Link href={`/mapa?parque=${p.id}`}>En el mapa</Link>
             <BotonViaje id={p.id} nombre={p.nombre} noches={estanciaDe(p.id, p.radio_km).ideal} mesHoy={mesHoy} />
             <BotonComparar id={p.id} />
             <a href="#organiza">Organiza tu viaje ↓</a>

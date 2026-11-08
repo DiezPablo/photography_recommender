@@ -8,6 +8,7 @@ import { useViajeGuardado } from "@/features/safaris/viaje";
 import {
   IconoBrujula,
   IconoCalendario,
+  IconoCarta,
   IconoHuella,
   IconoLibro,
   IconoManada,
@@ -38,13 +39,13 @@ const SAFARIS: Seccion[] = [
     activa: (r) => r === "/" || r.startsWith("/parque"),
     movil: true,
   },
+  { href: "/mapa", texto: "Mapa", Icono: IconoCarta, activa: (r) => r.startsWith("/mapa"), movil: true },
   { href: "/especies", texto: "Animales", Icono: IconoHuella, activa: (r) => r.startsWith("/especie"), movil: true },
   {
     href: "/safari-en",
     texto: "Calendario",
     Icono: IconoManada,
     activa: (r) => ["/safari-en", "/migracion", "/temporada-verde"].some((x) => r.startsWith(x)),
-    movil: true,
   },
   {
     href: "/planificar",
@@ -60,7 +61,7 @@ const ESPANA: Seccion[] = [
   {
     href: "/espana",
     texto: "Mapa",
-    Icono: IconoRuta,
+    Icono: IconoCarta,
     activa: (r, q) => r === "/espana" && modo(q) === "inicio",
     movil: true,
   },

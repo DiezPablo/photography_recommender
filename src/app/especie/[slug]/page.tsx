@@ -16,6 +16,7 @@ import {
   slugEspecie,
 } from "@/features/safaris/datos";
 import { fechaLocal } from "@/lib/sol";
+import { claveMundo } from "@/features/carta/mundo";
 import { eventosDeEspecie } from "@/features/safaris/eventos";
 import ParquesEspecie from "@/features/safaris/componentes/ParquesEspecie";
 import { FICHAS, REVISADO_FICHAS, TEXTO_UICN } from "@/features/safaris/fichasEspecie";
@@ -92,6 +93,13 @@ export default async function PaginaEspecieSafari({ params }: Props) {
               ? `Dónde más se ha observado entre los ${cifras().destacados} parques destacados, con su mejor época.`
               : "Hay muy pocas observaciones en los parques de la lista."}
           </p>
+          {claveMundo(e.cientifico) && (
+            <p>
+              <Link className="boton" href={`/mapa?especie=${claveMundo(e.cientifico)}`}>
+                Verlo en el mapa del mundo
+              </Link>
+            </p>
+          )}
         </div>
       </header>
       <div className="ficha-grid">

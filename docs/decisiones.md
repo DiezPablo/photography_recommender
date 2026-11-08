@@ -934,3 +934,23 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     de sitios queda como segunda opción.
   - Pendiente de decisión del usuario (auditoría): el vocabulario «muy probable / probable» que sigue en la ficha de
     especie y en «Cerca de mí»; la carta no lo usa.
+- 08-11-2026, rediseño B, fase 3 (la carta de safaris, `/mapa`): los 3429 parques del mundo con el sistema de la
+  carta de España (`features/carta/CartaMundo.tsx`, datos en `features/carta/mundo.ts`, rutas `/mapa/especies.json`,
+  `/mapa/especie/[clave]` y `/mapa/parque/[id]`). Nueva entrada «Mapa» en el menú de safaris (y en la barra del
+  móvil, que deja Calendario: el mes ya está en la cabecera).
+  - Datos distintos a los de España, y la carta lo dice: de cada parque solo hay registros de mamíferos de todo el
+    año (GBIF) y el pipeline guarda sus 12 más registrados. Con un mamífero elegido, el magenta es el ‰ de todos los
+    registros de mamíferos del parque (`obs`, la muestra) que son de él, en los mismos tramos que España, y rayado
+    con menos de 100 registros; sale en los parques donde está entre esos 12 (el león, en 80). Una primera versión
+    dividía entre la suma de los 12 y no entre el total: inflaba el ‰, se corrigió antes de publicar.
+  - El mes no cambia la frecuencia (no hay datos por mes en los 3400): marca la temporada recomendada (la del
+    catálogo en los 65 destacados; la época seca de NASA POWER en el resto). Sin especie, en magenta los parques en
+    temporada ese mes y la tira de meses cuenta cuántos lo están.
+  - Ficha del parque al tocarlo: foto de Commons con autor y licencia, los 12 mamíferos con su ‰ y la muestra con
+    su fiabilidad, lluvia y registros por mes con la temporada marcada (y el aviso de que los registros por mes dicen
+    cuándo va la gente, no cuándo hay más fauna), aeropuerto más cercano y enlace a la ficha completa.
+  - Los espacios de nivel C (poca fauna emblemática) van ocultos salvo con la capa «También espacios con poca
+    fauna» (`?con=todos`).
+  - La ficha de parque (destacados y del mundo) y la de especie enlazan a la carta. Las fichas completas de parque y
+    las demás páginas de safaris siguen con su estructura, ya con los tokens de la fase 2.
+  - Icono propio para «Mapa» en los dos mundos (hoja con cuadrícula); Planificar tenía el mismo de ruta.

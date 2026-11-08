@@ -32,7 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       .filter((p) => !destacados.has(p.id) && p.nivel !== "C")
       .map((p) => url(`/parque/${p.id}`, 0.4)),
     url("/espana", 0.8),
-    ...["/espana/hides", "/espana/rarezas", "/espana/normas"].map((r) => url(r, 0.6)),
+    ...["/mapa", "/espana/hides", "/espana/rarezas", "/espana/normas"].map((r) => url(r, 0.6)),
     ...Object.keys(cargarEspana()?.especies ?? {}).map((k) => url(`/espana/especie/${k}`, 0.5)),
     // fichas de lugares de España: espacios protegidos, observatorios y los puntos de eBird con 100 especies o más
     ...cargarLugares()

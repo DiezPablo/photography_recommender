@@ -24,7 +24,8 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
     hora de actividad por especie (altura del sol en cada observación de iNaturalist) → `espana_actividad.json`,
     workflow `espana_actividad.yml`, semanal.
 - Web Next.js 16 (App Router) en `src/`: `app/` (`/`, `/buscar` (y `/buscar.json` para el buscador de la cabecera), `/parque/[id]`, `/especies`, `/especie/[slug]`, `/guia`, `/comparar`, `/migracion`,
-  `/planificar`, `/presupuesto`, `/viaje`, `/safari-en/[mes|país]`, `/espana` (sin modo, la carta: mapa del IGN con la
+  `/planificar`, `/presupuesto`, `/viaje`, `/safari-en/[mes|país]`, `/mapa` (la carta de safaris: parques
+  del mundo, temporada por mes y ‰ de cada mamífero; `features/carta/CartaMundo.tsx` y `mundo.ts`), `/espana` (sin modo, la carta: mapa del IGN con la
   fauna por cuadrícula de 10 km, fiabilidad, luz y ficha de cuadrícula, en `features/carta/`, estado en la URL; con
   `modo=aqui|finde|donde`, «Cerca de mí», «Este finde» y «Buscar especie»), `/espana/lugar/[id]` (ficha de cada lugar,
   ISR; fenómenos escritos a mano en `features/espana/fenomenos.ts`), `/espana/mis-especies` (lista de vistas, solo
@@ -39,7 +40,7 @@ problemas en `docs/decisiones.md` (añade ahí lo nuevo); análisis de mercado y
   el mes del viaje en `lib/mes.ts` (URL `?mes=marzo` y navegador, selector en la cabecera), `ui/` (mapa Leaflet, iconos, `Navegacion.tsx`: dos mundos, «Safaris» y «España», con conmutador en la cabecera y
   menú y barra del móvil propios de cada uno; `FotoGrande.tsx`), `lib/`
   (`datos.ts`: lee `datos/*.gz`; `almacen.ts`; `fechas.ts`), `estilos/` (01-11 heredados de Rasante; el aspecto
-  propio, guía de campo editorial, en `01-tokens.css` y `12-diseno.css`, que va la última).
+  propio, rediseño B de 11-2026, en `01-tokens.css`, `12-diseno.css` y `13-carta.css`, que va la última).
   Los 65 destacados se generan en el build; el resto, al visitarlos (ISR) con los `.gz` en la función.
 - Workflows: `pruebas.yml` (ruff + pytest; tsc + ESLint + Prettier + build + Playwright), `safaris.yml`
   (semanal), `safaris_mundo.yml` (diario, incremental con caché), `recientes.yml` (dos veces al día),

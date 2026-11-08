@@ -186,6 +186,7 @@ export default async function PaginaParque({ params }: Props) {
           <p className="enlaces">
             <BotonViaje id={p.id} nombre={p.nombre} noches={estanciaDe(p.id, p.radio_km).ideal} mesHoy={mesHoy} />
             <BotonComparar id={p.id} />
+            <Link href={`/mapa?parque=${p.id}`}>En el mapa</Link>
             {p.web && (
               <a href={p.web} target="_blank" rel="noopener">
                 {etiquetaWeb(p.web)} ↗

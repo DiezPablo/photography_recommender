@@ -86,6 +86,13 @@ export const IconoRuta = (p: P) => (
     <path d="M8 17h7a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7" />
   </Svg>
 );
+/** Una hoja de mapa con su cuadrícula: la carta. */
+export const IconoCarta = (p: P) => (
+  <Svg {...p}>
+    <rect x="4" y="4" width="16" height="16" rx="1" />
+    <path d="M4 10h16M4 15h16M10 4v16M15 4v16" />
+  </Svg>
+);
 export const IconoCalendario = (p: P) => (
   <Svg {...p}>
     <rect x="4" y="5" width="16" height="15" rx="2" />

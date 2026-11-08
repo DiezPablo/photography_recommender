@@ -712,3 +712,94 @@
     transition: none;
   }
 }
+
+/* Carta de safaris (fase 3): parques como puntos */
+.carta path.parque-fauna {
+  fill: var(--carta-magenta);
+  stroke: var(--carta-papel);
+}
+.carta path.parque-fuera {
+  fill: var(--carta-papel);
+  stroke: var(--carta-tinta-3);
+  stroke-opacity: 0.7;
+}
+.carta path.parque-elegido {
+  stroke: var(--carta-tinta);
+}
+.muestra-capa.capa-todos {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--carta-tinta-3);
+  background: var(--carta-papel);
+}
+.foto-parque-carta {
+  margin: 0;
+}
+.foto-parque-carta img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 2px;
+}
+.foto-parque-carta figcaption {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--carta-tinta-3);
+}
+.foto-parque-carta a {
+  color: inherit;
+}
+.meses-parque {
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+.meses-parque-barras {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2px;
+  height: 72px;
+}
+.meses-parque-barras span {
+  position: relative;
+  border-bottom: 3px solid var(--carta-linea);
+}
+.meses-parque-barras span.en-temporada {
+  border-bottom-color: var(--carta-tinta);
+}
+.meses-parque-barras span.mes-actual {
+  background: var(--carta-papel-2);
+}
+.meses-parque-barras i,
+.meses-parque-barras b {
+  position: absolute;
+  bottom: 16px;
+  max-height: calc(100% - 16px);
+  width: 40%;
+}
+.meses-parque-barras i {
+  left: 8%;
+  background: var(--carta-agua);
+  opacity: 0.55;
+}
+.meses-parque-barras b {
+  right: 8%;
+  background: var(--carta-magenta);
+  opacity: 0.7;
+}
+.meses-parque-barras em {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font: normal 400 11px/16px var(--f-mono);
+  color: var(--carta-tinta-3);
+}
+.lista-mejores b {
+  font-weight: 600;
+  flex: 1 1 100%;
+}
