@@ -205,6 +205,9 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--espana-ebird", action="store_true", help="frecuencia de detección de aves (eBird en GBIF)")
     ap.add_argument("--espana-recientes", action="store_true", help="aves vistas en 30 días por provincia (eBird)")
     ap.add_argument("--espana-diagnostico", action="store_true", help="consultas SQL de prueba a GBIF (Gallocanta)")
+    ap.add_argument(
+        "--espana-experimentos", action="store_true", help="compara modelos de recomendación de España (caché de GBIF)"
+    )
     a = ap.parse_args(argv)
     if a.espana_actividad:
         from safari.espana import inat_espana
@@ -235,6 +238,11 @@ def main(argv: list[str] | None = None) -> None:
         destino = a.salida if a.salida != por_defecto else Path("public/datos/espana_recientes.json")
         ebird.recientes_espana(destino)
         ebird.rarezas_espana(destino.parent / "espana_rarezas.json")
+        return
+    if a.espana_experimentos:
+        from safari.espana import experimentos
+
+        experimentos.main()
         return
     if a.espana_diagnostico:
         from safari.espana import diagnostico

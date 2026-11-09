@@ -18,6 +18,10 @@ on:
         description: "Solo consultas de prueba pequeñas (Gallocanta) para ver qué filtro vacía la descarga"
         type: boolean
         default: false
+      experimentos:
+        description: "Solo comparar modelos de recomendación con la descarga de la caché (no publica)"
+        type: boolean
+        default: false
       aceptar_evaluacion:
         description: "Publicar aunque la evaluación empeore más de un 5 % (cambio de algoritmo aceptado a sabiendas)"
         type: boolean
@@ -65,15 +69,21 @@ jobs:
         if: ${{ inputs.diagnostico }}
         run: python -m safari --espana-diagnostico
 
+      - name: Experimentos
+        if: ${{ inputs.experimentos }}
+        run: |
+          python -m safari --espana-experimentos
+          [ -s docs/espana-experimentos.json ] && .github/scripts/subir_fichero.sh docs/espana-experimentos.json "Experimentos de España ($(date -u +%Y-%m-%d))" || true
+
       # para (y no publica) si la evaluación empeora más de un 5 % frente a la línea base (decisión D10)
       - name: GBIF, estacionalidad y evaluación
-        if: ${{ !inputs.diagnostico }}
+        if: ${{ !inputs.diagnostico && !inputs.experimentos }}
         env:
           ACEPTAR_EVALUACION: ${{ inputs.aceptar_evaluacion && '1' || '' }}
         run: python -m safari --espana
 
       - name: Frecuencia de detección de eBird (aves)
-        if: ${{ !inputs.diagnostico }}
+        if: ${{ !inputs.diagnostico && !inputs.experimentos }}
         run: |
           [ "${{ inputs.nueva_descarga }}" = "true" ] || [ "${{ github.event_name }}" = "schedule" ] && rm -f cache/espana_ebird.json.gz || true
           python -m safari --espana-ebird
@@ -85,6 +95,7 @@ jobs:
           key: espana-v1-${{ github.run_id }}
 
       - name: Informe de viabilidad
+        if: ${{ !inputs.experimentos }}
         run: |
           [ -s docs/espana-viabilidad.md ] || { echo "Sin informe (¿faltan los secretos de GBIF?)"; exit 0; }
           # con la API: el commit sale firmado por GitHub (verificado); no hace nada si el informe no cambió
@@ -97,6 +108,7 @@ jobs:
           fi
 
       - name: Publicar
+        if: ${{ !inputs.experimentos }}
         run: |
           [ -s public/datos/espana_ebird.json ] && .github/scripts/publicar_release.sh "España eBird ($(date -u +%Y-%m-%d))" public/datos/espana_ebird.json || true
           [ -s public/datos/espana.json ] || { echo "Nada que publicar"; exit 0; }

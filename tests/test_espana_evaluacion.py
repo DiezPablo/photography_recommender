@@ -54,3 +54,21 @@ def test_lo_que_sube_en_el_mes_se_calcula_en_el_pipeline():
     assert [k for k, _, _ in sube[10]] == ["1"]  # noviembre
     assert sube[10][0][1] == 60
     assert sube[5] == []  # en junio no sube nada
+
+
+def test_experimentos_comparan_modelos_y_grupos():
+    from safari.espana.experimentos import experimentar
+
+    filas = _filas()
+    # un mamífero en la misma cuadrícula con pocos registros pero ‰ altísimo en su grupo, que en 2025 no se ve
+    for anio in range(2015, 2025):
+        for mes in range(1, 13):
+            filas.append({"celda": "10kmE1N1", "clase": 359, "especie": 9, "anio": anio, "mes": mes, "n": 30})
+            filas.append({"celda": "10kmE1N1", "clase": 359, "especie": 8, "anio": anio, "mes": mes, "n": 1})
+    r = experimentar(filas, 2025)
+    assert set(r["por_grupo"]["212"]) >= {"mensual", "anual", "mezcla", "contraido", "casos"}
+    assert r["por_grupo"]["212"]["mensual"] > r["por_grupo"]["212"]["anual"]
+    juntos = r["juntos"]
+    assert juntos["casos"] > 0
+    # el mamífero no visto en 2025 queda arriba con el ‰ de su grupo y abajo con la parte absoluta
+    assert juntos["absoluto"] > juntos["grupo"]
