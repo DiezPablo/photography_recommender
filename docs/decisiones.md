@@ -1069,3 +1069,8 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   parque no se pierde; y el contorno es la envolvente convexa del polígono (siempre simple; cubre algo más que el
   parque, mucho menos que el círculo). También se descartan los huecos que Overpass deja en la geometría, que
   rompieron la ejecución programada.
+- 09-11-2026, D3 publicado: la ejecución del commit e952edd sacó 3544 parques con fauna (3525 con la caja) y publicó
+  3449 (antes 3429): 1630 con contorno (231 de Wikidata y 1411 de OpenStreetMap, como envolvente convexa) y 1819
+  con círculo, entre ellos los 65 destacados; ninguno se quedó con la caja. GBIF tardó (336 reintentos «no
+  responde»), sin rechazos. Los de nivel A o B pasan de 541 a 518: con el contorno, que es menor que el círculo,
+  algunos parques bajan de los umbrales de especies estrella.
