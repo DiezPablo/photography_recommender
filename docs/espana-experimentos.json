@@ -1,0 +1,39 @@
+{
+ "anio": 2025,
+ "por_grupo": {
+  "212": {
+   "mensual": 0.8822,
+   "anual": 0.8626,
+   "mezcla": 0.8831,
+   "contraido": 0.8897,
+   "casos": 25695
+  },
+  "358": {
+   "mensual": 0.8708,
+   "anual": 0.882,
+   "mezcla": 0.8775,
+   "contraido": 0.8783,
+   "casos": 31
+  },
+  "131": {
+   "mensual": 0.8416,
+   "anual": 0.8552,
+   "mezcla": 0.8441,
+   "contraido": 0.8482,
+   "casos": 12
+  },
+  "359": {
+   "mensual": 0.8291,
+   "anual": 0.8548,
+   "mezcla": 0.8472,
+   "contraido": 0.8415,
+   "casos": 69
+  }
+ },
+ "juntos": {
+  "grupo": 0.8728,
+  "absoluto": 0.8844,
+  "percentil": 0.8756,
+  "casos": 26144
+ }
+}
