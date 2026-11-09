@@ -10,3 +10,6 @@ rasante
 tests
 salida
 src/app/icon.svg
+
+# los escribe el workflow de España (evaluación, línea base y experimentos)
+docs/espana-*.json
