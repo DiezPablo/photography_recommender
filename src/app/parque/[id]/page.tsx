@@ -228,8 +228,6 @@ export default async function PaginaParque({ params }: Props) {
         conEspecies={false}
       />
 
-      <VeredictoMes meses={veredictos(p, filasFrecuencia)} mesHoy={mesHoy} />
-
       {(p.galeria?.length ?? 0) >= 3 && (
         <section className="seccion galeria-parque" aria-labelledby="galeria-titulo">
           <h2 className="rotulo" id="galeria-titulo">
@@ -258,10 +256,14 @@ export default async function PaginaParque({ params }: Props) {
         </section>
       )}
 
+      {/* «Cuándo ir», en un solo bloque (D8, 09-11-2026): el veredicto del mes, el año del parque, cuánto se
+          registra cada especie mes a mes, los fenómenos y la temporada verde */}
       <section className="seccion" id="cuando">
         <h2 className="rotulo">Cuándo ir</h2>
+        <VeredictoMes meses={veredictos(p, filasFrecuencia)} mesHoy={mesHoy} encabezado="h3" />
         <AnoSafari p={p} mesActual={mesHoy} />
         <AvisoCierre id={p.id} mesHoy={mesHoy} />
+        <FrecuenciaAvistamientos mesHoy={mesHoy} filas={filasFrecuencia} encabezado="h3" />
         <Fenomenos parque={p.id} mesHoy={mesHoy} />
         <TemporadaVerde p={p} mesActual={mesHoy} />
         <p className="nota-pie">
@@ -320,7 +322,6 @@ export default async function PaginaParque({ params }: Props) {
           </section>
         )}
 
-        <FrecuenciaAvistamientos mesHoy={mesHoy} filas={filasFrecuencia} />
         {enMundo && mundo && <CincoGrandes p={enMundo} mundo={mundo} conteos={conteosCientifico} />}
 
         <VistoAhora

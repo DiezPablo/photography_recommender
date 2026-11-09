@@ -1,5 +1,5 @@
 "use client";
-// La tabla de probabilidad en el móvil (T40): sin scroll horizontal, un mes cada vez (el elegido en la cabecera),
+// La tabla de frecuencia en el móvil (T40): sin scroll horizontal, un mes cada vez (el elegido en la cabecera),
 // con el nivel en texto y en puntos, no solo en color.
 import { MESES } from "@/lib/fechas";
 import { useMesElegido } from "@/lib/mes";

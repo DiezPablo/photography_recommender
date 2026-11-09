@@ -38,7 +38,7 @@ function lista(xs: string[]): string {
 }
 
 /** El veredicto de los 12 meses (índice 0-11). `especies`: nombre de cada especie estrella y su frecuencia (‰)
- * por mes, como en la tabla de probabilidad. */
+ * por mes, como en la tabla de frecuencia. */
 export function veredictos(p: Parque, especies: { nombre: string; meses: (number | null)[] }[]): VeredictoMes[] {
   const precios = indicePrecios(p.id);
   const lluvias = p.clima?.lluvia_mm ?? [];

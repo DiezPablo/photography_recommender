@@ -9,6 +9,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useParametrosUrl } from "@/lib/almacen";
 import { INICIALES, MESES, mesDeParametro } from "@/lib/fechas";
 import { useMapaBase } from "@/ui/mapa/useMapaBase";
+import SelectorEspecie, { type OpcionEspecie } from "@/ui/SelectorEspecie";
+import { grupoFauna } from "@/features/safaris/gruposFauna";
 import type { FilaIndice } from "@/features/safaris/modelo";
 import type { EspecieMundo, FichaParqueCarta, ParqueEspecie } from "@/features/carta/mundo";
 import { fiabilidad, TEXTO_FIABILIDAD } from "@/features/carta/estado";
@@ -32,7 +34,6 @@ const TRAMOS: [number, number, string][] = [
 const tramo = (v: number) => TRAMOS.findIndex(([d]) => v >= d);
 const RADIO: Record<string, number> = { A: 7, B: 5, C: 3.5 };
 
-const sinTildes = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const enTemporada = (p: FilaIndice, mes: number) => (p.t ?? p.ep ?? []).includes(mes + 1);
 
 export default function CartaMundo({ hoy }: { hoy: string }) {
@@ -53,7 +54,6 @@ export default function CartaMundo({ hoy }: { hoy: string }) {
   const [lista, setLista] = useState<EspecieMundo[]>([]);
   // cuántos mamíferos guarda cada parque (12 en los datos antiguos, 40 en los nuevos)
   const [maximo, setMaximo] = useState(12);
-  const [busqueda, setBusqueda] = useState("");
   const [hojaAlta, setHojaAlta] = useState(false);
   const [datos, setDatos] = useState<{ clave: string; parques: ParqueEspecie[] }>();
   const [ficha, setFicha] = useState<{ id: string; f: FichaParqueCarta | null }>();
@@ -186,11 +186,19 @@ export default function CartaMundo({ hoy }: { hoy: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listo, leaflet, nuevaCapa, visibles, deEspecie, especie, mes, parque, q.get("sin")]);
 
-  const qb = sinTildes(busqueda.trim());
-  const opciones = qb ? lista.filter((e) => sinTildes(`${e.n ?? ""} ${e.c}`).includes(qb)).slice(0, 8) : [];
+  const opcionesEspecie = useMemo<OpcionEspecie<string>[]>(
+    () =>
+      lista.map((e) => ({
+        clave: e.k,
+        nombre: e.n ?? e.c,
+        cientifico: e.c,
+        grupo: grupoFauna(e.c, "Mammalia"),
+        detalle: `${e.parques} parques`,
+      })),
+    [lista],
+  );
   const elegirEspecie = (k: string | null) => {
     actualizar({ especie: k });
-    setBusqueda("");
   };
   const alternar = (c: Capa) => {
     if (c === "todos") actualizar({ con: encendida("todos") ? null : "todos" });
@@ -249,34 +257,17 @@ export default function CartaMundo({ hoy }: { hoy: string }) {
         </h1>
 
         <div className="carta-campo carta-buscador">
-          <label htmlFor="carta-especie">Mamífero</label>
-          <input
-            id="carta-especie"
-            type="search"
-            autoComplete="off"
-            placeholder={elegida ? "Cambiar de especie" : "León, gorila de montaña, oso polar…"}
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            aria-controls="carta-opciones"
+          <SelectorEspecie<string>
+            etiqueta="Mamífero"
+            vacio="León, gorila de montaña, oso polar…"
+            opciones={opcionesEspecie}
+            valor={especie}
+            onCambio={(k) => elegirEspecie(k)}
+            limite={60}
           />
-          {opciones.length > 0 && (
-            <ul id="carta-opciones" className="carta-opciones">
-              {opciones.map((e) => (
-                <li key={e.k}>
-                  <button type="button" onClick={() => elegirEspecie(e.k)}>
-                    <b>{e.n ?? e.c}</b> <i>{e.c}</i>
-                    <span className="cifra">{e.parques} parques</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
           {elegida && (
             <p className="carta-elegida">
-              <i>{elegida.c}</i> · entre los {maximo} mamíferos más registrados de {elegida.parques} parques{" "}
-              <button type="button" className="boton-texto" onClick={() => elegirEspecie(null)}>
-                Quitar
-              </button>
+              <i>{elegida.c}</i> · entre los {maximo} mamíferos más registrados de {elegida.parques} parques
             </p>
           )}
         </div>

@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MESES } from "@/lib/fechas";
-import { PAREJAS, clavePareja } from "@/features/safaris/respuestas";
 import { cargarSafaris, enTemporada, paisesDe, paisesDestacados } from "@/features/safaris/datos";
 
 export const metadata: Metadata = {
@@ -46,25 +45,6 @@ export default function IndiceRespuestas() {
             <li key={s}>
               <Link href={`/safari-en/${s}`}>Safari en {n}</Link>{" "}
               <small>{parques.filter((p) => paisesDe(p).includes(n)).length} destacados</small>
-            </li>
-          ))}
-        </ul>
-      </section>
-      <section className="seccion">
-        <h2 className="rotulo">Comparativas</h2>
-        <ul className="lista-respuesta compacta">
-          {PAREJAS.map(([a, b]) => (
-            <li key={`${a}-${b}`} className="fila-pareja">
-              <b>
-                {paisesDestacados().get(a)} o {paisesDestacados().get(b)}
-              </b>
-              <span className="nav-respuestas">
-                {MESES.map((m, i) => (
-                  <Link key={m} href={`/safari-en/${clavePareja(a, b, i)}`} aria-label={`${m}`}>
-                    {m.slice(0, 3)}
-                  </Link>
-                ))}
-              </span>
             </li>
           ))}
         </ul>

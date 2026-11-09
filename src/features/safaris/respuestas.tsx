@@ -19,7 +19,7 @@ export const PAREJAS: [string, string][] = [
   ["india", "sri-lanka"],
 ];
 
-/** «kenia-o-tanzania-en-agosto» → ["kenia", "tanzania", 7] */
+/** «kenia-o-tanzania-en-agosto» → ["kenia", "tanzania", 7]: las comparativas que había, para redirigirlas (D8) */
 export function parejaDe(clave: string): [string, string, number] | null {
   for (const [a, b] of PAREJAS) {
     const prefijo = `${a}-o-${b}-en-`;
@@ -29,10 +29,6 @@ export function parejaDe(clave: string): [string, string, number] | null {
     }
   }
   return null;
-}
-
-export function clavePareja(a: string, b: string, mes: number): string {
-  return `${a}-o-${b}-en-${MESES[mes]}`;
 }
 
 /** Especies estrella frecuentes en los registros ese mes (≥ 20 ‰), de más a menos. */

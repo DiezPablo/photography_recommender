@@ -1,4 +1,4 @@
-// Qué probabilidad hay de ver cada especie estrella, mes a mes: frecuencia en las fotos de los visitantes
+// Cuánto se registra cada especie estrella, mes a mes: frecuencia en las fotos de los visitantes
 // (iNaturalist) frente a las de su grupo, en cinco niveles. La pregunta número uno de los foros.
 import Link from "next/link";
 import { INICIALES, MESES } from "@/lib/fechas";
@@ -20,13 +20,16 @@ export default function FrecuenciaAvistamientos({
   filas,
   mesHoy,
   unidad = "fotos",
-  titulo = "Qué probabilidad hay de verlos, mes a mes",
+  titulo = "Cuánto se registra cada especie, mes a mes",
+  encabezado: H = "h2",
 }: {
   filas: FilaFrecuencia[];
   mesHoy: number;
   /** qué cuenta la muestra: fotos (iNaturalist) u observaciones (GBIF) */
   unidad?: string;
   titulo?: string;
+  /** h3 dentro del bloque «Cuándo ir» de la ficha de parque */
+  encabezado?: "h2" | "h3";
 }) {
   const idTitulo = `frecuencia-${titulo
     .normalize("NFD")
@@ -40,9 +43,9 @@ export default function FrecuenciaAvistamientos({
   const hoy = confianza(base?.[mesHoy]);
   return (
     <section className="seccion frecuencia" aria-labelledby={idTitulo}>
-      <h2 className="rotulo" id={idTitulo}>
+      <H className="rotulo" id={idTitulo}>
         {titulo}
-      </h2>
+      </H>
       <FrecuenciaMes filas={filas} mesHoy={mesHoy} />
       <div className="tabla-desliza">
         <table className="tabla-frecuencia">

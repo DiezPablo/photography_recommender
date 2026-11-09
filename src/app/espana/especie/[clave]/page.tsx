@@ -88,10 +88,9 @@ export default async function PaginaEspecie({ params }: Props) {
         </p>
         <p>
           <BotonVista clave={clave} especie={{ n: nombre, c: e.c, clase: e.clase ?? null }} />{" "}
-          <Link className="boton" href={`/espana?especie=${clave}`}>
+          <Link className="boton" href={`/?especie=${clave}`}>
             Verla en el mapa
-          </Link>{" "}
-          <Link href={`/espana?modo=donde&k=${clave}`}>Lista de sitios</Link>
+          </Link>
         </p>
         {e.estado === "invasora" && (
           <p className="aviso-plan">Especie exótica invasora (Catálogo español): no es fauna autóctona.</p>

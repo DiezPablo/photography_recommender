@@ -62,7 +62,8 @@ const ESPANA: Seccion[] = [
     href: "/",
     texto: "Mapa",
     Icono: IconoCarta,
-    activa: (r, q) => r === "/" || (r === "/espana" && modo(q) === "inicio"),
+    // la ficha de una especie se abre desde la carta: cuenta como «Mapa»
+    activa: (r, q) => r === "/" || r.startsWith("/espana/especie") || (r === "/espana" && modo(q) === "inicio"),
     movil: true,
   },
   {
@@ -82,14 +83,6 @@ const ESPANA: Seccion[] = [
     movil: true,
   },
   {
-    href: "/espana?modo=donde",
-    texto: "Buscar especie",
-    corto: "Especies",
-    Icono: IconoPrismaticos,
-    activa: (r, q) => r.startsWith("/espana/especie") || (r === "/espana" && modo(q) === "donde"),
-    movil: true,
-  },
-  {
     href: "/espana/hides",
     texto: "Hides",
     Icono: IconoHuella,
@@ -101,6 +94,7 @@ const ESPANA: Seccion[] = [
     texto: "Rarezas",
     Icono: IconoPrismaticos,
     activa: (r) => r.startsWith("/espana/rarezas"),
+    movil: true,
   },
   {
     href: "/espana/diario",

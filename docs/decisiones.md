@@ -1029,3 +1029,16 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     iNaturalist. Los contornos de Wikidata son pocos (unos 7 de cada 300 parques de nivel A o B tienen P3896) y sus
     enlaces llevan «+» por espacio, que no se leía: solo salía 1 parque con contorno. Corregido. Para más contornos
     harían falta los límites de OpenStreetMap, con muchas más peticiones a Overpass: queda para más adelante.
+- 09-11-2026, D8 aprobada («junta páginas»):
+  - Fuera «Buscar especie» de España (`/espana?modo=donde`, `DondeVerEspecie`): redirige a la carta con la especie y
+    el mes; la ficha de especie y «Mis especies» enlazan a la carta. El menú de España deja esa entrada y la barra
+    del móvil enseña Rarezas en su lugar.
+  - Fuera las comparativas fijas de dos países (`/safari-en/[a]-o-[b]-en-[mes]`, 192 páginas del build): redirigen
+    a la página del primer país. La página de cada mes enlaza a la carta del mundo de ese mes.
+  - Ficha de parque: el veredicto del mes, el año del parque, cuánto se registra cada especie mes a mes, los
+    fenómenos y la temporada verde, en un solo bloque «Cuándo ir». El título de la tabla deja «Qué probabilidad hay
+    de verlos» por «Cuánto se registra cada especie, mes a mes».
+  - Un solo buscador de especie (`ui/SelectorEspecie.tsx`, ahora genérico: claves de texto o número, grupos libres,
+    tope de resultados para listas de miles) en la portada y el explorador de safaris y en las dos cartas.
+- 09-11-2026, D9: el usuario no prevé uso comercial de momento; todo sigue como está (Vercel Hobby, fotos CC BY-NC,
+  cuota gratuita de Open-Meteo, datos de la API de eBird).

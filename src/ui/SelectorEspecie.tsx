@@ -1,34 +1,41 @@
 "use client";
-// Selector de especie con búsqueda, miniatura y grupos (T34): el <select> nativo con 87 nombres era incómodo en el
-// móvil. Patrón combobox de ARIA: se escribe para filtrar (sin tildes), flechas para moverse, Intro para elegir.
+// El buscador de especie de toda la web (decisión D8, 09-11-2026: antes había siete): búsqueda, miniatura y grupos
+// (T34). Patrón combobox de ARIA: se escribe para filtrar (sin tildes y con erratas, como el buscador de la cabecera),
+// flechas para moverse, Intro para elegir. Lo usan la portada y el explorador de safaris y las dos cartas.
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { normal, puntuar } from "@/lib/busqueda";
-import { GRUPOS_FAUNA, type GrupoFauna } from "@/features/safaris/gruposFauna";
+import { GRUPOS_FAUNA } from "@/features/safaris/gruposFauna";
 
-export interface OpcionEspecie {
-  clave: number;
+export interface OpcionEspecie<C extends string | number = number> {
+  clave: C;
   nombre: string;
   cientifico: string;
-  grupo: GrupoFauna;
+  /** grupo en el que se lista (los de GRUPOS_FAUNA van en su orden; los demás, detrás, en el de las opciones) */
+  grupo: string;
   foto?: string | null;
+  /** una cifra al lado («1023 cuadrículas») */
+  detalle?: string;
 }
 
-export default function SelectorEspecie({
+export default function SelectorEspecie<C extends string | number = number>({
   opciones,
   valor,
   onCambio,
   etiqueta = "Qué quieres ver",
   vacio = "Cualquier especie",
   nombre,
+  limite = Infinity,
 }: {
-  opciones: OpcionEspecie[];
+  opciones: OpcionEspecie<C>[];
   /** clave elegida (o null) */
-  valor: number | null;
-  onCambio: (clave: number | null) => void;
+  valor: C | null;
+  onCambio: (clave: C | null) => void;
   etiqueta?: string;
   vacio?: string;
   /** nombre del campo oculto, para los formularios */
   nombre?: string;
+  /** cuántas se enseñan como mucho (las listas de miles, en el orden de las opciones) */
+  limite?: number;
 }) {
   const id = useId();
   const [abierto, setAbierto] = useState(false);
@@ -48,9 +55,12 @@ export default function SelectorEspecie({
     );
   }, [opciones, texto]);
   // en el orden de los grupos, que es el orden en que se recorren con las flechas
-  const grupos = GRUPOS_FAUNA.map((g) => [g, filtradas.filter((o) => o.grupo === g)] as const).filter(
-    ([, xs]) => xs.length,
-  );
+  const recortadas = filtradas.slice(0, limite);
+  const orden = [
+    ...GRUPOS_FAUNA.filter((g) => recortadas.some((o) => o.grupo === g)),
+    ...new Set(recortadas.map((o) => o.grupo).filter((g) => !(GRUPOS_FAUNA as readonly string[]).includes(g))),
+  ];
+  const grupos = orden.map((g) => [g, recortadas.filter((o) => o.grupo === g)] as const);
   const plana = grupos.flatMap(([, xs]) => xs);
 
   useEffect(() => {
@@ -62,7 +72,7 @@ export default function SelectorEspecie({
     return () => document.removeEventListener("pointerdown", fuera);
   }, [abierto]);
 
-  const elegir = (o: OpcionEspecie | null) => {
+  const elegir = (o: OpcionEspecie<C> | null) => {
     onCambio(o?.clave ?? null);
     setTexto("");
     setAbierto(false);
@@ -129,6 +139,9 @@ export default function SelectorEspecie({
       {abierto && (
         <div id={`${id}-lista`} role="listbox" aria-label={etiqueta} className="selector-especie-lista">
           {!plana.length && <p className="buscador-vacio">Ninguna especie con «{texto}».</p>}
+          {filtradas.length > recortadas.length && (
+            <p className="buscador-vacio">{filtradas.length - recortadas.length} más: escribe para afinar.</p>
+          )}
           {grupos.map(([g, xs]) => (
             <div key={g} role="group" aria-label={g}>
               <p className="rotulo" aria-hidden>
@@ -156,6 +169,7 @@ export default function SelectorEspecie({
                       {o.nombre}
                       <small>
                         <i>{o.cientifico}</i>
+                        {o.detalle ? ` · ${o.detalle}` : ""}
                       </small>
                     </span>
                   </div>

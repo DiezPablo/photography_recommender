@@ -26,8 +26,11 @@ test("carta: buscar una especie, cambiar de mes y apagar una capa queda en la UR
   const grulla = await claveDe(request, "Grus grus");
   test.skip(!grulla, "sin datos de España");
   await page.goto("/?mes=noviembre");
-  await page.getByRole("searchbox", { name: "Especie" }).fill("grulla com");
-  await page.locator(".carta-opciones button", { hasText: "Grulla común" }).click();
+  await page.getByRole("combobox", { name: "Especie" }).fill("grulla com");
+  await page
+    .getByRole("option", { name: /Grulla común/ })
+    .first()
+    .click();
   await expect(page).toHaveURL(new RegExp(`especie=${grulla}`));
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Grulla común en noviembre");
   await expect(page.locator(".tabla-tramos caption")).toContainText("cuadrículas con registros en noviembre");

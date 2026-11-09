@@ -3,7 +3,7 @@
 // Google; cada una enlaza a las fichas, al planificador y a las demás.
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { INICIALES, MESES } from "@/lib/fechas";
 import {
   CONTINENTES,
@@ -25,30 +25,20 @@ import { EnlaceFuente } from "@/features/safaris/componentes/Fenomenos";
 import { practicoDe } from "@/features/safaris/paises";
 import { SIN_MALARIA } from "@/features/safaris/familias";
 import { ItemsPais } from "@/features/safaris/componentes/PracticoPais";
-import {
-  NavMeses,
-  NavPaises,
-  PAREJAS,
-  clavePareja,
-  lista,
-  parejaDe,
-  probables,
-  rango,
-} from "@/features/safaris/respuestas";
-import ComparaPaises from "@/features/safaris/componentes/ComparaPaises";
+import { NavMeses, NavPaises, lista, parejaDe, probables, rango } from "@/features/safaris/respuestas";
 import { Suscribir } from "@/ui/Suscribir";
 
 type Props = { params: Promise<{ clave: string }> };
 
-export const dynamicParams = false;
+// true para que las comparativas de dos países que había (quitadas el 09-11-2026, D8) lleguen y redirijan
+export const dynamicParams = true;
 
 function mesDe(clave: string): number {
   return MESES.indexOf(clave);
 }
 
 export function generateStaticParams() {
-  const parejas = PAREJAS.flatMap(([a, b]) => MESES.map((_, i) => clavePareja(a, b, i)));
-  return [...MESES, ...paisesDestacados().keys(), ...parejas].map((clave) => ({ clave }));
+  return [...MESES, ...paisesDestacados().keys()].map((clave) => ({ clave }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -60,15 +50,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: `Los parques del mundo en su mejor época en ${MESES[mes]}, qué animales se registran más ese mes y dónde está la gran migración.`,
       alternates: { canonical: `/safari-en/${clave}` },
     };
-  const pareja = parejaDe(clave);
-  if (pareja) {
-    const [a, b, m] = pareja.map((x) => (typeof x === "string" ? paisesDestacados().get(x) : MESES[x]));
-    return {
-      title: `${a} o ${b} en ${m}: ¿dónde ir de safari?`,
-      description: `${a} y ${b} en ${m}, lado a lado: parques en su mejor época, qué animales se registran más, la lluvia, la migración, visados y malaria.`,
-      alternates: { canonical: `/safari-en/${clave}` },
-    };
-  }
   const pais = paisesDestacados().get(clave);
   if (!pais) return {};
   return {
@@ -188,18 +169,14 @@ function PaginaMes({ mes }: { mes: number }) {
       <section className="seccion no-imprimir">
         <h2 className="rotulo">Organízalo</h2>
         <p className="enlaces">
+          <Link href={`/mapa?mes=${nombreMes}`}>
+            Todos los parques del mundo en temporada en {nombreMes}, en el mapa →
+          </Link>
           <Link href={`/planificar?mes=${mes}`}>Planificar una ruta en {nombreMes} →</Link>
           <Link href="/presupuesto">Calcular el presupuesto →</Link>
         </p>
         <NavMeses actual={mes} />
         <NavPaises />
-        <nav className="nav-respuestas" aria-label="Comparativas">
-          {PAREJAS.map(([a, b]) => (
-            <Link key={`${a}-${b}`} href={`/safari-en/${clavePareja(a, b, mes)}`}>
-              {paisesDestacados().get(a)} o {paisesDestacados().get(b)} en {MESES[mes]}
-            </Link>
-          ))}
-        </nav>
       </section>
     </main>
   );
@@ -329,13 +306,6 @@ function PaginaPais({ clave, pais }: { clave: string; pais: string }) {
             Comparar sus parques →
           </Link>
         </p>
-        <nav className="nav-respuestas" aria-label="Comparativas">
-          {PAREJAS.filter((par) => par.includes(clave)).map(([a, b]) => (
-            <Link key={`${a}-${b}`} href={`/safari-en/${clavePareja(a, b, (mejores[0] ?? 8) - 1)}`}>
-              {paisesDestacados().get(a)} o {paisesDestacados().get(b)}
-            </Link>
-          ))}
-        </nav>
         <NavPaises actual={clave} />
         <NavMeses actual={-1} />
       </section>
@@ -348,7 +318,8 @@ export default async function PaginaRespuesta({ params }: Props) {
   const mes = mesDe(clave);
   if (mes >= 0) return <PaginaMes mes={mes} />;
   const pareja = parejaDe(clave);
-  if (pareja) return <ComparaPaises a={pareja[0]} b={pareja[1]} mes={pareja[2]} />;
+  // las comparativas fijas de dos países se quitaron (D8, 09-11-2026): a la página del primero
+  if (pareja) permanentRedirect(`/safari-en/${pareja[0]}`);
   const pais = paisesDestacados().get(clave);
   if (!pais) notFound();
   return <PaginaPais clave={clave} pais={pais} />;

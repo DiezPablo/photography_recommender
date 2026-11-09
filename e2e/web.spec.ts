@@ -427,11 +427,9 @@ test("calendario de un viaje con fecha de llegada", async ({ page, request }) =>
   );
 });
 
-test("comparativa de países en un mes y frescura de los datos", async ({ page }) => {
+test("las comparativas de países que había llevan al primer país, y frescura de los datos", async ({ page }) => {
   await page.goto("/safari-en/kenia-o-tanzania-en-agosto");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Kenia o Tanzania en agosto");
-  await expect(page.locator(".entradilla")).toContainText("migración está en Kenia");
-  await expect(page.locator(".tabla-paises-mes tbody tr")).toHaveCount(8);
+  await expect(page).toHaveURL(/\/safari-en\/kenia$/);
   await page.goto("/parque/serengeti");
   await page.getByText("De cuándo es cada dato").click();
   await expect(page.locator(".frescura")).toContainText("Lo visto en el último mes");
@@ -540,25 +538,9 @@ test("fauna en España: luz, tiempo y especies (o aviso sin datos)", async ({ pa
   await expect(especies.locator(".lista-especies-espana li, .nota-pie").first()).toBeVisible({ timeout: 15000 });
 });
 
-test("fauna en España al revés: dónde veo una especie (o aviso sin datos)", async ({ page, request }) => {
-  await page.goto("/espana?modo=donde");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Dónde ver una especie");
-  const lista = (await (await request.get("/espana/especies.json")).json()) as { especies: { k: string; n: string }[] };
-  if (!lista.especies.length) {
-    await expect(page.getByText("Aún no hay datos de especies para España")).toBeVisible();
-    return;
-  }
-  await page.getByLabel("Especie").fill(lista.especies[0].n.slice(0, 4));
-  await page.locator(".opciones-especie button").first().click();
-  await expect(page).toHaveURL(/k=\d+/);
-  await page.getByLabel("Cuándo").selectOption("todo");
-  await expect(page.locator(".lista-lugares li").first()).toBeVisible();
-  await expect(
-    page
-      .locator(".lista-lugares li")
-      .first()
-      .getByRole("link", { name: /Qué más se ve aquí/ }),
-  ).toHaveAttribute("href", /\/espana\?lat=/);
+test("«Buscar especie» de España lleva a la carta con la especie y el mes (D8)", async ({ page }) => {
+  await page.goto("/espana?modo=donde&k=2474950&mes=10");
+  await expect(page).toHaveURL(/\/\?especie=2474950&mes=noviembre$/);
 });
 
 test("fauna en España: buscar un lugar y lugares cerca", async ({ page, request }) => {
@@ -681,7 +663,7 @@ test.describe("sin JavaScript", () => {
     await page.goto("/planificar");
     await expect(page.getByLabel(/^País/)).toBeVisible();
     await expect(page.getByLabel("Noches de safari")).toBeVisible();
-    await page.goto("/espana?modo=donde");
-    await expect(page.locator(".enlaces-especies button, .nota-pie").first()).toBeVisible();
+    await page.goto("/espana/hides");
+    expect(await page.locator(".tarjeta-hide").count()).toBeGreaterThan(5);
   });
 });

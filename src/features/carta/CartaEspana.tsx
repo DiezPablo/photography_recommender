@@ -10,6 +10,7 @@ import { MESES, INICIALES } from "@/lib/fechas";
 import { celda as celdaDe, centroCelda } from "@/lib/rejilla";
 import { direccionesSol, horaLocal, horaSol } from "@/lib/sol";
 import { escaparHtml as esc, useMapaBase } from "@/ui/mapa/useMapaBase";
+import SelectorEspecie, { type OpcionEspecie } from "@/ui/SelectorEspecie";
 import type { EspecieDelMes } from "@/features/espana/datos";
 import {
   CAPAS,
@@ -50,7 +51,12 @@ const CAPA_TEXTO: Record<Capa, string> = {
   lugares: "Lugares con nombre",
 };
 
-const sinTildes = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const GRUPO_PLURAL: Record<string, string> = {
+  Aves: "Aves",
+  Mammalia: "Mamíferos",
+  Reptilia: "Reptiles",
+  Amphibia: "Anfibios",
+};
 
 export default function CartaEspana({ hoy, delMes }: { hoy: string; delMes: EspecieDelMes[][] }) {
   const [q, actualizar] = useParametrosUrl();
@@ -60,7 +66,6 @@ export default function CartaEspana({ hoy, delMes }: { hoy: string; delMes: Espe
   const { caja, mapa, leaflet, listo, vista, nuevaCapa } = useMapaBase({ scrollWheelZoom: true, minZoom: 4 }, "ign");
 
   const [lista, setLista] = useState<EspecieLista[]>([]);
-  const [busqueda, setBusqueda] = useState("");
   const [hojaAlta, setHojaAlta] = useState(false);
   const [datosEspecie, setDatosEspecie] = useState<{
     clave: string;
@@ -253,11 +258,19 @@ export default function CartaEspana({ hoy, delMes }: { hoy: string; delMes: Espe
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listo, vista, estado.apagadas.join()]);
 
-  const qb = sinTildes(busqueda.trim());
-  const opciones = qb ? lista.filter((e) => sinTildes(`${e.n ?? ""} ${e.c ?? ""}`).includes(qb)).slice(0, 8) : [];
+  const opcionesEspecie = useMemo<OpcionEspecie<string>[]>(
+    () =>
+      lista.map((e) => ({
+        clave: e.k,
+        nombre: e.n ?? e.c ?? e.k,
+        cientifico: e.c ?? "",
+        grupo: GRUPO_PLURAL[e.clase ?? ""] ?? "Otros",
+        detalle: `${e.celdas} cuadrículas`,
+      })),
+    [lista],
+  );
   const elegirEspecie = (k: string | null) => {
     cambiar({ especie: k });
-    setBusqueda("");
   };
   const alternar = (c: Capa) =>
     cambiar({ apagadas: encendida(c) ? [...estado.apagadas, c] : estado.apagadas.filter((x) => x !== c) });
@@ -302,35 +315,18 @@ export default function CartaEspana({ hoy, delMes }: { hoy: string; delMes: Espe
         </h1>
 
         <div className="carta-campo carta-buscador">
-          <label htmlFor="carta-especie">Especie</label>
-          <input
-            id="carta-especie"
-            type="search"
-            autoComplete="off"
-            placeholder={elegida ? "Cambiar de especie" : "Grulla, nutria, lagarto ocelado…"}
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            aria-controls="carta-opciones"
+          <SelectorEspecie<string>
+            etiqueta="Especie"
+            vacio="Grulla, nutria, lagarto ocelado…"
+            opciones={opcionesEspecie}
+            valor={estado.especie}
+            onCambio={(k) => elegirEspecie(k)}
+            limite={60}
           />
-          {opciones.length > 0 && (
-            <ul id="carta-opciones" className="carta-opciones">
-              {opciones.map((e) => (
-                <li key={e.k}>
-                  <button type="button" onClick={() => elegirEspecie(e.k)}>
-                    <b>{e.n ?? e.c}</b> <i>{e.c}</i>
-                    <span className="cifra">{e.celdas} cuadr.</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
           {elegida && (
             <p className="carta-elegida">
               <i>{elegida.c}</i> · {GRUPO[elegida.clase ?? ""] ?? elegida.clase} · {elegida.celdas} cuadrículas con
-              registros{" "}
-              <button type="button" className="boton-texto" onClick={() => elegirEspecie(null)}>
-                Quitar
-              </button>
+              registros
             </p>
           )}
         </div>

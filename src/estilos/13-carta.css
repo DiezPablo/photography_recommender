@@ -174,52 +174,6 @@
   outline: 2px solid var(--carta-magenta);
   outline-offset: 2px;
 }
-.carta-opciones {
-  position: absolute;
-  z-index: 5;
-  top: 100%;
-  left: 0;
-  right: 0;
-  margin: 2px 0 0;
-  padding: 0;
-  list-style: none;
-  background: var(--carta-papel);
-  border: 1px solid var(--carta-tinta-3);
-  border-radius: 3px;
-  box-shadow: 0 6px 18px rgb(0 0 0 / 0.12);
-}
-.carta-opciones button {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0 8px;
-  width: 100%;
-  text-align: left;
-  padding: 8px 12px;
-  border: 0;
-  border-bottom: 1px solid var(--carta-linea);
-  background: none;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-.carta-opciones li:last-child button {
-  border-bottom: 0;
-}
-.carta-opciones button:hover {
-  background: var(--carta-papel-2);
-}
-.carta-opciones i {
-  grid-column: 1;
-  color: var(--carta-tinta-3);
-  font-size: 13px;
-}
-.carta-opciones .cifra {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  align-self: center;
-  font-size: 12px;
-  color: var(--carta-tinta-3);
-}
 .carta-elegida {
   margin: 4px 0 0;
   color: var(--carta-tinta-2);

@@ -5,13 +5,22 @@ import { MESES } from "@/lib/fechas";
 import { useMesElegido } from "@/lib/mes";
 import type { VeredictoMes as Veredicto } from "@/features/safaris/veredicto";
 
-export default function VeredictoMes({ meses, mesHoy }: { meses: Veredicto[]; mesHoy: number }) {
+export default function VeredictoMes({
+  meses,
+  mesHoy,
+  encabezado: H = "h2",
+}: {
+  meses: Veredicto[];
+  mesHoy: number;
+  /** h3 dentro del bloque «Cuándo ir» de la ficha */
+  encabezado?: "h2" | "h3";
+}) {
   const [mes, cambiar] = useMesElegido(mesHoy);
   const v = meses[mes];
   if (!v) return null;
   return (
     <section className={`seccion veredicto-mes nota-${v.nota}`} aria-labelledby="veredicto-titulo">
-      <h2 id="veredicto-titulo">
+      <H id="veredicto-titulo">
         <label>
           <span className="sr">Mes</span>
           <select value={mes} onChange={(e) => cambiar(Number(e.target.value))}>
@@ -23,7 +32,7 @@ export default function VeredictoMes({ meses, mesHoy }: { meses: Veredicto[]; me
           </select>
         </label>
         : <span className="veredicto-nota">{v.titulo}</span>
-      </h2>
+      </H>
       {v.detalles.length > 0 && (
         <ul>
           {v.detalles.map((d) => (

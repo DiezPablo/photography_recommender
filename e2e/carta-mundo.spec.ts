@@ -22,8 +22,8 @@ test("carta del mundo: el león, su tabla de tramos y la ficha del Serengeti", a
   const leon = await claveDe(request, "Panthera leo");
   test.skip(!leon, "sin datos del mundo");
   await page.goto("/mapa?mes=agosto");
-  await page.getByRole("searchbox", { name: "Mamífero" }).fill("león");
-  await page.locator(".carta-opciones button", { hasText: "Panthera leo" }).click();
+  await page.getByRole("combobox", { name: "Mamífero" }).fill("león");
+  await page.getByRole("option", { name: /Panthera leo/ }).click();
   await expect(page).toHaveURL(new RegExp(`especie=${leon}`));
   await expect(page.locator(".tabla-tramos caption")).toContainText(/entre los \d+ mamíferos más registrados/);
   await page.goto(`/mapa?mes=agosto&especie=${leon}&parque=serengeti`);

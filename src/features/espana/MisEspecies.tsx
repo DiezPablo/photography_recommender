@@ -30,7 +30,7 @@ export default function MisEspecies() {
           <Link className="boton" href="/espana?modo=aqui">
             Ver qué hay cerca de mí
           </Link>
-          <Link href="/espana?modo=donde">Buscar una especie</Link>
+          <Link href="/">Buscar una especie en el mapa</Link>
         </p>
         <CopiaLocal claves={["espana-vistas"]} nombre="mis-especies" />
       </section>
