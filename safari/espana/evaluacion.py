@@ -4,7 +4,7 @@ El backtest anterior medía cuántas de las 20 especies más frecuentes se veía
 las zonas y no distinguía un buen modelo de uno malo. Esta evaluación, en cambio:
 
 - para cada cuadrícula de 10 km, grupo (aves, mamíferos…) y mes, ordena las especies registradas allí con los años
-  anteriores a `anio` según su ‰ en ese mes (el modelo de la web, `safari.frecuencia`);
+  anteriores a `anio` según su ‰ en ese mes (el modelo de la web: `frecuencia_contraida` desde el 09-11-2026);
 - mira cuáles se registraron de verdad en `anio` ese mes;
 - calcula el AUC: la probabilidad de que una especie registrada quede por encima de una que no (0,5 es el azar);
 - y lo compara con un modelo ingenuo sin estacionalidad (el ‰ de todo el año): si el modelo por meses no gana al
@@ -21,7 +21,7 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
-from safari.frecuencia import frecuencia, muestra
+from safari.frecuencia import frecuencia_contraida, muestra
 
 MIN_MUESTRA = 100
 MIN_PRUEBA = 20
@@ -69,7 +69,8 @@ def evaluar(filas: list[dict], anio: int) -> dict:
         if not meses:
             continue
         # una vez por cuadrícula: la curva de cada especie y su ‰ de todo el año
-        curvas = {k: frecuencia(m, base) for k, m in especies.items()}
+        # el modelo que publica la web (safari/espana/estacionalidad.py)
+        curvas = {k: frecuencia_contraida(m, base) for k, m in especies.items()}
         ingenuo = {k: sum(m) / total for k, m in especies.items()}
         for mes in meses:
             vistas = prueba[(celda, clase, mes)]

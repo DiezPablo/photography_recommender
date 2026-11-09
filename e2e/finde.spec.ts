@@ -106,3 +106,13 @@ test("tiempo de una franja concreta", () => {
   expect(tiempoFranja(horas, "2026-11-07", "mañana")?.probLluvia).toBe(80);
   expect(tiempoFranja(horas, "2026-11-07", "tarde")?.valor).toBe(1);
 });
+
+test("«Este finde» compara la riqueza con los mismos registros (rarefacción), no el recuento bruto", () => {
+  const seco = { valor: 1, franja: "mañana" as const, probLluvia: 0, rachas: 10 };
+  const base = { maxEspecies: 40, km: 10, maxKm: 50, fenomeno: null, tiempo: seco };
+  // muchas especies registradas por mucho esfuerzo, pocas esperadas; y al revés
+  const visitado = puntuarFinde({ ...base, especies: 150, esperadas: 20 });
+  const poco = puntuarFinde({ ...base, especies: 60, esperadas: 40 });
+  expect(poco.total).toBeGreaterThan(visitado.total);
+  expect(visitado.factores[0].detalle).toContain("esperadas en 100 registros");
+});

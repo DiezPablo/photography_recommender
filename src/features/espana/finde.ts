@@ -137,22 +137,34 @@ export interface Factor {
   detalle: string;
 }
 
-/** Nota 0-1 de un lugar un día: fauna del mes (relativa al mejor de la lista, con raíz para no aplastar a los
- * pequeños), tiempo y distancia (hasta un 40 % menos en el límite del radio); un fenómeno en su mes suma un 15 %. */
+/** Nota 0-1 de un lugar un día: fauna del mes (especies esperadas con los mismos registros en todas partes,
+ * relativas al mejor de la lista, con raíz para no aplastar a los pequeños), tiempo y distancia (hasta un 40 % menos
+ * en el límite del radio); un fenómeno en su mes suma un 15 %. Con el recuento bruto de especies ganaban los sitios
+ * más visitados (análisis del 09-11-2026). */
 export function puntuarFinde(e: {
   especies: number;
+  /** especies esperadas en 100 registros (rarefacción); sin ella, el recuento bruto */
+  esperadas?: number;
   maxEspecies: number;
   km: number;
   maxKm: number;
   tiempo: TiempoDia | null;
   fenomeno: string | null;
 }): { total: number; factores: Factor[] } {
-  const fauna = e.maxEspecies ? Math.sqrt(e.especies / e.maxEspecies) : 0;
+  const riqueza = e.esperadas ?? e.especies;
+  const fauna = e.maxEspecies ? Math.sqrt(Math.min(1, riqueza / e.maxEspecies)) : 0;
   const tiempo = e.tiempo?.valor ?? 0.7;
   const distancia = 1 - 0.4 * Math.min(1, e.km / e.maxKm);
   const extra = e.fenomeno ? 1.15 : 1;
   const factores: Factor[] = [
-    { nombre: "Fauna este mes", valor: fauna, detalle: `${e.especies} especies en sus cuadrículas` },
+    {
+      nombre: "Fauna este mes",
+      valor: fauna,
+      detalle:
+        e.esperadas !== undefined
+          ? `unas ${Math.round(e.esperadas)} especies esperadas en 100 registros (${e.especies} con registros en sus cuadrículas)`
+          : `${e.especies} especies en sus cuadrículas`,
+    },
     {
       nombre: "Tiempo",
       valor: tiempo,

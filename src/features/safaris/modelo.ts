@@ -127,11 +127,20 @@ export function enTemporada(p: Pick<Parque, "meses">, mes: number): boolean {
  */
 export function puntuacionAhora(p: Parque, mes: number, recientes?: Recientes | null): number {
   const r = recientes?.parques[p.id];
-  const vistas = r
-    ? Object.values(r.estrella).reduce((a, b) => a + b, 0)
-    : Object.values(p.conteo_estrella ?? {}).reduce((a, b) => a + b, 0) / 50;
-  return (enTemporada(p, mes) ? 1000 : 0) + Math.min(999, vistas);
+  // la tasa de especies estrella por observación, no el número bruto: el bruto seguía a cuánta gente sube fotos
+  // (correlación de rangos 0,89 con las observaciones; la tasa, 0,45; análisis del 09-11-2026). Con pocas
+  // observaciones la tasa se acerca a la típica (contracción con `K_AHORA` observaciones de peso).
+  const [vistas, obs, media] = r
+    ? [Object.values(r.estrella).reduce((a, b) => a + b, 0), r.observaciones, TASA_RECIENTE]
+    : [Object.values(p.conteo_estrella ?? {}).reduce((a, b) => a + b, 0), p.observaciones ?? 0, TASA_HISTORICA];
+  const tasa = (vistas + K_AHORA * media) / (obs + K_AHORA);
+  return (enTemporada(p, mes) ? 1000 : 0) + Math.min(999, Math.round(tasa * 500));
 }
+
+/** Tasas típicas de especies estrella por observación (medianas del 09-11-2026): en 30 días y en todo el histórico. */
+const TASA_RECIENTE = 0.32;
+const TASA_HISTORICA = 0.1;
+const K_AHORA = 30;
 
 /**
  * Enlace de Google Maps para leer reseñas (no hay reseñas abiertas y gratuitas): la búsqueda del nombre centrada

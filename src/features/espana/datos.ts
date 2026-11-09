@@ -146,9 +146,15 @@ export interface LugarCerca extends LugarFauna {
   km: number;
   /** especies con registros en el mes en sus cuadrículas */
   especies: number;
+  /** especies que se esperarían con los mismos 100 registros en todas partes (rarefacción, análisis del 09-11-2026):
+   * el recuento bruto sigue al esfuerzo de observación (correlación de rangos 0,82 con los registros; esta, 0,49) */
+  esperadas: number;
   /** las más frecuentes del mes, una de cada grupo por turno */
   destacadas: string[];
 }
+
+/** Registros a los que se rarefacta la riqueza de cada lugar («especies esperadas en 100 registros»). */
+export const REGISTROS_RAREFACCION = 100;
 
 /** Los lugares más cercanos al punto (hasta maxKm) con lo que hay en sus cuadrículas en el mes (0-11). */
 export function lugaresCerca(lat: number, lon: number, mes: number, max = 12, maxKm = 30): LugarCerca[] {
@@ -184,11 +190,14 @@ export function lugaresCerca(lat: number, lon: number, mes: number, max = 12, ma
     .map(({ l, km }) => {
       const porGrupo = new Map<string, { k: string; v: number }[]>();
       const vistas = new Set<string>();
+      // la mayor proporción de cada especie en las cuadrículas del lugar, para la rarefacción
+      const proporcion = new Map<string, number>();
       for (const c of celdasDe(l)) {
         const d = e?.celdas[c];
         if (!d) continue;
         for (const [k, meses] of Object.entries(d.e)) {
           const v = meses[mes];
+          if (v) proporcion.set(k, Math.max(proporcion.get(k) ?? 0, v / 1000));
           if (!v || vistas.has(k)) continue;
           // las invasoras cuentan en el total pero no se destacan
           if (e?.especies[k]?.estado === "invasora") {
@@ -209,7 +218,14 @@ export function lugaresCerca(lat: number, lon: number, mes: number, max = 12, ma
         for (const xs of listas)
           if (xs[i] && destacadas.length < 4)
             destacadas.push(e?.especies[xs[i].k]?.n ?? e?.especies[xs[i].k]?.c ?? xs[i].k);
-      return { ...l, km: Math.round(km * 10) / 10, especies: vistas.size, destacadas };
+      const esperadas = [...proporcion.values()].reduce((a, p) => a + 1 - (1 - p) ** REGISTROS_RAREFACCION, 0);
+      return {
+        ...l,
+        km: Math.round(km * 10) / 10,
+        especies: vistas.size,
+        esperadas: Math.round(esperadas * 10) / 10,
+        destacadas,
+      };
     });
 }
 

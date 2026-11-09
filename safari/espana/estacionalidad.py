@@ -7,7 +7,7 @@ from __future__ import annotations
 from collections import defaultdict
 from collections.abc import Iterable
 
-from safari.frecuencia import MIN_BASE, frecuencia, muestra
+from safari.frecuencia import MIN_BASE, frecuencia_contraida, muestra
 
 
 def confianza(n: int) -> str | None:
@@ -41,7 +41,8 @@ def estacionalidad(filas: Iterable[dict], celdas: set[str] | None = None, hasta:
     salida = {}
     for k, meses in especies.items():
         base = clases[clase_de[k]]
-        salida[k] = {"frecuencia": frecuencia(meses, base), "muestra": muestra(base), "n": sum(meses)}
+        # el ‰ del mes contraído hacia el del año según la muestra (safari/frecuencia.py): el que publica la web
+        salida[k] = {"frecuencia": frecuencia_contraida(meses, base), "muestra": muestra(base), "n": sum(meses)}
     return salida
 
 

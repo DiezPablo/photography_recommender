@@ -27,3 +27,19 @@ def frecuencia(especie: list[int], base: list[int]) -> list[int | None]:
         e = sum(especie[i] for i in vecinos)
         salida.append(round(1000 * e / b) if b >= MIN_BASE else None)
     return salida
+
+
+# peso, en registros del grupo, del ‰ de todo el año al estimar el de un mes (análisis del 09-11-2026)
+K_CONTRACCION = 100
+
+
+def frecuencia_contraida(especie: list[int], base: list[int], k: int = K_CONTRACCION) -> list[int | None]:
+    """El ‰ de cada mes acercado al de todo el año según la muestra del mes: (n·mes + k·año) / (n + k). Con mucha
+    muestra manda el mes; con poca, el año. En el año de prueba (2025) ordena mejor que el ‰ del mes solo en los
+    cuatro grupos (AUC de las aves: 0,890 frente a 0,882; docs/espana-experimentos.json). Sin muestra suficiente,
+    None, como `frecuencia`."""
+    mensual = frecuencia(especie, base)
+    total = sum(base)
+    anual = 1000 * sum(especie) / total if total else 0.0
+    tam = muestra(base)
+    return [None if f is None else round((tam[i] * f + k * anual) / (tam[i] + k)) for i, f in enumerate(mensual)]

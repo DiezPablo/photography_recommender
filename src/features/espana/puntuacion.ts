@@ -119,7 +119,8 @@ export function puntuar(
           clave: "frecuencia",
           nombre: "Frecuencia en la época",
           valor: factorFrecuencia(entrada.permil),
-          detalle: entrada.permil ? `${entrada.permil} ‰ de su grupo` : "sin datos ese mes",
+          // desde el 09-11-2026, el ‰ de todos los registros de la zona (todos los grupos): comparable entre grupos
+          detalle: entrada.permil ? `${entrada.permil} ‰ de todos los registros de la zona` : "sin datos ese mes",
         },
     {
       clave: "presencia",

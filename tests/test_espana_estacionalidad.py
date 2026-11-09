@@ -26,7 +26,8 @@ def test_estacionalidad_y_ranking():
     est = estacionalidad(filas(), {CELDA})
     grulla = est[GRULLA]["frecuencia"]
     assert grulla[11] > grulla[5]  # diciembre frente a junio
-    assert grulla[6] is not None and grulla[6] == 0  # julio: con muestra, pero sin grullas ni vecinos
+    # julio: sin grullas ni vecinos, pero el ‰ contraído hacia el del año no llega a 0 (poca muestra en el mes)
+    assert grulla[6] is not None and 0 < grulla[6] < grulla[11] / 2
     assert ranking(est, 12)[0][0] == GRULLA
     assert ranking(est, 7)[0][0] == ANADE
     assert est[GORRION]["n"] == 3 * 12 * 5
@@ -65,3 +66,13 @@ def test_por_celda_e_informe(monkeypatch):
     texto = cli.informe(filas(), {"clave": "x", "doi": "10.15468/dl.x", "registros": 1}, str)
     assert "## Gallocanta" in texto
     assert f"1. {GRULLA}" in texto
+
+
+def test_frecuencia_contraida_hacia_el_ano_segun_la_muestra():
+    from safari.frecuencia import frecuencia, frecuencia_contraida
+
+    especie = [0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0]
+    poca, mucha = [10] * 12, [10_000] * 12
+    # con poca muestra, el pico de julio se suaviza mucho hacia la media del año; con mucha, casi no
+    assert frecuencia_contraida(especie, poca)[6] < frecuencia(especie, poca)[6] / 2
+    assert frecuencia_contraida(especie, mucha)[6] >= 0.95 * frecuencia(especie, mucha)[6]

@@ -1042,3 +1042,18 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     tope de resultados para listas de miles) en la portada y el explorador de safaris y en las dos cartas.
 - 09-11-2026, D9: el usuario no prevé uso comercial de momento; todo sigue como está (Vercel Hobby, fotos CC BY-NC,
   cuota gratuita de Open-Meteo, datos de la API de eBird).
+- 09-11-2026, análisis del algoritmo de recomendación (informe aparte) y cambios medidos:
+  - Estacionalidad de España: el ‰ del mes pasa a contraerse hacia el del año según la muestra del mes
+    (`frecuencia_contraida`, K = 100 registros). Experimento con el año de prueba 2025 (`docs/espana-experimentos.json`):
+    AUC de las aves 0,890 frente a 0,882 del ‰ del mes solo, y mejora también en mamíferos (0,842 frente a 0,829),
+    reptiles y anfibios. En esos tres grupos el ‰ de todo el año da algo más (0,855 en mamíferos), pero con 12 a 69
+    casos sería ajustar al ruido: se usa el mismo modelo para todos. La evaluación (D10) mide desde ahora este modelo.
+  - «Cerca de mí»: la nota usa el ‰ de todos los registros de la zona y no el de su grupo. Con el del grupo, en el
+    84 % de las cuadrículas con dos grupos la primera especie no era un ave (un conejo con 39 registros por delante de
+    una gaviota con 42 008). AUC del orden con todos los grupos juntos: 0,884 frente a 0,873 (el percentil dentro del
+    grupo, 0,876).
+  - «Este finde»: la fauna de cada lugar es la riqueza rarefactada (especies esperadas en 100 registros) y no el
+    recuento bruto, que seguía al esfuerzo (correlación de rangos 0,82 con los registros; la rarefacción, 0,49).
+  - «Mejor ahora» (safaris): dentro de los parques en temporada, la tasa de especies estrella por observación,
+    contraída hacia la típica con 30 observaciones, y no el número bruto de vistas en 30 días (0,89 de correlación de
+    rangos con cuántas observaciones se suben; la tasa, 0,45).

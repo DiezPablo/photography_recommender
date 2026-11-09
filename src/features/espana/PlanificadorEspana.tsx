@@ -69,7 +69,6 @@ interface Especie {
 
 const DIA_MS = 86_400_000;
 /** Muestra a partir de la cual la frecuencia se cree casi entera (la mitad con esta muestra). */
-const MUESTRA_PRUDENTE = 100;
 const fechaCorta = (f: string) => `${Number(f.slice(8, 10))} ${MESES[Number(f.slice(5, 7)) - 1].slice(0, 3)}`;
 /** Hasta qué distancia del radio cuenta una observación reciente (eBird da la última por provincia). */
 const MARGEN_RECIENTES_KM = 15;
@@ -117,14 +116,17 @@ function deteccionRadio(bloques: BloqueEspana[], celdas: Set<string>, mes: numbe
   return salida;
 }
 
-/** Une las celdas del radio: ‰ de cada especie ponderado por la muestra de su clase en cada celda. */
+/** Une las celdas del radio: ‰ de cada especie ponderado por la muestra de su clase en cada celda, y los registros
+ * de todos los grupos juntos (para comparar especies de grupos distintos). */
 function especiesDelRadio(bloques: BloqueEspana[], celdas: Set<string>, mes: number) {
   const suma = new Map<string, { p: number; m: number; clase: string }>();
   const nombres: BloqueEspana["especies"] = {};
+  let total = 0;
   for (const b of bloques) {
     Object.assign(nombres, b.especies);
     for (const [c, d] of Object.entries(b.celdas)) {
       if (!celdas.has(c)) continue;
+      total += Object.values(d.m).reduce((a, x) => a + (x[mes] ?? 0), 0);
       for (const [k, meses] of Object.entries(d.e)) {
         const v = meses[mes];
         if (v === null) continue;
@@ -136,7 +138,7 @@ function especiesDelRadio(bloques: BloqueEspana[], celdas: Set<string>, mes: num
       }
     }
   }
-  return { suma, nombres };
+  return { suma, nombres, total };
 }
 
 export default function PlanificadorEspana({ hoy }: { hoy: string }) {
@@ -218,7 +220,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
   let hayRecientes = false;
   if (Array.isArray(bloques)) {
     cita = bloques[0]?.cita ?? null;
-    const { suma, nombres } = especiesDelRadio(bloques, new Set(celdas), mes);
+    const { suma, nombres, total } = especiesDelRadio(bloques, new Set(celdas), mes);
     const deteccion = deteccionRadio(bloques, new Set(celdas), mes);
     const ultimas = ultimasVistas(bloques, lat, lon, radio);
     hayRecientes = bloques.some((b) => b.recientes);
@@ -227,9 +229,11 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
       .filter(([, s]) => s.m > 0 && s.p > 0)
       .map(([k, s]) => {
         const permil = Math.round(s.p / s.m);
-        // con poca muestra el ‰ es ruido (un corzo entre 93 registros de mamíferos da 581 ‰): se rebaja hacia 0
-        // con n / (n + MUESTRA_PRUDENTE) para la nota; con cientos de registros apenas cambia
-        const permilNota = Math.round((permil * s.m) / (s.m + MUESTRA_PRUDENTE));
+        // para la nota, el ‰ de todos los registros de la zona (todos los grupos), no el de su grupo: el de su grupo
+        // ponía un conejo con 487 ‰ de 39 registros de mamíferos por encima de una gaviota con 127 ‰ de 42 008 de
+        // aves (en el 84 % de las cuadrículas con dos grupos la primera no era un ave). En el año de prueba ordena
+        // mejor: AUC 0,884 frente a 0,873 (docs/espana-experimentos.json, análisis del 09-11-2026)
+        const permilNota = total ? Math.round(s.p / total) : 0;
         const cientifico = nombres[k]?.c ?? null;
         const ultima = cientifico ? (ultimas.get(especieDe(cientifico)) ?? null) : null;
         // sin observación reciente (o a meses vista) la presencia es neutra
@@ -432,7 +436,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
                         <li>
                           Muestra: {e.muestra.toLocaleString("es-ES")} observaciones de su grupo
                           {c ? ` (${c.texto})` : ""}
-                          {e.muestra < 1000 ? "; con poca muestra la frecuencia cuenta menos en la nota" : ""}
+                          {"; la nota compara con todos los registros de la zona, de todos los grupos"}
                         </li>
                       </ul>
                     </details>

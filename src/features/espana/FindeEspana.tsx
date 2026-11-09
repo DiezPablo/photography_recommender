@@ -29,6 +29,8 @@ import type { LugarFauna } from "@/features/espana/zonas";
 interface LugarCerca extends LugarFauna {
   km: number;
   especies: number;
+  /** especies esperadas en 100 registros (rarefacción); falta en respuestas antiguas */
+  esperadas?: number;
   destacadas: string[];
 }
 
@@ -78,7 +80,8 @@ export default function FindeEspana({ hoy }: { hoy: string }) {
   }, [clave]);
   const datos = res?.clave === clave ? res : undefined;
 
-  const maxEspecies = Math.max(1, ...(datos?.lugares ?? []).map((l) => l.especies));
+  // la riqueza comparable entre sitios: especies esperadas con los mismos registros (rarefacción)
+  const maxEspecies = Math.max(1, ...(datos?.lugares ?? []).map((l) => l.esperadas ?? l.especies));
   const porDia = dias.map((dia) => ({
     dia,
     lista: (datos?.lugares ?? [])
@@ -89,6 +92,7 @@ export default function FindeEspana({ hoy }: { hoy: string }) {
           l,
           nota: puntuarFinde({
             especies: l.especies,
+            esperadas: l.esperadas,
             maxEspecies,
             km: l.km,
             maxKm: km,
@@ -110,6 +114,7 @@ export default function FindeEspana({ hoy }: { hoy: string }) {
       const t = datos?.horas?.[i] ? tiempoFranja(datos.horas[i], dia, franja) : null;
       return puntuarFinde({
         especies: l.especies,
+        esperadas: l.esperadas,
         maxEspecies,
         km: l.km,
         maxKm: km,
