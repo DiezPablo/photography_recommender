@@ -69,3 +69,23 @@ def test_sin_tiempo_se_usa_lo_guardado_con_la_caja_de_antes(monkeypatch, tmp_pat
     cache.guardar("gbif:" + repr(sorted(antes.items())), {"obs": 5, "especies": [], "meses": [0] * 12})
     _, guardado = mundo._de_cache(params, -2.33, 34.83, 60, "gbif:")
     assert guardado["obs"] == 5 and guardado["antigua"] is True
+
+
+def test_anillo_de_una_relacion_de_osm_con_tramos_desordenados():
+    def tramo(*pts):
+        return {"type": "way", "role": "outer", "geometry": [{"lon": x, "lat": y} for x, y in pts]}
+
+    rel = {
+        "members": [
+            tramo((0, 0), (1, 0)),
+            tramo((1, 1), (1, 0)),  # al revés
+            tramo((1, 1), (0, 1), (0, 0)),
+            {"type": "way", "role": "inner", "geometry": [{"lon": 0.2, "lat": 0.2}, {"lon": 0.3, "lat": 0.3}]},
+            {"type": "node", "role": "admin_centre"},
+        ]
+    }
+    anillos = huellas.anillos_de_relacion(rel)
+    assert len(anillos) == 1
+    assert anillos[0][0] == anillos[0][-1] and len(anillos[0]) == 5
+    # un tramo suelto que no cierra no da anillo
+    assert huellas.anillos_de_relacion({"members": [tramo((0, 0), (1, 0))]}) == []

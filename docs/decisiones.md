@@ -1057,3 +1057,7 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
   - «Mejor ahora» (safaris): dentro de los parques en temporada, la tasa de especies estrella por observación,
     contraída hacia la típica con 30 observaciones, y no el número bruto de vistas en 30 días (0,89 de correlación de
     rangos con cuántas observaciones se suben; la tasa, 0,45).
+  - D3, contornos de OpenStreetMap: para los parques sin contorno en Wikidata, el límite del espacio protegido en
+    OSM con su etiqueta wikidata (relaciones boundary o multipolygon; `contornos_osm` en `safari/huellas.py`), por
+    tandas de 20 en Overpass, con caché por parque (también cuando no tiene) y respetando el tiempo de la ejecución:
+    se completan en varias ejecuciones. Probado con el Kruger (78 vértices tras simplificar).

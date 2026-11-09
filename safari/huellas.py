@@ -121,3 +121,72 @@ def contornos(urls: list[str]) -> dict[str, str]:
             if wkt and pagina.get("title") in titulos:
                 salida[titulos[pagina["title"]]] = wkt
     return salida
+
+
+def anillos_de_relacion(rel: dict) -> list[list[tuple[float, float]]]:
+    """Los anillos cerrados de una relación de OSM con su geometría (`out geom`): une los tramos exteriores por sus
+    extremos, dándoles la vuelta si hace falta."""
+    tramos = [
+        [(round(p["lon"], 6), round(p["lat"], 6)) for p in m["geometry"]]
+        for m in rel.get("members", [])
+        if m.get("type") == "way" and m.get("role", "outer") in ("outer", "") and len(m.get("geometry") or []) >= 2
+    ]
+    anillos = []
+    while tramos:
+        anillo = tramos.pop(0)
+        while anillo[0] != anillo[-1]:
+            for i, t in enumerate(tramos):
+                if t[0] == anillo[-1]:
+                    anillo += t[1:]
+                elif t[-1] == anillo[-1]:
+                    anillo += t[-2::-1]
+                else:
+                    continue
+                tramos.pop(i)
+                break
+            else:
+                break  # no cierra: se descarta
+        if anillo[0] == anillo[-1] and len(anillo) >= 4:
+            anillos.append(anillo)
+    return anillos
+
+
+def contornos_osm(qids: list[str], lote: int = 20) -> dict[str, str]:
+    """Contorno en WKT de los espacios protegidos de OSM con la etiqueta wikidata de cada parque (relaciones de tipo
+    boundary o multipolygon), por tandas, con caché por parque («» si no tiene). Sin tiempo, solo lo guardado."""
+    from safari import mundo, practico
+
+    salida: dict[str, str] = {}
+    pendientes = []
+    for q in qids:
+        guardado = practico.CACHE.leer(f"osm-contorno:{q}")
+        if guardado is None:
+            pendientes.append(q)
+        elif guardado:
+            salida[q] = guardado
+    for i in range(0, len(pendientes), lote):
+        if mundo.sin_tiempo():
+            break
+        tanda = pendientes[i : i + lote]
+        consulta = (
+            "[out:json][timeout:180];"
+            f'rel["wikidata"~"^({"|".join(tanda)})$"]["type"~"^(boundary|multipolygon)$"];out geom;'
+        )
+        datos = practico.overpass(consulta, timeout=200)
+        if datos is None:
+            continue
+        hallados: dict[str, str] = {}
+        for rel in datos.get("elements", []):
+            q = rel.get("tags", {}).get("wikidata")
+            anillos = anillos_de_relacion(rel)
+            if q in tanda and anillos and q not in hallados:
+                wkt = contorno_wkt(
+                    {"type": "Polygon", "coordinates": [max(anillos, key=lambda a: abs(_area_firmada(a)))]}
+                )
+                if wkt:
+                    hallados[q] = wkt
+        for q in tanda:
+            practico.CACHE.guardar(f"osm-contorno:{q}", hallados.get(q, ""))
+            if q in hallados:
+                salida[q] = hallados[q]
+    return salida

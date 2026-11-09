@@ -153,12 +153,27 @@ def calcular(hilos: int = 4, osm_max: int = 1500, limite: int | None = None) -> 
         formas = {}
     # los destacados no: también se cuentan en iNaturalist, cuya API solo admite círculos, y las dos fuentes han de
     # usar la misma zona
-    con_forma = [
-        x for x in elegidos if not x.get("destacado") and formas.get(det.get(x["qid"] or "", {}).get("forma", ""))
-    ]
-    print(f"  {len(con_forma)} parques con contorno; GBIF dentro de él…", flush=True)
-    for x in con_forma:
-        x["forma"] = formas[det[x["qid"]]["forma"]]
+    for x in elegidos:
+        wkt = formas.get(det.get(x["qid"] or "", {}).get("forma", ""))
+        if wkt and not x.get("destacado"):
+            x["forma"] = wkt
+    # y, para los que no lo tienen en Wikidata, el límite del espacio protegido en OpenStreetMap con su etiqueta
+    # wikidata (por tandas y con caché: los que no se piden hoy, otro día)
+    sin_forma = [x["qid"] for x in elegidos if x["qid"] and not x.get("destacado") and not x.get("forma")]
+    try:
+        de_osm = huellas.contornos_osm(sin_forma)
+    except _ERRORES as e:
+        print(f"  sin contornos de OSM: {e}", flush=True)
+        de_osm = {}
+    for x in elegidos:
+        if not x.get("forma") and x["qid"] in de_osm:
+            x["forma"] = de_osm[x["qid"]]
+    con_forma = [x for x in elegidos if x.get("forma")]
+    print(
+        f"  {len(con_forma)} parques con contorno ({len(con_forma) - len(de_osm)} de Wikidata, {len(de_osm)} de OSM);"
+        " GBIF dentro de él…",
+        flush=True,
+    )
     nuevos = _en_paralelo(
         lambda x: mundo.gbif(x["lat"], x["lon"], x["radio_km"], mundo.MAMIFEROS, forma=x["forma"]),
         con_forma,
