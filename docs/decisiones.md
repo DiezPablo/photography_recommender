@@ -1061,3 +1061,11 @@ Muestra aleatoria de 40 parques de nivel B. Errores encontrados y arreglo:
     OSM con su etiqueta wikidata (relaciones boundary o multipolygon; `contornos_osm` en `safari/huellas.py`), por
     tandas de 20 en Overpass, con caché por parque (también cuando no tiene) y respetando el tiempo de la ejecución:
     se completan en varias ejecuciones. Probado con el Kruger (78 vértices tras simplificar).
+- 09-11-2026, D3, segunda corrección: con el círculo de igual superficie GBIF da lo mismo que con la caja (Kruger
+  12 527 frente a 12 572), pero la ejecución sacó 2820 parques con fauna: las consultas por polígono son más lentas,
+  muchas acabaron en «GBIF no responde» y esos parques se perdían; y algunos contornos, simplificados quitando
+  vértices, se cruzaban consigo mismos y GBIF los rechazaba (400). `no_empeora.py` paró la publicación las dos veces.
+  Ahora, si GBIF falla o rechaza la huella nueva, se usa lo guardado con la caja (marcado: `huella` «caja») y el
+  parque no se pierde; y el contorno es la envolvente convexa del polígono (siempre simple; cubre algo más que el
+  parque, mucho menos que el círculo). También se descartan los huecos que Overpass deja en la geometría, que
+  rompieron la ejecución programada.

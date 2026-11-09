@@ -168,17 +168,23 @@ def zona(lat: float, lon: float, r_km: float, forma: str | None = None) -> dict:
     return {"geometry": wkt} if wkt else caja(lat, lon, r_km)
 
 
+def _antes(params: dict, lat: float, lon: float, r_km: float, prefijo: str):
+    """Lo guardado con la caja de antes para estos parámetros, marcado como tal; None si no hay o no hay huella nueva."""
+    if "geometry" not in params:
+        return None
+    antes = {k: v for k, v in params.items() if k != "geometry"} | caja(lat, lon, r_km)
+    guardado = CACHE.leer(prefijo + repr(sorted(antes.items())))
+    return {**guardado, "antigua": True} if isinstance(guardado, dict) else guardado
+
+
 def _de_cache(params: dict, lat: float, lon: float, r_km: float, prefijo: str):
     """Lo guardado para la huella nueva o, mientras no esté y no quede tiempo, lo de la caja de antes: así el cambio
     de huella (08-11-2026) se hace por tandas sin que los parques sin consultar desaparezcan de lo publicado."""
     clave = prefijo + repr(sorted(params.items()))
     guardado = CACHE.leer(clave)
-    if guardado is None and sin_tiempo() and "geometry" in params:
-        antes = {k: v for k, v in params.items() if k != "geometry"} | caja(lat, lon, r_km)
-        guardado = CACHE.leer(prefijo + repr(sorted(antes.items())))
-        # marcado, para no llamarlo «contorno» ni «círculo» mientras es la caja de antes
-        if isinstance(guardado, dict):
-            guardado = {**guardado, "antigua": True}
+    if guardado is None and sin_tiempo():
+        # marcado («antigua»), para no llamarlo «contorno» ni «círculo» mientras es la caja de antes
+        guardado = _antes(params, lat, lon, r_km, prefijo)
     return clave, guardado
 
 
@@ -232,6 +238,11 @@ def gbif(lat: float, lon: float, r_km: float, clase_gbif: int, n: int = 200, for
             if r.status_code in (429, 500, 502, 503, 504):
                 time.sleep(int(r.headers.get("Retry-After", 0) or 10 * (intento + 1)))
                 continue
+            if r.status_code == 400 and "geometry" in params:
+                # la huella nueva rechazada: lo guardado con la caja, si lo hay
+                guardado = _antes(params, lat, lon, r_km, "gbif:")
+                if guardado is not None:
+                    return guardado
             r.raise_for_status()
             d = r.json()
             facetas = {f["field"]: f["counts"] for f in d.get("facets", [])}
@@ -246,7 +257,9 @@ def gbif(lat: float, lon: float, r_km: float, clase_gbif: int, n: int = 200, for
             CACHE.guardar(clave, guardado)
             break
         else:
-            raise requests.ConnectionError("GBIF no responde")
+            guardado = _antes(params, lat, lon, r_km, "gbif:")
+            if guardado is None:
+                raise requests.ConnectionError("GBIF no responde")
     return guardado
 
 

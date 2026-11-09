@@ -74,13 +74,41 @@ def _anillos_exteriores(geo: dict) -> list[list[tuple[float, float]]]:
     return []
 
 
+def envolvente(puntos: list[tuple[float, float]]) -> list[tuple[float, float]]:
+    """Envolvente convexa (cadena monótona de Andrew), cerrada y antihoraria."""
+    pts = sorted(set(puntos))
+    if len(pts) < 3:
+        return []
+
+    def giro(o, a, b):
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+
+    abajo: list[tuple[float, float]] = []
+    for p in pts:
+        while len(abajo) >= 2 and giro(abajo[-2], abajo[-1], p) <= 0:
+            abajo.pop()
+        abajo.append(p)
+    arriba: list[tuple[float, float]] = []
+    for p in reversed(pts):
+        while len(arriba) >= 2 and giro(arriba[-2], arriba[-1], p) <= 0:
+            arriba.pop()
+        arriba.append(p)
+    casco = abajo[:-1] + arriba[:-1]
+    return [*casco, casco[0]]
+
+
 def contorno_wkt(geo: dict, max_puntos: int = MAX_PUNTOS) -> str | None:
-    """El polígono más grande de un GeoJSON, simplificado y antihorario, en WKT; None si no hay ninguno útil."""
+    """La envolvente convexa del polígono más grande de un GeoJSON, en WKT antihorario; None si no hay ninguno útil.
+
+    La envolvente y no el contorno simplificado: quitando vértices, los contornos con entrantes se cruzaban consigo
+    mismos y GBIF los rechazaba (400, 09-11-2026). La envolvente siempre es un polígono simple; cubre algo más que el
+    parque, mucho menos que el círculo."""
     anillos = [a for a in _anillos_exteriores(geo) if len(a) >= 4]
     if not anillos:
         return None
     mayor = max(anillos, key=lambda a: abs(_area_firmada([*a, a[0]] if a[0] != a[-1] else a)))
-    anillo = _simplificar(mayor, max_puntos)
+    casco = envolvente(mayor)
+    anillo = _simplificar(casco, max_puntos) if casco else []
     if len(anillo) < 4:
         return None
     if any(abs(lon) > 180 or abs(lat) > 90 for lon, lat in anillo):
@@ -127,7 +155,8 @@ def anillos_de_relacion(rel: dict) -> list[list[tuple[float, float]]]:
     """Los anillos cerrados de una relación de OSM con su geometría (`out geom`): une los tramos exteriores por sus
     extremos, dándoles la vuelta si hace falta."""
     tramos = [
-        [(round(p["lon"], 6), round(p["lat"], 6)) for p in m["geometry"]]
+        # Overpass deja a veces huecos (None) en la geometría de un tramo
+        [(round(p["lon"], 6), round(p["lat"], 6)) for p in m["geometry"] if p]
         for m in rel.get("members", [])
         if m.get("type") == "way" and m.get("role", "outer") in ("outer", "") and len(m.get("geometry") or []) >= 2
     ]
@@ -159,7 +188,7 @@ def contornos_osm(qids: list[str], lote: int = 20) -> dict[str, str]:
     salida: dict[str, str] = {}
     pendientes = []
     for q in qids:
-        guardado = practico.CACHE.leer(f"osm-contorno:{q}")
+        guardado = practico.CACHE.leer(f"osm-contorno-envolvente:{q}")
         if guardado is None:
             pendientes.append(q)
         elif guardado:
@@ -186,7 +215,7 @@ def contornos_osm(qids: list[str], lote: int = 20) -> dict[str, str]:
                 if wkt:
                     hallados[q] = wkt
         for q in tanda:
-            practico.CACHE.guardar(f"osm-contorno:{q}", hallados.get(q, ""))
+            practico.CACHE.guardar(f"osm-contorno-envolvente:{q}", hallados.get(q, ""))
             if q in hallados:
                 salida[q] = hallados[q]
     return salida

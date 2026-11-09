@@ -89,3 +89,62 @@ def test_anillo_de_una_relacion_de_osm_con_tramos_desordenados():
     assert anillos[0][0] == anillos[0][-1] and len(anillos[0]) == 5
     # un tramo suelto que no cierra no da anillo
     assert huellas.anillos_de_relacion({"members": [tramo((0, 0), (1, 0))]}) == []
+
+
+def test_envolvente_de_un_contorno_con_entrantes_es_un_poligono_simple():
+    # una «C»: quitar vértices de su contorno lo hacía cruzarse; la envolvente es el rectángulo
+    c = [[0, 0], [3, 0], [3, 1], [1, 1], [1, 2], [3, 2], [3, 3], [0, 3], [0, 0]]
+    pts = _puntos(huellas.contorno_wkt({"type": "Polygon", "coordinates": [c]}))
+    assert sorted(set(pts)) == [(0.0, 0.0), (0.0, 3.0), (3.0, 0.0), (3.0, 3.0)]
+    assert huellas._area_firmada(pts) > 0
+
+
+def test_huecos_en_la_geometria_de_osm():
+    rel = {
+        "members": [
+            {
+                "type": "way",
+                "role": "outer",
+                "geometry": [
+                    {"lon": 0, "lat": 0},
+                    None,
+                    {"lon": 1, "lat": 0},
+                    {"lon": 1, "lat": 1},
+                    {"lon": 0, "lat": 0},
+                ],
+            }
+        ]
+    }
+    assert len(huellas.anillos_de_relacion(rel)) == 1
+
+
+def test_si_gbif_rechaza_la_huella_se_usa_lo_guardado_con_la_caja(monkeypatch, tmp_path):
+    from safari.comun.cache import CacheJson
+
+    cache = CacheJson(directorio=tmp_path)
+    monkeypatch.setattr(mundo, "CACHE", cache)
+    monkeypatch.setattr(mundo, "sin_tiempo", lambda: False)
+
+    class Rechazo:
+        status_code = 400
+        headers = None
+
+        def raise_for_status(self):
+            raise AssertionError("no debía llegar aquí")
+
+    monkeypatch.setattr(mundo._SESION, "get", lambda *a, **k: Rechazo())
+    antes = {
+        "classKey": 359,
+        "year": f"{mundo.DESDE_ANO},2030",
+        "occurrenceStatus": "PRESENT",
+        "hasGeospatialIssue": "false",
+        "basisOfRecord": ["HUMAN_OBSERVATION", "MACHINE_OBSERVATION"],
+        "limit": 0,
+        "facet": ["speciesKey", "month"],
+        "speciesKey.facetLimit": 200,
+        "month.facetLimit": 12,
+        **mundo.caja(-2.33, 34.83, 60),
+    }
+    cache.guardar("gbif:" + repr(sorted(antes.items())), {"obs": 7, "especies": [], "meses": [0] * 12})
+    g = mundo.gbif(-2.33, 34.83, 60, 359)
+    assert g["obs"] == 7 and g["antigua"] is True
