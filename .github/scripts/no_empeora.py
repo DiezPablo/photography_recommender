@@ -8,7 +8,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-REPOS = ["DiezPablo/safari_recommender"]
+REPOS = ["DiezPablo/photography_recommender"]
 MARGEN = 0.95
 
 

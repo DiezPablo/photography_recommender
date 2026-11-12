@@ -8,7 +8,7 @@ import {
   puntuarFinde,
   tiempoDia,
   tiempoFranja,
-} from "../src/features/espana/finde";
+} from "../src/features/fauna/finde";
 import type { HoraTiempo } from "../src/lib/tiempo";
 
 test("días del fin de semana", () => {

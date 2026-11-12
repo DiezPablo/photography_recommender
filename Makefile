@@ -6,13 +6,13 @@ instalar:
 check: check-python check-web
 
 check-python:
-	ruff check safari tests && ruff format --check safari tests && python -m pytest
+	ruff check safari rasante tests && ruff format --check safari rasante tests && python -m pytest
 
 check-web:
 	npm run check
 
 formato:
-	ruff format safari tests && ruff check --fix safari tests && npx prettier --write .
+	ruff format safari rasante tests && ruff check --fix safari rasante tests && npx prettier --write .
 
 test:
 	python -m pytest

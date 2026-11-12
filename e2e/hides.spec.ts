@@ -1,6 +1,6 @@
 // Catálogo de hides: datos completos, sin nidos, y búsqueda por especie y por zona (sin navegador).
 import { expect, test } from "@playwright/test";
-import { HIDES, hidesCerca, hidesDe } from "../src/features/espana/hides";
+import { HIDES, hidesCerca, hidesDe } from "../src/features/fauna/hides";
 
 test("cada hide tiene web, zona y punto en España; ids únicos", () => {
   expect(new Set(HIDES.map((h) => h.id)).size).toBe(HIDES.length);

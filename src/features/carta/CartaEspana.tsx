@@ -11,7 +11,7 @@ import { celda as celdaDe, centroCelda } from "@/lib/rejilla";
 import { direccionesSol, horaLocal, horaSol } from "@/lib/sol";
 import { escaparHtml as esc, useMapaBase } from "@/ui/mapa/useMapaBase";
 import SelectorEspecie, { type OpcionEspecie } from "@/ui/SelectorEspecie";
-import type { EspecieDelMes } from "@/features/espana/datos";
+import type { EspecieDelMes } from "@/features/fauna/datos";
 import {
   CAPAS,
   leerEstado,
@@ -74,7 +74,7 @@ export default function CartaEspana({ hoy, delMes }: { hoy: string; delMes: Espe
   }>();
 
   useEffect(() => {
-    fetch("/espana/especies.json")
+    fetch("/fauna/especies.json")
       .then((r) => (r.ok ? r.json() : { especies: [] }))
       .then((d: { especies: EspecieLista[] }) => setLista(d.especies))
       .catch(() => setLista([]));
@@ -84,7 +84,7 @@ export default function CartaEspana({ hoy, delMes }: { hoy: string; delMes: Espe
   useEffect(() => {
     if (!estado.especie) return;
     let vivo = true;
-    fetch(`/espana/especie-datos/${estado.especie}?celdas=1&mes=${estado.mes}`)
+    fetch(`/fauna/especie-datos/${estado.especie}?celdas=1&mes=${estado.mes}`)
       .then((r) => (r.ok ? r.json() : { celdas: [], curva: [] }))
       .then(
         (d: { celdas: CeldaEspecie[]; curva?: (number | null)[] }) =>
@@ -231,7 +231,7 @@ export default function CartaEspana({ hoy, delMes }: { hoy: string; delMes: Espe
     let vivo = true;
     const t = setTimeout(() => {
       fetch(
-        `/espana/lugares-mapa?s=${b.getSouth()}&w=${b.getWest()}&n=${b.getNorth()}&e=${b.getEast()}&z=${m.getZoom()}`,
+        `/fauna/lugares-mapa?s=${b.getSouth()}&w=${b.getWest()}&n=${b.getNorth()}&e=${b.getEast()}&z=${m.getZoom()}`,
       )
         .then((r) => (r.ok ? r.json() : { lugares: [] }))
         .then((d: { lugares: [string, string, string, number, number][] }) => {
@@ -245,7 +245,7 @@ export default function CartaEspana({ hoy, delMes }: { hoy: string; delMes: Espe
               className: id.startsWith("eb-") ? "lugar-ebird" : "lugar-espacio",
             })
               .bindPopup(
-                `<strong>${esc(n)}</strong><br>${esc(tipo)}<br><a href="/espana/lugar/${encodeURIComponent(id)}">Ficha del lugar</a>`,
+                `<strong>${esc(n)}</strong><br>${esc(tipo)}<br><a href="/fauna/lugar/${encodeURIComponent(id)}">Ficha del lugar</a>`,
               )
               .addTo(g);
         })

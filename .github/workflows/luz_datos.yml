@@ -1,0 +1,114 @@
+# Modo Luz. Previsión para todos los spots de España, dos veces al día (madrugada, con los modelos de la noche,
+# y mediodía, para decidir el atardecer). Los datos van a la release "datos" y Vercel reconstruye la
+# web. Calcula también el calendario de eventos (eventos.json). La ejecución del mediodía manda además el aviso opcional por Telegram.
+# Dos ejecuciones al día para no pasar del límite gratuito de Open-Meteo (10 000 llamadas/día).
+# GitHub interpreta el cron en UTC y suele ejecutarlo con retraso.
+name: Luz · previsión
+
+on:
+  schedule:
+    - cron: "47 3 * * *" # ~05:47 hora peninsular en verano, 04:47 en invierno
+    - cron: "47 12 * * *" # ~14:47 / 13:47: previsión fresca para el atardecer
+  workflow_dispatch:
+    inputs:
+      enviar:
+        description: "Enviar aviso por Telegram (si hay secretos)"
+        type: boolean
+        default: false
+  push:
+    branches: [main]
+    paths:
+      - rasante/prevision/**
+      - rasante/notas/**
+      - rasante/cielo/**
+      - rasante/terreno/**
+      - rasante/comun/**
+      - rasante/eventos/**
+      - rasante/verificacion/**
+      - rasante/recursos/eventos_naturaleza.csv
+      - mis_spots.csv
+      - .github/workflows/luz_datos.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publicar-datos
+  cancel-in-progress: false
+
+jobs:
+  datos:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: pip install -e .
+
+      - uses: actions/cache@v6
+        with:
+          path: cache/lp
+          key: atlas-lp-2025
+
+      # La primera vez, los datos que no se recalculan a diario vienen de la release del repositorio anterior
+      - name: Siembra (solo si faltan en la release)
+        run: .github/scripts/sembrar.sh spots.geojson clima.json dron.json verificacion.json
+
+      - name: Spots publicados
+        run: |
+          mkdir -p public/datos
+          curl -fsSL https://github.com/${{ github.repository }}/releases/download/datos/spots.geojson.gz \
+            | gunzip > /tmp/spots.geojson && mv /tmp/spots.geojson public/datos/spots.geojson \
+            || echo "Sin spots en la release: se usan los del repositorio"
+
+      - name: Calcular condiciones
+        run: |
+          mkdir -p salida
+          python -m rasante prevision --salida salida/informe.json
+
+      - name: Calendario de eventos y alineaciones
+        run: |
+          python -m rasante eventos --salida salida/eventos.json
+          python -m rasante alineaciones --salida salida/alineaciones.json
+
+      # Lo previsto para los aeropuertos frente a lo observado (METAR): el historial vive en la release
+      # nunca bloquea la publicación de la previsión: si falla, esa vez no se publica la verificación
+      - name: Verificación
+        continue-on-error: true
+        run: |
+          if curl -fsSL -o /tmp/verificacion.json.gz \
+              https://github.com/${{ github.repository }}/releases/download/datos/verificacion.json.gz; then
+            gunzip -c /tmp/verificacion.json.gz > salida/verificacion.json
+          else
+            echo "Sin historial: se empieza de cero"
+          fi
+          python -m rasante verificar --historial salida/verificacion.json
+
+      - name: Publicar
+        run: |
+          # publicar_release.sh no publica nada si falta un fichero: la lista lleva solo los que existen
+          ficheros="salida/informe.json"
+          for f in salida/eventos.json salida/alineaciones.json salida/verificacion.json; do
+            [ -s "$f" ] && ficheros="$ficheros $f"
+          done
+          .github/scripts/publicar_release.sh "Datos $(date -u +%Y-%m-%dT%H:%MZ)" $ficheros
+
+      - name: Aviso por Telegram (opcional)
+        if: github.event.schedule == '47 12 * * *' || inputs.enviar
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          WEB_URL: ${{ vars.WEB_URL }}
+        run: |
+          if [ -z "$TELEGRAM_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "Sin secretos de Telegram: no se envía aviso."; exit 0
+          fi
+          python -m rasante avisos --informe salida/informe.json --silencio

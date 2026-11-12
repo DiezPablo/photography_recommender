@@ -6,7 +6,7 @@ import FotoGrande from "@/ui/FotoGrande";
 import QueVer from "@/features/safaris/componentes/QueVer";
 import ExploradorSafaris from "@/features/safaris/componentes/ExploradorSafaris";
 import EntradasHero from "@/features/safaris/componentes/EntradasHero";
-import { listaEspeciesEspana } from "@/features/espana/datos";
+import { listaEspeciesEspana } from "@/features/fauna/datos";
 import {
   cargarRecientes,
   cargarSafaris,
@@ -69,7 +69,7 @@ export default function PaginaSafaris() {
             Para empezar:{" "}
             {tigre && <Link href={`/safaris?especie=${tigre.clave}&mes=marzo#explorar`}>Tigres en marzo</Link>}
             <Link href="/safaris?ninos=1#explorar">Safari sin malaria con niños</Link>
-            {grulla && <Link href={`/espana/especie/${grulla.k}`}>Grullas en España</Link>}
+            {grulla && <Link href={`/fauna/especie/${grulla.k}`}>Grullas en España</Link>}
           </p>
           <div className="acciones">
             <Link href="/planificar">Planifica tu safari</Link>

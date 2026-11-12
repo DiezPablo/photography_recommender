@@ -211,7 +211,7 @@ def sin_repetir(xs: list[dict], km: float = 3) -> list[dict]:
     return salida
 
 
-PUBLICADO = "https://github.com/DiezPablo/safari_recommender/releases/download/datos/espana_lugares.json.gz"
+PUBLICADO = "https://github.com/DiezPablo/photography_recommender/releases/download/datos/espana_lugares.json.gz"
 
 
 def observatorios_publicados(s: requests.Session) -> list[dict]:

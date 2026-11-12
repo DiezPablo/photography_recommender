@@ -1,4 +1,5 @@
 // Iconos SVG en línea (sin librerías): heredan el color del texto.
+import type { Filtro } from "@/features/spots/modelo";
 
 type P = { size?: number; titulo?: string };
 
@@ -181,6 +182,24 @@ export const IconoHuella = (p: P) => (
     <circle cx="17.5" cy="9.5" r="1.6" />
   </Svg>
 );
+
+/** Sol rasante sobre el horizonte. */
+export function IconoMomento({ momento, size }: { momento: Filtro; size?: number }) {
+  switch (momento) {
+    case "amanecer":
+      return <IconoAmanecer size={size} />;
+    case "atardecer":
+      return <IconoAtardecer size={size} />;
+    case "astro":
+      return <IconoNoche size={size} />;
+    case "niebla":
+      return <IconoNiebla size={size} />;
+    case "luna":
+      return <IconoLunaLlena size={size} />;
+    default:
+      return <IconoTodo size={size} />;
+  }
+}
 
 /** Sol rasante sobre el horizonte. */
 export function Logo({ size = 22 }: { size?: number }) {

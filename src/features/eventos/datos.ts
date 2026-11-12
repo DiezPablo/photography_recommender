@@ -1,0 +1,66 @@
+// Lectura de public/datos/eventos.json en el build (solo servidor) y cruces con spots.
+import "server-only";
+import { leerDatos } from "@/lib/datos";
+import { cargar } from "@/features/spots/datos";
+import {
+  type Alineaciones,
+  type Ambito,
+  ambito,
+  distanciaKm,
+  type EventoNaturaleza,
+  type Eventos,
+} from "@/features/eventos/modelo";
+
+export * from "@/features/eventos/modelo";
+
+let cache: Eventos | null | undefined;
+
+export function cargarEventos(): Eventos | null {
+  if (cache !== undefined) return cache;
+  cache = leerDatos<Eventos>("eventos.json");
+  return cache;
+}
+
+export function getEvento(id: string): EventoNaturaleza | undefined {
+  return cargarEventos()?.naturaleza.find((e) => e.id === id);
+}
+
+/** Eventos de naturaleza cuyo entorno incluye el punto (su radio más un margen para acercarse). */
+export function eventosCerca(
+  lat: number,
+  lon: number,
+  margenKm = 15,
+  solo?: Ambito,
+): (EventoNaturaleza & { km: number })[] {
+  return (cargarEventos()?.naturaleza ?? [])
+    .filter((e) => !solo || ambito(e) === solo)
+    .map((e) => ({ ...e, km: distanciaKm(e, { lat, lon }) }))
+    .filter((e) => e.km <= e.radio_km + margenKm)
+    .sort((a, b) => a.km - b.km);
+}
+
+export interface SpotCercano {
+  id: string;
+  nombre: string;
+  tipo: string | null;
+  lat: number;
+  lon: number;
+  km: number;
+}
+
+/** Spots dentro del área del evento o a poca distancia, del más cercano al más lejano. */
+export function spotsCerca(e: EventoNaturaleza, n = 8): SpotCercano[] {
+  return cargar()
+    .spots.map((s) => ({ id: s.id, nombre: s.nombre, tipo: s.tipo, lat: s.lat, lon: s.lon, km: distanciaKm(e, s) }))
+    .filter((s) => s.km <= e.radio_km + 15)
+    .sort((a, b) => a.km - b.km)
+    .slice(0, n);
+}
+
+let cacheAlineaciones: Alineaciones | null | undefined;
+
+export function cargarAlineaciones(): Alineaciones | null {
+  if (cacheAlineaciones !== undefined) return cacheAlineaciones;
+  cacheAlineaciones = leerDatos<Alineaciones>("alineaciones.json");
+  return cacheAlineaciones;
+}

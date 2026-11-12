@@ -9,3 +9,6 @@ pyproject.toml
 *.py
 docs
 capturas
+rasante/*
+mis_spots.csv
+.claude

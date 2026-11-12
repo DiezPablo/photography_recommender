@@ -3,15 +3,20 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "safari"
-version = "0.1.0"
-description = "Safaris por el mundo: dónde y cuándo ver cada animal y cómo organizarlo, con datos abiertos"
+name = "rasante"
+version = "3.0.0"
+description = "Rasante: dónde ir a fotografiar naturaleza en España (luz y fauna); pipelines rasante (luz) y safari (fauna)"
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "Uso personal, no comercial" }
 authors = [{ name = "Pablo Díez" }]
 dependencies = [
+  "astral>=3.2",
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "pillow>=10.0",
   "requests>=2.31",
+  "scikit-learn>=1.4",
   "shapely>=2.0",
 ]
 
@@ -20,12 +25,14 @@ dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [project.scripts]
 safari = "safari.cli:main"
+rasante = "rasante.__main__:main"
 
 [tool.setuptools.packages.find]
-include = ["safari*"]
+include = ["safari*", "rasante*"]
 
 [tool.setuptools.package-data]
 safari = ["recursos/*"]
+rasante = ["recursos/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -47,7 +54,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["safari"]
+known-first-party = ["safari", "rasante"]
 
 [tool.ruff.format]
 quote-style = "double"

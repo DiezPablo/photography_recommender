@@ -8,7 +8,7 @@ import requests
 
 USER_AGENT = os.environ.get(
     "USER_AGENT",
-    "safaris/0.4 (https://github.com/DiezPablo/safari_recommender; proyecto personal no comercial)",
+    "safaris/0.4 (https://github.com/DiezPablo/photography_recommender; proyecto personal no comercial)",
 )
 
 

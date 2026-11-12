@@ -1,0 +1,53 @@
+/* Portada de Rasante: las dos puertas (Luz y Fauna). Provisional hasta el sistema de diseño (spec 004). */
+.puertas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+.puerta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: var(--superficie);
+}
+.puerta h2 {
+  margin: 0;
+}
+.puerta h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+.puerta-lista {
+  list-style: none;
+  margin: 4px 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.puerta-lista li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.puerta-lista li > span,
+ul.puerta-lista li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.puerta-lista small {
+  color: var(--texto-3);
+}
+.puerta-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 8px;
+}

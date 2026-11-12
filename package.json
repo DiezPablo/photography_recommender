@@ -1,8 +1,8 @@
 {
-  "name": "safaris",
-  "version": "0.1.0",
+  "name": "rasante",
+  "version": "3.0.0",
   "private": true,
-  "description": "Safaris por el mundo: dónde y cuándo ver cada animal y cómo organizarlo, con datos abiertos",
+  "description": "Rasante: dónde ir a fotografiar naturaleza en España (luz y fauna)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

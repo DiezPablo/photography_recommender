@@ -8,9 +8,21 @@ import { mkdir, readFile, writeFile, stat } from "node:fs/promises";
 import { gunzipSync } from "node:zlib";
 import path from "node:path";
 
-// Release «datos» de este repositorio (solo la suya: no se mezclan datos con otros proyectos)
-const REPOS = [process.env.DATOS_REPO ?? "DiezPablo/safari_recommender"];
+// Release «datos» de este repositorio. Los del modo Luz, mientras los workflows de aquí no los hayan publicado
+// (siembra de .github/scripts/sembrar.sh), se toman de la release del repositorio anterior.
+const REPO = process.env.DATOS_REPO ?? "DiezPablo/photography_recommender";
+const REPO_ANTERIOR = "DiezPablo/photo_recommender";
+const LUZ = [
+  "informe.json",
+  "spots.geojson",
+  "eventos.json",
+  "clima.json",
+  "alineaciones.json",
+  "verificacion.json",
+  "dron.json",
+];
 const FICHEROS = [
+  ...LUZ,
   "safaris.json",
   "safaris_recientes.json",
   "safaris_mundo.json",
@@ -38,7 +50,7 @@ async function existe(f) {
 }
 
 async function descargar(nombre) {
-  for (const repo of REPOS) {
+  for (const repo of LUZ.includes(nombre) && !process.env.DATOS_REPO ? [REPO, REPO_ANTERIOR] : [REPO]) {
     const gz = await descargarDe(repo, nombre);
     if (gz) return gz;
   }
@@ -87,8 +99,22 @@ for (const f of PUBLICOS) {
   if (await existe(gz)) await writeFile(path.join(PUBLICO, f), gunzipSync(await readFile(gz)));
 }
 
-// Resumen para las pruebas (que también corren contra producción, sin acceso a los ficheros): qué datos hay.
+// Resumen para las pruebas (que también corren contra producción, sin acceso a los ficheros): qué datos hay y un
+// spot de costa con mareas.
 const disponibles = [];
 for (const f of FICHEROS)
   if ((await existe(path.join(COMPRIMIDOS, `${f}.gz`))) || (await existe(path.join(PUBLICO, f)))) disponibles.push(f);
-await writeFile(path.join(PUBLICO, "resumen.json"), JSON.stringify({ ficheros: disponibles }));
+/** El JSON de un fichero: del .gz si está, si no del de public/datos (salida local del pipeline). */
+async function leer(nombre) {
+  const gz = path.join(COMPRIMIDOS, `${nombre}.gz`);
+  if (await existe(gz)) return JSON.parse(gunzipSync(await readFile(gz)).toString("utf8"));
+  const local = path.join(PUBLICO, nombre);
+  return (await existe(local)) ? JSON.parse(await readFile(local, "utf8")) : null;
+}
+// un spot de costa con mareas, para las pruebas de la ficha
+const informe = await leer("informe.json");
+const costa = informe?.spots.find((s) => s.dias.some((d) => d.mar && d.mar.mareas.length > 0));
+await writeFile(
+  path.join(PUBLICO, "resumen.json"),
+  JSON.stringify({ ficheros: disponibles, spot_costa: costa?.id ?? null }),
+);

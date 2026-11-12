@@ -1,0 +1,96 @@
+# Busca los spots de toda España (Wikidata + OpenStreetMap + popularidad en Commons), calcula el
+# horizonte del terreno de cada uno y publica spots.geojson e informe.json en la release "datos".
+# El primer cálculo es largo (~13 000 peticiones a Commons): la caché se guarda entre ejecuciones y,
+# si se agota el tiempo, la siguiente continúa.
+name: Luz · descubrir spots
+
+on:
+  schedule:
+    - cron: "41 2 1 * *" # día 1 de cada mes
+  workflow_dispatch:
+    inputs:
+      total:
+        description: "Número de spots"
+        default: "1500"
+      por_provincia:
+        description: "Mínimo de spots por provincia"
+        default: "12"
+      minutos:
+        description: "Tiempo máximo para consultar Commons (min)"
+        default: "150"
+  push:
+    branches: [main]
+    paths:
+      - rasante/spots/**
+      - rasante/comun/territorio.py
+      - rasante/recursos/provincias.geojson
+      - rasante/recursos/vecinos.geojson
+      - rasante/dron/**
+      - .github/workflows/luz_descubrir.yml
+
+permissions:
+  contents: write
+
+# Cola propia: el descubrimiento dura horas y no debe frenar las previsiones diarias (datos.yml).
+# Publicar a la vez no rompe nada: cada publicación parte del último main y sube sus ficheros.
+concurrency:
+  group: descubrir
+  cancel-in-progress: false
+
+jobs:
+  descubrir:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 345
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: pip install -e .
+
+      # Respuestas de Commons, Wikidata y Overpass, teselas del terreno y del atlas: entre ejecuciones.
+      # Se guardan aunque el trabajo falle o se corte, para no repetir horas de peticiones.
+      - uses: actions/cache/restore@v6
+        with:
+          path: cache
+          key: descubrir-${{ github.run_id }}
+          restore-keys: descubrir-
+
+      - name: Buscar spots
+        run: |
+          python -m rasante spots --salida salida \
+            --total "${{ inputs.total || '1500' }}" \
+            --por-provincia "${{ inputs.por_provincia || '12' }}" \
+            --minutos "${{ inputs.minutos || '150' }}"
+
+      - name: Previsión con los spots nuevos
+        run: python -m rasante prevision --spots salida/spots.geojson --salida salida/informe.json
+
+      # ¿Se puede volar un dron en cada spot? (ENAIRE y espacios protegidos). Si no responden, queda el anterior.
+      - name: Dron
+        continue-on-error: true
+        run: python -m rasante dron --spots salida/spots.geojson --salida salida/dron.json
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: spots
+          path: salida/spots.*
+          retention-days: 14
+
+      - name: Publicar
+        run: |
+          .github/scripts/publicar_release.sh "Actualizar spots ($(date -u +%Y-%m-%d))" \
+            salida/spots.geojson salida/spots.csv salida/informe.json
+          [ -s salida/dron.json ] && .github/scripts/publicar_release.sh "Dron (2026-11-12)" salida/dron.json || true
+
+      - uses: actions/cache/save@v6
+        if: always()
+        with:
+          path: cache
+          key: descubrir-${{ github.run_id }}
