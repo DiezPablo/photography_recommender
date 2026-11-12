@@ -44,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="cabecera-in">
             <Link href="/" className="marca" aria-label="Rasante, inicio">
               <Logo />
-              Rasante
+              <span className="marca-texto">Rasante</span>
             </Link>
             <Suspense fallback={null}>
               <Mundos />
