@@ -9,6 +9,8 @@ Una orden por subpaquete: `python -m rasante <orden>` (`--help` para verlas).
 - `prevision`: Open-Meteo (+ Marine en costa) → `informe.json`. `spots`: Commons + Wikidata + OSM →
   `spots.geojson`. `eventos`: luna, meteoros, Vía Láctea, eclipses, auroras, Starlight y
   `recursos/eventos_naturaleza.csv` → `eventos.json`; alineaciones.
+- `lugares`: índice común de spots y lugares de fauna → `lugares.json` (contrato en
+  `recursos/lugar.schema.json`; lee también `espana_lugares.json` y `espana_natura.json`).
 - `clima` (ERA5 por mes), `dron` (ENAIRE + AEMA), `verificacion` (METAR), `validacion` (ERA5 + Commons +
   METAR), `avisos` (Telegram, opcional).
 - No están aquí: rutas y logística (aparcadas, backlog «Después») ni fauna (vive en `safari/espana`).

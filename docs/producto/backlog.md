@@ -5,10 +5,10 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 
 ## Ahora
 - [~] 001 — Consolidación en photography_recommender (`docs/specs/001-consolidacion.md`): fase 1 hecha (Luz traído, `/luz` y `/fauna`, redirecciones); queda lo de abajo
+- [x] 003 — Núcleo común de "lugar" para los dos catálogos: `lugares.json` y validador (`docs/specs/003-esquema-lugar.md`)
 - [ ] 017 — Cierre del repo anterior: apagar workflows de `photo_recommender` y redirigir su web al dominio nuevo (001 §4)
 - [ ] 005 — Safaris del mundo: retirar o dejar congelados (decide Pablo; 001 §4)
-- [ ] 002 — Auditoría de licencias y cobertura de la base de datos (curador-datos)
-- [ ] 003 — Núcleo común de "lugar" para los dos catálogos: `lugares.json` y validador (`docs/specs/003-esquema-lugar.md`)
+- [ ] 002 — Auditoría de licencias y cobertura de la base de datos (curador-datos), sobre `lugares.json`. Primer dato: spots muy desiguales por comunidad (Cataluña 235, Madrid 26, Ceuta 12)
 - [ ] 006 — Un solo pipeline: `safari/espana` → `rasante/fauna`, un único `comun`, workflows `fauna_*.yml` (001 §4)
 - [ ] 007 — Limpieza de datos de fauna: fuera `espana_rutas.json` y `espana_rasante.json`; `espana_*` → `fauna_*` (001 §4)
 - [ ] 012 — Consulta común "cuándo / dónde / qué" en la URL y portada que la lanza. CA: una URL reproduce cualquier resultado; funciona sin JS; pestañas Luz/Fauna

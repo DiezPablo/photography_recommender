@@ -13,6 +13,7 @@ ORDENES = {
         "rasante.eventos.cli_alineaciones",
         "Sol y luna llena por los picos del horizonte → alineaciones.json",
     ),
+    "lugares": ("rasante.lugares.cli", "Índice común de spots y lugares de fauna → lugares.json"),
     "clima": ("rasante.clima.cli", "Climatología fotográfica por mes (ERA5) → clima.json"),
     "dron": ("rasante.dron.cli", "¿Se puede volar un dron en cada spot? (ENAIRE y espacios protegidos) → dron.json"),
     "verificar": ("rasante.verificacion.cli", "Lo previsto frente a lo observado (METAR) → verificacion.json"),
