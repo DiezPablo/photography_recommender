@@ -152,7 +152,7 @@ def _centro(e: dict) -> tuple[float, float] | None:
 def observatorios(s: requests.Session | None = None) -> list[dict]:
     """Observatorios de aves de OpenStreetMap (leisure=bird_hide) en España, agrupados a menos de 400 m; sin las
     exhibiciones de cetrería ni los de acceso privado. Los que no tienen nombre se nombran al final (`todos`)."""
-    from safari.practico import overpass
+    from safari.overpass import overpass
 
     d = None
     for intento in range(3):  # la consulta de toda España a veces no entra a la primera
@@ -425,7 +425,7 @@ def rutas(salida, s: requests.Session | None = None) -> None:
     """espana_rutas.json: rutas de senderismo de OpenStreetMap (relaciones route=hiking) con su centro, nombre,
     código (GR, PR, SL…) y longitud, para «Rutas de senderismo cerca» en la ficha de cada lugar."""
     from safari.comun.ficheros import escribir_json
-    from safari.practico import overpass
+    from safari.overpass import overpass
 
     d = overpass(CONSULTA_RUTAS, timeout=330)
     if not d:

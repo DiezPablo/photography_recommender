@@ -9,7 +9,7 @@ make instalar        # .venv con los pipelines y npm ci
 make check           # ruff, pytest, tsc, ESLint, Prettier
 npm run build && npx playwright test
 python -m rasante --help   # modo Luz
-python -m safari --help    # modo Fauna (--espana…) y safaris (congelado)
+python -m safari --help    # modo Fauna (--espana…)
 ```
 
 Contexto para desarrollar: [CLAUDE.md](CLAUDE.md). Producto: [docs/producto](docs/producto). Decisiones:

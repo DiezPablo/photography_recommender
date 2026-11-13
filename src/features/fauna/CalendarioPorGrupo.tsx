@@ -2,7 +2,7 @@
 // Qué se ve cada mes en un lugar, un grupo cada vez (aves, mamíferos…) con pestañas, y solo las 10 más frecuentes
 // hasta que pides el resto: cuatro tablas seguidas eran ocho pantallas en el móvil.
 import { useState } from "react";
-import FrecuenciaAvistamientos, { type FilaFrecuencia } from "@/features/safaris/componentes/FrecuenciaAvistamientos";
+import FrecuenciaAvistamientos, { type FilaFrecuencia } from "@/features/fauna/FrecuenciaAvistamientos";
 
 const VISIBLES = 10;
 

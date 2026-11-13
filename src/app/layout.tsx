@@ -2,8 +2,6 @@ import RegistrarSW from "@/ui/RegistrarSW";
 import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import Link from "next/link";
-import BuscadorGlobal from "@/ui/BuscadorGlobal";
-import SelectorMes from "@/ui/SelectorMes";
 import { Suspense } from "react";
 import { SITIO } from "@/lib/sitio";
 import { Logo } from "@/ui/Iconos";
@@ -19,9 +17,6 @@ export const metadata: Metadata = {
   description:
     "Dónde y cuándo ir a fotografiar en España: la mejor luz de amanecer, atardecer y noche en cada spot, y la fauna que se ve en cada lugar y época. Datos abiertos, gratis.",
   metadataBase: new URL(SITIO),
-  alternates: {
-    types: { "application/rss+xml": [{ url: "/recientes.xml", title: "Safaris: lo visto en el último mes" }] },
-  },
 };
 
 export const viewport: Viewport = {
@@ -50,10 +45,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Mundos />
               <MenuPrincipal />
             </Suspense>
-            <Suspense fallback={null}>
-              <SelectorMes />
-            </Suspense>
-            <BuscadorGlobal />
           </div>
         </header>
         <div id="contenido">{children}</div>
@@ -85,7 +76,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/fauna/hides">Hides</Link>
               <Link href="/fauna/rarezas">Rarezas</Link>
               <Link href="/fauna/normas">Normas</Link>
-              <Link href="/safaris">Safaris por el mundo</Link>
             </nav>
             <div className="pie-datos">
               <p>Datos abiertos</p>
@@ -113,15 +103,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <a href="https://www.wikidata.org/" rel="noopener">
                   Wikidata
                 </a>{" "}
-                y Wikimedia Commons (fotos con autor y licencia),{" "}
-                <a href="https://power.larc.nasa.gov/" rel="noopener">
-                  NASA POWER
-                </a>
-                ,{" "}
-                <a href="https://ourairports.com/" rel="noopener">
-                  OurAirports
-                </a>{" "}
-                y ©{" "}
+                y Wikimedia Commons (fotos con autor y licencia) y ©{" "}
                 <a href="https://www.openstreetmap.org/copyright" rel="noopener">
                   colaboradores de OpenStreetMap
                 </a>

@@ -1,5 +1,5 @@
 // Lectura de los datos que publica el pipeline (solo servidor). En Vercel están comprimidos en datos/*.gz, fuera
-// de public/: así no se publican como estáticos (el navegador solo pide fauna.json y safaris_indice.json) y las
+// de public/: así no se publican como estáticos (el navegador no pide ninguno directamente) y las
 // funciones ISR llevan ~10 veces menos peso. En local, si no hay .gz, se usa public/datos (salida del pipeline).
 import "server-only";
 import { existsSync, readFileSync } from "node:fs";

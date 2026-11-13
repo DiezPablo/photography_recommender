@@ -1,204 +1,25 @@
-"""Safaris en todo el mundo → safaris.json (mensual) y safaris_recientes.json (avistamientos de los últimos 30 días).
+"""Fauna en España: las órdenes del pipeline (cada una escribe su fichero de public/datos o el de --salida).
 
 Uso:
-  python -m safari --salida public/datos/safaris.json
-  python -m safari --recientes --salida public/datos/safaris_recientes.json
-  python -m safari --refinar safaris_mundo.json.gz --salida salida/safaris_mundo.json --indice salida/indice.json
+  python -m safari --espana                      # cuadrícula de 10 km con GBIF → espana.json
+  python -m safari --espana-ebird                # frecuencia de detección de aves (eBird en GBIF) → espana_ebird.json
+  python -m safari --espana-recientes            # vistas en 30 días y rarezas (eBird, iNaturalist)
+  python -m safari --espana-lugares              # lugares, Natura 2000 y rutas de OSM
+  python -m safari --espana-listas               # listas de eBird por punto en 7 y 30 días
+  python -m safari --espana-actividad espana.json  # hora de actividad por especie (iNaturalist)
 """
 
 from __future__ import annotations
 
 import argparse
-import time
-from datetime import date, timedelta
 from pathlib import Path
 
-import requests
-
-from safari import entorno, inat, limpieza, practico
-from safari.catalogo import cargar
-from safari.comun.ficheros import escribir_json
-from safari.frecuencia import frecuencia, muestra
-
-DIAS_RECIENTES = 30
-MIN_OBS_ESPECIE = 20  # con menos puede ser un animal de paso, un error o un zoo cercano: no cuenta como «se ve aquí»
-GRUPOS = (("Mammalia", 30), ("Aves", 12), ("Reptilia", 6))
-_ERRORES = (requests.RequestException, KeyError, ValueError)
-
-
-def meses_relativos(grupo: list[int]) -> list[int] | None:
-    """Observaciones de mamíferos por mes, de 0 a 100. No se divide entre todas las observaciones: en las zonas
-    templadas el invierno saldría «mejor» solo porque no hay flores ni insectos que fotografiar."""
-    if sum(grupo) < 50:  # con tan pocas observaciones la forma del año es ruido
-        return None
-    tope = max(grupo)
-    return [round(100 * g / tope) for g in grupo]
-
-
-def taxones_estrella(parques: list[dict]) -> dict[str, dict]:
-    nombres = sorted({c for p in parques for c in p["estrella"]})
-    salida = {}
-    for c in nombres:
-        try:
-            t = inat.taxon(c)
-        except _ERRORES as e:
-            print(f"  sin taxón para {c}: {e}", flush=True)
-            continue
-        if t is None:
-            print(f"  iNaturalist no conoce {c}", flush=True)
-            continue
-        salida[c] = t
-    return salida
-
-
-def frecuencias(p: dict, taxones: list[dict]) -> tuple[dict[str, list[int | None]], dict[str, list[int]]]:
-    """Frecuencia de avistamientos por mes de cada especie estrella frente a las de su grupo (safari.frecuencia) y
-    el tamaño de muestra de cada mes (observaciones del grupo), para decir con qué confianza."""
-    bases: dict[str, list[int]] = {}
-    salida, muestras = {}, {}
-    for t in taxones:
-        grupo = t.get("grupo") or "Mammalia"
-        if grupo not in bases:
-            bases[grupo] = inat.por_mes(p, grupo)
-        salida[str(t["taxon"])] = frecuencia(inat.por_mes(p, taxon=t["taxon"]), bases[grupo])
-        muestras[str(t["taxon"])] = muestra(bases[grupo])
-    return salida, muestras
-
-
-WEBS_OFICIALES = Path(__file__).resolve().parent / "recursos" / "webs_oficiales.csv"
-
-
-def webs_oficiales() -> dict[str, tuple[str, str]]:
-    """recursos/webs_oficiales.csv: la web de la autoridad que gestiona cada parque destacado."""
-    import csv
-
-    with WEBS_OFICIALES.open(encoding="utf-8") as f:
-        return {r["parque"]: (r["web"], r["autoridad"]) for r in csv.DictReader(f)}
-
-
-def calcular(parques: list[dict], con_clima: bool = True, con_alojamientos: bool = True) -> dict:
-    estrella = taxones_estrella(parques)
-    ids = [t["taxon"] for t in estrella.values()]
-    try:
-        wd = entorno.wikidata([p["wikidata"] for p in parques if p["wikidata"]])
-    except _ERRORES as e:
-        print(f"  sin Wikidata: {e}", flush=True)
-        wd = {}
-    try:
-        fotos = entorno.fotos_commons([w["img"] for w in wd.values() if w.get("img")])
-    except (*_ERRORES, RuntimeError) as e:
-        print(f"  sin fotos de Commons: {e}", flush=True)
-        fotos = {}
-    for w in wd.values():
-        w["foto"] = fotos.get(w.pop("img", None))
-    salida, por_especie = [], {t["taxon"]: [] for t in estrella.values()}
-    for i, p in enumerate(parques):
-        x = {**p, **{k: v for k, v in (wd.get(p["wikidata"]) or {}).items()}}
-        x["estrella"] = [estrella[c]["taxon"] for c in p["estrella"] if c in estrella]
-        # la web de la autoridad gestora, revisada a mano, manda sobre la de Wikidata (a veces es una agencia)
-        oficial = webs_oficiales().get(p["id"])
-        if oficial:
-            x["web"], x["autoridad"] = oficial
-        try:
-            x["especies"] = {g: inat.especies(p, g, n) for g, n in GRUPOS}
-            cuenta = inat.conteos(p, ids)
-            x["conteo_estrella"] = {str(k): v for k, v in cuenta.items()}
-            for k, v in cuenta.items():
-                por_especie[k].append({"id": p["id"], "n": v})
-            x["meses_mamiferos"] = meses_relativos(inat.por_mes(p, "Mammalia"))
-            x["observaciones"] = sum(inat.por_mes(p))
-            x["frecuencia"], x["muestra"] = frecuencias(p, [estrella[c] for c in p["estrella"] if c in estrella])
-            # fotos hechas en el propio parque (T20): la de cada especie estrella y una galería
-            x["fotos_estrella"] = {
-                str(estrella[c]["taxon"]): f
-                for c in p["estrella"]
-                if c in estrella and (f := inat.foto_en_parque(p, estrella[c]["taxon"]))
-            }
-            x["galeria"] = inat.galeria(p)
-        except _ERRORES as e:
-            print(f"  {p['nombre']}: sin iNaturalist ({e})", flush=True)
-        try:
-            if con_clima:
-                x["clima"] = practico.clima(p["lat"], p["lon"], con_maxima=True)
-        except _ERRORES as e:
-            print(f"  {p['nombre']}: sin clima ({e})", flush=True)
-        try:
-            if con_alojamientos:
-                x["alojamientos"] = entorno.alojamientos(p["lat"], p["lon"], p["radio_km"])
-        except _ERRORES as e:
-            print(f"  {p['nombre']}: sin alojamientos ({e})", flush=True)
-        salida.append(x)
-        print(f"  {i + 1}/{len(parques)} {p['nombre']}", flush=True)
-    con = [x for x in salida if x.get("alojamientos")]
-    for x, lista in zip(con, limpieza.repartir([x["alojamientos"] for x in con]), strict=True):
-        x["alojamientos"] = lista
-    especies = []
-    for c, t in estrella.items():
-        lugares = sorted(por_especie[t["taxon"]], key=lambda x: -x["n"])
-        especies.append({**t, "cientifico": c, "parques": [x for x in lugares if x["n"] >= MIN_OBS_ESPECIE]})
-    especies.sort(key=lambda e: -sum(x["n"] for x in e["parques"]))
-    pendientes = sorted(
-        {
-            x["cientifico"]
-            for p in salida
-            for xs in (p.get("especies") or {}).values()
-            for x in xs
-            if not x.get("nombre")
-        }
-    )
-    print(
-        f"  nombres en español pendientes (se enseña el científico): {len(pendientes)}: {', '.join(pendientes[:40])}",
-        flush=True,
-    )
-    return {"parques": salida, "especies": especies}
-
-
-def recientes(parques: list[dict], hoy: date | None = None) -> dict:
-    """Lo que se ha visto en cada parque en los últimos 30 días: cambia con la temporada y la migración."""
-    hoy = hoy or date.today()
-    desde = (hoy - timedelta(days=DIAS_RECIENTES)).isoformat()
-    estrella = taxones_estrella(parques)
-    salida = {}
-    for p in parques:
-        ids = [estrella[c]["taxon"] for c in p["estrella"] if c in estrella]
-        try:
-            cuenta = inat.conteos(p, ids, desde, cache=inat.CACHE_RECIENTE)
-            mam = inat.especies(p, "Mammalia", 12, desde, cache=inat.CACHE_RECIENTE)
-        except _ERRORES as e:
-            print(f"  {p['nombre']}: sin iNaturalist ({e})", flush=True)
-            continue
-        salida[p["id"]] = {
-            "estrella": {str(k): v for k, v in cuenta.items()},
-            "mamiferos": [{k: m[k] for k in ("taxon", "cientifico", "nombre", "n")} for m in mam],
-            "observaciones": sum(m["n"] for m in mam),
-        }
-    return {"fecha": hoy.isoformat(), "desde": desde, "parques": salida}
+DATOS = Path("public/datos")
 
 
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(prog="safari", description=__doc__.splitlines()[0])
-    ap.add_argument("--salida", type=Path, default=Path("public/datos/safaris.json"))
-    ap.add_argument("--recientes", action="store_true", help="solo los avistamientos de los últimos 30 días")
-    ap.add_argument("--mundo", action="store_true", help="todos los parques del mundo (horas la primera vez)")
-    ap.add_argument("--indice", type=Path, default=Path("public/datos/safaris_indice.json"))
-    ap.add_argument("--hilos", type=int, default=4)
-    ap.add_argument(
-        "--osm-max", type=int, default=1500, help="parques nuevos que se piden a Overpass en esta ejecución"
-    )
-    ap.add_argument("--minutos", type=float, help="tiempo para peticiones nuevas; después, solo caché (--mundo)")
-    ap.add_argument("--limite-candidatos", type=int, help="solo los N primeros candidatos del mundo (pruebas)")
-    ap.add_argument("--solo", help="ids de parques separados por comas (pruebas)")
-    ap.add_argument("--sin-clima", action="store_true", help="sin climatología (desde el contenedor Open-Meteo limita)")
-    ap.add_argument("--sin-alojamientos", action="store_true", help="sin OSM (desde el contenedor Overpass limita)")
-    ap.add_argument(
-        "--refinar",
-        type=Path,
-        metavar="ENTRADA",
-        help="aplica safari.refinar a un safaris_mundo.json (o .gz) ya calculado y escribe --salida e --indice",
-    )
-    ap.add_argument(
-        "--sondeo-precios", action="store_true", help="sondeo de webs de operadores (docs/sondeo-precios.md)"
-    )
+    ap.add_argument("--salida", type=Path, help="fichero de salida (por defecto, el de cada orden en public/datos)")
     ap.add_argument("--espana", action="store_true", help="fauna en España con GBIF (necesita GBIF_USUARIO/CLAVE)")
     ap.add_argument("--espana-actividad", type=Path, help="espana.json → hora de actividad por especie (iNaturalist)")
     ap.add_argument("--espana-lugares", action="store_true", help="lugares de fauna en España (eBird, Wikidata, OSM)")
@@ -213,16 +34,13 @@ def main(argv: list[str] | None = None) -> None:
     if a.espana_actividad:
         from safari.espana import inat_espana
 
-        destino = a.salida if a.salida != ap.get_default("salida") else Path("public/datos/espana_actividad.json")
-        inat_espana.actividad_main(destino, a.espana_actividad)
+        inat_espana.actividad_main(a.salida or DATOS / "espana_actividad.json", a.espana_actividad)
         return
     if a.espana_lugares:
-        from safari.espana import lugares
+        from safari.espana import lugares, natura
 
-        destino = a.salida if a.salida != ap.get_default("salida") else Path("public/datos/espana_lugares.json")
+        destino = a.salida or DATOS / "espana_lugares.json"
         # primero Natura 2000: los lugares que se llaman como un espacio sin lugar propio se quedan con su código
-        from safari.espana import natura
-
         natura.main(destino.parent / "espana_natura.json")
         lugares.main(destino, destino.parent / "espana_natura.json")
         lugares.rutas(destino.parent / "espana_rutas.json")
@@ -235,15 +53,13 @@ def main(argv: list[str] | None = None) -> None:
     if a.espana_listas:
         from safari.espana import ebird_listas
 
-        destino = a.salida if a.salida != ap.get_default("salida") else Path("public/datos/espana_listas.json")
+        destino = a.salida or DATOS / "espana_listas.json"
         ebird_listas.main(destino, destino.parent / "espana_lugares.json")
         return
     if a.espana_recientes:
         from safari.espana import ebird
 
-        # --salida trae por defecto safaris.json: aquí, si no se da otra, va a su propio fichero
-        por_defecto = ap.get_default("salida")
-        destino = a.salida if a.salida != por_defecto else Path("public/datos/espana_recientes.json")
+        destino = a.salida or DATOS / "espana_recientes.json"
         ebird.recientes_espana(destino)
         ebird.rarezas_espana(destino.parent / "espana_rarezas.json")
         return
@@ -262,42 +78,4 @@ def main(argv: list[str] | None = None) -> None:
 
         espana.main()
         return
-    if a.sondeo_precios:
-        from safari import sondeo
-
-        sondeo.main()
-        return
-    if a.refinar:
-        from safari import mundo_cli
-
-        mundo_cli.refinar_fichero(a.refinar, a.salida, a.indice, a.minutos, not a.sin_alojamientos)
-        return
-    if a.mundo:
-        from safari import mundo_cli
-
-        mundo_cli.main(a.salida, a.indice, a.hilos, a.osm_max, a.limite_candidatos, a.minutos)
-        return
-    t0 = time.time()
-    parques = cargar()
-    if a.solo:
-        parques = [p for p in parques if p["id"] in a.solo.split(",")]
-    if a.recientes:
-        datos = recientes(parques)
-        escribir_json(a.salida, datos)
-        print(f"{a.salida}: {len(datos['parques'])} parques ({time.time() - t0:.0f} s)")
-        return
-    datos = calcular(parques, con_clima=not a.sin_clima, con_alojamientos=not a.sin_alojamientos)
-    escribir_json(
-        a.salida,
-        {
-            "generado": date.today().isoformat(),
-            "fuentes": {
-                "parques": "Selección propia; foto, web y artículo de Wikidata y Wikipedia",
-                "especies": "iNaturalist (observaciones verificables; fotos con licencia Creative Commons)",
-                "clima": "NASA POWER (climatología mensual de lluvia y máxima)",
-                "alojamientos": "OpenStreetMap (ODbL)",
-            },
-            **datos,
-        },
-    )
-    print(f"{a.salida}: {len(datos['parques'])} parques, {len(datos['especies'])} especies ({time.time() - t0:.0f} s)")
+    ap.error("falta la orden: una de las --espana… (python -m safari --help)")

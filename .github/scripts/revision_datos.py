@@ -1,6 +1,6 @@
-"""Revisión anual de los datos escritos a mano (tarifas, tasas, visados, cierres, edades mínimas).
+"""Revisión anual de los datos escritos a mano (hides, fenómenos, consejos de fotografía y normas).
 
-Busca en src/features/safaris las fechas de revisión (`REVISADO… = "dd-mm-aaaa"`, `CONSULTADO = …` y los
+Busca en src/features/fauna las fechas de revisión (`REVISADO… = "dd-mm-aaaa"`, `CONSULTADO = …` y los
 `revisado: "dd-mm-aaaa"` de cada país) y escribe en la salida un informe en Markdown con lo que tiene más de
 MAX_DIAS. Sale con código 1 si hay algo que revisar (el workflow abre entonces una incidencia).
 Uso: python .github/scripts/revision_datos.py [--max-dias 365]
@@ -15,19 +15,11 @@ from datetime import date, datetime
 from pathlib import Path
 
 FEATURES = Path(__file__).resolve().parents[2] / "src" / "features"
-RAICES = [FEATURES / "safaris", FEATURES / "espana"]
+RAICES = [FEATURES / "fauna"]
 QUE = {
-    "temporadaVerde.ts": "Tarifas de los lodges por mes (temporada verde): abrir cada enlace y copiar las del año nuevo.",
-    "tasas.ts": "Tasas de entrada de los parques: comprobar en la fuente de cada una.",
-    "paises.ts": "Visado, fiebre amarilla, malaria y dinero por país: web oficial del visado y Exteriores.",
-    "cierres.ts": "Cierres estacionales (tigres en el monzón, Kaziranga, Yala…): fechas del año en las fuentes.",
-    "familias.ts": "Edades mínimas (gorilas, chimpancés) y parques sin malaria.",
-    "eventos.ts": "Calendario de fenómenos (desoves, ballenas, osos, crecidas…): meses en las fuentes.",
     "fenomenos.ts": "Fenómenos de fauna en España (berrea, grullas, Estrecho…): meses en las fuentes.",
     "hides.ts": "Hides y salidas guiadas en España: que la web siga activa, temporadas y precios.",
     "fotografia.ts": "Dificultad y consejos de fotografía por especie en España.",
-    "fichasEspecie.ts": "Estado UICN, tamaño y consejos de las especies principales: Lista Roja y guías de campo.",
-    "fotografiaParques.ts": "Fotografía en cada parque (salir de pista, horarios, nocturnos, hides): normas del parque.",
     "normas.ts": "Normas de fotografía de fauna: enlaces oficiales (BOE, AESA, ENAIRE, parques nacionales).",
 }
 FECHA = re.compile(r'(?:REVISADO\w*|CONSULTADO)\s*=\s*"(\d{2}-\d{2}-\d{4})"|revisado:\s*"(\d{2}-\d{2}-\d{4})"')
@@ -56,8 +48,8 @@ def informe(max_dias: int, hoy: date | None = None) -> tuple[str, bool]:
     texto = "\n".join(
         [
             f"Datos escritos a mano con más de {max_dias} días (sin marcar). Al revisarlos, actualiza la fecha en el",
-            "fichero (`REVISADO…`, `CONSULTADO` o `revisado:` de cada país) y anota los cambios en",
-            "`docs/archivo/safaris-decisiones-hasta-2026-11.md`.",
+            "fichero (`REVISADO…`, `CONSULTADO` o `revisado:`) y, si cambia algo que alguien deba saber, anótalo en",
+            "una ficha de `docs/decisiones/`.",
             "",
             *filas,
         ]

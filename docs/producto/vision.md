@@ -23,7 +23,7 @@ hace que la web sea de referencia. Todo lo demás se nutre de él.
   alineaciones al minuto (eso es PhotoPills y similares).
 - Sin IA generativa ni LLM en el producto (por ahora).
 - Sin backend propio: GitHub Actions + release de datos + Vercel.
-- Safaris fuera de España: fuera de alcance. Su código comparte repo, congelado (decisión 0018, spec 005).
+- Safaris fuera de España: fuera de esta versión (decisión 0021). Se retoman solo si lo vemos necesario.
 - Rutas de senderismo: aparcadas hasta que Luz y Fauna estén montados (decisión 0019).
 
 ## Sin monetización

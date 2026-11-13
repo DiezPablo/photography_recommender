@@ -1,38 +1,46 @@
 import type { NextConfig } from "next";
 
-// Las reglas de nombres comunes y las exclusiones de especies (mismos ficheros que el pipeline): las lee el
-// servidor al cargar los datos de safaris, así que van con todas las funciones que los leen
-const NOMBRES = [
-  "./safari/recursos/nombres_safari.csv",
-  "./safari/recursos/nombres_propios.txt",
-  "./safari/recursos/fotos_especies.csv",
-];
-const SAFARIS = ["./datos/safaris.json.gz", "./datos/safaris_mundo.json.gz", ...NOMBRES];
-
 const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   // Las fotos vienen de Wikimedia Commons e iNaturalist ya en miniatura: no hace falta optimizarlas
   images: { unoptimized: true },
-  // sinónimos que tuvieron ficha propia: una sola por taxón
   async redirects() {
-    // enlaces antiguos a la portada con parámetros: los de la portada de safaris y los de la carta de fauna
+    // enlaces antiguos a la carta de fauna, que vivía en la portada con sus parámetros
     const dePortada = (claves: string[], destination: string) =>
       claves.map((key) => ({ source: "/", has: [{ type: "query" as const, key }], destination, permanent: false }));
+    // los safaris del mundo se retiraron de esta versión (decisión 0021): sus páginas llevan a la portada.
+    // Temporales (307), por si vuelven.
+    const retiradas = [
+      "/safaris",
+      "/parque/:ruta*",
+      "/safari-en/:ruta*",
+      "/especie/:ruta*",
+      "/especies",
+      "/guia",
+      "/comparar",
+      "/migracion",
+      "/planificar",
+      "/presupuesto",
+      "/temporada-verde",
+      "/viaje",
+      "/mapa",
+      "/mapa/:ruta*",
+      "/buscar",
+    ].map((source) => ({ source, destination: "/", permanent: false }));
     return [
-      { source: "/especie/phoeniconaias-minor", destination: "/especie/phoenicopterus-minor", permanent: true },
-      // el modo Fauna vivía en /espana (y la carta, en la portada)
+      // el modo Fauna vivía en /espana
       { source: "/espana", destination: "/fauna", permanent: true },
       { source: "/espana/:ruta*", destination: "/fauna/:ruta*", permanent: true },
       // secciones retiradas (decisión 0016)
       { source: "/fauna/mis-especies", destination: "/fauna", permanent: false },
       { source: "/fauna/diario", destination: "/fauna", permanent: false },
-      ...dePortada(["ver", "q", "continente", "cuenta", "epoca", "foto", "ninos", "todos"], "/safaris"),
       ...dePortada(["especie", "celda", "mes", "fecha", "c", "z", "sin"], "/fauna"),
+      ...retiradas,
     ];
   },
-  // Las fichas de los destacados se generan en el build; las de los miles del resto del mundo, al visitarlas
-  // (ISR), leyendo los datos comprimidos de datos/*.gz en la función
+  // Las fichas que no se generan en el build se generan al visitarlas (ISR), leyendo en la función los datos
+  // comprimidos de datos/*.gz: cada ruta lleva solo los que usa
   outputFileTracingIncludes: {
     // Modo Luz: la ficha de un spot fuera del top del día se genera al visitarla
     "/luz/spot/[id]": [
@@ -43,13 +51,6 @@ const config: NextConfig = {
       "./datos/alineaciones.json.gz",
       "./datos/dron.json.gz",
     ],
-    "/parque/[id]": [...SAFARIS, "./datos/safaris_recientes.json.gz", "./safari/recursos/exclusiones.csv"],
-    "/parque/[id]/calendario.ics": SAFARIS,
-    "/viaje.ics": SAFARIS,
-    "/comparar": SAFARIS,
-    "/mapa/especie/[clave]": SAFARIS,
-    "/mapa/parque/[id]": SAFARIS,
-    "/buscar": [...SAFARIS, "./datos/safaris_indice.json.gz"],
     "/fauna/datos/[bloque]": [
       "./datos/espana.json.gz",
       "./datos/espana_recientes.json.gz",
@@ -63,20 +64,13 @@ const config: NextConfig = {
       "./datos/espana_natura.json.gz",
       "./datos/espana_recientes.json.gz",
       "./datos/espana_actividad.json.gz",
-      ...SAFARIS,
     ],
     "/fauna/especie-datos/[clave]": [
       "./datos/espana.json.gz",
       "./datos/espana_lugares.json.gz",
       "./datos/espana_natura.json.gz",
-      ...SAFARIS,
     ],
-    "/fauna/cerca": [
-      "./datos/espana.json.gz",
-      "./datos/espana_lugares.json.gz",
-      "./datos/espana_natura.json.gz",
-      ...SAFARIS,
-    ],
+    "/fauna/cerca": ["./datos/espana.json.gz", "./datos/espana_lugares.json.gz", "./datos/espana_natura.json.gz"],
     "/fauna/lugar/[id]": [
       "./datos/espana.json.gz",
       "./datos/espana_rutas.json.gz",
@@ -85,11 +79,10 @@ const config: NextConfig = {
       "./datos/espana_natura.json.gz",
       "./datos/espana_recientes.json.gz",
       "./datos/espana_listas.json.gz",
-      ...SAFARIS,
     ],
     "/fauna": ["./datos/espana.json.gz"],
     "/fauna/lugares-mapa": ["./datos/espana_lugares.json.gz", "./datos/espana_natura.json.gz"],
-    "/fauna/lugares": ["./datos/espana_lugares.json.gz", "./datos/espana_natura.json.gz", ...SAFARIS],
+    "/fauna/lugares": ["./datos/espana_lugares.json.gz", "./datos/espana_natura.json.gz"],
   },
 };
 

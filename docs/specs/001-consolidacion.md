@@ -29,7 +29,7 @@ mudanza se invierte, así que ya no hay que migrar la fauna ni los secretos, sin
 | eBird | Se usa todo, rarezas incluidas (0017) |
 | Rutas de senderismo | No se traen; tarea para después (0019) |
 | «Mis especies» y «Diario» | Quitados de la aplicación; sus URLs redirigen a `/fauna` (0016) |
-| Safaris del mundo | Siguen funcionando, congelados; su retirada es la spec 005 |
+| Safaris del mundo | Retirados de esta versión (spec 005, decisión 0021) |
 
 ## 2. Fase 1: qué se ha hecho
 **Pipeline**
@@ -65,9 +65,8 @@ antiguos de los dos repos, en `docs/archivo/`.
   3,0, `safaris_mundo.json` 2,1, resto < 1 MB. Salida del build: ~131 MB de páginas (Luz 81, fichas de parque
   28, fauna 2). Muy por debajo de 1 GB. Lo que más pesa es Luz: 60 fichas de spot (37 MB) y los JSON del
   ranking (23 MB).
-- **Nº de despliegues**. Publican: `luz_datos` (2/día), `espana_recientes` (1/día), `recientes` de safaris
-  (2/día), `safaris_mundo` (1/día) y los semanales. ~6 al día × 30 días de retención. Congelar los workflows
-  de safaris (005) lo deja en 3.
+- **Nº de despliegues**. Con los safaris retirados (005) publican `luz_datos` (2/día) y `espana_recientes`
+  (1/día), más los trimestrales y semanales de fauna: 3 al día × 30 días de retención.
 - **Doble cómputo**: mientras `photo_recommender` siga con sus workflows, la previsión se calcula dos veces
   (dos cuotas de Open-Meteo, dos despliegues). Hay que apagarlos allí (spec 017).
 - **Secretos**: `GBIF_USUARIO`, `GBIF_CLAVE` y `EBIRD_CLAVE` ya están aquí (environment `EBIRD_CLAVE`). Luz no
@@ -80,9 +79,7 @@ antiguos de los dos repos, en `docs/archivo/`.
 
 ## 4. Partición (en el backlog)
 - **003 — Núcleo común de lugar**: `lugares.json` con spots y lugares de fauna. Ver su spec.
-- **005 — Safaris del mundo: retirar o dejar congelados**. CA: decisión de Pablo anotada; si se retiran, etiqueta
-  git `safaris-congelado` antes de borrar, `grep -ri safari src` solo devuelve el paquete de fauna y las
-  redirecciones, workflows de safaris fuera, assets borrados de la release tras el primer despliegue verde.
+- **005 — Safaris del mundo, fuera de esta versión**: hecha (`docs/specs/005-safaris-fuera.md`, decisión 0021).
 - **006 — Un solo pipeline**: `safari/espana` → `rasante/fauna`, un único `comun`, órdenes
   `python -m rasante fauna …`, workflows `fauna_*.yml`. CA: tests en verde; los nombres de los ficheros
   publicados no cambian en esta spec; ningún import de `safari.` fuera de safaris.

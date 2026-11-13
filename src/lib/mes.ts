@@ -1,8 +1,8 @@
 "use client";
-// El mes del viaje, elegido una vez y conservado en toda la parte de safaris (T32): vive en la URL (?mes=marzo) y
-// en el navegador, así que al entrar en un parque o una especie sigue siendo el mismo. Si no se ha elegido, el mes
-// en curso. Los enlaces antiguos con el número (?mes=2, de 0 a 11) siguen valiendo.
-import { useCallback, useEffect } from "react";
+// El mes que se está mirando en las tablas de frecuencia, elegido una vez y conservado: vive en la URL
+// (?mes=marzo) y en el navegador. Si no se ha elegido, el mes en curso. Los enlaces antiguos con el número
+// (?mes=2, de 0 a 11) siguen valiendo.
+import { useCallback } from "react";
 import { MESES, mesDeParametro } from "@/lib/fechas";
 
 export { mesDeParametro };
@@ -24,24 +24,4 @@ export function useMesElegido(mesHoy: number): [number, (m: number) => void, boo
     [actualizar],
   );
   return [mes, cambiar, enUrl !== null || guardado !== null];
-}
-
-/** Lleva el mes elegido a <html data-mes="3"> (1-12, para que el CSS resalte esa columna en todos los
- * calendarios, también los pintados en el servidor) y a la URL de la página si aún no lo tiene. */
-export function useMesEnPagina(mesHoy: number, activo: boolean): void {
-  const [parametros, actualizar] = useParametrosUrl();
-  const [mes, , elegido] = useMesElegido(mesHoy);
-  const enUrl = parametros.get("mes");
-  useEffect(() => {
-    const raiz = document.documentElement;
-    if (!activo) {
-      delete raiz.dataset.mes;
-      return;
-    }
-    raiz.dataset.mes = String(mes + 1);
-    // si lo trae la URL de otra página (un enlace compartido), se guarda; si no, se escribe en esta
-    const deUrl = mesDeParametro(enUrl);
-    if (deUrl !== null) escribirAlmacen(CLAVE, MESES[deUrl]);
-    else if (elegido) actualizar({ mes: MESES[mes] });
-  }, [activo, mes, elegido, enUrl, actualizar]);
 }

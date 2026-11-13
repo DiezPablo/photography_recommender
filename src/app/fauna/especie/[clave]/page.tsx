@@ -3,7 +3,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import FrecuenciaAvistamientos from "@/features/safaris/componentes/FrecuenciaAvistamientos";
+import FrecuenciaAvistamientos from "@/features/fauna/FrecuenciaAvistamientos";
 import FenomenosEspana from "@/features/fauna/FenomenosEspana";
 import TarjetaHide from "@/features/fauna/TarjetaHide";
 import CitaEbird from "@/features/fauna/citaEbird";

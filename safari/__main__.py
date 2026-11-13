@@ -1,4 +1,4 @@
-"""Punto de entrada: python -m safari [--mundo | --recientes] [opciones]."""
+"""Punto de entrada: python -m safari --espana… [opciones]."""
 
 from safari.cli import main
 

@@ -1,10 +1,10 @@
 "use client";
 // El buscador de especie de toda la web (decisión D8, 09-11-2026: antes había siete): búsqueda, miniatura y grupos
-// (T34). Patrón combobox de ARIA: se escribe para filtrar (sin tildes y con erratas, como el buscador de la cabecera),
-// flechas para moverse, Intro para elegir. Lo usan la portada y el explorador de safaris y las dos cartas.
+// (T34). Patrón combobox de ARIA: se escribe para filtrar (sin tildes y con erratas), flechas para moverse, Intro
+// para elegir. Lo usa la carta de fauna.
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { normal, puntuar } from "@/lib/busqueda";
-import { GRUPOS_FAUNA } from "@/features/safaris/gruposFauna";
+import { GRUPOS_FAUNA } from "@/features/fauna/gruposFauna";
 
 export interface OpcionEspecie<C extends string | number = number> {
   clave: C;
