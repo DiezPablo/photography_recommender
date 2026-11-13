@@ -6,11 +6,14 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 ## Ahora
 - [~] 001 — Consolidación en photography_recommender (`docs/specs/001-consolidacion.md`): fase 1 hecha (Luz traído, `/luz` y `/fauna`, redirecciones); queda lo de abajo
 - [x] 003 — Núcleo común de "lugar" para los dos catálogos: `lugares.json` y validador (`docs/specs/003-esquema-lugar.md`)
+- [x] 002 — Auditoría de cobertura y licencias: `python -m rasante auditar`, `docs/datos/` (`docs/specs/002-auditoria-datos.md`)
 - [ ] 017 — Cierre del repo anterior: apagar workflows de `photo_recommender` y redirigir su web al dominio nuevo (001 §4)
 - [ ] 005 — Safaris del mundo: retirar o dejar congelados (decide Pablo; 001 §4)
-- [ ] 002 — Auditoría de licencias y cobertura de la base de datos (curador-datos), sobre `lugares.json`. Primer dato: spots muy desiguales por comunidad (Cataluña 235, Madrid 26, Ceuta 12)
 - [ ] 006 — Un solo pipeline: `safari/espana` → `rasante/fauna`, un único `comun`, workflows `fauna_*.yml` (001 §4)
 - [ ] 007 — Limpieza de datos de fauna: fuera `espana_rutas.json` y `espana_rasante.json`; `espana_*` → `fauna_*` (001 §4)
+- [ ] 018 — Cobertura de spots: 30 provincias en el mínimo de 12 y un 32 % en cielo urbano (auditoría 002). CA: criterio de selección revisado (variedad de tipos y cielo, no solo popularidad); ninguna provincia peninsular con menos de 20; informe de auditoría antes y después
+- [ ] 019 — Duplicados de fauna: 48 pares con el mismo nombre y 41 espacios superpuestos (auditoría 002). CA: un espacio con varias figuras o varias fichas de Wikidata es un solo lugar; un punto de eBird dentro de su espacio homónimo no se repite; la auditoría baja a < 5 pares
+- [ ] 020 — Página única de fuentes y créditos que faltan (`docs/datos/fuentes.md`). CA: crédito de la EEA donde hay contornos Natura 2000; Mesonet, NOAA SWPC, IGN y Natural Earth citados; licencias dudosas confirmadas
 - [ ] 012 — Consulta común "cuándo / dónde / qué" en la URL y portada que la lanza. CA: una URL reproduce cualquier resultado; funciona sin JS; pestañas Luz/Fauna
 - [ ] 004 — Sistema de diseño y rediseño de portada y fichas (sobre las seis pantallas de `modos.md`); incluye web instalable y modo noche
 - [ ] 010 — Ficha de lugar de fauna y ficha de especie: "luz cerca" y poda de bloques
