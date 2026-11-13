@@ -37,10 +37,18 @@ jobs:
         run: python -m safari --espana-recientes --salida salida/espana_recientes.json
       - name: Lugares (puntos de eBird, espacios protegidos de Wikidata, observatorios y rutas de OSM, Natura 2000)
         run: python -m safari --espana-lugares --salida salida/espana_lugares.json
+      # Listas de eBird por punto (spec 021): el recuento por día vive en la release y cada día se añade el anterior
+      - name: Actividad de eBird por punto
+        continue-on-error: true
+        run: |
+          curl -fsSL "https://github.com/${{ github.repository }}/releases/download/datos/espana_listas_dias.json.gz" \
+            | gunzip > salida/espana_listas_dias.json || rm -f salida/espana_listas_dias.json
+          python -m safari --espana-listas --salida salida/espana_listas.json
       - name: Publicar
         run: |
           .github/scripts/publicar_release.sh "España recientes $(date -u +%Y-%m-%dT%H:%MZ)" salida/espana_recientes.json
           [ -s salida/espana_rarezas.json ] && .github/scripts/publicar_release.sh "España rarezas $(date -u +%Y-%m-%d)" salida/espana_rarezas.json || true
           [ -s salida/espana_lugares.json ] && .github/scripts/publicar_release.sh "España lugares $(date -u +%Y-%m-%d)" salida/espana_lugares.json || true
           [ -s salida/espana_rutas.json ] && .github/scripts/publicar_release.sh "España rutas $(date -u +%Y-%m-%d)" salida/espana_rutas.json || true
+          [ -s salida/espana_listas.json ] && .github/scripts/publicar_release.sh "España listas de eBird $(date -u +%Y-%m-%d)" salida/espana_listas.json salida/espana_listas_dias.json || true
           [ -s salida/espana_natura.json ] && .github/scripts/publicar_release.sh "España Natura 2000 $(date -u +%Y-%m-%d)" salida/espana_natura.json || true

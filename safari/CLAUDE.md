@@ -2,10 +2,10 @@
 
 - `espana/` es el **modo Fauna** de Rasante: cuadrícula EEA de 10 km (`rejilla`), descarga SQL de GBIF
   (`gbif_descarga`), estacionalidad con confianza y backtest (`estacionalidad`, `evaluacion`), eBird
-  (`ebird`, `ebird_frecuencia`: recientes, rarezas y frecuencia de detección), iNaturalist (`inat_espana`:
+  (`ebird`, `ebird_frecuencia`, `ebird_listas`: recientes, rarezas, frecuencia de detección y listas por punto), iNaturalist (`inat_espana`:
   recientes y actividad por hora), lugares (`lugares`, `natura`, `nombres_lugares`).
   Órdenes: `python -m safari --espana`, `--espana-ebird`, `--espana-recientes`, `--espana-lugares`,
-  `--espana-actividad`. Workflows: `espana.yml` (trimestral, GBIF), `espana_recientes.yml` (diario, eBird),
+  `--espana-actividad`, `--espana-listas`. Workflows: `espana.yml` (trimestral, GBIF), `espana_recientes.yml` (diario, eBird),
   `espana_actividad.yml` (semanal).
 - El resto (`catalogo`, `mundo`, `practico`, `inat`, `entorno`…) son los safaris del mundo: **congelados**, no
   les añadas nada (spec 005).

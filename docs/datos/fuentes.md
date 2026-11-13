@@ -26,7 +26,7 @@ Revisado el 13-11-2026 (spec 002). «Atribución en la web» está comprobada en
 |---|---|---|---|---|
 | GBIF (descarga SQL por cuadrícula) | Frecuencia por especie y mes | La de cada conjunto (CC0, CC BY, CC BY-NC); la descarga tiene DOI que hay que citar | Solo los conjuntos sin NC | Pie, carta y ficha de especie ✔ |
 | EOD – eBird Observation Dataset (vía GBIF) | Frecuencia de detección de aves | CC BY 4.0 (comprobado el 08-11-2026) | Sí, con cita | `CitaEbird` con DOI ✔ |
-| API de eBird 2.0 | Recientes, rarezas, puntos de observación | Condiciones de uso de eBird: no comercial, con atribución | **No** | Pie, rarezas y ficha de lugar ✔ |
+| API de eBird 2.0 | Recientes, rarezas, puntos de observación, listas por punto (solo recuentos) | Condiciones de uso de eBird: no comercial, con atribución | **No** | Pie, rarezas y ficha de lugar ✔ |
 | iNaturalist | Recientes de mamíferos, reptiles y anfibios; actividad por hora | La de cada observación (CC0, CC BY, CC BY-NC) | Solo las que no son NC | Ficha de lugar y «de dónde salen los datos» ✔ |
 | Wikidata | Espacios protegidos | CC0 | Sí | Pie ✔ |
 | Natura 2000 (EEA) | Contornos y cuadrículas de los espacios | CC BY 4.0 (aviso legal de la EEA) | Sí | Carta (cuadrícula), ficha de lugar (contorno) y `/fuentes` ✔ |

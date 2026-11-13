@@ -14,6 +14,7 @@ import LuzYMar from "@/features/fauna/LuzYMar";
 import { direccionesSol, rumbo } from "@/lib/sol";
 import { fenomenosCerca } from "@/features/fauna/fenomenos";
 import {
+  actividadPunto,
   calendarioLugar,
   cargarEspana,
   contornoDe,
@@ -69,6 +70,7 @@ export default async function PaginaLugar({ params }: Props) {
     .slice(0, 8);
   const rutas = rutasCerca(l);
   const hides = hidesCerca(l.lat, l.lon, 60).slice(0, 6);
+  const actividad = actividadPunto(l.id);
   const rarezas = rarezasCerca(l.lat, l.lon, 30).slice(0, 12);
   const sol = direccionesSol(hoy, l.lat, l.lon);
   const espana = cargarEspana();
@@ -92,6 +94,24 @@ export default async function PaginaLugar({ params }: Props) {
           {l.e ? ` · ${l.e} aves vistas en eBird` : ""}
           {fenomenos.some((f) => f.meses.includes(mesHoy + 1)) ? " · hay un fenómeno de temporada ahora" : ""}
         </p>
+        {actividad && (
+          <p className="actividad-ebird">
+            {actividad.l7 > 0 ? (
+              <>
+                <b>
+                  {actividad.l7} {actividad.l7 === 1 ? "lista" : "listas"} de eBird en los últimos 7 días
+                </b>{" "}
+                ({actividad.l30} en 30).
+              </>
+            ) : (
+              <>
+                {actividad.l30} {actividad.l30 === 1 ? "lista" : "listas"} de eBird en los últimos 30 días.
+              </>
+            )}{" "}
+            La última, el {fechaCorta(actividad.u)}
+            {actividad.e > 0 ? `, con ${actividad.e} especies` : ""}.
+          </p>
+        )}
         <p className="enlaces-lugar">
           <Link
             className="boton"

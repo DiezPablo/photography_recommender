@@ -126,7 +126,7 @@ export const FUENTES: Fuente[] = [
     modos: ["fauna"],
   },
   {
-    uso: "Aves vistas estos días, rarezas y puntos de observación",
+    uso: "Aves vistas estos días, rarezas, puntos de observación y listas por punto",
     nombre: "eBird (Cornell Lab of Ornithology)",
     url: "https://ebird.org",
     licencia: "Condiciones de uso de eBird (no comercial)",

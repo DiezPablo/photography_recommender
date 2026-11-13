@@ -33,6 +33,7 @@ const FICHEROS = [
   "espana_actividad.json",
   "espana_rutas.json",
   "espana_rarezas.json",
+  "espana_listas.json",
   "espana_natura.json",
   "espana_ebird.json",
 ];

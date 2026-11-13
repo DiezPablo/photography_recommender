@@ -204,6 +204,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--espana-lugares", action="store_true", help="lugares de fauna en España (eBird, Wikidata, OSM)")
     ap.add_argument("--espana-ebird", action="store_true", help="frecuencia de detección de aves (eBird en GBIF)")
     ap.add_argument("--espana-recientes", action="store_true", help="aves vistas en 30 días por provincia (eBird)")
+    ap.add_argument("--espana-listas", action="store_true", help="listas de eBird por punto en 7 y 30 días")
     ap.add_argument("--espana-diagnostico", action="store_true", help="consultas SQL de prueba a GBIF (Gallocanta)")
     ap.add_argument(
         "--espana-experimentos", action="store_true", help="compara modelos de recomendación de España (caché de GBIF)"
@@ -230,6 +231,12 @@ def main(argv: list[str] | None = None) -> None:
         from safari.espana import ebird_frecuencia
 
         ebird_frecuencia.main()
+        return
+    if a.espana_listas:
+        from safari.espana import ebird_listas
+
+        destino = a.salida if a.salida != ap.get_default("salida") else Path("public/datos/espana_listas.json")
+        ebird_listas.main(destino, destino.parent / "espana_lugares.json")
         return
     if a.espana_recientes:
         from safari.espana import ebird

@@ -1,6 +1,6 @@
 # 021 — eBird a fondo
 
-Estado: propuesta
+Estado: en curso (bloque 1 hecho; 2 y 3 pendientes)
 Modo: Fauna
 Situación del fotógrafo: una tarde | un finde | un viaje
 
@@ -28,9 +28,11 @@ Tres bloques, cada uno implementable por separado y en este orden:
   (la clave no sale de Actions).
 
 ## Criterios de aceptación
-- [ ] Bloque 1: `espana_recientes.yml` publica `fauna_actividad_puntos.json` (por punto: listas 7 y 30 días,
-      última fecha, especies de la última); la ficha de lugar y «Cerca de mí» lo muestran; test con respuestas
-      reales grabadas en Actions.
+- [x] Bloque 1: `espana_recientes.yml` publica `espana_listas.json` (por punto: listas de 7 y 30 días, última
+      fecha, especies de la lista más larga) y la ficha de un punto de eBird lo muestra. El recuento por día se
+      guarda en `espana_listas_dias.json` y el histórico de 30 días se completa en unos 6 días (5 por ejecución).
+- [ ] Bloque 1, pendiente: comprobar la primera ejecución en Actions (los tests usan el formato documentado de
+      la API, no respuestas grabadas: aquí no hay clave) y usar la actividad para ordenar «Cerca de mí».
 - [ ] Bloque 2: serie de 30 días por provincia en la release; una línea en «Este finde»; sin clave, la web no
       enseña el bloque.
 - [ ] Bloque 3: lista de especies con nombre en español en la ficha de los puntos cubiertos; tanda diaria
@@ -47,5 +49,9 @@ API de eBird 2.0 (condiciones de uso de eBird, no comercial, con atribución). F
 (La rellena `/diseno`: dónde va cada dato en la ficha de lugar y en «Cerca de mí».)
 
 ## Notas de implementación
+Bloque 1: `safari/espana/ebird_listas.py` (`--espana-listas`). Solo se guardan recuentos por punto: ni
+observadores ni listas sueltas, y solo de los puntos públicos que ya son lugares. eBird da como mucho 200 listas
+por provincia y día: en las provincias con más actividad el recuento es un mínimo (se avisa en el log).
+
 `safari/espana/ebird.py` ya tiene `_get` con pausa de 1 s y clave opcional. Las respuestas de estos tres
 endpoints hay que grabarlas una vez desde Actions (aquí no hay clave) antes de escribir los tests.
