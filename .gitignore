@@ -16,3 +16,6 @@ tsconfig.tsbuildinfo
 /datos/
 public/datos/*.json
 !public/datos/version.json
+
+# Claude Code: ajustes personales
+.claude/settings.local.json

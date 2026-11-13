@@ -6,9 +6,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MESES } from "@/lib/fechas";
 import { bloque, celda as celdaDe, centroCelda } from "@/lib/rejilla";
-import type { BloqueEspana } from "@/features/espana/zonas";
+import type { BloqueEspana } from "@/features/fauna/zonas";
 import FranjaDia from "@/features/carta/FranjaDia";
-import CitaEbird from "@/features/espana/citaEbird";
+import CitaEbird from "@/features/fauna/citaEbird";
 import { fiabilidad, TEXTO_FIABILIDAD } from "@/features/carta/estado";
 
 const POR_GRUPO = 6;
@@ -93,11 +93,11 @@ export default function FichaCelda({
 
   useEffect(() => {
     let vivo = true;
-    fetch(`/espana/datos/${bloque(codigo)}`)
+    fetch(`/fauna/datos/${bloque(codigo)}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((b: BloqueEspana | null) => vivo && setDatos({ codigo, b }))
       .catch(() => vivo && setDatos({ codigo, b: null }));
-    fetch(`/espana/cerca?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&mes=${mes}&max=1&km=15`)
+    fetch(`/fauna/cerca?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&mes=${mes}&max=1&km=15`)
       .then((r) => (r.ok ? r.json() : { lugares: [] }))
       .then((d: { lugares: Cercano[] }) => vivo && setCercano({ codigo, l: d.lugares[0] ?? null }))
       .catch(() => vivo && setCercano({ codigo, l: null }));
@@ -248,8 +248,8 @@ export default function FichaCelda({
         >
           Cómo llegar (OpenStreetMap)
         </a>
-        {lugar && <Link href={`/espana/lugar/${encodeURIComponent(lugar.id)}`}>Ficha de {lugar.n}</Link>}
-        <Link href={`/espana?modo=aqui&lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&radio=10&fecha=${fecha}`}>
+        {lugar && <Link href={`/fauna/lugar/${encodeURIComponent(lugar.id)}`}>Ficha de {lugar.n}</Link>}
+        <Link href={`/fauna?modo=aqui&lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&radio=10&fecha=${fecha}`}>
           Plan del día aquí
         </Link>
       </nav>

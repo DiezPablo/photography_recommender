@@ -1,0 +1,36 @@
+# Validación histórica de las notas de amanecer/atardecer (rasante.validacion): días con fotos en Commons
+# frente al resto, con el tiempo reanalizado ERA5. El informe queda como artefacto "validacion".
+name: Luz · validar notas
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - rasante/notas/**
+      - rasante/validacion/**
+      - .github/workflows/luz_validar.yml
+
+jobs:
+  validar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: pip install -e .
+      - name: Validar
+        run: python -m rasante validar --salida salida/validacion
+      - name: Resumen
+        if: always()
+        run: cat salida/validacion/validacion.md >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: validacion
+          path: salida/validacion/
+          retention-days: 30

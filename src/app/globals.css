@@ -1,4 +1,4 @@
-/* Safaris — estilos globales. Cada área en src/estilos/; el orden de importación es el de la cascada. Las piezas
+/* Rasante — estilos globales. Cada área en src/estilos/; el orden de importación es el de la cascada. Las piezas
    01-11 vienen de Rasante; 12-diseno.css, la última, da el aspecto propio (guía de campo editorial). */
 @import "../estilos/01-tokens.css";
 @import "../estilos/02-base.css";
@@ -13,3 +13,4 @@
 @import "../estilos/10-movil.css";
 @import "../estilos/12-diseno.css";
 @import "../estilos/13-carta.css";
+@import "../estilos/14-rasante.css";

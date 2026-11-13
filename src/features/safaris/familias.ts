@@ -1,5 +1,5 @@
 // Safari con niños: parques sin malaria (lo que más pesa al elegir con niños pequeños) y edades mínimas de las
-// actividades estrella. Escrito a mano para los destacados el 27-10-2026 (ver docs/decisiones.md); confírmalo con
+// actividades estrella. Escrito a mano para los destacados el 27-10-2026 (ver docs/archivo/safaris-decisiones-hasta-2026-11.md); confírmalo con
 // el parque o el operador, y la malaria con un centro de vacunación internacional.
 
 /** Fecha de la última revisión (la comprueba .github/scripts/revision_datos.py). */

@@ -108,7 +108,9 @@ export default function MapaEventos({
         fillColor: colorCss("var(--n-top)"),
         fillOpacity: 1,
       })
-        .bindPopup(`<strong>${esc(s.nombre)}</strong><br><a href="/spot/${encodeURIComponent(s.id)}">Ver spot →</a>`)
+        .bindPopup(
+          `<strong>${esc(s.nombre)}</strong><br><a href="/luz/spot/${encodeURIComponent(s.id)}">Ver spot →</a>`,
+        )
         .addTo(g);
       limites.push([s.lat, s.lon]);
     }

@@ -57,7 +57,7 @@ def informe(max_dias: int, hoy: date | None = None) -> tuple[str, bool]:
         [
             f"Datos escritos a mano con más de {max_dias} días (sin marcar). Al revisarlos, actualiza la fecha en el",
             "fichero (`REVISADO…`, `CONSULTADO` o `revisado:` de cada país) y anota los cambios en",
-            "`docs/decisiones.md`.",
+            "`docs/archivo/safaris-decisiones-hasta-2026-11.md`.",
             "",
             *filas,
         ]

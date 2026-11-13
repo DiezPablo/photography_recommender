@@ -47,7 +47,7 @@ test("los datos públicos responden y son JSON válido; los demás no se publica
 
 test("sin errores en las páginas principales", async ({ page }) => {
   const errores = vigilar(page);
-  for (const ruta of ["/", "/especies", "/guia"]) {
+  for (const ruta of ["/", "/luz", "/fauna/hides", "/especies", "/guia"]) {
     await page.goto(ruta);
     await expect(page.locator("h1")).toBeVisible();
   }
@@ -106,7 +106,7 @@ test("safaris del mundo: ficha de un parque fuera del catálogo con cómo llegar
   await expect(page.locator(".ano-safari")).toBeVisible();
   await page.screenshot({ path: `${CAPTURAS}/safari-mundo-${info.project.name}.png`, fullPage: true });
   // y el buscador encuentra parques fuera del catálogo
-  await page.goto(`/?q=${encodeURIComponent(otro.n.slice(0, 12))}`);
+  await page.goto(`/safaris?q=${encodeURIComponent(otro.n.slice(0, 12))}`);
   await expect(page.locator(".rejilla-safaris li").first()).toBeVisible();
   expect(errores).toEqual([]);
 });
@@ -527,7 +527,7 @@ test("calendario de fenómenos: ficha, página del mes, especie y .ics", async (
 });
 
 test("fauna en España: luz, tiempo y especies (o aviso sin datos)", async ({ page }) => {
-  await page.goto("/espana?zona=gallocanta&fecha=2026-11-08");
+  await page.goto("/fauna?zona=gallocanta&fecha=2026-11-08");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Cerca de mí");
   await expect(page.locator(".resumen-dia")).toContainText("Mejor momento");
   // la luz y el tiempo por horas van plegados debajo
@@ -539,15 +539,15 @@ test("fauna en España: luz, tiempo y especies (o aviso sin datos)", async ({ pa
 });
 
 test("«Buscar especie» de España lleva a la carta con la especie y el mes (D8)", async ({ page }) => {
-  await page.goto("/espana?modo=donde&k=2474950&mes=10");
-  await expect(page).toHaveURL(/\/\?especie=2474950&mes=noviembre$/);
+  await page.goto("/fauna?modo=donde&k=2474950&mes=10");
+  await expect(page).toHaveURL(/\/fauna\?especie=2474950&mes=noviembre$/);
 });
 
 test("fauna en España: buscar un lugar y lugares cerca", async ({ page, request }) => {
-  const cerca = (await (await request.get("/espana/cerca?lat=40.42&lon=-3.70&mes=10")).json()) as {
+  const cerca = (await (await request.get("/fauna/cerca?lat=40.42&lon=-3.70&mes=10")).json()) as {
     lugares: { n: string }[];
   };
-  await page.goto("/espana?lat=40.420&lon=-3.700&radio=10&fecha=2026-11-08");
+  await page.goto("/fauna?lat=40.420&lon=-3.700&radio=10&fecha=2026-11-08");
   if (!cerca.lugares.length) return; // sin lugares publicados aún
   await expect(page.locator(".cerca-de-aqui summary")).toContainText("lugares para ver fauna");
   const nombre = cerca.lugares[0].n;
@@ -558,45 +558,32 @@ test("fauna en España: buscar un lugar y lugares cerca", async ({ page, request
 });
 
 test("fauna en España: ficha de un lugar", async ({ page, request }) => {
-  const r = await request.get("/espana/lugares?q=gallocanta");
+  const r = await request.get("/fauna/lugares?q=gallocanta");
   const { lugares } = (await r.json()) as { lugares: { id: string; n: string }[] };
   if (!lugares.length) return; // sin lugares publicados aún
-  await page.goto(`/espana/lugar/${encodeURIComponent(lugares[0].id)}`);
+  await page.goto(`/fauna/lugar/${encodeURIComponent(lugares[0].id)}`);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(lugares[0].n);
   await expect(page.getByRole("link", { name: /Qué veo aquí un día concreto/ })).toHaveAttribute("href", /lat=/);
   await expect(page.locator(".fenomenos")).toContainText("Grullas en Gallocanta");
 });
 
 test("fauna en España: lugar que no existe da 404", async ({ request }) => {
-  expect((await request.get("/espana/lugar/no-existe")).status()).toBe(404);
+  expect((await request.get("/fauna/lugar/no-existe")).status()).toBe(404);
 });
 
 test("fauna en España: este finde cerca", async ({ page }) => {
-  await page.goto("/espana?modo=finde&lat=37.390&lon=-5.990&lugar=Sevilla&km=50");
+  await page.goto("/fauna?modo=finde&lat=37.390&lon=-5.990&lugar=Sevilla&km=50");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Este finde");
   await expect(page.locator(".lista-finde li, .nota-pie").first()).toBeVisible({ timeout: 20000 });
 });
 
-test("fauna en España: mi lista de especies vistas", async ({ page }) => {
-  await page.goto("/espana?zona=gallocanta&fecha=2026-11-08");
-  const boton = page.locator(".lista-especies-espana .boton-vista").first();
-  if (!(await boton.isVisible({ timeout: 15000 }).catch(() => false))) return; // sin datos de especies
-  const nombre = await page.locator(".lista-especies-espana summary b").first().innerText();
-  await boton.click();
-  await expect(boton).toHaveText("✓ vista");
-  await page.goto("/espana/mis-especies");
-  await expect(page.locator(".lista-vistas")).toContainText(nombre);
-  await page.getByRole("button", { name: "quitar" }).first().click();
-  await expect(page.getByText("Aún no has marcado ninguna")).toBeVisible();
-});
-
 test("fauna en España: rarezas de la semana", async ({ page }) => {
-  await page.goto("/espana/rarezas");
+  await page.goto("/fauna/rarezas");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Rarezas esta semana");
 });
 
 test("fauna en España: hides y salidas guiadas, con filtros", async ({ page }) => {
-  await page.goto("/espana/hides");
+  await page.goto("/fauna/hides");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Hides y salidas guiadas");
   const todos = await page.locator(".tarjeta-hide").count();
   expect(todos).toBeGreaterThan(20);
@@ -607,12 +594,12 @@ test("fauna en España: hides y salidas guiadas, con filtros", async ({ page }) 
 });
 
 test("fauna en España: ficha de una especie", async ({ page, request }) => {
-  const { especies } = (await (await request.get("/espana/especies.json")).json()) as {
+  const { especies } = (await (await request.get("/fauna/especies.json")).json()) as {
     especies: { k: string; c: string | null }[];
   };
   const grulla = especies.find((e) => e.c === "Grus grus");
   if (!grulla) return; // sin datos de especies
-  await page.goto(`/espana/especie/${grulla.k}`);
+  await page.goto(`/fauna/especie/${grulla.k}`);
   await expect(page.getByRole("heading", { level: 1 })).toContainText(/[Gg]rulla/);
   // en el móvil, un mes cada vez en vez de la tabla (T40)
   await expect(page.locator(".tabla-frecuencia:visible, .frecuencia-mes:visible").first()).toBeVisible();
@@ -620,38 +607,36 @@ test("fauna en España: ficha de una especie", async ({ page, request }) => {
   await expect(page.locator("section", { hasText: "Para fotografiarla" })).toContainText("cm");
 });
 
-test("fauna en España: diario de salidas (añadir y borrar)", async ({ page }) => {
-  await page.goto("/espana/diario");
-  await page.getByLabel("Lugar").fill("Laguna de prueba");
-  await page.getByLabel("Especies (separadas por comas)").fill("grulla, avefría");
-  await page.getByRole("button", { name: "Añadir salida" }).click();
-  await expect(page.locator(".tarjeta-hide").first()).toContainText("Laguna de prueba");
-  await expect(page.getByText(/1 salidas/)).toBeVisible();
-  page.once("dialog", (d) => d.accept());
-  await page.getByRole("button", { name: "borrar" }).first().click();
-  await expect(page.getByText("Aún no hay salidas")).toBeVisible();
-});
-
 test("fauna en España: normas y código ético", async ({ page }) => {
-  await page.goto("/espana/normas");
+  await page.goto("/fauna/normas");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Normas y código ético");
   await expect(page.locator("blockquote").first()).toContainText("molestar o inquietar");
   expect(await page.locator("a[href*='miteco.gob.es']").count()).toBe(17);
 });
 
-test("navegación en dos mundos: el conmutador y el menú cambian con la sección", async ({ page }) => {
+test("navegación por modos: el conmutador y el menú cambian con la sección", async ({ page }) => {
   await page.goto("/safaris");
   await expect(page.locator(".mundos a", { hasText: "Safaris" })).toHaveAttribute("aria-current", "page");
-  await page.locator(".mundos a", { hasText: "España" }).click();
-  await expect(page).toHaveURL(/\/$/);
-  await expect(page.locator(".mundos a", { hasText: "España" })).toHaveAttribute("aria-current", "page");
-  // la barra del móvil o el menú de escritorio enseñan las secciones de España
+  await page.locator(".mundos a", { hasText: "Fauna" }).click();
+  await expect(page).toHaveURL(/\/fauna$/);
+  await expect(page.locator(".mundos a", { hasText: "Fauna" })).toHaveAttribute("aria-current", "page");
+  // la barra del móvil o el menú de escritorio enseñan las secciones de Fauna
   await expect(
     page
       .locator(".barra-inferior a, .menu a")
       .filter({ hasText: /Finde|Este finde/ })
       .first(),
   ).toBeAttached();
+  await page.locator(".mundos a", { hasText: "Luz" }).click();
+  await expect(page).toHaveURL(/\/luz$/);
+  await expect(page.locator(".barra-inferior a, .menu a").filter({ hasText: "Calendario" }).first()).toBeAttached();
+});
+
+test("secciones retiradas: «Mis especies» y «Diario» llevan al mapa de fauna", async ({ page }) => {
+  await page.goto("/fauna/mis-especies");
+  await expect(page).toHaveURL(/\/fauna$/);
+  await page.goto("/espana/diario");
+  await expect(page).toHaveURL(/\/fauna$/);
 });
 
 test.describe("sin JavaScript", () => {
@@ -663,7 +648,7 @@ test.describe("sin JavaScript", () => {
     await page.goto("/planificar");
     await expect(page.getByLabel(/^País/)).toBeVisible();
     await expect(page.getByLabel("Noches de safari")).toBeVisible();
-    await page.goto("/espana/hides");
+    await page.goto("/fauna/hides");
     expect(await page.locator(".tarjeta-hide").count()).toBeGreaterThan(5);
   });
 });

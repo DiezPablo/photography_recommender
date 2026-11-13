@@ -1,6 +1,6 @@
 // Puntuación con desglose (sin página).
 import { expect, test } from "@playwright/test";
-import { factorDeteccion, factorFrecuencia, factorPresencia, puntuar } from "../src/features/espana/puntuacion";
+import { factorDeteccion, factorFrecuencia, factorPresencia, puntuar } from "../src/features/fauna/puntuacion";
 
 test("puntuación: dos notas, suelos y desglose", () => {
   expect(factorFrecuencia(0)).toBe(0);

@@ -6,6 +6,7 @@ import BuscadorGlobal from "@/ui/BuscadorGlobal";
 import SelectorMes from "@/ui/SelectorMes";
 import { Suspense } from "react";
 import { SITIO } from "@/lib/sitio";
+import { Logo } from "@/ui/Iconos";
 import { BarraInferior, MenuPrincipal, Mundos } from "@/ui/Navegacion";
 import "./globals.css";
 
@@ -14,11 +15,13 @@ const ui = Archivo({ subsets: ["latin"], variable: "--f-ui", display: "swap", ax
 const mono = IBM_Plex_Mono({ subsets: ["latin"], variable: "--f-mono", display: "swap", weight: ["400", "500"] });
 
 export const metadata: Metadata = {
-  title: { default: "Atlas de fauna · dónde y cuándo ver cada animal", template: "%s · Atlas de fauna" },
+  title: { default: "Rasante · dónde ir a fotografiar naturaleza en España", template: "%s · Rasante" },
   description:
-    "Parques nacionales y reservas de todo el mundo: qué fauna se ve y cuándo, lo visto en el último mes, cómo llegar, alojamientos y operadores. Datos abiertos, sin comisiones.",
+    "Dónde y cuándo ir a fotografiar en España: la mejor luz de amanecer, atardecer y noche en cada spot, y la fauna que se ve en cada lugar y época. Datos abiertos, gratis.",
   metadataBase: new URL(SITIO),
-  alternates: { types: { "application/rss+xml": [{ url: "/recientes.xml", title: "Lo visto en el último mes" }] } },
+  alternates: {
+    types: { "application/rss+xml": [{ url: "/recientes.xml", title: "Safaris: lo visto en el último mes" }] },
+  },
 };
 
 export const viewport: Viewport = {
@@ -39,8 +42,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <header className="cabecera">
           <div className="cabecera-in">
-            <Link href="/" className="marca" aria-label="Atlas de fauna, inicio">
-              Atlas de fauna
+            <Link href="/" className="marca" aria-label="Rasante, inicio">
+              <Logo />
+              <span className="marca-texto">Rasante</span>
             </Link>
             <Suspense fallback={null}>
               <Mundos />
@@ -59,33 +63,44 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="pie">
           <div className="pie-in">
             <div className="pie-marca">
-              <p className="marca">Atlas de fauna</p>
+              <p className="marca">Rasante</p>
               <p>
-                Dónde y cuándo ver cada animal, en todo el mundo. Sin comisiones ni alojamientos patrocinados: reservas
-                directamente con el parque, el lodge o el operador.
+                Dónde ir a fotografiar naturaleza en España: el lugar y el momento. Gratis, con datos abiertos, sin
+                cuentas ni comisiones.
               </p>
             </div>
-            <nav aria-label="Mapa del sitio">
-              <p>Descubrir</p>
-              <Link href="/safaris">Destinos</Link>
-              <Link href="/especies">Animales</Link>
-              <Link href="/safari-en">Calendario</Link>
-              <Link href="/migracion">La gran migración</Link>
-              <Link href="/temporada-verde">Temporada verde</Link>
-              <Link href="/">España</Link>
-              <a href="/recientes.xml">Lo visto, por RSS</a>
+            <nav aria-label="Luz y cielo">
+              <p>Luz y cielo</p>
+              <Link href="/luz">Los mejores spots de hoy</Link>
+              <Link href="/luz/calendario">Calendario</Link>
+              <Link href="/luz/alertas">Avisos en tu calendario</Link>
+              <Link href="/luz/metodo">Cómo se puntúa</Link>
             </nav>
-            <nav aria-label="Organizar">
-              <p>Organizar</p>
-              <Link href="/planificar">Planificar</Link>
-              <Link href="/presupuesto">Presupuesto</Link>
-              <Link href="/comparar">Comparar parques</Link>
-              <Link href="/viaje">Mi viaje</Link>
-              <Link href="/guia">Guía</Link>
+            <nav aria-label="Fauna">
+              <p>Fauna</p>
+              <Link href="/fauna">Mapa de fauna</Link>
+              <Link href="/fauna?modo=aqui">Cerca de mí</Link>
+              <Link href="/fauna?modo=finde">Este finde</Link>
+              <Link href="/fauna/hides">Hides</Link>
+              <Link href="/fauna/rarezas">Rarezas</Link>
+              <Link href="/fauna/normas">Normas</Link>
+              <Link href="/safaris">Safaris por el mundo</Link>
             </nav>
             <div className="pie-datos">
               <p>Datos abiertos</p>
               <span>
+                <a href="https://open-meteo.com/" rel="noopener">
+                  Open-Meteo
+                </a>{" "}
+                (previsión, CC BY 4.0),{" "}
+                <a href="https://djlorenz.github.io/astronomy/lp/" rel="noopener">
+                  atlas de D. Lorenz
+                </a>{" "}
+                (contaminación lumínica),{" "}
+                <a href="https://ebird.org/" rel="noopener">
+                  eBird
+                </a>
+                ,{" "}
                 <a href="https://www.gbif.org/" rel="noopener">
                   GBIF
                 </a>

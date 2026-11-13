@@ -1,15 +1,17 @@
 "use client";
-// Navegación en dos mundos: «Safaris» (parques del mundo) y «España» (fauna cerca de casa). Un conmutador en la
-// cabecera cambia de mundo; el menú de escritorio y la barra inferior del móvil enseñan solo las secciones del
-// mundo en el que estás, y a la derecha va lo tuyo de cada uno («Mi viaje» o «Lo mío»).
+// Navegación por modos: «Luz» (paisaje y cielo), «Fauna» (España) y «Safaris» (parques del mundo, congelado). Un
+// conmutador en la cabecera cambia de modo; el menú de escritorio y la barra inferior del móvil enseñan solo las
+// secciones del modo en el que estás. En la portada (/) no hay modo elegido: solo el conmutador.
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useViajeGuardado } from "@/features/safaris/viaje";
 import {
+  IconoAmanecer,
   IconoBrujula,
   IconoCalendario,
   IconoCarta,
   IconoHuella,
+  IconoInfo,
   IconoLibro,
   IconoManada,
   IconoMarcador,
@@ -28,7 +30,9 @@ interface Seccion {
   movil?: boolean;
 }
 
-const enEspana = (r: string) => r === "/" || r.startsWith("/espana");
+type Modo = "inicio" | "luz" | "fauna" | "safaris";
+const modoDe = (r: string): Modo =>
+  r === "/" ? "inicio" : r.startsWith("/luz") ? "luz" : r.startsWith("/fauna") ? "fauna" : "safaris";
 const modo = (q: URLSearchParams) => q.get("modo") ?? (q.has("lat") || q.has("zona") ? "aqui" : "inicio");
 
 const SAFARIS: Seccion[] = [
@@ -57,99 +61,112 @@ const SAFARIS: Seccion[] = [
   { href: "/guia", texto: "Guía", Icono: IconoLibro, activa: (r) => r.startsWith("/guia") },
 ];
 
-const ESPANA: Seccion[] = [
+const LUZ: Seccion[] = [
   {
-    href: "/",
+    href: "/luz",
+    texto: "Hoy",
+    Icono: IconoAmanecer,
+    activa: (r) => r === "/luz" || r.startsWith("/luz/dia") || r.startsWith("/luz/spot"),
+    movil: true,
+  },
+  {
+    href: "/luz/calendario",
+    texto: "Calendario",
+    Icono: IconoCalendario,
+    activa: (r) => r.startsWith("/luz/calendario") || r.startsWith("/luz/evento"),
+    movil: true,
+  },
+  {
+    href: "/luz/alertas",
+    texto: "Avisos",
+    Icono: IconoMarcador,
+    activa: (r) => r.startsWith("/luz/alertas"),
+    movil: true,
+  },
+  { href: "/luz/metodo", texto: "Método", Icono: IconoInfo, activa: (r) => r.startsWith("/luz/metodo"), movil: true },
+];
+
+const FAUNA: Seccion[] = [
+  {
+    href: "/fauna",
     texto: "Mapa",
     Icono: IconoCarta,
     // la ficha de una especie se abre desde la carta: cuenta como «Mapa»
-    activa: (r, q) => r === "/" || r.startsWith("/espana/especie") || (r === "/espana" && modo(q) === "inicio"),
+    activa: (r, q) => r.startsWith("/fauna/especie") || (r === "/fauna" && modo(q) === "inicio"),
     movil: true,
   },
   {
-    href: "/espana?modo=aqui",
+    href: "/fauna?modo=aqui",
     texto: "Cerca de mí",
     corto: "Cerca",
     Icono: IconoUbicacion,
-    activa: (r, q) => r.startsWith("/espana/lugar") || (r === "/espana" && modo(q) === "aqui"),
+    activa: (r, q) => r.startsWith("/fauna/lugar") || (r === "/fauna" && modo(q) === "aqui"),
     movil: true,
   },
   {
-    href: "/espana?modo=finde",
+    href: "/fauna?modo=finde",
     texto: "Este finde",
     corto: "Finde",
     Icono: IconoCalendario,
-    activa: (r, q) => r === "/espana" && modo(q) === "finde",
+    activa: (r, q) => r === "/fauna" && modo(q) === "finde",
     movil: true,
   },
   {
-    href: "/espana/hides",
+    href: "/fauna/hides",
     texto: "Hides",
     Icono: IconoHuella,
-    activa: (r) => r.startsWith("/espana/hides"),
+    activa: (r) => r.startsWith("/fauna/hides"),
     movil: true,
   },
   {
-    href: "/espana/rarezas",
+    href: "/fauna/rarezas",
     texto: "Rarezas",
     Icono: IconoPrismaticos,
-    activa: (r) => r.startsWith("/espana/rarezas"),
+    activa: (r) => r.startsWith("/fauna/rarezas"),
     movil: true,
   },
-  {
-    href: "/espana/diario",
-    texto: "Mi diario",
-    Icono: IconoLibro,
-    activa: (r) => ["/espana/diario", "/espana/mis-especies"].some((x) => r.startsWith(x)),
-  },
+  { href: "/fauna/normas", texto: "Normas", Icono: IconoLibro, activa: (r) => r.startsWith("/fauna/normas") },
 ];
+
+const SECCIONES: Record<Modo, Seccion[]> = { inicio: [], luz: LUZ, fauna: FAUNA, safaris: SAFARIS };
 
 function useNav() {
   const ruta = usePathname();
   const q = useSearchParams();
-  return { ruta, q: new URLSearchParams(q?.toString() ?? ""), espana: enEspana(ruta) };
+  return { ruta, q: new URLSearchParams(q?.toString() ?? ""), modo: modoDe(ruta) };
 }
 
-/** Conmutador entre los dos mundos, junto a la marca (también en el móvil). */
+/** Conmutador de modos, junto a la marca (también en el móvil). */
 export function Mundos() {
-  const { espana } = useNav();
+  const { modo } = useNav();
   return (
-    <nav className="mundos" aria-label="Sección de la web">
-      <Link href="/safaris" aria-current={espana ? undefined : "page"}>
-        Safaris
+    <nav className="mundos" aria-label="Modo">
+      <Link href="/luz" aria-current={modo === "luz" ? "page" : undefined}>
+        Luz
       </Link>
-      <Link href="/" aria-current={espana ? "page" : undefined}>
-        España
+      <Link href="/fauna" aria-current={modo === "fauna" ? "page" : undefined}>
+        Fauna
+      </Link>
+      <Link href="/safaris" aria-current={modo === "safaris" ? "page" : undefined}>
+        Safaris
       </Link>
     </nav>
   );
 }
 
 export function MenuPrincipal() {
-  const { ruta, q, espana } = useNav();
+  const { ruta, q, modo } = useNav();
   const viaje = useViajeGuardado();
-  const secciones = espana ? ESPANA : SAFARIS;
   return (
     <>
       <nav className="menu" aria-label="Principal">
-        {secciones.map((s) => (
+        {SECCIONES[modo].map((s) => (
           <Link key={s.href} href={s.href} aria-current={s.activa(ruta, q) ? "page" : undefined}>
             {s.texto}
           </Link>
         ))}
       </nav>
-      {espana ? (
-        <Link
-          href="/espana/mis-especies"
-          className="boton-viaje"
-          aria-current={
-            ruta.startsWith("/espana/mis-especies") || ruta.startsWith("/espana/diario") ? "page" : undefined
-          }
-        >
-          <IconoMarcador size={17} />
-          Lo mío
-        </Link>
-      ) : (
+      {modo === "safaris" && (
         <Link href="/viaje" className="boton-viaje" aria-current={ruta.startsWith("/viaje") ? "page" : undefined}>
           <IconoMarcador size={17} />
           Mi viaje
@@ -161,14 +178,16 @@ export function MenuPrincipal() {
 }
 
 export function BarraInferior() {
-  const { ruta, q, espana } = useNav();
+  const { ruta, q, modo } = useNav();
   const viaje = useViajeGuardado();
-  const items: Seccion[] = espana
-    ? ESPANA.filter((s) => s.movil)
-    : [
-        ...SAFARIS.filter((s) => s.movil),
-        { href: "/viaje", texto: "Mi viaje", Icono: IconoMarcador, activa: (r) => r.startsWith("/viaje") },
-      ];
+  const items: Seccion[] =
+    modo === "safaris"
+      ? [
+          ...SAFARIS.filter((s) => s.movil),
+          { href: "/viaje", texto: "Mi viaje", Icono: IconoMarcador, activa: (r) => r.startsWith("/viaje") },
+        ]
+      : SECCIONES[modo].filter((s) => s.movil);
+  if (!items.length) return null;
   return (
     <nav className="barra-inferior" aria-label="Secciones">
       {items.map((s) => (

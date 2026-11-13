@@ -3,13 +3,13 @@
 import { expect, test } from "@playwright/test";
 
 async function claveDe(request: import("@playwright/test").APIRequestContext, cientifico: string) {
-  const r = await request.get("/espana/especies.json");
+  const r = await request.get("/fauna/especies.json");
   const { especies } = (await r.json()) as { especies: { k: string; c: string | null }[] };
   return especies.find((e) => e.c === cientifico)?.k ?? null;
 }
 
 test("carta: sin especie, el mapa y lo que más sube en el mes", async ({ page }) => {
-  await page.goto("/?mes=abril");
+  await page.goto("/fauna?mes=abril");
   await expect(page.locator(".carta-mapa[data-listo=si]")).toBeVisible({ timeout: 15000 });
   await expect(page.getByRole("heading", { level: 1 })).toContainText("en abril");
   await expect(page.getByRole("button", { name: "abril" })).toHaveAttribute("aria-pressed", "true");
@@ -25,7 +25,7 @@ test("carta: sin especie, el mapa y lo que más sube en el mes", async ({ page }
 test("carta: buscar una especie, cambiar de mes y apagar una capa queda en la URL", async ({ page, request }) => {
   const grulla = await claveDe(request, "Grus grus");
   test.skip(!grulla, "sin datos de España");
-  await page.goto("/?mes=noviembre");
+  await page.goto("/fauna?mes=noviembre");
   await page.getByRole("combobox", { name: "Especie" }).fill("grulla com");
   await page
     .getByRole("option", { name: /Grulla común/ })
@@ -51,7 +51,7 @@ test("carta: buscar una especie, cambiar de mes y apagar una capa queda en la UR
 test("carta: ficha de la cuadrícula de Gallocanta con grupos, luz y cómo llegar", async ({ page, request }) => {
   const grulla = await claveDe(request, "Grus grus");
   test.skip(!grulla, "sin datos de España");
-  await page.goto(`/?especie=${grulla}&mes=noviembre&fecha=2026-11-14&celda=10kmE335N206`);
+  await page.goto(`/fauna?especie=${grulla}&mes=noviembre&fecha=2026-11-14&celda=10kmE335N206`);
   const ficha = page.locator(".ficha-celda");
   await expect(ficha.getByRole("heading", { level: 2 })).toContainText("Gallocanta");
   await expect(ficha.locator(".ficha-celda-elegida")).toContainText(/Grulla común en noviembre: \d+ ‰/);
@@ -67,24 +67,28 @@ test("carta: ficha de la cuadrícula de Gallocanta con grupos, luz y cómo llega
 });
 
 test("carta: el explorador antiguo lleva a la carta con la especie y el mes", async ({ page }) => {
-  await page.goto("/espana/mapa?k=2474950&mes=10");
-  await expect(page).toHaveURL(/\/\?especie=2474950&mes=noviembre/);
+  await page.goto("/fauna/mapa?k=2474950&mes=10");
+  await expect(page).toHaveURL(/\/fauna\?especie=2474950&mes=noviembre/);
 });
 
 test("carta: los enlaces antiguos con lat y lon siguen abriendo «Cerca de mí»", async ({ page }) => {
-  await page.goto("/espana?lat=40.420&lon=-3.700&radio=10&fecha=2026-11-08");
+  await page.goto("/fauna?lat=40.420&lon=-3.700&radio=10&fecha=2026-11-08");
   await expect(page.locator(".carta")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Cerca de mí");
 });
 
-test("portada: la carta de España; /espana y los enlaces antiguos de safaris redirigen", async ({ page }) => {
-  await page.goto("/espana?mes=marzo");
-  await expect(page).toHaveURL(/\/\?mes=marzo$/);
+test("la carta vive en /fauna; los enlaces antiguos (portada con parámetros, /espana) redirigen", async ({ page }) => {
+  await page.goto("/fauna?mes=marzo");
+  await expect(page).toHaveURL(/\/fauna\?mes=marzo$/);
   await expect(page.locator(".carta")).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Modo" }).getByRole("link", { name: "Fauna" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
   await page.goto("/?ver=5219404&mes=7");
   await expect(page).toHaveURL(/\/safaris\?ver=5219404&mes=7/);
-  await page.goto("/");
-  await expect(
-    page.getByRole("navigation", { name: "Sección de la web" }).getByRole("link", { name: "España" }),
-  ).toHaveAttribute("aria-current", "page");
+  await page.goto("/?especie=2474950&mes=noviembre");
+  await expect(page).toHaveURL(/\/fauna\?especie=2474950&mes=noviembre/);
+  await page.goto("/espana/hides");
+  await expect(page).toHaveURL(/\/fauna\/hides$/);
 });

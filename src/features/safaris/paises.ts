@@ -1,5 +1,5 @@
 // Lo práctico de cada país de safari para un viajero con pasaporte español: visado, salud, enchufes, dinero,
-// conducción y propinas. Revisado el 27-10-2026 con fuentes que se citan en docs/decisiones.md; los visados y los
+// conducción y propinas. Revisado el 27-10-2026 con fuentes que se citan en docs/archivo/safaris-decisiones-hasta-2026-11.md; los visados y los
 // requisitos sanitarios cambian a menudo, así que la web siempre enlaza la web oficial y Exteriores para
 // confirmarlo. Solo lo que coincidía en varias fuentes: si no, se dice que hay que comprobarlo.
 

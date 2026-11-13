@@ -1,14 +1,16 @@
-# Safaris
+# Rasante
 
-Dónde y cuándo ver cada animal, en todo el mundo, y cómo organizarlo: parques nacionales y reservas con fauna,
-qué se ve cada mes, lo visto en los últimos 30 días, cómo llegar, alojamientos y operadores locales. Con datos
-abiertos (GBIF, iNaturalist, Wikidata, NASA POWER, OurAirports, OpenStreetMap), gratis y sin comisiones.
+Dónde ir a fotografiar naturaleza en España: la mejor **luz** (amanecer, atardecer, noche, eventos del cielo) en
+cada spot y la **fauna** que se ve en cada lugar y época. Datos abiertos (Open-Meteo, Wikidata, OpenStreetMap,
+Wikimedia Commons, GBIF, eBird, iNaturalist), gratis, sin cuentas y sin IA.
 
 ```bash
-make instalar        # .venv con el pipeline y npm ci
+make instalar        # .venv con los pipelines y npm ci
 make check           # ruff, pytest, tsc, ESLint, Prettier
 npm run build && npx playwright test
-python -m safari --help
+python -m rasante --help   # modo Luz
+python -m safari --help    # modo Fauna (--espana…) y safaris (congelado)
 ```
 
-Contexto para desarrollar: [CLAUDE.md](CLAUDE.md). Decisiones: [docs/decisiones.md](docs/decisiones.md).
+Contexto para desarrollar: [CLAUDE.md](CLAUDE.md). Producto: [docs/producto](docs/producto). Decisiones:
+[docs/decisiones](docs/decisiones).
