@@ -9,9 +9,9 @@ Detalle en `docs/producto/vision.md` y `docs/producto/modos.md`. Qué toca hacer
 Cómo trabajamos: `docs/flujo-de-trabajo.md` (léelo solo si la tarea es sobre el propio proceso).
 
 Este repositorio (antes safari_recommender) es la base desde el 13-11-2026 (decisión 0018): aquí están los
-secretos y la release `datos`. El modo Luz vino de DiezPablo/photo_recommender, que queda congelado. Los
-**safaris del mundo** (`/safaris`, `/parque`, `/mapa`, `safari/` salvo `safari/espana`) siguen funcionando pero
-congelados: no se les añade nada (spec 005 decide su retirada).
+secretos y la release `datos`. El modo Luz vino de DiezPablo/photo_recommender, que queda congelado. Los safaris
+del mundo que traía este repo se retiraron de la versión (decisión 0021); el paquete Python de Fauna conserva el
+nombre `safari` hasta la spec 006.
 
 ## Reglas fijas
 - Sin IA generativa ni LLM en el producto. Sin backend: GitHub Actions calcula, la release `datos` almacena,
@@ -28,9 +28,9 @@ congelados: no se les añade nada (spec 005 decide su retirada).
 
 ## Piezas (detalle en `rasante/CLAUDE.md`, `safari/CLAUDE.md` y `src/CLAUDE.md`, se cargan al trabajar ahí)
 - `rasante/`: pipeline de Luz, `python -m rasante <orden>`.
-- `safari/`: pipeline de Fauna (`safari/espana`, `python -m safari --espana…`) y de safaris (congelado).
+- `safari/`: pipeline de Fauna (`safari/espana`, `python -m safari --espana…`).
 - `src/`: web Next.js 16 App Router (`app/` rutas finas, `features/<área>/`, `ui/`, `lib/`, `estilos/`).
-- `.github/workflows/`: `luz_*.yml`, `espana*.yml` (fauna), `safaris*.yml` y `recientes.yml` (congelados), `pruebas.yml`.
+- `.github/workflows/`: `luz_*.yml`, `espana*.yml` (fauna), `revision.yml` (datos escritos a mano), `pruebas.yml`.
 
 ## Probar
 - `make check` (ruff, pytest sin red, tsc, ESLint, Prettier). E2E: `npm run build && npx playwright test`.
