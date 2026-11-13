@@ -67,9 +67,16 @@ jobs:
       - name: Spots publicados
         run: |
           mkdir -p public/datos
-          curl -fsSL https://github.com/${{ github.repository }}/releases/download/datos/spots.geojson.gz \
-            | gunzip > /tmp/spots.geojson && mv /tmp/spots.geojson public/datos/spots.geojson \
-            || echo "Sin spots en la release: se usan los del repositorio"
+          # recién sembrados, la release puede tardar unos segundos en servirlos (404): vale la copia local
+          if curl -fsSL https://github.com/${{ github.repository }}/releases/download/datos/spots.geojson.gz \
+              | gunzip > /tmp/spots.geojson; then
+            mv /tmp/spots.geojson public/datos/spots.geojson
+          elif [ -s salida/siembra/spots.geojson ]; then
+            cp salida/siembra/spots.geojson public/datos/spots.geojson
+            echo "Spots de la siembra de esta misma ejecución"
+          else
+            echo "Sin spots en la release: se usan los del repositorio"
+          fi
 
       - name: Calcular condiciones
         run: |

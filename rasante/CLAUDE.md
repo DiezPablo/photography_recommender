@@ -28,7 +28,7 @@ Reglas:
 
 Workflows: `luz_datos.yml` (previsión, 2 veces al día; la primera vez siembra `spots.geojson`, `clima.json`,
 `dron.json` y `verificacion.json` desde la release del repo anterior con `.github/scripts/sembrar.sh`),
-`luz_descubrir.yml` (mensual, spots + dron), `luz_clima.yml` (solo a mano), `luz_validar.yml`.
+`luz_descubrir.yml` (solo a mano hasta la spec 018: la caché de Commons de este repo está vacía; spots + dron), `luz_clima.yml` (solo a mano), `luz_validar.yml`.
 
 Publicación: los datos no van en git. Se suben a la release `datos` (`.github/scripts/publicar_release.sh`) y
 solo se hace commit de `public/datos/version.json`, que redespliega Vercel si algo cambió.
