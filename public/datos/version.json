@@ -1,22 +1,26 @@
 {
- "actualizado": "2026-11-13T07:31:51+00:00",
+ "actualizado": "2026-11-13T13:29:31+00:00",
  "ficheros": {
-  "safaris_recientes.json": "0cce730cf58b",
+  "safaris_recientes.json": "b5190e9cacfb",
   "safaris.json": "3843840dca83",
   "safaris_mundo.json": "478da2c6970d",
   "safaris_indice.json": "c86f9e3e0c3d",
   "espana.json": "777721cc1d42",
-  "espana_recientes.json": "3f2037bc84b4",
-  "espana_lugares.json": "2872f335829e",
+  "espana_recientes.json": "2f5e6ea289c2",
+  "espana_lugares.json": "190d8ab465f9",
   "espana_rasante.json": "c65dd8f8112b",
-  "espana_natura.json": "86c113bad9e6",
+  "espana_natura.json": "6b899cb80d5e",
   "espana_actividad.json": "4eff78effe85",
-  "espana_rutas.json": "aea7928cd416",
-  "espana_rarezas.json": "8ff5275a3bfd",
+  "espana_rutas.json": "86e7a7b8e6ae",
+  "espana_rarezas.json": "30804c4ed267",
   "espana_ebird.json": "366b9d1e529e",
   "spots.geojson": "4807e96946b9",
   "clima.json": "7a90a382ad7e",
   "dron.json": "ac4256bf5991",
-  "verificacion.json": "1922654189bf"
+  "verificacion.json": "9073238cdaed",
+  "informe.json": "96cfebebda0a",
+  "eventos.json": "79fb57f4cd90",
+  "alineaciones.json": "9a389ef7d66b",
+  "lugares.json": "8244c3fd6f11"
  }
 }
