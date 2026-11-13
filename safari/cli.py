@@ -219,11 +219,12 @@ def main(argv: list[str] | None = None) -> None:
         from safari.espana import lugares
 
         destino = a.salida if a.salida != ap.get_default("salida") else Path("public/datos/espana_lugares.json")
-        lugares.main(destino)
-        lugares.rutas(destino.parent / "espana_rutas.json")
+        # primero Natura 2000: los lugares que se llaman como un espacio sin lugar propio se quedan con su código
         from safari.espana import natura
 
         natura.main(destino.parent / "espana_natura.json")
+        lugares.main(destino, destino.parent / "espana_natura.json")
+        lugares.rutas(destino.parent / "espana_rutas.json")
         return
     if a.espana_ebird:
         from safari.espana import ebird_frecuencia

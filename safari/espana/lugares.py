@@ -15,6 +15,8 @@ from __future__ import annotations
 import math
 import re
 import time
+import unicodedata
+from collections import defaultdict
 
 import requests
 
@@ -196,19 +198,108 @@ PREFIJOS = {"eBird": "eb-", "Wikidata": "wd-", "OpenStreetMap": "osm-"}
 NO_OBSERVATORIO = re.compile(r"espect[aá]culo|exhibici[oó]n|exibici[oó]n|cetrer[ií]a|vuelo de rapaces", re.I)
 
 
+def clave_nombre(nombre: str) -> str:
+    """El nombre sin tildes, mayúsculas ni signos: «Complexo Ons - O Grove» y «Complexo Ons-O Grove» son el mismo."""
+    sin = unicodedata.normalize("NFKD", nombre).encode("ascii", "ignore").decode().lower()
+    return re.sub(r"[^a-z0-9]+", " ", sin).strip()
+
+
+def _km(x: dict, y: dict) -> float:
+    return math.dist((x["lat"], x["lon"] * 0.8), (y["lat"], y["lon"] * 0.8)) * 111
+
+
+def _heredar(queda: dict, sobra: dict) -> None:
+    """Lo que el lugar que se quita sabía y el que se queda no: especies de eBird y código Natura 2000."""
+    for campo in ("e", "z"):
+        if sobra.get(campo) and not queda.get(campo):
+            queda[campo] = sobra[campo]
+
+
 def sin_repetir(xs: list[dict], km: float = 3) -> list[dict]:
-    """Quita los lugares con el mismo nombre que otro ya visto a menos de km (dos observatorios de una laguna)."""
+    """Quita los lugares con el mismo nombre que otro ya visto a menos de km (dos observatorios de una laguna, o
+    el punto de eBird de un espacio que ya está). El que queda hereda las especies de eBird y el código Natura."""
     vistos: dict[str, list[dict]] = {}
     salida = []
     for x in xs:
-        clave = x["n"].lower()
-        if any(
-            math.dist((x["lat"], x["lon"] * 0.8), (y["lat"], y["lon"] * 0.8)) * 111 < km for y in vistos.get(clave, [])
-        ):
+        clave = clave_nombre(x["n"])
+        ya = next((y for y in vistos.get(clave, []) if _km(x, y) < km), None)
+        if ya:
+            _heredar(ya, x)
             continue
         vistos.setdefault(clave, []).append(x)
         salida.append(x)
     return salida
+
+
+# De la figura que más dice a quien busca dónde ir a la que menos: el parque antes que la ZEC del mismo sitio
+FIGURAS = (
+    "Parque nacional",
+    "Parque natural",
+    "Reserva natural",
+    "Paraje natural",
+    "Monumento natural",
+    "Paisaje protegido",
+    "Parque periurbano",
+    "Humedal Ramsar",
+    "Microrreserva",
+    "Reserva de la biosfera",
+    "ZEPA",
+    "Red Natura 2000",
+    "Espacio protegido",
+)
+
+
+def una_figura(xs: list[dict], metros: float = 100) -> list[dict]:
+    """Un espacio con varias figuras (parque natural, ZEC, reserva de la biosfera…) viene de Wikidata como varios
+    lugares en el mismo punto: queda el de la figura más conocida, con el mayor radio y el código Natura 2000."""
+    espacios = [x for x in xs if x["id"].startswith("wd-")]
+    grupo = {x["id"]: x["id"] for x in espacios}
+
+    def raiz(i: str) -> str:
+        while grupo[i] != i:
+            grupo[i] = grupo[grupo[i]]
+            i = grupo[i]
+        return i
+
+    rejilla: dict[tuple[int, int], list[dict]] = defaultdict(list)
+    for x in espacios:
+        rejilla[(round(x["lat"] * 100), round(x["lon"] * 100))].append(x)
+    for (i, j), celda in rejilla.items():
+        vecinos = [y for di in (-1, 0, 1) for dj in (-1, 0, 1) for y in rejilla.get((i + di, j + dj), ())]
+        for x in celda:
+            for y in vecinos:
+                if x["id"] < y["id"] and _km(x, y) * 1000 < metros:
+                    grupo[raiz(x["id"])] = raiz(y["id"])
+    juntos: dict[str, list[dict]] = defaultdict(list)
+    for x in espacios:
+        juntos[raiz(x["id"])].append(x)
+    fuera: set[str] = set()
+    orden = {f: n for n, f in enumerate(FIGURAS)}
+    for varios in juntos.values():
+        if len(varios) < 2:
+            continue
+        queda = min(varios, key=lambda x: (orden.get(x["t"], len(FIGURAS)), -x["r"], x["id"]))
+        for sobra in varios:
+            if sobra is not queda:
+                _heredar(queda, sobra)
+                queda["r"] = max(queda["r"], sobra["r"])
+                fuera.add(sobra["id"])
+    return [x for x in xs if x["id"] not in fuera]
+
+
+def con_codigo_natura(xs: list[dict], sitios: dict[str, dict], km: float = 3) -> None:
+    """Un espacio Natura 2000 sin lugar propio pero con un lugar del mismo nombre al lado (casi siempre su punto de
+    eBird): ese lugar se queda con el código, y con él su contorno y sus cuadrículas, en vez de salir dos veces."""
+    con_codigo = {x["z"] for x in xs if x.get("z")}
+    por_nombre: dict[str, list[dict]] = defaultdict(list)
+    for x in xs:
+        por_nombre[clave_nombre(x["n"])].append(x)
+    for codigo, s in sitios.items():
+        if codigo in con_codigo:
+            continue
+        cerca = [x for x in por_nombre.get(clave_nombre(s["n"]), []) if not x.get("z") and _km(x, s) < km]
+        if cerca:
+            min(cerca, key=lambda x: _km(x, s))["z"] = codigo
 
 
 PUBLICADO = "https://github.com/DiezPablo/photography_recommender/releases/download/datos/espana_lugares.json.gz"
@@ -229,7 +320,19 @@ def observatorios_publicados(s: requests.Session) -> list[dict]:
     return [x for x in xs if re.match(r"osm-(node|way|relation)-\d+$", x.get("id", ""))]
 
 
-def todos(s: requests.Session | None = None) -> tuple[list[dict], dict[str, int]]:
+def unificar(xs: list[dict], sitios: dict[str, dict] | None = None) -> list[dict]:
+    """Sin repetidos (spec 019): un espacio antes que su punto de eBird homónimo, una sola figura por espacio y el
+    código Natura 2000 para el lugar que se llama igual que un espacio sin lugar propio."""
+    prioridad = {"wd": 0, "eb": 1, "osm": 2}
+    xs = sorted(xs, key=lambda x: prioridad.get(x["id"].split("-")[0], 3))  # estable: dentro de cada fuente, igual
+    xs = una_figura(sin_repetir(xs))
+    con_codigo_natura(xs, sitios or {})
+    return xs
+
+
+def todos(
+    s: requests.Session | None = None, sitios: dict[str, dict] | None = None
+) -> tuple[list[dict], dict[str, int]]:
     """Los lugares de las tres fuentes y cuántos de cada una (una fuente que falla no tumba a las demás)."""
     s = s or sesion()
     salida, cuenta = [], {}
@@ -259,17 +362,20 @@ def todos(s: requests.Session | None = None) -> tuple[list[dict], dict[str, int]
         cerca = min(con_nombre, key=lambda y: math.dist((x["lat"], x["lon"]), (y["lat"], y["lon"])), default=None)
         km = math.dist((x["lat"], x["lon"] * 0.8), (cerca["lat"], cerca["lon"] * 0.8)) * 111 if cerca else 99
         x["n"] = f"Observatorio de aves junto a {cerca['n']}" if cerca and km < 5 else "Observatorio de aves"
-    salida = sin_repetir(salida)
+    salida = unificar(salida, sitios)
     cuenta = {f: sum(1 for x in salida if x["id"].startswith(p)) for f, p in PREFIJOS.items()}
     return salida, cuenta
 
 
-def main(salida) -> None:
+def main(salida, natura=None) -> None:
+    """`natura`: espana_natura.json ya escrito (para dar su código a los lugares homónimos); puede no existir."""
+    import json
     from datetime import date
 
     from safari.comun.ficheros import escribir_json
 
-    xs, cuenta = todos()
+    sitios = json.loads(natura.read_text(encoding="utf-8")).get("sitios", {}) if natura and natura.exists() else {}
+    xs, cuenta = todos(sitios=sitios)
     # sin observatorios (Overpass caído y nada propio publicado) se publica igual: mejor sin ellos un día que con
     # los de otro proyecto
     faltan = [f for f, n in cuenta.items() if not n and f not in ("OpenStreetMap",) and (f != "eBird" or ebird.clave())]
