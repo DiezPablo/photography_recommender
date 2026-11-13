@@ -17,6 +17,27 @@ export interface Espana {
   celdas: BloqueEspana["celdas"];
 }
 
+/** Listas de eBird en un punto de observación (espana_listas.json, spec 021). */
+export interface ActividadPunto {
+  /** listas en los últimos 7 y 30 días */
+  l7: number;
+  l30: number;
+  /** fecha de la última (AAAA-MM-DD) y especies de la lista más larga de ese día */
+  u: string;
+  e: number;
+  /** especies de la lista más larga de los 30 días */
+  m: number;
+}
+
+let listas: Record<string, ActividadPunto> | null | undefined;
+/** La actividad reciente de un lugar que es un punto de eBird (id `eb-L…`); null si no hay datos o no lo es. */
+export function actividadPunto(id: string): ActividadPunto | null {
+  if (!id.startsWith("eb-")) return null;
+  if (listas === undefined)
+    listas = leerDatos<{ puntos: Record<string, ActividadPunto> }>("espana_listas.json")?.puntos ?? null;
+  return listas?.[id.slice(3)] ?? null;
+}
+
 let espana: Espana | null | undefined;
 export function cargarEspana(): Espana | null {
   if (espana === undefined) espana = leerDatos<Espana>("espana.json");

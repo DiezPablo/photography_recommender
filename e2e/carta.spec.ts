@@ -110,3 +110,18 @@ test("ficha de un lugar con contorno Natura 2000: lleva el crédito de la Agenci
   await page.goto(`/fauna/lugar/${encodeURIComponent(conContorno!)}`);
   await expect(page.locator(".credito-contorno")).toContainText("Agencia Europea de Medio Ambiente");
 });
+
+test("ficha de un punto de eBird: listas de los últimos días (si ya se han publicado)", async ({ page, request }) => {
+  const r = await request.get("/datos/resumen.json");
+  const { ficheros } = (r.ok() ? await r.json() : { ficheros: [] }) as { ficheros: string[] };
+  test.skip(!ficheros.includes("espana_listas.json"), "aún no se han publicado las listas de eBird");
+  // un punto con mucha actividad: el primero que devuelve el buscador para un humedal conocido
+  const b = await request.get("/fauna/lugares?q=donana");
+  const { lugares } = (await b.json()) as { lugares: { id: string }[] };
+  const punto = lugares.find((l) => l.id.startsWith("eb-"));
+  test.skip(!punto, "sin puntos de eBird");
+  await page.goto(`/fauna/lugar/${encodeURIComponent(punto!.id)}`);
+  // puede no tener listas en 30 días: si las tiene, la línea dice cuántas y cuándo fue la última
+  const linea = page.locator(".actividad-ebird");
+  if (await linea.count()) await expect(linea).toContainText(/listas? de eBird en los últimos (7|30) días/);
+});
