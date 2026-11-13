@@ -4,9 +4,10 @@
 # si se agota el tiempo, la siguiente continúa.
 name: Luz · descubrir spots
 
+# Solo a mano por ahora: en este repositorio la caché de Commons está vacía y un descubrimiento desde cero
+# publicaría un catálogo peor que el sembrado desde el repositorio anterior (la popularidad se completa en varias
+# ejecuciones). El calendario mensual vuelve con la spec 018 (cobertura de spots).
 on:
-  schedule:
-    - cron: "41 2 1 * *" # día 1 de cada mes
   workflow_dispatch:
     inputs:
       total:
@@ -18,15 +19,6 @@ on:
       minutos:
         description: "Tiempo máximo para consultar Commons (min)"
         default: "150"
-  push:
-    branches: [main]
-    paths:
-      - rasante/spots/**
-      - rasante/comun/territorio.py
-      - rasante/recursos/provincias.geojson
-      - rasante/recursos/vecinos.geojson
-      - rasante/dron/**
-      - .github/workflows/luz_descubrir.yml
 
 permissions:
   contents: write

@@ -36,7 +36,7 @@ mudanza se invierte, así que ya no hay que migrar la fauna ni los secretos, sin
 - `rasante/` copiado junto a `safari/` sin `rutas`, `logistica`, `safaris` ni `fauna` (la fauna buena es
   `safari/espana`). Un solo `pyproject.toml` con los dos paquetes; `python -m rasante` y `python -m safari`.
 - Tests de Luz en `tests/` con sus grabaciones (221 pruebas en verde con las de fauna y safaris).
-- Workflows `luz_datos.yml` (2 veces al día), `luz_descubrir.yml` (mensual, spots + dron), `luz_clima.yml`
+- Workflows `luz_datos.yml` (2 veces al día), `luz_descubrir.yml` (solo a mano hasta la spec 018; spots + dron), `luz_clima.yml`
   (solo a mano) y `luz_validar.yml`. **Siembra**: la primera vez, `sembrar.sh` copia `spots.geojson`,
   `clima.json`, `dron.json` y `verificacion.json` de la release del repo anterior a la de este; el prebuild
   también mira allí mientras falten.

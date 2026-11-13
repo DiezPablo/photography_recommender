@@ -11,7 +11,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [ ] 005 — Safaris del mundo: retirar o dejar congelados (decide Pablo; 001 §4)
 - [ ] 006 — Un solo pipeline: `safari/espana` → `rasante/fauna`, un único `comun`, workflows `fauna_*.yml` (001 §4)
 - [ ] 007 — Limpieza de datos de fauna: fuera `espana_rutas.json` y `espana_rasante.json`; `espana_*` → `fauna_*` (001 §4)
-- [ ] 018 — Cobertura de spots: 30 provincias en el mínimo de 12 y un 32 % en cielo urbano (auditoría 002). CA: criterio de selección revisado (variedad de tipos y cielo, no solo popularidad); ninguna provincia peninsular con menos de 20; informe de auditoría antes y después
+- [ ] 018 — Cobertura de spots: 30 provincias en el mínimo de 12 y un 32 % en cielo urbano (auditoría 002). CA: criterio de selección revisado (variedad de tipos y cielo, no solo popularidad); ninguna provincia peninsular con menos de 20; informe de auditoría antes y después; `luz_descubrir.yml` vuelve a tener calendario mensual cuando su caché de Commons esté completa
 - [x] 019 — Lugares de fauna sin repetir: de 48 y 41 pares duplicados a 3 y 3 (`docs/specs/019-duplicados-fauna.md`)
 - [x] 020 — Página única de fuentes (`/fuentes`) y créditos que faltaban (`docs/specs/020-fuentes.md`)
 - [ ] 012 — Consulta común "cuándo / dónde / qué" en la URL y portada que la lanza. CA: una URL reproduce cualquier resultado; funciona sin JS; pestañas Luz/Fauna
