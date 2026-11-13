@@ -17,7 +17,8 @@ export default function SelectorMes() {
   // el mes de hoy en el navegador (la cabecera se genera al compilar, quizá otro mes)
   const mesHoy = hidratado ? new Date().getMonth() : 0;
   // solo en el modo Safaris
-  const activo = hidratado && ruta !== "/" && !ruta.startsWith("/fauna") && !ruta.startsWith("/luz");
+  const activo =
+    hidratado && ruta !== "/" && !ruta.startsWith("/fuentes") && !ruta.startsWith("/fauna") && !ruta.startsWith("/luz");
   useMesEnPagina(mesHoy, activo);
   const [mes, cambiar] = useMesElegido(mesHoy);
   if (!activo) return null;

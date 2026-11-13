@@ -1,7 +1,8 @@
 # src/ — web (Next.js 16, App Router)
 
 - `app/`: rutas finas; la lógica va en `features/`.
-  - `/` portada (dos puertas, provisional hasta la spec 012).
+  - `/` portada (dos puertas, provisional hasta la spec 012). `/fuentes`: fuentes y licencias de los dos modos
+    (la lista está en `lib/fuentes.ts`; al añadir una fuente, añádela ahí y en `docs/datos/fuentes.md`).
   - `/luz/**`: ranking del día (`/luz`, `/luz/dia/[d]/[tipo]`), `/luz/spot/[id]`, `/luz/calendario`,
     `/luz/evento/[id]`, `/luz/alertas` (.ics), `/luz/metodo`.
   - `/fauna/**`: carta por cuadrícula (`/fauna`; `?modo=aqui|finde`), `/fauna/lugar/[id]`,

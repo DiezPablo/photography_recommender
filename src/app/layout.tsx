@@ -75,6 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/luz/calendario">Calendario</Link>
               <Link href="/luz/alertas">Avisos en tu calendario</Link>
               <Link href="/luz/metodo">Cómo se puntúa</Link>
+              <Link href="/fuentes">Fuentes y licencias</Link>
             </nav>
             <nav aria-label="Fauna">
               <p>Fauna</p>

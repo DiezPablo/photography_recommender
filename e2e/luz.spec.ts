@@ -241,3 +241,19 @@ test("spot de costa: mareas, oleaje y si se puede volar un dron", async ({ page,
     .catch(() => {});
   expect(errores).toEqual([]);
 });
+
+test("fuentes y licencias: una página para los dos modos, enlazada desde el pie y desde Método", async ({ page }) => {
+  await page.goto("/luz/metodo");
+  await expect(page.locator(".tabla-fuentes")).toContainText("Iowa Environmental Mesonet");
+  await expect(page.locator(".tabla-fuentes")).toContainText("NOAA Space Weather Prediction Center");
+  await page.locator(".pie").getByRole("link", { name: "Fuentes y licencias" }).click();
+  await expect(page).toHaveURL(/\/fuentes$/);
+  await expect(page.locator("h1")).toHaveText("Fuentes y licencias");
+  const tablas = page.locator(".tabla-fuentes");
+  await expect(tablas).toHaveCount(2);
+  await expect(tablas.first()).toContainText("Open-Meteo");
+  await expect(tablas.last()).toContainText("eBird");
+  await expect(tablas.last()).toContainText("Agencia Europea de Medio Ambiente");
+  // no es de ningún modo: el conmutador no marca ninguno
+  await expect(page.locator(".mundos a[aria-current=page]")).toHaveCount(0);
+});

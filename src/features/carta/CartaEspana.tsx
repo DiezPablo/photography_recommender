@@ -3,6 +3,7 @@
 // su grupo en el mes, GBIF), rayado donde la muestra es pequeña, la dirección del sol del día elegido y los lugares
 // con nombre. Al lado (o abajo, en el móvil), la especie, el mes, el día y la ficha de la cuadrícula que se toque.
 // Todo el estado va en la URL: cada pregunta («dónde veo…», «qué hay aquí», «cuándo») se puede hacer sola.
+import Link from "next/link";
 import type { LayerGroup, LeafletMouseEvent, Map as LMap } from "leaflet";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParametrosUrl } from "@/lib/almacen";
@@ -453,7 +454,7 @@ export default function CartaEspana({ hoy, delMes }: { hoy: string; delMes: Espe
         <p className="nota-celda">
           Cuadrícula de 10 km de la Agencia Europea de Medio Ambiente. ‰: de cada mil registros de su grupo en GBIF en
           esa cuadrícula, ese mes y los vecinos, cuántos son de la especie: mide lo que se registra, no la probabilidad
-          de verla. Mapa: IGN y OpenStreetMap.
+          de verla. Mapa: IGN y OpenStreetMap. <Link href="/fuentes">Fuentes y licencias</Link>.
         </p>
       </aside>
       {estado.celda && (
