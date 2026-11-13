@@ -12,6 +12,7 @@ license = { text = "Uso personal, no comercial" }
 authors = [{ name = "Pablo Díez" }]
 dependencies = [
   "astral>=3.2",
+  "jsonschema>=4.20",
   "numpy>=1.26",
   "pandas>=2.1",
   "pillow>=10.0",

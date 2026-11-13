@@ -34,3 +34,4 @@ Consecuencias: qué implica y qué queda descartado.
 - [0017](0017-ebird-y-monetizacion.md) — Se usa la API de eBird; monetización aparcada
 - [0018](0018-repo-base.md) — La base es photography_recommender
 - [0019](0019-rutas-aparcadas.md) — Rutas de senderismo, aparcadas
+- [0020](0020-lugares-json.md) — `lugares.json`: un índice, dos catálogos, ids existentes

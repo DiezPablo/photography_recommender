@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/DiezPablo/photography_recommender/rasante/recursos/lugar.schema.json",
+  "title": "lugares.json: índice común de los dos catálogos de Rasante (spots de luz y lugares de fauna)",
+  "type": "object",
+  "required": ["esquema", "generado", "fuentes", "cuenta", "lugares"],
+  "additionalProperties": false,
+  "properties": {
+    "esquema": { "const": 1 },
+    "generado": { "type": "string" },
+    "fuentes": { "type": "object", "additionalProperties": { "type": "string" } },
+    "cuenta": { "type": "object" },
+    "lugares": { "type": "array", "items": { "$ref": "#/$defs/lugar" } }
+  },
+  "$defs": {
+    "lugar": {
+      "type": "object",
+      "required": [
+        "id", "catalogo", "nombre", "lat", "lon", "provincia", "ccaa", "tipo", "fuentes", "foto", "acceso", "cerca",
+        "eventos", "revisado"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$" },
+        "catalogo": { "enum": ["luz", "fauna"] },
+        "nombre": { "type": "string", "minLength": 1 },
+        "lat": { "type": "number", "minimum": 27, "maximum": 44.5 },
+        "lon": { "type": "number", "minimum": -18.5, "maximum": 4.6 },
+        "provincia": { "type": "string", "minLength": 1 },
+        "ccaa": { "type": "string", "minLength": 1 },
+        "tipo": {
+          "enum": [
+            "mirador", "cumbre", "costa", "faro", "cascada", "agua", "bosque", "canon", "urbano", "humedal",
+            "observatorio", "espacio_protegido", "punto_de_observacion", "otro"
+          ]
+        },
+        "fuentes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["fuente", "ref", "licencia"],
+            "additionalProperties": false,
+            "properties": {
+              "fuente": { "type": "string", "minLength": 1 },
+              "ref": { "type": ["string", "null"] },
+              "licencia": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "foto": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["url", "autor", "licencia"],
+              "additionalProperties": false,
+              "properties": {
+                "url": { "type": "string", "pattern": "^https://" },
+                "autor": { "type": ["string", "null"] },
+                "licencia": { "type": ["string", "null"] }
+              }
+            }
+          ]
+        },
+        "acceso": {
+          "type": "object",
+          "required": ["aparcamiento_m", "accesible"],
+          "additionalProperties": false,
+          "properties": {
+            "aparcamiento_m": { "type": ["number", "null"], "minimum": 0 },
+            "accesible": { "type": ["boolean", "null"] }
+          }
+        },
+        "cerca": {
+          "description": "Hasta 5 lugares del otro catálogo a 15 km o menos, del más cercano al más lejano",
+          "type": "array",
+          "maxItems": 5,
+          "items": { "type": "string" }
+        },
+        "eventos": { "type": "array", "items": { "type": "string" } },
+        "revisado": { "type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+        "luz": {
+          "type": "object",
+          "required": ["cielo_mag", "bortle", "horizonte", "costa", "popularidad"],
+          "additionalProperties": false,
+          "properties": {
+            "cielo_mag": { "type": ["number", "null"] },
+            "bortle": { "type": ["integer", "null"], "minimum": 1, "maximum": 9 },
+            "horizonte": {
+              "description": "Altura del relieve (grados, mediana) hacia cada uno de los 8 rumbos; null si no hay perfil",
+              "oneOf": [
+                { "type": "null" },
+                {
+                  "type": "object",
+                  "required": ["N", "NE", "E", "SE", "S", "SO", "O", "NO"],
+                  "additionalProperties": { "type": "number" }
+                }
+              ]
+            },
+            "costa": { "type": "boolean" },
+            "popularidad": { "type": ["number", "null"] }
+          }
+        },
+        "fauna": {
+          "type": "object",
+          "required": ["celdas", "radio_km", "espacio", "natura", "especies_ebird"],
+          "additionalProperties": false,
+          "properties": {
+            "celdas": {
+              "description": "Cuadrículas EEA de 10 km que cubre el lugar; las especies salen de ellas (espana.json)",
+              "type": "array",
+              "items": { "type": "string", "pattern": "^10kmE\\d+N\\d+$" }
+            },
+            "radio_km": { "type": "number", "exclusiveMinimum": 0 },
+            "espacio": {
+              "oneOf": [
+                { "type": "null" },
+                {
+                  "type": "object",
+                  "required": ["nombre", "figura"],
+                  "additionalProperties": false,
+                  "properties": { "nombre": { "type": "string" }, "figura": { "type": "string" } }
+                }
+              ]
+            },
+            "natura": { "type": ["string", "null"] },
+            "especies_ebird": { "type": ["integer", "null"], "minimum": 0 }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "catalogo": { "const": "luz" } } },
+          "then": { "required": ["luz"], "not": { "required": ["fauna"] } },
+          "else": { "required": ["fauna"], "not": { "required": ["luz"] } }
+        }
+      ]
+    }
+  }
+}

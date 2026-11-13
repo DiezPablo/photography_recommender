@@ -7,6 +7,7 @@ Subpaquetes:
   notas       modelos de puntuación 0-10 (luz, noche, niebla, luna)
   prevision   Open-Meteo + notas → informe.json
   spots       descubrimiento de spots en toda España → spots.geojson
+  lugares     índice común de spots y lugares de fauna → lugares.json
   validacion  validación histórica de las notas
   avisos      resumen diario por Telegram (opcional)
 
