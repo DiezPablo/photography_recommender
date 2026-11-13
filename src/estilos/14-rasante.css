@@ -51,11 +51,3 @@ ul.puerta-lista li {
   margin-top: auto;
   padding-top: 8px;
 }
-
-/* Cabecera en el móvil: con el selector de mes (modo Safaris) no caben la marca, los tres modos, el mes y el
-   buscador; la marca se queda en el logo. */
-@media (max-width: 480px) {
-  .cabecera-in:has(.selector-mes) .marca-texto {
-    display: none;
-  }
-}

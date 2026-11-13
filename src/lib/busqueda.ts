@@ -1,5 +1,5 @@
 // Búsqueda por texto tolerante a tildes, mayúsculas y erratas (una letra cambiada, de más, de menos o dos letras
-// cambiadas de sitio; dos en palabras largas). Pura: la usan el buscador de la cabecera y la página /buscar.
+// cambiadas de sitio; dos en palabras largas). Pura: la usa el selector de especies de la carta.
 
 export type TipoResultado = "parque" | "especie" | "pais";
 
@@ -85,16 +85,3 @@ export function puntuar(q: string, e: EntradaBusqueda): number {
   }
   return mejor ? mejor + (e.w ?? 0) : 0;
 }
-
-export function buscar(entradas: EntradaBusqueda[], texto: string, n = 8): EntradaBusqueda[] {
-  const q = normal(texto);
-  if (q.length < 2) return [];
-  return entradas
-    .map((e) => ({ e, p: puntuar(q, e) }))
-    .filter((x) => x.p > 0)
-    .sort((a, b) => b.p - a.p || a.e.t.localeCompare(b.e.t, "es"))
-    .slice(0, n)
-    .map((x) => x.e);
-}
-
-export const TIPO_TEXTO: Record<TipoResultado, string> = { parque: "Parque", especie: "Animal", pais: "País" };

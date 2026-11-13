@@ -1,6 +1,5 @@
 // Portada de Rasante: las dos puertas (Luz y Fauna). Es provisional hasta la spec 012 (consulta «cuándo / dónde /
-// qué»). Los enlaces antiguos a la carta o a la portada de safaris, que vivían aquí con parámetros, se redirigen en
-// next.config.ts.
+// qué»). Los enlaces antiguos a la carta de fauna, que vivía aquí con sus parámetros, se redirigen en next.config.ts.
 import type { Metadata } from "next";
 import Link from "next/link";
 import { NOMBRE_CORTO } from "@/features/spots/modelo";

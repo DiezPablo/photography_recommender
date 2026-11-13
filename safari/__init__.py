@@ -1,6 +1,5 @@
-"""Safaris por el mundo: dónde y cuándo ver cada animal y cómo organizarlo, con datos abiertos.
+"""Pipeline del modo Fauna de Rasante (España): cuadrícula de 10 km con GBIF, eBird, iNaturalist y lugares.
 
-- Catálogo curado (recursos/safaris.csv) enriquecido con iNaturalist, Wikidata, NASA POWER y OpenStreetMap.
-- Todos los parques del mundo con fauna: Wikidata cribado con GBIF, lluvia de la NASA, aeropuertos de
-  OurAirports y servicios de OpenStreetMap.
+El paquete conserva el nombre `safari` del proyecto del que viene (los safaris del mundo se retiraron de esta
+versión, decisión 0021); pasará a `rasante/fauna` con la spec 006.
 """

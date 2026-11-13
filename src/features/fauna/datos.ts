@@ -1,11 +1,10 @@
 // Datos de España en el servidor: espana.json (descarga de GBIF por cuadrícula de 10 km) y los lugares
 // (espana_lugares.json: puntos de eBird, espacios protegidos de Wikidata, observatorios de OSM) para buscar, para
-// «cerca de aquí» y para nombrar cada celda; si aún no están, los espacios protegidos del catálogo mundial.
+// «cerca de aquí» y para nombrar cada celda.
 import "server-only";
 import { leerDatos } from "@/lib/datos";
 import { celda, celdasEnRadio, centroCelda } from "@/lib/rejilla";
 import { distanciaKm } from "@/lib/fechas";
-import type { Mundo } from "@/features/safaris/modelo";
 import { ZONAS_ESPANA, type BloqueEspana, type LugarFauna, type ObsReciente } from "@/features/fauna/zonas";
 
 export interface Espana {
@@ -118,7 +117,7 @@ function espacioDeCelda(c: string): { nombre: string; id: string } | null {
 }
 
 let lugares: LugarFauna[] | undefined;
-/** Todos los lugares: los de espana_lugares.json o, mientras no exista, las zonas y los parques del catálogo. */
+/** Todos los lugares: las zonas destacadas y los de espana_lugares.json (mientras no exista, solo las zonas). */
 export function cargarLugares(): LugarFauna[] {
   if (lugares === undefined) {
     const propios = leerDatos<{ lugares: LugarFauna[] }>("espana_lugares.json")?.lugares;
@@ -130,17 +129,7 @@ export function cargarLugares(): LugarFauna[] {
       lon: z.lon,
       r: z.radioKm,
     }));
-    if (propios?.length) lugares = [...zonas, ...propios, ...lugaresNatura(propios)];
-    else {
-      const m = leerDatos<Mundo>("safaris_mundo.json");
-      const espanaQ = Object.entries(m?.paises ?? {}).find(([, p]) => p.nombre === "España")?.[0];
-      lugares = [
-        ...zonas,
-        ...(m?.parques ?? [])
-          .filter((p) => p.pais === espanaQ)
-          .map((p) => ({ id: p.id, n: p.nombre, t: "Espacio protegido", lat: p.lat, lon: p.lon, r: p.radio_km ?? 5 })),
-      ];
-    }
+    lugares = propios?.length ? [...zonas, ...propios, ...lugaresNatura(propios)] : zonas;
   }
   return lugares;
 }

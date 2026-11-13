@@ -18,7 +18,7 @@ import {
   type HoraTiempo,
   type Prevision,
 } from "@/lib/tiempo";
-import { confianza, nivelFrecuencia, textoFrecuencia } from "@/features/safaris/modelo";
+import { confianza, nivelFrecuencia, textoFrecuencia } from "@/features/fauna/frecuencia";
 import { actividadPorDefecto, puntuar, type Puntuacion } from "@/features/fauna/puntuacion";
 import ElegirLugar from "@/features/fauna/ElegirLugar";
 import LuzYMar from "@/features/fauna/LuzYMar";

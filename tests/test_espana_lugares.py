@@ -62,7 +62,7 @@ def test_km_ruta():
 
 
 def test_observatorios_agrupa_y_filtra(monkeypatch):
-    from safari import practico
+    from safari import overpass as consultas
 
     elementos = [
         {"type": "node", "id": 1, "lat": 40.970, "lon": -1.520, "tags": {"leisure": "bird_hide", "name": "La Reguera"}},
@@ -71,7 +71,7 @@ def test_observatorios_agrupa_y_filtra(monkeypatch):
         {"type": "node", "id": 4, "lat": 42.0, "lon": -3.0, "tags": {"name": "Exhibición de aves rapaces"}},
         {"type": "node", "id": 5, "lat": 43.0, "lon": -4.0, "tags": {"access": "private"}},
     ]
-    monkeypatch.setattr(practico, "overpass", lambda consulta, timeout=0: {"elements": elementos})
+    monkeypatch.setattr(consultas, "overpass", lambda consulta, timeout=0: {"elements": elementos})
     xs = lugares.observatorios()
     assert [(x["id"], x["n"], x.get("k")) for x in xs] == [("osm-node-1", "La Reguera", 2), ("osm-way-3", None, None)]
 

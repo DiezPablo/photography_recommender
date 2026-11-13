@@ -23,10 +23,6 @@ const LUZ = [
 ];
 const FICHEROS = [
   ...LUZ,
-  "safaris.json",
-  "safaris_recientes.json",
-  "safaris_mundo.json",
-  "safaris_indice.json",
   "espana.json",
   "espana_recientes.json",
   "espana_lugares.json",
@@ -37,8 +33,8 @@ const FICHEROS = [
   "espana_natura.json",
   "espana_ebird.json",
 ];
-// el único que se pide desde el navegador (fetch en ExploradorSafaris)
-const PUBLICOS = ["safaris_indice.json"];
+// los que pide el navegador directamente (hoy, ninguno: todo lo sirve el servidor)
+const PUBLICOS = [];
 const COMPRIMIDOS = path.join(process.cwd(), "datos");
 const PUBLICO = path.join(process.cwd(), "public", "datos");
 

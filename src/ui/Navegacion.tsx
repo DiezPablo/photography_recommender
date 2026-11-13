@@ -1,22 +1,18 @@
 "use client";
-// Navegación por modos: «Luz» (paisaje y cielo), «Fauna» (España) y «Safaris» (parques del mundo, congelado). Un
-// conmutador en la cabecera cambia de modo; el menú de escritorio y la barra inferior del móvil enseñan solo las
-// secciones del modo en el que estás. En la portada (/) no hay modo elegido: solo el conmutador.
+// Navegación por modos: «Luz» (paisaje y cielo) y «Fauna» (España). Un conmutador en la cabecera cambia de modo; el
+// menú de escritorio y la barra inferior del móvil enseñan solo las secciones del modo en el que estás. En la
+// portada (/) y en las páginas comunes (/fuentes) no hay modo elegido: solo el conmutador.
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useViajeGuardado } from "@/features/safaris/viaje";
 import {
   IconoAmanecer,
-  IconoBrujula,
   IconoCalendario,
   IconoCarta,
   IconoHuella,
   IconoInfo,
   IconoLibro,
-  IconoManada,
   IconoMarcador,
   IconoPrismaticos,
-  IconoRuta,
   IconoUbicacion,
 } from "@/ui/Iconos";
 
@@ -30,42 +26,9 @@ interface Seccion {
   movil?: boolean;
 }
 
-type Modo = "inicio" | "luz" | "fauna" | "safaris";
-const modoDe = (r: string): Modo =>
-  r === "/" || r.startsWith("/fuentes")
-    ? "inicio"
-    : r.startsWith("/luz")
-      ? "luz"
-      : r.startsWith("/fauna")
-        ? "fauna"
-        : "safaris";
+type Modo = "inicio" | "luz" | "fauna";
+const modoDe = (r: string): Modo => (r.startsWith("/luz") ? "luz" : r.startsWith("/fauna") ? "fauna" : "inicio");
 const modo = (q: URLSearchParams) => q.get("modo") ?? (q.has("lat") || q.has("zona") ? "aqui" : "inicio");
-
-const SAFARIS: Seccion[] = [
-  {
-    href: "/safaris",
-    texto: "Destinos",
-    Icono: IconoBrujula,
-    activa: (r) => r === "/safaris" || r.startsWith("/parque"),
-    movil: true,
-  },
-  { href: "/mapa", texto: "Mapa", Icono: IconoCarta, activa: (r) => r.startsWith("/mapa"), movil: true },
-  { href: "/especies", texto: "Animales", Icono: IconoHuella, activa: (r) => r.startsWith("/especie"), movil: true },
-  {
-    href: "/safari-en",
-    texto: "Calendario",
-    Icono: IconoManada,
-    activa: (r) => ["/safari-en", "/migracion", "/temporada-verde"].some((x) => r.startsWith(x)),
-  },
-  {
-    href: "/planificar",
-    texto: "Planificar",
-    Icono: IconoRuta,
-    activa: (r) => ["/planificar", "/presupuesto", "/comparar"].some((x) => r.startsWith(x)),
-    movil: true,
-  },
-  { href: "/guia", texto: "Guía", Icono: IconoLibro, activa: (r) => r.startsWith("/guia") },
-];
 
 const LUZ: Seccion[] = [
   {
@@ -134,7 +97,7 @@ const FAUNA: Seccion[] = [
   { href: "/fauna/normas", texto: "Normas", Icono: IconoLibro, activa: (r) => r.startsWith("/fauna/normas") },
 ];
 
-const SECCIONES: Record<Modo, Seccion[]> = { inicio: [], luz: LUZ, fauna: FAUNA, safaris: SAFARIS };
+const SECCIONES: Record<Modo, Seccion[]> = { inicio: [], luz: LUZ, fauna: FAUNA };
 
 function useNav() {
   const ruta = usePathname();
@@ -153,46 +116,26 @@ export function Mundos() {
       <Link href="/fauna" aria-current={modo === "fauna" ? "page" : undefined}>
         Fauna
       </Link>
-      <Link href="/safaris" aria-current={modo === "safaris" ? "page" : undefined}>
-        Safaris
-      </Link>
     </nav>
   );
 }
 
 export function MenuPrincipal() {
   const { ruta, q, modo } = useNav();
-  const viaje = useViajeGuardado();
   return (
-    <>
-      <nav className="menu" aria-label="Principal">
-        {SECCIONES[modo].map((s) => (
-          <Link key={s.href} href={s.href} aria-current={s.activa(ruta, q) ? "page" : undefined}>
-            {s.texto}
-          </Link>
-        ))}
-      </nav>
-      {modo === "safaris" && (
-        <Link href="/viaje" className="boton-viaje" aria-current={ruta.startsWith("/viaje") ? "page" : undefined}>
-          <IconoMarcador size={17} />
-          Mi viaje
-          {viaje && <span className="contador">{viaje.etapas.length}</span>}
+    <nav className="menu" aria-label="Principal">
+      {SECCIONES[modo].map((s) => (
+        <Link key={s.href} href={s.href} aria-current={s.activa(ruta, q) ? "page" : undefined}>
+          {s.texto}
         </Link>
-      )}
-    </>
+      ))}
+    </nav>
   );
 }
 
 export function BarraInferior() {
   const { ruta, q, modo } = useNav();
-  const viaje = useViajeGuardado();
-  const items: Seccion[] =
-    modo === "safaris"
-      ? [
-          ...SAFARIS.filter((s) => s.movil),
-          { href: "/viaje", texto: "Mi viaje", Icono: IconoMarcador, activa: (r) => r.startsWith("/viaje") },
-        ]
-      : SECCIONES[modo].filter((s) => s.movil);
+  const items = SECCIONES[modo].filter((s) => s.movil);
   if (!items.length) return null;
   return (
     <nav className="barra-inferior" aria-label="Secciones">
@@ -200,7 +143,6 @@ export function BarraInferior() {
         <Link key={s.href} href={s.href} aria-current={s.activa(ruta, q) ? "page" : undefined}>
           <s.Icono size={22} />
           {s.corto ?? s.texto}
-          {s.href === "/viaje" && viaje && <span className="contador">{viaje.etapas.length}</span>}
         </Link>
       ))}
     </nav>

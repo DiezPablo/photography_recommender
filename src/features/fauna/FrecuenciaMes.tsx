@@ -1,9 +1,9 @@
 "use client";
-// La tabla de frecuencia en el móvil (T40): sin scroll horizontal, un mes cada vez (el elegido en la cabecera),
+// La tabla de frecuencia en el móvil (T40): sin scroll horizontal, un mes cada vez (se cambia con las flechas y se recuerda en la URL),
 // con el nivel en texto y en puntos, no solo en color.
 import { MESES } from "@/lib/fechas";
 import { useMesElegido } from "@/lib/mes";
-import { nivelFrecuencia, textoFrecuencia } from "@/features/safaris/modelo";
+import { nivelFrecuencia, textoFrecuencia } from "@/features/fauna/frecuencia";
 import type { FilaFrecuencia } from "./FrecuenciaAvistamientos";
 
 export const PUNTOS: Record<string, string> = {

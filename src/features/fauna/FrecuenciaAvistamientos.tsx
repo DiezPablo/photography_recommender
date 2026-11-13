@@ -1,8 +1,7 @@
-// Cuánto se registra cada especie estrella, mes a mes: frecuencia en las fotos de los visitantes
-// (iNaturalist) frente a las de su grupo, en cinco niveles. La pregunta número uno de los foros.
+// Cuánto se registra cada especie, mes a mes: su frecuencia frente a las de su grupo (GBIF), en cinco niveles.
 import Link from "next/link";
 import { INICIALES, MESES } from "@/lib/fechas";
-import { confianza, nivelFrecuencia, textoFrecuencia } from "@/features/safaris/modelo";
+import { confianza, nivelFrecuencia, textoFrecuencia } from "@/features/fauna/frecuencia";
 import FrecuenciaMes from "./FrecuenciaMes";
 
 export interface FilaFrecuencia {

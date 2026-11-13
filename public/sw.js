@@ -1,4 +1,4 @@
-// Sin conexión (Safaris): las páginas, primero de la red y, si no hay cobertura, de la copia guardada; los ficheros
+// Sin conexión (Rasante): las páginas, primero de la red y, si no hay cobertura, de la copia guardada; los ficheros
 // estáticos de la web, de la copia. «Guardar sin conexión» guarda de antemano las páginas de un plan.
 const PAGINAS = "paginas-v1";
 const ESTATICOS = "estaticos-v1";
