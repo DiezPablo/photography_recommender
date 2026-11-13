@@ -1,3 +1,5 @@
+import TablaFuentes from "@/ui/TablaFuentes";
+import Link from "next/link";
 import type { Metadata } from "next";
 import Marcador from "@/features/verificacion/Marcador";
 
@@ -127,53 +129,10 @@ export default function Acerca() {
       <Marcador />
 
       <h2>Fuentes</h2>
-      <table>
-        <tbody>
-          <tr>
-            <th>Previsión</th>
-            <td>
-              <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0), con ECMWF IFS como segundo modelo
-            </td>
-          </tr>
-          <tr>
-            <th>Aerosoles y polvo</th>
-            <td>CAMS (Copernicus) vía Open-Meteo</td>
-          </tr>
-          <tr>
-            <th>Sol, luna y Vía Láctea</th>
-            <td>Cálculo propio (astral, Meeus)</td>
-          </tr>
-          <tr>
-            <th>Relieve</th>
-            <td>Modelo digital del terreno (teselas Terrarium, Mapzen/AWS Open Data)</td>
-          </tr>
-          <tr>
-            <th>Spots</th>
-            <td>
-              <a href="https://www.wikidata.org/">Wikidata</a> (CC0) y OpenStreetMap
-            </td>
-          </tr>
-          <tr>
-            <th>Contaminación lumínica</th>
-            <td>
-              <a href="https://djlorenz.github.io/astronomy/lp/">World Atlas of Artificial Night Sky Brightness 2025</a>
-              , D. Lorenz
-            </td>
-          </tr>
-          <tr>
-            <th>Mapa y nombres</th>
-            <td>
-              © <a href="https://www.openstreetmap.org/copyright">colaboradores de OpenStreetMap</a> (ODbL)
-            </td>
-          </tr>
-          <tr>
-            <th>Fotos</th>
-            <td>
-              <a href="https://commons.wikimedia.org/">Wikimedia Commons</a>, con la licencia de cada autor
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <TablaFuentes modo="luz" />
+      <p className="nota-pie">
+        Las del modo Fauna, en <Link href="/fuentes">Fuentes y licencias</Link>.
+      </p>
     </main>
   );
 }

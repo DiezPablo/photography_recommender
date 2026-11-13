@@ -32,7 +32,13 @@ interface Seccion {
 
 type Modo = "inicio" | "luz" | "fauna" | "safaris";
 const modoDe = (r: string): Modo =>
-  r === "/" ? "inicio" : r.startsWith("/luz") ? "luz" : r.startsWith("/fauna") ? "fauna" : "safaris";
+  r === "/" || r.startsWith("/fuentes")
+    ? "inicio"
+    : r.startsWith("/luz")
+      ? "luz"
+      : r.startsWith("/fauna")
+        ? "fauna"
+        : "safaris";
 const modo = (q: URLSearchParams) => q.get("modo") ?? (q.has("lat") || q.has("zona") ? "aqui" : "inicio");
 
 const SAFARIS: Seccion[] = [

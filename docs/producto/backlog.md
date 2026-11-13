@@ -13,7 +13,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [ ] 007 — Limpieza de datos de fauna: fuera `espana_rutas.json` y `espana_rasante.json`; `espana_*` → `fauna_*` (001 §4)
 - [ ] 018 — Cobertura de spots: 30 provincias en el mínimo de 12 y un 32 % en cielo urbano (auditoría 002). CA: criterio de selección revisado (variedad de tipos y cielo, no solo popularidad); ninguna provincia peninsular con menos de 20; informe de auditoría antes y después
 - [ ] 019 — Duplicados de fauna: 48 pares con el mismo nombre y 41 espacios superpuestos (auditoría 002). CA: un espacio con varias figuras o varias fichas de Wikidata es un solo lugar; un punto de eBird dentro de su espacio homónimo no se repite; la auditoría baja a < 5 pares
-- [ ] 020 — Página única de fuentes y créditos que faltan (`docs/datos/fuentes.md`). CA: crédito de la EEA donde hay contornos Natura 2000; Mesonet, NOAA SWPC, IGN y Natural Earth citados; licencias dudosas confirmadas
+- [x] 020 — Página única de fuentes (`/fuentes`) y créditos que faltaban (`docs/specs/020-fuentes.md`)
 - [ ] 012 — Consulta común "cuándo / dónde / qué" en la URL y portada que la lanza. CA: una URL reproduce cualquier resultado; funciona sin JS; pestañas Luz/Fauna
 - [ ] 004 — Sistema de diseño y rediseño de portada y fichas (sobre las seis pantallas de `modos.md`); incluye web instalable y modo noche
 - [ ] 010 — Ficha de lugar de fauna y ficha de especie: "luz cerca" y poda de bloques

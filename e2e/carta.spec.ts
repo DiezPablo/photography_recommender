@@ -92,3 +92,21 @@ test("la carta vive en /fauna; los enlaces antiguos (portada con parámetros, /e
   await page.goto("/espana/hides");
   await expect(page).toHaveURL(/\/fauna\/hides$/);
 });
+
+test("ficha de un lugar con contorno Natura 2000: lleva el crédito de la Agencia Europea de Medio Ambiente", async ({
+  page,
+  request,
+}) => {
+  // el buscador devuelve primero los puntos de eBird (sin contorno): se prueba con varios espacios conocidos
+  let conContorno: string | null = null;
+  for (const q of ["donana", "gallocanta", "monfrague", "cabaneros"]) {
+    const r = await request.get(`/fauna/lugares?q=${q}`);
+    if (!r.ok()) continue;
+    const { lugares } = (await r.json()) as { lugares: { id: string; z?: string }[] };
+    conContorno = lugares.find((l) => l.z)?.id ?? null;
+    if (conContorno) break;
+  }
+  test.skip(!conContorno, "sin lugares de fauna con contorno");
+  await page.goto(`/fauna/lugar/${encodeURIComponent(conContorno!)}`);
+  await expect(page.locator(".credito-contorno")).toContainText("Agencia Europea de Medio Ambiente");
+});

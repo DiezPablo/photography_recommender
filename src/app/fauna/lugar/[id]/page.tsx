@@ -136,6 +136,12 @@ export default async function PaginaLugar({ params }: Props) {
             : []),
         ]}
       />
+      {contornoDe(l) && (
+        <p className="nota-pie credito-contorno">
+          Contorno: Red Natura 2000, <a href="https://www.eea.europa.eu/">Agencia Europea de Medio Ambiente</a> (CC BY
+          4.0).
+        </p>
+      )}
 
       <FenomenosEspana fenomenos={fenomenos} mesHoy={mesHoy} />
 
