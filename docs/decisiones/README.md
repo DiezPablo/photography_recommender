@@ -31,7 +31,7 @@ Consecuencias: qué implica y qué queda descartado.
 - [0014](0014-web-sin-js-y-offline.md) — Funciona sin JavaScript y sin cobertura
 - [0015](0015-una-web-dos-catalogos.md) — Una web, dos catálogos que no se fusionan
 - [0016](0016-lo-existente-es-un-mock.md) — La web anterior a 11-2026 es un mock
-- [0017](0017-ebird-y-monetizacion.md) — Se usa la API de eBird; monetización aparcada
+- [0017](0017-ebird-y-monetizacion.md) — Sin monetización; eBird, a fondo
 - [0018](0018-repo-base.md) — La base es photography_recommender
 - [0019](0019-rutas-aparcadas.md) — Rutas de senderismo, aparcadas
 - [0020](0020-lugares-json.md) — `lugares.json`: un índice, dos catálogos, ids existentes

@@ -26,5 +26,6 @@ hace que la web sea de referencia. Todo lo demás se nutre de él.
 - Safaris fuera de España: fuera de alcance. Su código comparte repo, congelado (decisión 0018, spec 005).
 - Rutas de senderismo: aparcadas hasta que Luz y Fauna estén montados (decisión 0019).
 
-## Monetización
-Aparcada (decisión 0017). Se anota la licencia de cada fuente, sin que condicione qué se usa.
+## Sin monetización
+Rasante no se va a monetizar (decisión 0017): uso personal, sin fines comerciales. Se anota la licencia de cada
+fuente para atribuirla bien, no para decidir cuál se usa.

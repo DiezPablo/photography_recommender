@@ -14,6 +14,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [ ] 018 — Cobertura de spots: 30 provincias en el mínimo de 12 y un 32 % en cielo urbano (auditoría 002). CA: criterio de selección revisado (variedad de tipos y cielo, no solo popularidad); ninguna provincia peninsular con menos de 20; informe de auditoría antes y después; `luz_descubrir.yml` vuelve a tener calendario mensual cuando su caché de Commons esté completa
 - [x] 019 — Lugares de fauna sin repetir: de 48 y 41 pares duplicados a 3 y 3 (`docs/specs/019-duplicados-fauna.md`)
 - [x] 020 — Página única de fuentes (`/fuentes`) y créditos que faltaban (`docs/specs/020-fuentes.md`)
+- [ ] 021 — eBird a fondo: listas recientes por punto, actividad por provincia y especies de cada punto (`docs/specs/021-ebird-a-fondo.md`)
 - [ ] 012 — Consulta común "cuándo / dónde / qué" en la URL y portada que la lanza. CA: una URL reproduce cualquier resultado; funciona sin JS; pestañas Luz/Fauna
 - [ ] 004 — Sistema de diseño y rediseño de portada y fichas (sobre las seis pantallas de `modos.md`); incluye web instalable y modo noche
 - [ ] 010 — Ficha de lugar de fauna y ficha de especie: "luz cerca" y poda de bloques

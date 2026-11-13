@@ -1,8 +1,7 @@
 # Fuentes de datos: licencia y atribución
 
 Revisado el 13-11-2026 (spec 002). «Atribución en la web» está comprobada en el código; las licencias que dicen
-«comprobado» se han leído en la web de la fuente ese día; el resto están escritas de memoria. La monetización está aparcada (decisión 0017): la columna «uso comercial» es solo para saber qué
-habría que revisar ese día.
+«comprobado» se han leído en la web de la fuente ese día; el resto están escritas de memoria. Rasante no se monetiza (decisión 0017): la columna «uso comercial» es solo informativa.
 
 ## Modo Luz
 | Fuente | Para qué | Licencia | Uso comercial | Atribución en la web |
@@ -37,7 +36,6 @@ habría que revisar ese día.
 
 ## Qué falta
 1. Confirmar las condiciones de reutilización de las zonas UAS de ENAIRE.
-2. Si algún día hay uso comercial: permiso de D. Lorenz, plan de pago de Open-Meteo y sustituir la API de eBird.
 
 Resuelto con la spec 020 (13-11-2026): página `/fuentes` para los dos modos, crédito de la EEA en los contornos
 Natura 2000 y Mesonet, NOAA SWPC, IGN y Natural Earth citados.
