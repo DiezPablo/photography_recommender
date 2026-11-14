@@ -178,7 +178,10 @@ def era5(lat: float, lon: float, variables: list[str]) -> pd.DataFrame:
     }
     for intento in range(6):
         r = SESION.get(ARCHIVO, params=params, timeout=300)
-        if r.status_code == 429:
+        # 429: límite por minuto. 5xx: el archivo de Open-Meteo se cae a ratos (un 502 a mitad de los diez años
+        # tiraba toda la validación): se espera y se reintenta; cualquier otro error sí es nuestro
+        if r.status_code == 429 or r.status_code >= 500:
+            print(f"  ERA5 {lat},{lon}: HTTP {r.status_code}; reintento {intento + 1} de 6", flush=True)
             time.sleep(60 * (intento + 1))
             continue
         r.raise_for_status()
