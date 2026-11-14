@@ -12,8 +12,16 @@ export interface PuntoMapa {
   lat: number;
   lon: number;
   nota?: number;
+  /** en «lo habitual» no hay nota: este texto («38 %») va en su lugar y el marcador no lleva número */
+  cifra?: string;
   clase?: string;
   texto?: string;
+}
+
+/** La nota o, en «lo habitual», el porcentaje, para el globo del mapa. */
+function valor(p: PuntoMapa): string {
+  if (p.cifra) return ` · ${esc(p.cifra)} de los días`;
+  return p.nota !== undefined ? ` · ${p.nota.toFixed(1)}/10` : "";
 }
 
 export interface LineaMapa {
@@ -92,7 +100,7 @@ export default function MapaSpots({
           fillOpacity: 0.9,
         })
           .bindPopup(
-            `<strong>${esc(p.nombre)}</strong>${p.nota !== undefined ? ` · ${p.nota.toFixed(1)}/10` : ""}` +
+            `<strong>${esc(p.nombre)}</strong>${valor(p)}` +
               `<br><a href="/luz/spot/${encodeURIComponent(p.id)}">Ver ficha →</a>`,
           )
           .addTo(g);
@@ -113,11 +121,11 @@ export default function MapaSpots({
       }
       // En el mapa general los spots flojos son puntos pequeños: destacan los que merecen la pena
       const pequeno = enlazar && p.nota !== undefined && p.nota < 6.5;
-      const lado = pequeno ? 14 : enlazar ? 26 : 30;
+      const lado = pequeno ? 14 : p.cifra ? 18 : enlazar ? 26 : 30;
       const icono = L.divIcon({
         className: "",
         html: `<div class="marcador ${pequeno ? "pequeno " : ""}${p.clase ?? "n-floja"}" style="width:${lado}px;height:${lado}px">${
-          !pequeno && p.nota !== undefined ? p.nota.toFixed(0) : ""
+          !pequeno && !p.cifra && p.nota !== undefined ? p.nota.toFixed(0) : ""
         }</div>`,
         iconSize: [lado, lado],
         iconAnchor: [lado / 2, lado / 2],
@@ -130,7 +138,7 @@ export default function MapaSpots({
       }).addTo(g);
       if (enlazar) {
         mk.bindPopup(
-          `<strong>${esc(p.nombre)}</strong>${p.nota !== undefined ? ` · ${p.nota.toFixed(1)}/10` : ""}` +
+          `<strong>${esc(p.nombre)}</strong>${valor(p)}` +
             `${p.texto ? `<br>${esc(p.texto)}` : ""}<br><a href="/luz/spot/${encodeURIComponent(p.id)}">Ver ficha →</a>`,
         );
       }

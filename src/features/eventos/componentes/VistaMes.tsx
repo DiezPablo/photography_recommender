@@ -5,6 +5,7 @@ import Link from "next/link";
 import AvisoAurora from "@/features/eventos/componentes/AvisoAurora";
 import MapaEventos from "@/ui/mapa/MapaEventos";
 import MejoresZonasMes from "@/features/clima/componentes/MejoresZonasMes";
+import { rutaHabitual } from "@/features/clima/habitual";
 import AlineacionesMes from "@/features/eventos/componentes/AlineacionesMes";
 import TarjetaEvento from "@/features/eventos/componentes/TarjetaEvento";
 import NavMeses from "@/features/eventos/componentes/NavMeses";
@@ -79,7 +80,10 @@ export default function VistaMes({ eventos, mes, mesHoy }: { eventos: Eventos; m
                 <span className="icono-vl" aria-hidden />
                 <div>
                   <b>Vía Láctea sin luna</b> · del {fechaCorta(v.desde)} al {fechaCorta(v.hasta)}
-                  <small>Hasta {v.horas_max.toLocaleString("es-ES")} h de núcleo alto en noche cerrada.</small>
+                  <small>
+                    Hasta {v.horas_max.toLocaleString("es-ES")} h de núcleo alto en noche cerrada.{" "}
+                    <Link href={rutaHabitual(mes, "noche")}>¿Dónde verla? →</Link>
+                  </small>
                 </div>
               </li>
             ))}
@@ -103,7 +107,8 @@ export default function VistaMes({ eventos, mes, mesHoy }: { eventos: Eventos; m
                   <b>{m.nombre}</b> · noche del {fechaCorta(m.noche)} al {fechaCorta(m.fecha)}
                   <small>
                     Hasta {m.thz} meteoros/h en condiciones ideales. {TEXTO_CALIDAD[m.calidad]} (luna al{" "}
-                    {m.luna.iluminacion} %). {m.descripcion}
+                    {m.luna.iluminacion} %). {m.descripcion}{" "}
+                    <Link href={rutaHabitual(mes, "noche")}>¿Dónde verlas? →</Link>
                   </small>
                 </div>
               </li>

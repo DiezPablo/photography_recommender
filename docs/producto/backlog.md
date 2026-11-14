@@ -20,7 +20,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [ ] 010 — Ficha de lugar de fauna y ficha de especie: "luz cerca" y poda de bloques
 - [x] 013 — Idoneidad del lugar por momento y «lo habitual» de cada mes en `/luz/habitual` (`docs/specs/013-idoneidad.md`)
 - [ ] 014 — Eventos con varios lugares. CA: la berrea lista ≥ 8 lugares de ≥ 4 comunidades con franja y fiabilidad (semilla a mano + cuadrícula de la especie); `fenomenos.ts` fusionado con `eventos_naturaleza.csv`; los eventos de fauna salen de `/luz/evento`
-- [ ] 015 — "¿Dónde verlo?" en eventos de cielo. CA: la ficha de Perseidas enlaza a resultados de noche para su fecha y la zona elegida, con luna y horas de Vía Láctea
+- [x] 015 — «¿Dónde verlo?» en los eventos de cielo: del calendario a «lo habitual» de noche (`docs/specs/015-donde-verlo.md`)
 - [ ] 016 — Plan de varios días. CA: Asturias-octubre da por día luz + fauna + eventos en temporada; vive en `/plan`
 
 ## Después

@@ -104,3 +104,8 @@ ul.puerta-lista li {
   min-width: 7.5em;
   text-transform: capitalize;
 }
+
+/* «Qué noches» (spec 015): entre el titular y el mapa, también en móvil, donde la columna se reparte con order */
+.habitual .cielo-noche-mes {
+  order: 2;
+}
