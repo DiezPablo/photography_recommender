@@ -161,6 +161,8 @@ export interface LugarCerca extends LugarFauna {
   esperadas: number;
   /** las más frecuentes del mes, una de cada grupo por turno */
   destacadas: string[];
+  /** listas de eBird en el punto en los últimos 7 días (solo puntos de eBird con actividad; spec 021) */
+  listas7?: number;
 }
 
 /** Registros a los que se rarefacta la riqueza de cada lugar («especies esperadas en 100 registros»). */
@@ -169,8 +171,10 @@ export const REGISTROS_RAREFACCION = 100;
 /** Los lugares más cercanos al punto (hasta maxKm) con lo que hay en sus cuadrículas en el mes (0-11). */
 export function lugaresCerca(lat: number, lon: number, mes: number, max = 12, maxKm = 30): LugarCerca[] {
   const e = cargarEspana();
-  // de los puntos de eBird, uno por cuadrícula de 10 km (el de más especies): los de una misma cuadrícula tienen
-  // los mismos datos y en una ciudad llenaban la lista de plazas (Retiro sale; Plaza del Carmen, no)
+  // de los puntos de eBird, uno por cuadrícula de 10 km: los de una misma cuadrícula tienen los mismos datos y en
+  // una ciudad llenaban la lista de plazas (Retiro sale; Plaza del Carmen, no). Se queda aquel al que más se está
+  // yendo (listas de eBird en 30 días, spec 021) y, a igualdad o sin ese dato, el de más especies
+  const peso = (l: LugarFauna): [number, number] => [actividadPunto(l.id)?.l30 ?? 0, l.e ?? 0];
   const mejorPorCelda = new Map<string, LugarFauna>();
   const aqui = celda(lat, lon);
   const todos = cargarLugares()
@@ -181,7 +185,12 @@ export function lugaresCerca(lat: number, lon: number, mes: number, max = 12, ma
     if (l.id.startsWith("eb-")) {
       const c = celda(l.lat, l.lon);
       const ya = mejorPorCelda.get(c);
-      if (!ya || (l.e ?? 0) > (ya.e ?? 0)) mejorPorCelda.set(c, l);
+      if (!ya) mejorPorCelda.set(c, l);
+      else {
+        const [a30, aE] = peso(l);
+        const [b30, bE] = peso(ya);
+        if (a30 > b30 || (a30 === b30 && aE > bE)) mejorPorCelda.set(c, l);
+      }
     }
   const cerca = todos
     .filter((x) => !x.l.id.startsWith("eb-") || mejorPorCelda.get(celda(x.l.lat, x.l.lon)) === x.l)
@@ -229,12 +238,14 @@ export function lugaresCerca(lat: number, lon: number, mes: number, max = 12, ma
           if (xs[i] && destacadas.length < 4)
             destacadas.push(e?.especies[xs[i].k]?.n ?? e?.especies[xs[i].k]?.c ?? xs[i].k);
       const esperadas = [...proporcion.values()].reduce((a, p) => a + 1 - (1 - p) ** REGISTROS_RAREFACCION, 0);
+      const listas7 = actividadPunto(l.id)?.l7;
       return {
         ...l,
         km: Math.round(km * 10) / 10,
         especies: vistas.size,
         esperadas: Math.round(esperadas * 10) / 10,
         destacadas,
+        ...(listas7 ? { listas7 } : {}),
       };
     });
 }
