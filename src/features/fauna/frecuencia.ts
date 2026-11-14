@@ -29,7 +29,7 @@ export interface Confianza {
   texto: string;
 }
 
-/** Con menos de 30 fotos del grupo no se da nivel (safari/frecuencia.py); de 30 a 99, confianza baja. */
+/** Con menos de 30 fotos del grupo no se da nivel (rasante/fauna/frecuencia.py); de 30 a 99, confianza baja. */
 export function confianza(n: number | null | undefined): Confianza | null {
   if (n === null || n === undefined || n < 30) return null;
   if (n >= 300) return { clave: "alta", texto: "confianza alta" };

@@ -4,4 +4,4 @@ Contexto: hay que decir dónde ver fauna sin poner en riesgo especies amenazadas
 Decisión: observatorios de OSM + facetas de GBIF (no se descargan registros); meses normalizados por la
 clase para quitar el sesgo de primavera; formas domésticas fuera (*Canis lupus familiaris*). Lince, oso,
 lobo… solo por zonas (ya llegan generalizadas); fuera especies muy sensibles a la molestia (urogallo).
-Consecuencias: valen también para recientes y rarezas de eBird e iNaturalist (`safari/espana`).
+Consecuencias: valen también para recientes y rarezas de eBird e iNaturalist (`rasante/fauna`).

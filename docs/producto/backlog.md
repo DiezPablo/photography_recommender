@@ -9,7 +9,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [x] 002 — Auditoría de cobertura y licencias: `python -m rasante auditar`, `docs/datos/` (`docs/specs/002-auditoria-datos.md`)
 - [ ] 017 — Cierre del repo anterior: apagar workflows de `photo_recommender` y redirigir su web al dominio nuevo (001 §4)
 - [x] 005 — Safaris del mundo, fuera de esta versión (`docs/specs/005-safaris-fuera.md`)
-- [ ] 006 — Un solo pipeline: `safari/espana` → `rasante/fauna`, un único `comun`, workflows `fauna_*.yml` (001 §4)
+- [x] 006 — Un solo pipeline: Fauna en `rasante/fauna`, un único `comun`, workflows `fauna_*.yml` (`docs/specs/006-un-pipeline.md`)
 - [ ] 007 — Limpieza de datos de fauna: fuera `espana_rutas.json` y `espana_rasante.json`; `espana_*` → `fauna_*` (001 §4)
 - [ ] 018 — Cobertura de spots: 30 provincias en el mínimo de 12 y un 32 % en cielo urbano (auditoría 002). CA: criterio de selección revisado (variedad de tipos y cielo, no solo popularidad); ninguna provincia peninsular con menos de 20; informe de auditoría antes y después; `luz_descubrir.yml` vuelve a tener calendario mensual cuando su caché de Commons esté completa
 - [x] 019 — Lugares de fauna sin repetir: de 48 y 41 pares duplicados a 3 y 3 (`docs/specs/019-duplicados-fauna.md`)

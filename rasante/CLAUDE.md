@@ -1,4 +1,4 @@
-# rasante/ — pipeline del modo Luz (Python)
+# rasante/ — pipeline de datos (Python)
 
 Una orden por subpaquete: `python -m rasante <orden>` (`--help` para verlas).
 
@@ -17,7 +17,8 @@ Una orden por subpaquete: `python -m rasante <orden>` (`--help` para verlas).
   `docs/datos/auditoria-AAAA-MM-DD.md`. Pásalo antes y después de tocar el catálogo.
 - `clima` (ERA5 por mes), `dron` (ENAIRE + AEMA), `verificacion` (METAR), `validacion` (ERA5 + Commons +
   METAR), `avisos` (Telegram, opcional).
-- No están aquí: rutas y logística (aparcadas, backlog «Después») ni fauna (vive en `safari/espana`).
+- `fauna`: el modo Fauna entero, con sus propias órdenes (`python -m rasante fauna …`; ver `fauna/CLAUDE.md`).
+- No están aquí: rutas y logística (aparcadas, backlog «Después»).
 
 Reglas:
 - Antes de cambiar pesos de `notas/`, mira el informe de validación (workflow `luz_validar.yml`); no ajustes

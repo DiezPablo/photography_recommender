@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "rasante"
 version = "3.0.0"
-description = "Rasante: dónde ir a fotografiar naturaleza en España (luz y fauna); pipelines rasante (luz) y safari (fauna de España)"
+description = "Rasante: dónde ir a fotografiar naturaleza en España (luz y fauna)"
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "Uso personal, no comercial" }
@@ -25,14 +25,12 @@ dependencies = [
 dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [project.scripts]
-safari = "safari.cli:main"
 rasante = "rasante.__main__:main"
 
 [tool.setuptools.packages.find]
-include = ["safari*", "rasante*"]
+include = ["rasante*"]
 
 [tool.setuptools.package-data]
-safari = ["recursos/*"]
 rasante = ["recursos/*"]
 
 [tool.pytest.ini_options]
@@ -55,7 +53,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["safari", "rasante"]
+known-first-party = ["rasante"]
 
 [tool.ruff.format]
 quote-style = "double"
