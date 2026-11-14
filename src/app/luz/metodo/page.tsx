@@ -107,6 +107,17 @@ export default function Acerca() {
         previsión para toda España.
       </p>
 
+      <h2>Más allá de cinco días: lo habitual</h2>
+      <p>
+        Para una fecha sin previsión, <Link href="/luz/habitual">lo habitual</Link> ordena los spots por dos cosas que
+        no dependen del día: cuántos amaneceres, atardeceres o noches de ese mes salieron buenos en su zona entre 2021 y
+        2025 (ERA5) y lo que da de sí el lugar. Esto último se mide de 0 a 10 con los mismos factores que la previsión:
+        el relieve hacia donde sale o se pone el sol ese mes (cambia unos 60° entre junio y diciembre) y, de noche, la
+        oscuridad del cielo y si el sur, por donde pasa la Vía Láctea, está despejado. El porcentaje que ves es el
+        producto de las dos. Sirve para elegir zona y lugar, no para saber cómo saldrá un día concreto: no es una nota
+        ni está validado como tal.
+      </p>
+
       <h2>Cómo se ha validado</h2>
       <ul>
         <li>

@@ -46,6 +46,12 @@ está alto sin luna; restan las rachas de viento; aviso de rocío.
 La luna grande saliendo o poniéndose en el crepúsculo: casi llena, sobre el relieve, con el sol entre 6° bajo
 el horizonte y 2° sobre él, y sin nubes bajas en su dirección.
 
+## Idoneidad del lugar (`notas/idoneidad.py`, spec 013)
+Lo que da de sí un spot sin el tiempo, de 0 a 10, para ordenar cuando no hay previsión (`/luz/habitual`): no es
+una nota validada. Amanecer y atardecer, por mes: `3·f_luz + 7·f_color` con el relieve hacia el sol del día 15 y
+el `factor_relieve` de `nota_luz`. Noche: `10 · factor_sqm · f_sur`, con `f_sur` de 1 (relieve al sur ≤ 5°) a
+0,6 (≥ 20°). La web la multiplica por el % de días buenos del mes en la zona (climatología).
+
 ## Rutas (`rutas/metricas.py`)
 
 No es una nota, pero sigue el mismo principio de transparencia:

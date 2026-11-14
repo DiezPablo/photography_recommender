@@ -51,3 +51,56 @@ ul.puerta-lista li {
   margin-top: auto;
   padding-top: 8px;
 }
+
+/* «Lo habitual» (spec 013): ranking por mes sin previsión */
+.cifra.cifra-habitual {
+  font-size: 1.25rem;
+  white-space: nowrap;
+}
+.selector-habitual {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 0;
+}
+.selector-habitual a {
+  padding: 6px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  color: var(--texto-2);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.selector-habitual.meses a {
+  padding: 4px 9px;
+  font-size: 0.82rem;
+}
+.selector-habitual a[aria-current="page"] {
+  background: var(--texto);
+  border-color: var(--texto);
+  color: var(--fondo);
+}
+.enlace-habitual {
+  margin: 10px 0 0;
+  font-size: 0.9rem;
+  color: var(--texto-3);
+}
+.lista-habitual {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: grid;
+  gap: 8px;
+}
+.lista-habitual li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--borde);
+}
+.lista-habitual strong {
+  min-width: 7.5em;
+  text-transform: capitalize;
+}

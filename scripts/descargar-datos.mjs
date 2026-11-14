@@ -23,6 +23,7 @@ const LUZ = [
 ];
 const FICHEROS = [
   ...LUZ,
+  "lugares.json",
   "espana.json",
   "espana_recientes.json",
   "espana_lugares.json",

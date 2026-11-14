@@ -18,7 +18,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [ ] 012 — Consulta común "cuándo / dónde / qué" en la URL y portada que la lanza. CA: una URL reproduce cualquier resultado; funciona sin JS; pestañas Luz/Fauna
 - [ ] 004 — Sistema de diseño y rediseño de portada y fichas (sobre las seis pantallas de `modos.md`); incluye web instalable y modo noche y la poda del CSS que solo usaban los safaris
 - [ ] 010 — Ficha de lugar de fauna y ficha de especie: "luz cerca" y poda de bloques
-- [ ] 013 — Idoneidad del lugar por momento y resultados fuera de previsión. CA: `luz.idoneidad` (amanecer, atardecer, noche) como criterio de orden con desglose, no como nota validada; ranking para cualquier fecha = climatología × idoneidad, marcado como "lo habitual"
+- [x] 013 — Idoneidad del lugar por momento y «lo habitual» de cada mes en `/luz/habitual` (`docs/specs/013-idoneidad.md`)
 - [ ] 014 — Eventos con varios lugares. CA: la berrea lista ≥ 8 lugares de ≥ 4 comunidades con franja y fiabilidad (semilla a mano + cuadrícula de la especie); `fenomenos.ts` fusionado con `eventos_naturaleza.csv`; los eventos de fauna salen de `/luz/evento`
 - [ ] 015 — "¿Dónde verlo?" en eventos de cielo. CA: la ficha de Perseidas enlaza a resultados de noche para su fecha y la zona elegida, con luna y horas de Vía Láctea
 - [ ] 016 — Plan de varios días. CA: Asturias-octubre da por día luz + fauna + eventos en temporada; vive en `/plan`

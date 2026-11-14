@@ -257,3 +257,44 @@ test("fuentes y licencias: una página para los dos modos, enlazada desde el pie
   // no es de ningún modo: el conmutador no marca ninguno
   await expect(page.locator(".mundos a[aria-current=page]")).toHaveCount(0);
 });
+
+test("lo habitual: ranking de un mes sin previsión, por clima y por lugar (spec 013)", async ({
+  page,
+  request,
+}, info) => {
+  const errores = vigilar(page);
+  await page.goto("/luz/habitual/octubre/atardecer");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Atardecer en octubre");
+  // mes y momento se eligen con enlaces: marcados los dos actuales
+  await expect(page.locator('.selector-habitual a[aria-current="page"]')).toHaveText(["Atardecer", "oct"]);
+  const filas = (await (await request.get("/luz/datos-habitual/octubre/atardecer")).json()) as {
+    nota: number;
+    cifra: string;
+  }[];
+  if (filas.length === 0) {
+    // la idoneidad aún no se ha publicado (llega con el siguiente cálculo de la previsión): la página lo dice
+    await expect(page.locator(".vacio")).toContainText("Aún no hay datos");
+    return;
+  }
+  // de más a menos días buenos, y como porcentaje, no como nota
+  expect(filas.map((f) => f.nota)).toEqual(filas.map((f) => f.nota).sort((a, b) => b - a));
+  const primera = page.locator("ol.ranking li").first();
+  await expect(primera.locator(".cifra-habitual")).toHaveText(filas[0].cifra);
+  await expect(primera.locator(".por-que")).toContainText(/El \d+ % de los atardeceres de octubre salen buenos/);
+  await expect(primera.locator(".por-que")).toContainText(/Lugar: [\d,]+ de 10/);
+  await esperarTeselas(page);
+  await page.screenshot({ path: `${CAPTURAS}/habitual-${info.project.name}.png`, fullPage: true });
+  // cambiar de momento y de mes
+  await page.locator(".selector-habitual").getByRole("link", { name: "Noche" }).click();
+  await expect(page).toHaveURL(/\/luz\/habitual\/octubre\/noche$/);
+  await expect(page.locator("ol.ranking li").first().locator(".por-que")).toContainText("mag/arcsec²");
+  await page.locator(".selector-habitual.meses").getByRole("link", { name: "jul" }).click();
+  await expect(page).toHaveURL(/\/luz\/habitual\/julio\/noche$/);
+  // se llega desde el ranking del día y desde el índice
+  await page.goto("/luz");
+  await page.getByRole("link", { name: /Lo habitual de cada mes/ }).click();
+  await expect(page).toHaveURL(/\/luz\/habitual\/[a-z]+\/atardecer$/);
+  await page.goto("/luz/habitual");
+  await expect(page.locator(".lista-habitual li")).toHaveCount(12);
+  expect(errores).toEqual([]);
+});

@@ -26,7 +26,7 @@ fuentes, foto y acceso. Hoy cada uno tiene su forma, heredada del mock (0016).
 | `foto` | objeto o nulo | `{url, autor, licencia}` (la primera de la galería de Commons) |
 | `acceso` | objeto | `{aparcamiento_m, accesible}`; nulos hoy (no hay dato) |
 | `cerca` | lista de ids | Hasta 5 lugares del **otro** catálogo a ≤ 15 km, por distancia |
-| `luz` | solo si `catalogo: luz` | `{cielo_mag, bortle, horizonte: altura del relieve hacia 8 rumbos, costa, popularidad}`; `idoneidad` llega con 013 |
+| `luz` | solo si `catalogo: luz` | `{cielo_mag, bortle, horizonte: altura del relieve hacia 8 rumbos, costa, popularidad}`; `idoneidad` (spec 013) |
 | `fauna` | solo si `catalogo: fauna` | `{celdas: [EEA 10 km], radio_km, espacio: {nombre, figura}, natura, especies_ebird}`. Las especies salen de la cuadrícula, no van aquí |
 | `eventos` | lista de ids | Eventos de `eventos_naturaleza.csv` cuyo radio incluye el lugar: los de fauna en fauna, el resto en luz (014 lo afina) |
 | `revisado` | fecha o nulo | Solo en datos escritos a mano (ninguno todavía) |

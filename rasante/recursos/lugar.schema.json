@@ -13,6 +13,18 @@
     "lugares": { "type": "array", "items": { "$ref": "#/$defs/lugar" } }
   },
   "$defs": {
+    "doce_notas": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": { "type": "number", "minimum": 0, "maximum": 10 }
+    },
+    "doce_angulos": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": { "type": ["number", "null"] }
+    },
     "lugar": {
       "type": "object",
       "required": [
@@ -82,7 +94,7 @@
         "revisado": { "type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
         "luz": {
           "type": "object",
-          "required": ["cielo_mag", "bortle", "horizonte", "costa", "popularidad"],
+          "required": ["cielo_mag", "bortle", "horizonte", "costa", "popularidad", "idoneidad"],
           "additionalProperties": false,
           "properties": {
             "cielo_mag": { "type": ["number", "null"] },
@@ -99,7 +111,28 @@
               ]
             },
             "costa": { "type": "boolean" },
-            "popularidad": { "type": ["number", "null"] }
+            "popularidad": { "type": ["number", "null"] },
+            "idoneidad": {
+              "description": "Lo que da de sí el lugar en cada momento, sin el tiempo (0-10; spec 013). Criterio de orden, no nota validada. Amanecer y atardecer, por mes (enero a diciembre); `relieve`: los grados de horizonte de los que sale",
+              "type": "object",
+              "required": ["amanecer", "atardecer", "noche", "relieve"],
+              "additionalProperties": false,
+              "properties": {
+                "amanecer": { "$ref": "#/$defs/doce_notas" },
+                "atardecer": { "$ref": "#/$defs/doce_notas" },
+                "noche": { "type": "number", "minimum": 0, "maximum": 10 },
+                "relieve": {
+                  "type": "object",
+                  "required": ["amanecer", "atardecer", "sur"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "amanecer": { "$ref": "#/$defs/doce_angulos" },
+                    "atardecer": { "$ref": "#/$defs/doce_angulos" },
+                    "sur": { "type": ["number", "null"] }
+                  }
+                }
+              }
+            }
           }
         },
         "fauna": {
