@@ -1,5 +1,5 @@
 // Cuadrícula europea de referencia (EEA, EPSG:3035) en el navegador: en qué celda de 10 km cae un punto, para
-// pedir los datos de su bloque de 100 km. Mismas fórmulas que safari/espana/rejilla.py (Snyder, LAEA sobre GRS80).
+// pedir los datos de su bloque de 100 km. Mismas fórmulas que rasante/fauna/rejilla.py (Snyder, LAEA sobre GRS80).
 
 const A = 6378137;
 const F = 1 / 298.257222101;

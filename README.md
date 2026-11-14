@@ -5,11 +5,11 @@ cada spot y la **fauna** que se ve en cada lugar y época. Datos abiertos (Open-
 Wikimedia Commons, GBIF, eBird, iNaturalist), gratis, sin cuentas y sin IA.
 
 ```bash
-make instalar        # .venv con los pipelines y npm ci
+make instalar        # .venv con el pipeline y npm ci
 make check           # ruff, pytest, tsc, ESLint, Prettier
 npm run build && npx playwright test
-python -m rasante --help   # modo Luz
-python -m safari --help    # modo Fauna (--espana…)
+python -m rasante --help         # todas las órdenes (Luz)
+python -m rasante fauna --help   # las del modo Fauna
 ```
 
 Contexto para desarrollar: [CLAUDE.md](CLAUDE.md). Producto: [docs/producto](docs/producto). Decisiones:

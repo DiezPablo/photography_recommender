@@ -1,4 +1,4 @@
-// La cuadrícula EEA del navegador da lo mismo que pyproj (y que safari/espana/rejilla.py); sin página.
+// La cuadrícula EEA del navegador da lo mismo que pyproj (y que rasante/fauna/rejilla.py); sin página.
 import { expect, test } from "@playwright/test";
 import { bloque, celda, celdasEnRadio, centroCelda, laea, laeaInversa } from "../src/lib/rejilla";
 

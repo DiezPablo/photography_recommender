@@ -13,6 +13,7 @@ ORDENES = {
         "rasante.eventos.cli_alineaciones",
         "Sol y luna llena por los picos del horizonte → alineaciones.json",
     ),
+    "fauna": ("rasante.fauna.ordenes", "Modo Fauna: cuadrícula, eBird, recientes, lugares… (fauna --help)"),
     "lugares": ("rasante.lugares.cli", "Índice común de spots y lugares de fauna → lugares.json"),
     "auditar": ("rasante.lugares.auditoria", "Auditoría de lugares.json: cobertura, vacíos y duplicados → informe .md"),
     "clima": ("rasante.clima.cli", "Climatología fotográfica por mes (ERA5) → clima.json"),

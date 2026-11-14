@@ -8,7 +8,7 @@ import requests
 
 USER_AGENT = os.environ.get(
     "USER_AGENT",
-    "spots-paisaje/0.3 (https://github.com/DiezPablo/photography_recommender; proyecto personal no comercial)",
+    "rasante/3.0 (https://github.com/DiezPablo/photography_recommender; proyecto personal no comercial)",
 )
 
 
