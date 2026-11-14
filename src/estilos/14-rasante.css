@@ -109,3 +109,40 @@ ul.puerta-lista li {
 .habitual .cielo-noche-mes {
   order: 2;
 }
+
+/* Fenómeno de fauna con varios lugares (spec 014) */
+.lugares-fenomeno {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0 8px;
+  display: grid;
+  gap: 4px;
+  counter-reset: lugar;
+}
+.lugares-fenomeno li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--borde);
+}
+.lugares-fenomeno h3 {
+  font-size: 1.08rem;
+  margin: 0 0 2px;
+}
+.lugares-fenomeno .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  color: var(--texto-3);
+  font-size: 0.88rem;
+  margin: 0 0 6px;
+}
+.lugares-fenomeno p {
+  margin: 0 0 4px;
+}
+.lugares-fenomeno .fiabilidad {
+  font-size: 0.9rem;
+  color: var(--texto-2);
+}
+.enlace-fenomeno {
+  margin: 8px 0;
+  font-weight: 600;
+}

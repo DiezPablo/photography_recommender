@@ -61,6 +61,38 @@ def test_naturaleza_valida():
     assert all(e["ccaa"] for e in eventos), [e["id"] for e in eventos if not e["ccaa"]]
 
 
+def test_fenomenos_con_varios_lugares():
+    """Spec 014: la berrea reúne al menos 8 lugares de 4 comunidades; cada fenómeno, con especie y fuente."""
+    eventos = naturaleza.cargar()
+    fenomenos = {f["id"]: f for f in naturaleza.cargar_fenomenos(eventos)}
+    berrea = fenomenos["berrea"]
+    lugares = [e for e in eventos if e["id"] in berrea["eventos"]]
+    assert len(lugares) >= 8 and len({e["ccaa"] for e in lugares}) >= 4
+    assert {e["provincia"] for e in lugares} >= {
+        "Zamora",
+        "Cantabria",
+        "Jaén",
+        "Lleida",
+        "Teruel",
+        "Asturias",
+        "Navarra",
+    }
+    assert berrea["especie"] == "Cervus elaphus" and berrea["franja"]
+    assert len(fenomenos["grullas"]["eventos"]) >= 2
+
+
+def test_fenomenos_rechaza_errores(tmp_path):
+    eventos = naturaleza.cargar()
+    malo = tmp_path / "f.csv"
+    cabecera = "id,nombre,especie,franja,descripcion,consejo,fuente\n"
+    malo.write_text(cabecera + "lince,Lince,Lynx pardinus,todo el día,d,c,https://es.wikipedia.org/wiki/Lince\n")
+    with pytest.raises(ValueError, match="al menos dos lugares"):
+        naturaleza.cargar_fenomenos(eventos, malo)
+    malo.write_text(cabecera + "berrea,Berrea,Cervus elaphus,amanecer,d,c,wikipedia\n")
+    with pytest.raises(ValueError, match="https"):
+        naturaleza.cargar_fenomenos(eventos, malo)
+
+
 def test_naturaleza_rechaza_errores(tmp_path):
     malo = tmp_path / "e.csv"
     cabecera = "id,nombre,categoria,desde,hasta,pico,lugar,lat,lon,radio_km,descripcion,consejo\n"
@@ -78,7 +110,7 @@ def test_naturaleza_rechaza_errores(tmp_path):
 def test_generar_sin_nan():
     datos = generar(date(2026, 10, 24), 13, con_red=False)
     sin_nan(datos)
-    assert datos["luna"] and datos["meteoros"] and datos["naturaleza"]
+    assert datos["luna"] and datos["meteoros"] and datos["naturaleza"] and datos["fenomenos"]
 
 
 def test_aurora_con_pronostico_real():

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import BarraAnual from "@/features/eventos/componentes/BarraAnual";
 import MapaEventos from "@/ui/mapa/MapaEventos";
 import ClimaSpot from "@/features/clima/componentes/ClimaSpot";
+import { fenomenoDeEvento } from "@/features/fauna/eventoFauna";
 import {
   ambito,
   cargarEventos,
@@ -44,6 +45,7 @@ export default async function PaginaEvento({ params }: Props) {
     (l) => l.fase === "nueva" && l.fecha >= temporada.desde && l.fecha <= temporada.hasta,
   );
   const spots = spotsCerca(e);
+  const fenomeno = fenomenoDeEvento(e.id);
 
   return (
     <main className={`ficha evento cat-${e.categoria}`}>
@@ -59,6 +61,13 @@ export default async function PaginaEvento({ params }: Props) {
         </p>
         <h1>{e.nombre}</h1>
         <p className="entradilla">{e.descripcion}</p>
+        {fenomeno && (
+          <p className="enlace-fenomeno">
+            <Link href={`/fauna/evento/${fenomeno.id}`}>
+              {fenomeno.nombre}: los {fenomeno.eventos.length} lugares →
+            </Link>
+          </p>
+        )}
         <div className="temporada">
           <p>
             {temporada.ahora ? (
