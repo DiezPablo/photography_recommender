@@ -98,9 +98,12 @@ def test_provincias_incluye_las_comunidades_de_una_sola_provincia(monkeypatch):
         return [
             {"code": "ES-AR", "name": "Aragón"},
             {"code": "ES-CN", "name": "Canarias"},
-            {"code": "ES-MD", "name": "Madrid"},
-            {"code": "ES-AS", "name": "Asturias"},
+            {"code": "ES-MD", "name": "Madrid, Comunidad de"},
+            {"code": "ES-AS", "name": "Asturias, Principado de"},
         ]
 
     monkeypatch.setattr(ebird, "_get", falso)
-    assert [p["code"] for p in ebird.provincias()] == ["ES-AR-TE", "ES-CN-TF", "ES-MD", "ES-AS"]
+    regiones = ebird.provincias()
+    assert [p["code"] for p in regiones] == ["ES-AR-TE", "ES-CN-TF", "ES-MD", "ES-AS"]
+    # eBird las nombra al revés; en las rarezas se enseña el nombre: «Madrid», no «Madrid, Comunidad de»
+    assert [p["name"] for p in regiones] == ["Teruel", "Tenerife", "Madrid", "Asturias"]

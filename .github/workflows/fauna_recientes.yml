@@ -17,7 +17,8 @@ concurrency:
 jobs:
   recientes:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    # la ejecución completa ronda los 14 min mientras se rellena el histórico de listas (5 días por vez)
+    timeout-minutes: 30
     # la clave de eBird está en este environment de GitHub
     environment: EBIRD_CLAVE
     env:

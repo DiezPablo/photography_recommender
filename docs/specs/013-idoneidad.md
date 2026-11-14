@@ -1,6 +1,6 @@
 # 013 — Idoneidad del lugar por momento y resultados fuera de previsión
 
-Estado: hecha (falta que el pipeline la publique en producción)
+Estado: hecha
 Modo: Luz
 Situación del fotógrafo: un finde | un viaje (a más de cinco días)
 
@@ -36,7 +36,8 @@ conoce cada lugar (relieve, cielo), pero no lo junta en una lista.
       momento; con JavaScript, filtros y lista completa.
 - [x] Marcado como «lo habitual», en porcentaje y no como nota; Método dice que no está validado como nota.
 - [x] Sin `idoneidad` publicada (hasta el primer `luz_datos` tras fusionar), la página lo dice y nada falla.
-- [ ] Primera publicación en producción comprobada (tras fusionar, lanzar `luz_datos.yml` o esperar al cron).
+- [x] Primera publicación en producción comprobada (14-11-2026): `lugares.json` trae `luz.idoneidad` en los
+      1 500 spots y `/luz/habitual/octubre/atardecer` enseña su lista en la web pública.
 
 ## Datos
 `lugares.json` crece ~0,2 MB comprimido; la web lo descarga ahora en el build (antes no lo usaba). 36 páginas y

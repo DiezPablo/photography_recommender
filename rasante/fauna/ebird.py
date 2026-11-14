@@ -79,7 +79,14 @@ def provincias(pais: str = "ES", s=None) -> list[dict]:
     primero = _get(f"ref/region/list/subnational1/{pais}", {"fmt": "json"}, s)
     vistas = {p["code"] for p in segundo}
     con_hijas = {c.rsplit("-", 1)[0] for c in vistas}
-    return [*segundo, *(p for p in primero if p["code"] not in con_hijas and p["code"] not in vistas)]
+    # eBird nombra las de primer nivel al revés («Madrid, Comunidad de», «Asturias, Principado de»): el nombre se
+    # enseña tal cual en las rarezas, así que se queda en «Madrid», «Asturias»
+    solas = [
+        {**p, "name": p.get("name", "").split(",")[0].strip()}
+        for p in primero
+        if p["code"] not in con_hijas and p["code"] not in vistas
+    ]
+    return [*segundo, *solas]
 
 
 def recientes_region(region: str, dias: int = 30, s=None) -> list[dict]:
