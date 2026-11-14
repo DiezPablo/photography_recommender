@@ -38,7 +38,9 @@ Tres bloques, cada uno implementable por separado y en este orden:
       Navarra, La Rioja, Baleares, Ceuta, Melilla) y se quedaban sin recientes, rarezas ni listas. Ahora se piden
       por su región de primer nivel (`ebird.provincias`); el histórico de listas se vuelve a pedir si cambian
       las regiones.
-- [ ] Comprobar en la siguiente ejecución que Madrid y las demás traen datos.
+- [x] Comprobado en la ejecución del 14-11-2026 tras el arreglo: Madrid pasa de 0 a 190 observaciones de eBird
+      (Asturias 221, Cantabria 225, Murcia 195, Navarra 195, La Rioja 147, Baleares 194, Ceuta 59, Melilla 17);
+      53 provincias con datos (antes 45), rarezas de 361 a 510 y listas de 1 805 a 2 330 (Madrid, 171).
 - [ ] Bloque 2: serie de 30 días por provincia en la release; una línea en «Este finde»; sin clave, la web no
       enseña el bloque.
 - [ ] Bloque 3: lista de especies con nombre en español en la ficha de los puntos cubiertos; tanda diaria

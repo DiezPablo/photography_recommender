@@ -32,7 +32,7 @@ no existe (`espana*.yml`).
       sin escribir nada, como antes.
 - [x] Los nombres de los ficheros publicados y las claves de caché no cambian: la web no nota nada.
 - [x] `tsc`, ESLint y Prettier en verde (en `src/` solo cambian comentarios).
-- [ ] Primera ejecución de `fauna_recientes.yml` en Actions en verde tras fusionar (lanzarla a mano).
+- [x] Primera ejecución de `fauna_recientes.yml` en Actions en verde tras fusionar (14-11-2026, 14 minutos).
 
 ## Datos
 Ninguno nuevo. `espana.json`, `espana_ebird.json`, `espana_recientes.json`, `espana_rarezas.json`,
