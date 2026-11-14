@@ -55,9 +55,9 @@ API de eBird 2.0 (condiciones de uso de eBird, no comercial, con atribución). F
 (La rellena `/diseno`: dónde va cada dato en la ficha de lugar y en «Cerca de mí».)
 
 ## Notas de implementación
-Bloque 1: `safari/espana/ebird_listas.py` (`--espana-listas`). Solo se guardan recuentos por punto: ni
+Bloque 1: `rasante/fauna/ebird_listas.py` (`python -m rasante fauna listas`). Solo se guardan recuentos por punto: ni
 observadores ni listas sueltas, y solo de los puntos públicos que ya son lugares. eBird da como mucho 200 listas
 por provincia y día: en las provincias con más actividad el recuento es un mínimo (se avisa en el log).
 
-`safari/espana/ebird.py` ya tiene `_get` con pausa de 1 s y clave opcional. Las respuestas de estos tres
+`rasante/fauna/ebird.py` ya tiene `_get` con pausa de 1 s y clave opcional. Las respuestas de estos tres
 endpoints hay que grabarlas una vez desde Actions (aquí no hay clave) antes de escribir los tests.

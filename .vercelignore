@@ -3,7 +3,6 @@ tests
 e2e
 __pycache__
 # el pipeline no hace falta en Vercel
-safari/*
 pyproject.toml
 *.py
 docs

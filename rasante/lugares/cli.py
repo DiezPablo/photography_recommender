@@ -21,6 +21,7 @@ from jsonschema import Draft202012Validator
 from rasante.comun.ficheros import escribir_json
 from rasante.comun.territorio import Provincias
 from rasante.eventos import naturaleza
+from rasante.fauna.rejilla import celdas_en_radio
 from rasante.lugares import modelo
 from rasante.prevision.mar import Costa
 
@@ -46,9 +47,6 @@ def construir(
     costa=None,
 ) -> tuple[dict, int]:
     """El documento lugares.json y cuántos lugares de fauna se descartan por caer fuera de España o en el mar."""
-    # la cuadrícula es del pipeline de fauna (safari.espana) hasta que se unifiquen los paquetes (spec 006)
-    from safari.espana.rejilla import celdas_en_radio
-
     provincias = provincias or Provincias()
     sitios = (natura or {}).get("sitios", {})
     lugares = [modelo.de_spot(f, costa) for f in (spots or {}).get("features", [])]

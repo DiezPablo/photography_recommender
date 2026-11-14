@@ -55,7 +55,7 @@ export function parametros(e: EstadoCarta, hoy: string): Record<string, string |
 }
 
 /** Fiabilidad del dato según la muestra (observaciones de su grupo con los meses vecinos): los mismos umbrales que
- * el pipeline (safari/espana/estacionalidad.py). */
+ * el pipeline (rasante/fauna/estacionalidad.py). */
 export type Fiabilidad = "solida" | "media" | "poca" | "ninguna";
 export function fiabilidad(muestra: number | null | undefined): Fiabilidad {
   if (!muestra || muestra < 30) return "ninguna";

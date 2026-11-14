@@ -10,8 +10,7 @@ Cómo trabajamos: `docs/flujo-de-trabajo.md` (léelo solo si la tarea es sobre e
 
 Este repositorio (antes safari_recommender) es la base desde el 13-11-2026 (decisión 0018): aquí están los
 secretos y la release `datos`. El modo Luz vino de DiezPablo/photo_recommender, que queda congelado. Los safaris
-del mundo que traía este repo se retiraron de la versión (decisión 0021); el paquete Python de Fauna conserva el
-nombre `safari` hasta la spec 006.
+del mundo que traía este repo se retiraron de la versión (decisión 0021).
 
 ## Reglas fijas
 - Sin IA generativa ni LLM en el producto. Sin backend: GitHub Actions calcula, la release `datos` almacena,
@@ -26,11 +25,11 @@ nombre `safari` hasta la spec 006.
 - Ética: nunca ubicaciones exactas ni recientes de especies sensibles (lince, oso, lobo…): solo zonas (0011).
 - `git pull` antes de push: Actions hace commits de `public/datos/version.json`.
 
-## Piezas (detalle en `rasante/CLAUDE.md`, `safari/CLAUDE.md` y `src/CLAUDE.md`, se cargan al trabajar ahí)
-- `rasante/`: pipeline de Luz, `python -m rasante <orden>`.
-- `safari/`: pipeline de Fauna (`safari/espana`, `python -m safari --espana…`).
+## Piezas (detalle en `rasante/CLAUDE.md`, `rasante/fauna/CLAUDE.md` y `src/CLAUDE.md`, se cargan al trabajar ahí)
+- `rasante/`: el pipeline, `python -m rasante <orden>`. Luz en sus subpaquetes; Fauna en `rasante/fauna`
+  (`python -m rasante fauna <orden>`).
 - `src/`: web Next.js 16 App Router (`app/` rutas finas, `features/<área>/`, `ui/`, `lib/`, `estilos/`).
-- `.github/workflows/`: `luz_*.yml`, `espana*.yml` (fauna), `revision.yml` (datos escritos a mano), `pruebas.yml`.
+- `.github/workflows/`: `luz_*.yml`, `fauna_*.yml`, `revision.yml` (datos escritos a mano), `pruebas.yml`.
 
 ## Probar
 - `make check` (ruff, pytest sin red, tsc, ESLint, Prettier). E2E: `npm run build && npx playwright test`.
