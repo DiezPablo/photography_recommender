@@ -69,8 +69,17 @@ def hotspots(lat: float, lon: float, radio_km: int = 25, s=None) -> list[dict]:
 
 
 def provincias(pais: str = "ES", s=None) -> list[dict]:
-    """Regiones de segundo nivel de eBird (provincias): [{code: "ES-AR-TE", name: "Teruel"}]."""
-    return _get(f"ref/region/list/subnational2/{pais}", {"fmt": "json"}, s)
+    """Las regiones de eBird con las que se cubre el país entero: [{code: "ES-AR-TE", name: "Teruel"}].
+
+    Son las de segundo nivel (provincias; en Canarias, islas) y, donde eBird no tiene segundo nivel, la de primero:
+    las comunidades de una sola provincia (Madrid «ES-MD», Asturias, Cantabria, Murcia, Navarra, La Rioja,
+    Baleares…) no aparecen en la lista de segundo nivel. Hasta el 14-11-2026 solo se pedía esa lista y esas
+    comunidades se quedaban sin recientes, sin rarezas y sin listas."""
+    segundo = _get(f"ref/region/list/subnational2/{pais}", {"fmt": "json"}, s)
+    primero = _get(f"ref/region/list/subnational1/{pais}", {"fmt": "json"}, s)
+    vistas = {p["code"] for p in segundo}
+    con_hijas = {c.rsplit("-", 1)[0] for c in vistas}
+    return [*segundo, *(p for p in primero if p["code"] not in con_hijas and p["code"] not in vistas)]
 
 
 def recientes_region(region: str, dias: int = 30, s=None) -> list[dict]:

@@ -86,3 +86,21 @@ def test_notables_una_por_especie_y_lugar(monkeypatch):
     assert len(xs) == 1
     assert xs[0]["f"] == "2026-11-03 09:30" and xs[0]["k"] == 2 and xs[0]["r"] is True
     assert xs[0]["l"] == "Marismas · Santoña"
+
+
+def test_provincias_incluye_las_comunidades_de_una_sola_provincia(monkeypatch):
+    """eBird solo da segundo nivel donde lo hay: Madrid, Asturias o Murcia son regiones de primer nivel y sin
+    ellas se quedaban sin datos (visto en producción el 14-11-2026: ni una observación en esas comunidades)."""
+
+    def falso(ruta, params, s=None):
+        if "subnational2" in ruta:
+            return [{"code": "ES-AR-TE", "name": "Teruel"}, {"code": "ES-CN-TF", "name": "Tenerife"}]
+        return [
+            {"code": "ES-AR", "name": "Aragón"},
+            {"code": "ES-CN", "name": "Canarias"},
+            {"code": "ES-MD", "name": "Madrid"},
+            {"code": "ES-AS", "name": "Asturias"},
+        ]
+
+    monkeypatch.setattr(ebird, "_get", falso)
+    assert [p["code"] for p in ebird.provincias()] == ["ES-AR-TE", "ES-CN-TF", "ES-MD", "ES-AS"]

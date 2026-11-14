@@ -54,8 +54,11 @@ test("«Buscar especie» de España lleva a la carta con la especie y el mes (D8
 
 test("fauna en España: buscar un lugar y lugares cerca", async ({ page, request }) => {
   const cerca = (await (await request.get("/fauna/cerca?lat=40.42&lon=-3.70&mes=10")).json()) as {
-    lugares: { n: string }[];
+    lugares: { n: string; km: number; listas7?: number }[];
   };
+  // de más cerca a más lejos; la actividad de eBird (spec 021) elige el punto de cada cuadrícula, no el orden
+  expect(cerca.lugares.map((l) => l.km)).toEqual(cerca.lugares.map((l) => l.km).sort((x, y) => x - y));
+  for (const l of cerca.lugares) if (l.listas7 !== undefined) expect(l.listas7).toBeGreaterThan(0);
   await page.goto("/fauna?lat=40.420&lon=-3.700&radio=10&fecha=2026-11-08");
   if (!cerca.lugares.length) return; // sin lugares publicados aún
   await expect(page.locator(".cerca-de-aqui summary")).toContainText("lugares para ver fauna");

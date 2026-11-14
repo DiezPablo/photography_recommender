@@ -10,6 +10,7 @@ interface LugarCerca extends LugarFauna {
   km: number;
   especies: number;
   destacadas: string[];
+  listas7?: number;
 }
 
 export type Eleccion = { lat: number; lon: number; radio: number; nombre: string | null };
@@ -135,6 +136,7 @@ export default function ElegirLugar({
                   {l.t} · {l.km < 1 ? "aquí" : `a ${l.km.toLocaleString("es-ES")} km`}
                   {l.especies > 0 ? ` · ${l.especies} especies este mes` : ""}
                   {l.e ? ` · ${l.e} en eBird` : ""}
+                  {l.listas7 ? ` · ${l.listas7} ${l.listas7 === 1 ? "lista" : "listas"} esta semana` : ""}
                 </small>
                 {l.destacadas.length > 0 && (
                   <>

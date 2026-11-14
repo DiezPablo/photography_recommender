@@ -1,6 +1,6 @@
 # 021 — eBird a fondo
 
-Estado: en curso (bloque 1 hecho; 2 y 3 pendientes)
+Estado: en curso (bloque 1 hecho y comprobado en producción; 2 y 3 pendientes)
 Modo: Fauna
 Situación del fotógrafo: una tarde | un finde | un viaje
 
@@ -31,8 +31,14 @@ Tres bloques, cada uno implementable por separado y en este orden:
 - [x] Bloque 1: `espana_recientes.yml` publica `espana_listas.json` (por punto: listas de 7 y 30 días, última
       fecha, especies de la lista más larga) y la ficha de un punto de eBird lo muestra. El recuento por día se
       guarda en `espana_listas_dias.json` y el histórico de 30 días se completa en unos 6 días (5 por ejecución).
-- [ ] Bloque 1, pendiente: comprobar la primera ejecución en Actions (los tests usan el formato documentado de
-      la API, no respuestas grabadas: aquí no hay clave) y usar la actividad para ordenar «Cerca de mí».
+- [x] Bloque 1, primera ejecución en Actions (14-11-2026): 1 805 listas en 1 002 puntos en los 5 primeros
+      días, con el formato esperado. «Cerca de aquí» se queda, de los puntos de eBird de cada cuadrícula, con el
+      de más listas en 30 días y dice cuántas hubo esa semana.
+- [x] Cobertura: eBird no da «provincias» en las comunidades de una sola (Madrid, Asturias, Cantabria, Murcia,
+      Navarra, La Rioja, Baleares, Ceuta, Melilla) y se quedaban sin recientes, rarezas ni listas. Ahora se piden
+      por su región de primer nivel (`ebird.provincias`); el histórico de listas se vuelve a pedir si cambian
+      las regiones.
+- [ ] Comprobar en la siguiente ejecución que Madrid y las demás traen datos.
 - [ ] Bloque 2: serie de 30 días por provincia en la release; una línea en «Este finde»; sin clave, la web no
       enseña el bloque.
 - [ ] Bloque 3: lista de especies con nombre en español en la ficha de los puntos cubiertos; tanda diaria

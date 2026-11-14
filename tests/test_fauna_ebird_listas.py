@@ -50,11 +50,14 @@ def test_main_rellena_dias_guarda_el_historial_y_continua(monkeypatch, tmp_path)
     pedidas = []
 
     def falso_get(ruta, params, s=None):
-        if ruta.startswith("ref/region"):
-            return [{"code": "ES-MD-M", "name": "Madrid"}, {"code": "ES-CL-SG", "name": "Segovia"}]
+        # eBird no tiene segundo nivel en las comunidades de una sola provincia: Madrid es «ES-MD»
+        if ruta.startswith("ref/region/list/subnational2"):
+            return [{"code": "ES-CL-SG", "name": "Segovia"}]
+        if ruta.startswith("ref/region/list/subnational1"):
+            return [{"code": "ES-CL", "name": "Castilla y León"}, {"code": "ES-MD", "name": "Madrid"}]
         pedidas.append(ruta)
         assert params == {"maxResults": 200}
-        return [_lista("L1", 20)] if "ES-MD-M" in ruta else [_lista("L2", 9), _lista("L7", 4)]
+        return [_lista("L1", 20)] if "ES-MD/" in ruta else [_lista("L2", 9), _lista("L7", 4)]
 
     monkeypatch.setenv("EBIRD_CLAVE", "x")
     monkeypatch.setattr(ebird, "_get", falso_get)
@@ -63,7 +66,7 @@ def test_main_rellena_dias_guarda_el_historial_y_continua(monkeypatch, tmp_path)
     salida = tmp_path / "espana_listas.json"
     hoy = date(2026, 11, 13)
     ebird_listas.main(salida, lugares, hoy, max_dias=2)
-    assert pedidas[0] == "product/lists/ES-MD-M/2026/11/12" and len(pedidas) == 4
+    assert pedidas[:2] == ["product/lists/ES-CL-SG/2026/11/12", "product/lists/ES-MD/2026/11/12"] and len(pedidas) == 4
     d = json.loads(salida.read_text())
     assert d["dias"] == ["2026-11-11", "2026-11-12"]
     assert d["puntos"] == {
@@ -73,8 +76,15 @@ def test_main_rellena_dias_guarda_el_historial_y_continua(monkeypatch, tmp_path)
     # la siguiente ejecución sigue con los días que faltan, sin repetir los que ya están
     pedidas.clear()
     ebird_listas.main(salida, lugares, hoy, max_dias=1)
-    assert pedidas == ["product/lists/ES-MD-M/2026/11/10", "product/lists/ES-CL-SG/2026/11/10"]
-    assert len(json.loads((tmp_path / "espana_listas_dias.json").read_text())["dias"]) == 3
+    assert pedidas == ["product/lists/ES-CL-SG/2026/11/10", "product/lists/ES-MD/2026/11/10"]
+    guardado = json.loads((tmp_path / "espana_listas_dias.json").read_text())
+    assert len(guardado["dias"]) == 3 and guardado["regiones"] == ["ES-CL-SG", "ES-MD"]
+    # un historial pedido con otras regiones (el de antes de incluir Madrid) no vale: se empieza de nuevo
+    (tmp_path / "espana_listas_dias.json").write_text(json.dumps({"dias": guardado["dias"]}))
+    pedidas.clear()
+    ebird_listas.main(salida, lugares, hoy, max_dias=1)
+    assert pedidas == ["product/lists/ES-CL-SG/2026/11/12", "product/lists/ES-MD/2026/11/12"]
+    assert list(json.loads((tmp_path / "espana_listas_dias.json").read_text())["dias"]) == ["2026-11-12"]
 
 
 def test_sin_clave_no_pide_ni_escribe(monkeypatch, tmp_path):

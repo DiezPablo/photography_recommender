@@ -122,13 +122,19 @@ def main(salida: Path, lugares: Path | None = None, hoy: date | None = None, max
         return
     hoy = hoy or datetime.now(UTC).date()
     historial = salida.parent / "espana_listas_dias.json"
-    dias: dict[str, dict] = {}
-    if historial.exists():
-        dias = json.loads(historial.read_text(encoding="utf-8")).get("dias", {})
-    desde = (hoy - timedelta(days=DIAS)).isoformat()
-    dias = {d: v for d, v in dias.items() if d >= desde}
     s = sesion()
     regiones = [p["code"] for p in ebird.provincias(s=s)]
+    dias: dict[str, dict] = {}
+    if historial.exists():
+        guardado = json.loads(historial.read_text(encoding="utf-8"))
+        # los días guardados solo valen si se pidieron con las mismas regiones: si la lista cambia (como al
+        # añadir las comunidades de una sola provincia), se vuelven a pedir en vez de quedar a medias 30 días
+        if guardado.get("regiones") == sorted(regiones):
+            dias = guardado.get("dias", {})
+        else:
+            print("eBird listas: cambian las regiones; se vuelve a pedir el histórico", flush=True)
+    desde = (hoy - timedelta(days=DIAS)).isoformat()
+    dias = {d: v for d, v in dias.items() if d >= desde}
     puntos = puntos_de_lugares(lugares)
     nuevos = 0
     for dia in dias_que_faltan(dias, hoy, max_dias):
@@ -141,7 +147,7 @@ def main(salida: Path, lugares: Path | None = None, hoy: date | None = None, max
     if not dias:
         print("eBird listas: sin datos; no se escribe nada", flush=True)
         return
-    escribir_json(historial, {"dias": dias})
+    escribir_json(historial, {"regiones": sorted(regiones), "dias": dias})
     por_punto = resumen(dias, hoy)
     escribir_json(
         salida,
