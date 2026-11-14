@@ -27,7 +27,8 @@ def generar(hoy: date, meses: int, con_red: bool = True) -> dict:
         "via_lactea": cielo.via_lactea(hoy, hasta),
         "aurora": aurora.aurora() if con_red else None,
         "starlight": {"zonas": starlight.cargar(), "fuente": starlight.FUENTE},
-        "naturaleza": naturaleza.cargar(),
+        "naturaleza": (eventos := naturaleza.cargar()),
+        "fenomenos": naturaleza.cargar_fenomenos(eventos),
         "categorias": naturaleza.CATEGORIAS,
     }
 

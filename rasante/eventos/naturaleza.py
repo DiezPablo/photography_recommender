@@ -8,6 +8,7 @@ from pathlib import Path
 from rasante.comun.territorio import RECURSOS, Provincias, ccaa_de
 
 CSV = RECURSOS / "eventos_naturaleza.csv"
+FENOMENOS = RECURSOS / "fenomenos_fauna.csv"
 CATEGORIAS = {
     "flora": "Floración",
     "otono": "Otoño",
@@ -62,3 +63,24 @@ def cargar(ruta: Path = CSV, provincias: Provincias | None = None) -> list[dict]
     if len(ids) != len(set(ids)):
         raise ValueError("ids de evento repetidos")
     return eventos
+
+
+def cargar_fenomenos(eventos: list[dict], ruta: Path = FENOMENOS) -> list[dict]:
+    """Fenómenos de fauna que se dan en varios lugares (spec 014): la berrea, las grullas… Cada uno reúne los
+    eventos de fauna cuyo id empieza por el suyo («berrea-monfrague» es de «berrea»), así que añadir un lugar es
+    añadir una fila al CSV de eventos. Falla si un fenómeno se queda con menos de dos lugares."""
+    fenomenos = []
+    with open(ruta, encoding="utf-8") as f:
+        for n, fila in enumerate(csv.DictReader(f), start=2):
+            if None in fila or any(v is None or v == "" for v in fila.values()):
+                raise ValueError(f"fenómenos, línea {n}: campos de más o vacíos (¿una coma sin comillas?)")
+            if not fila["fuente"].startswith("https://"):
+                raise ValueError(f"{fila['id']}: la fuente tiene que ser una dirección https")
+            suyos = [e["id"] for e in eventos if e["categoria"] == "fauna" and e["id"].startswith(fila["id"] + "-")]
+            if len(suyos) < 2:
+                raise ValueError(f"{fila['id']}: un fenómeno necesita al menos dos lugares (tiene {len(suyos)})")
+            fenomenos.append({**fila, "eventos": suyos})
+    ids = [x["id"] for x in fenomenos]
+    if len(ids) != len(set(ids)):
+        raise ValueError("ids de fenómeno repetidos")
+    return fenomenos

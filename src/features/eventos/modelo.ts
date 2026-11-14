@@ -20,6 +20,21 @@ export interface EventoNaturaleza {
   consejo: string;
 }
 
+/** Un fenómeno de fauna que se da en varios lugares (la berrea, las grullas): reúne eventos de `naturaleza`. */
+export interface FenomenoFauna {
+  id: string;
+  nombre: string;
+  /** nombre científico */
+  especie: string;
+  /** cuándo dentro del día: «amanecer y atardecer» */
+  franja: string;
+  descripcion: string;
+  consejo: string;
+  fuente: string;
+  /** ids de sus eventos (uno por lugar) */
+  eventos: string[];
+}
+
 /** Dos mundos: el paisaje (y el cielo) para fotografiar y la fauna para observar. */
 export type Ambito = "paisaje" | "fauna";
 
@@ -100,6 +115,8 @@ export interface Eventos {
   aurora?: Aurora | null;
   starlight?: { zonas: ZonaStarlight[]; fuente: string };
   naturaleza: EventoNaturaleza[];
+  /** fenómenos de fauna con varios lugares (spec 014); falta en datos publicados antes de esa spec */
+  fenomenos?: FenomenoFauna[];
   categorias: Record<Categoria, string>;
 }
 

@@ -8,6 +8,7 @@ import FenomenosEspana from "@/features/fauna/FenomenosEspana";
 import TarjetaHide from "@/features/fauna/TarjetaHide";
 import CitaEbird from "@/features/fauna/citaEbird";
 import { fenomenosDe } from "@/features/fauna/fenomenos";
+import { fenomenoDeEspecie } from "@/features/fauna/eventoFauna";
 import { hidesDe } from "@/features/fauna/hides";
 import { fotografiaDe } from "@/features/fauna/fotografia";
 import {
@@ -64,6 +65,7 @@ export default async function PaginaEspecie({ params }: Props) {
   const nombre = e.n ?? e.c ?? "Especie";
   const hoy = fechaLocal(new Date());
   const mesHoy = Number(hoy.slice(5, 7)) - 1;
+  const fenomeno = fenomenoDeEspecie(e.c);
   const curva = curvaEspecie(clave);
   const deteccion = e.clase === "Aves" ? deteccionEspecie(clave) : null;
   const buenos = curva.meses.flatMap((v, i) => ((v ?? 0) >= 20 ? [i + 1] : []));
@@ -120,6 +122,13 @@ export default async function PaginaEspecie({ params }: Props) {
       )}
 
       <FenomenosEspana fenomenos={fenomenosDe(e.c)} mesHoy={mesHoy} titulo="Momentos especiales" />
+      {fenomeno && (
+        <p className="enlace-fenomeno">
+          <Link href={`/fauna/evento/${fenomeno.id}`}>
+            {fenomeno.nombre}: los {fenomeno.eventos.length} lugares y sus fechas →
+          </Link>
+        </p>
+      )}
 
       {(foto || act) && (
         <section className="seccion">

@@ -183,3 +183,28 @@ test.describe("sin JavaScript", () => {
     await expect(page.locator(".ranking .fila").first()).toBeVisible();
   });
 });
+
+test("la berrea: un evento de fauna con sus lugares, fechas, franja y fiabilidad (spec 014)", async ({ page }) => {
+  const r = await page.goto("/fauna/evento/berrea");
+  // los fenómenos llegan con el siguiente cálculo de eventos: hasta entonces la página no existe ni se enlaza
+  if (r?.status() === 404) {
+    await page.goto("/luz/evento/berrea-monfrague");
+    await expect(page.locator(".enlace-fenomeno")).toHaveCount(0);
+    return;
+  }
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Berrea del ciervo");
+  await expect(page.locator(".temporada")).toContainText("amanecer y atardecer");
+  const lugares = page.locator(".lugares-fenomeno li");
+  expect(await lugares.count()).toBeGreaterThanOrEqual(8);
+  // de al menos cuatro comunidades, cada uno con sus fechas y su fiabilidad
+  const texto = (await lugares.allTextContents()).join(" ");
+  for (const ccaa of ["Extremadura", "Castilla-La Mancha", "Andalucía", "Castilla y León", "Cantabria", "Aragón"])
+    expect(texto).toContain(ccaa);
+  await expect(lugares.first().locator(".meta")).toContainText(/del \d+ sep al \d+ oct · mejor hacia el \d+/);
+  await expect(lugares.first().locator(".fiabilidad")).toContainText(/‰|sin registros suficientes/);
+  // ida y vuelta con la ficha de cada lugar
+  await lugares.filter({ hasText: "Monfragüe" }).getByRole("link").first().click();
+  await expect(page).toHaveURL(/\/luz\/evento\/berrea-monfrague$/);
+  await page.locator(".enlace-fenomeno a").click();
+  await expect(page).toHaveURL(/\/fauna\/evento\/berrea$/);
+});

@@ -3,6 +3,7 @@
 import type { MetadataRoute } from "next";
 import { SITIO } from "@/lib/sitio";
 import { cargarEspana, cargarLugares } from "@/features/fauna/datos";
+import { fenomenosFauna } from "@/features/fauna/eventoFauna";
 
 export const dynamic = "force-static";
 
@@ -20,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...["/luz/calendario", "/luz/habitual", "/luz/alertas", "/luz/metodo"].map((r) => url(r, 0.6)),
     url("/fauna", 0.9),
     ...["/fauna/hides", "/fauna/rarezas", "/fauna/normas", "/fuentes"].map((r) => url(r, 0.6)),
+    ...fenomenosFauna().map((f) => url(`/fauna/evento/${f.id}`, 0.6)),
     ...Object.keys(espana?.especies ?? {}).map((k) => url(`/fauna/especie/${k}`, 0.5)),
     // fichas de lugares: espacios protegidos, observatorios y los puntos de eBird con 100 especies o más
     ...cargarLugares()
