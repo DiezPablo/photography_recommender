@@ -10,15 +10,16 @@ import {
   TIPOS_HABITUAL,
   urlHabitual,
 } from "@/features/clima/habitual";
+import CieloNocheMes from "@/features/eventos/componentes/CieloNocheMes";
 import Mapa from "@/features/spots/componentes/MapaSpots";
 import Ranking from "@/features/spots/componentes/Ranking";
 import { TOP_HTML } from "@/features/spots/ranking";
 import { MESES } from "@/lib/fechas";
 
-const EN_PLURAL: Record<TipoHabitual, string> = {
-  amanecer: "amaneceres",
-  atardecer: "atardeceres",
-  noche: "noches",
+const CUANTOS: Record<TipoHabitual, [string, string]> = {
+  amanecer: ["cuántos amaneceres", "salen buenos"],
+  atardecer: ["cuántos atardeceres", "salen buenos"],
+  noche: ["cuántas noches", "salen despejadas"],
 };
 
 export default function VistaHabitual({ mes, tipo }: { mes: number; tipo: TipoHabitual }) {
@@ -34,8 +35,8 @@ export default function VistaHabitual({ mes, tipo }: { mes: number; tipo: TipoHa
             {NOMBRE_HABITUAL[tipo]} en {MESES[mes]}: dónde suele ir mejor
           </h1>
           <p className="entradilla">
-            La previsión llega a cinco días. Para cualquier otra fecha, esto es lo que suele pasar: cuántos{" "}
-            {EN_PLURAL[tipo]} de {MESES[mes]} salen buenos en la zona de cada spot
+            La previsión llega a cinco días. Para cualquier otra fecha, esto es lo que suele pasar: {CUANTOS[tipo][0]}{" "}
+            de {MESES[mes]} {CUANTOS[tipo][1]} en la zona de cada spot
             {clima ? ` (${clima.desde.slice(0, 4)}-${clima.hasta.slice(0, 4)})` : ""} y lo que da de sí el lugar
             {tipo === "noche" ? " (cielo oscuro y sur despejado)" : " (relieve hacia donde está el sol ese mes)"}. Es
             una orientación para elegir zona, no una nota: <Link href="/luz">cuando falten pocos días</Link>, manda la
@@ -56,6 +57,7 @@ export default function VistaHabitual({ mes, tipo }: { mes: number; tipo: TipoHa
             ))}
           </nav>
         </header>
+        {tipo === "noche" && <CieloNocheMes mes={mes} />}
         {filas.length === 0 ? (
           <p className="vacio">
             Aún no hay datos para esta página: se publican con el próximo cálculo de la previsión.
@@ -83,8 +85,9 @@ export default function VistaHabitual({ mes, tipo }: { mes: number; tipo: TipoHa
             lat: f.lat,
             lon: f.lon,
             nota: f.nota,
+            cifra: f.cifra,
             clase: f.clase,
-            texto: `${f.cifra} de los días · ${MESES[mes]}`,
+            texto: `${NOMBRE_HABITUAL[tipo]} · ${MESES[mes]}`,
           }))}
           urlTodos={urlHabitual(mes, tipo)}
         />

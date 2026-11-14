@@ -298,3 +298,22 @@ test("lo habitual: ranking de un mes sin previsión, por clima y por lugar (spec
   await expect(page.locator(".lista-habitual li")).toHaveCount(12);
   expect(errores).toEqual([]);
 });
+
+test("eventos de cielo: del calendario a dónde verlos, con la luna y la Vía Láctea del mes (spec 015)", async ({
+  page,
+}) => {
+  await page.goto("/luz/calendario/agosto");
+  const perseidas = page.locator(".lista-cielo li", { hasText: "Perseidas" });
+  await perseidas.getByRole("link", { name: /Dónde verlas/ }).click();
+  await expect(page).toHaveURL(/\/luz\/habitual\/agosto\/noche$/);
+  const cielo = page.locator(".cielo-noche-mes");
+  await expect(cielo).toContainText("Perseidas");
+  await expect(cielo).toContainText(/luna al \d+ %/);
+  await expect(cielo).toContainText("Luna nueva");
+  await expect(cielo).toContainText("Vía Láctea");
+  await cielo.getByRole("link", { name: "calendario de agosto" }).click();
+  await expect(page).toHaveURL(/\/luz\/calendario\/agosto$/);
+  // el bloque es de la noche: en el atardecer no sale
+  await page.goto("/luz/habitual/agosto/atardecer");
+  await expect(page.locator(".cielo-noche-mes")).toHaveCount(0);
+});
