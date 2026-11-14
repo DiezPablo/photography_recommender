@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-14T12:25:34+00:00",
+ "actualizado": "2026-11-14T12:25:40+00:00",
  "ficheros": {
   "safaris_recientes.json": "b5190e9cacfb",
   "safaris.json": "3843840dca83",
@@ -22,7 +22,7 @@
   "eventos.json": "372e7e150d38",
   "alineaciones.json": "4eb4fa3d0e6e",
   "lugares.json": "a7eca4e3a885",
-  "espana_listas.json": "de353ac5ae56",
-  "espana_listas_dias.json": "0378904dcbd6"
+  "espana_listas.json": "89668aeb8b1b",
+  "espana_listas_dias.json": "d77c90f1db50"
  }
 }
