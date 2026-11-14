@@ -1,4 +1,6 @@
 // Portada: titular del día, tabla de los próximos días (que hace de filtro), ranking y mapa.
+import Link from "next/link";
+import { rutaHabitual } from "@/features/clima/habitual";
 import AvisoAurora from "@/features/eventos/componentes/AvisoAurora";
 import Temporada from "@/features/eventos/componentes/Temporada";
 import { avisoAurora, cargarEventos } from "@/features/eventos/datos";
@@ -63,6 +65,12 @@ export default function VistaDia({ d, filtro }: { d: number; filtro: Filtro }) {
         <AvisoAurora aurora={avisoAurora(cargarEventos()?.aurora, informe.fechas[0])} />
         {primero && <Destacado f={primero} foto={miniatura(credito?.url, 960)} credito={credito} />}
         <Almanaque fechas={informe.fechas} mejores={mejores} d={d} filtro={filtro} ruta={rutaDia} />
+        <p className="enlace-habitual">
+          ¿Otra fecha?{" "}
+          <Link href={rutaHabitual(Number(informe.fechas[0].slice(5, 7)) - 1, "atardecer")}>
+            Lo habitual de cada mes →
+          </Link>
+        </p>
         <Temporada hoy={informe.fechas[0]} />
         <section aria-label="Ranking" className="bloque-ranking">
           <h2 className="rotulo">

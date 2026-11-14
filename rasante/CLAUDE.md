@@ -9,6 +9,8 @@ Una orden por subpaquete: `python -m rasante <orden>` (`--help` para verlas).
 - `prevision`: Open-Meteo (+ Marine en costa) → `informe.json`. `spots`: Commons + Wikidata + OSM →
   `spots.geojson`. `eventos`: luna, meteoros, Vía Láctea, eclipses, auroras, Starlight y
   `recursos/eventos_naturaleza.csv` → `eventos.json`; alineaciones.
+- `notas/idoneidad.py`: lo que da de sí un spot sin el tiempo (relieve hacia el sol de cada mes, cielo), con los
+  factores de la previsión; va en `lugares.json` (`luz.idoneidad`, spec 013).
 - `lugares`: índice común de spots y lugares de fauna → `lugares.json` (contrato en
   `recursos/lugar.schema.json`; lee también `espana_lugares.json` y `espana_natura.json`).
 - `auditar` (`lugares/auditoria.py`): informe de cobertura, vacíos y duplicados de `lugares.json` →

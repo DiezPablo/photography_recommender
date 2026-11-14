@@ -9,6 +9,7 @@ from collections import defaultdict
 from statistics import median
 
 from rasante.comun.territorio import Provincias, ccaa_de
+from rasante.notas import idoneidad
 
 RUMBOS = ("N", "NE", "E", "SE", "S", "SO", "O", "NO")
 KM_CERCA = 15.0
@@ -54,8 +55,8 @@ def km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 
 
 def horizonte_por_rumbos(angulos: list[float] | None) -> dict[str, float] | None:
-    """Altura del relieve hacia cada rumbo: mediana del perfil (un ángulo cada 360/n grados desde el norte) en
-    el sector de 45° centrado en el rumbo."""
+    """Altura del relieve (grados) hacia cada rumbo: mediana del perfil (décimas de grado, un ángulo cada 360/n
+    grados desde el norte) en el sector de 45° centrado en el rumbo."""
     if not angulos:
         return None
     n = len(angulos)
@@ -64,7 +65,7 @@ def horizonte_por_rumbos(angulos: list[float] | None) -> dict[str, float] | None
     for i, rumbo in enumerate(RUMBOS):
         centro = i * 45.0
         sector = [a for j, a in enumerate(angulos) if abs((j * paso - centro + 180) % 360 - 180) <= 22.5]
-        salida[rumbo] = round(median(sector), 1)
+        salida[rumbo] = round(median(sector) / 10, 1)
     return salida
 
 
@@ -89,6 +90,7 @@ def de_spot(f: dict, costa=None) -> dict:
         foto = {"url": g["url"], "autor": g.get("autor") or None, "licencia": g.get("licencia") or None}
         fuentes.append({"fuente": "Wikimedia Commons", "ref": g.get("enlace") or None, "licencia": "la de cada foto"})
     lp = p.get("contaminacion") or {}
+    perfil = p.get("horizonte") or {}
     tipo = TIPO_LUZ.get(p.get("tipo_osm") or "", "otro")
     return {
         "id": p["id"],
@@ -108,9 +110,10 @@ def de_spot(f: dict, costa=None) -> dict:
         "luz": {
             "cielo_mag": _numero(lp.get("sqm")),
             "bortle": lp.get("bortle") if isinstance(lp.get("bortle"), int) else None,
-            "horizonte": horizonte_por_rumbos((p.get("horizonte") or {}).get("angulos")),
+            "horizonte": horizonte_por_rumbos(perfil.get("angulos")),
             "costa": bool(costa and costa.es_costero({"lat": lat, "lon": lon, "tipo": p.get("tipo_osm")})),
             "popularidad": _numero(p.get("puntuacion")),
+            "idoneidad": idoneidad.de_lugar(lat, lon, perfil, _numero(lp.get("sqm"))),
         },
     }
 

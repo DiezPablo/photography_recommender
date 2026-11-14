@@ -4,7 +4,8 @@
   - `/` portada (dos puertas, provisional hasta la spec 012). `/fuentes`: fuentes y licencias de los dos modos
     (la lista está en `lib/fuentes.ts`; al añadir una fuente, añádela ahí y en `docs/datos/fuentes.md`).
   - `/luz/**`: ranking del día (`/luz`, `/luz/dia/[d]/[tipo]`), `/luz/spot/[id]`, `/luz/calendario`,
-    `/luz/evento/[id]`, `/luz/alertas` (.ics), `/luz/metodo`.
+    `/luz/habitual/[mes]/[tipo]` (sin previsión: climatología × idoneidad, spec 013), `/luz/evento/[id]`,
+    `/luz/alertas` (.ics), `/luz/metodo`.
   - `/fauna/**`: carta por cuadrícula (`/fauna`; `?modo=aqui|finde`), `/fauna/lugar/[id]`,
     `/fauna/especie/[clave]`, `/fauna/hides`, `/fauna/rarezas`, `/fauna/normas` y sus rutas JSON.
   - `/espana/*` redirige a `/fauna/*`, y las URLs de los safaris retirados (decisión 0021), a la portada

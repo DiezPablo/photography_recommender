@@ -9,6 +9,8 @@ export interface FilaRanking {
   tipo: string | null;
   nota: number;
   clase: string;
+  /** en «lo habitual» (spec 013) no hay nota: se enseña este texto («38 %») en su lugar */
+  cifra?: string;
   momento: Momento;
   hora: string;
   motivos: string[];

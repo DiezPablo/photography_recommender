@@ -143,12 +143,18 @@ export default function Ranking({
             <li key={f.id}>
               <Link href={`/luz/spot/${f.id}`} className="fila" data-spot={f.id}>
                 <span className="pos">{String(i + 1).padStart(2, "0")}</span>
-                <Cifra nota={f.nota} />
+                {f.cifra ? (
+                  <span className={`cifra cifra-habitual ${f.clase}`} title="Días buenos aquí en un mes como este">
+                    {f.cifra}
+                  </span>
+                ) : (
+                  <Cifra nota={f.nota} />
+                )}
                 <div className="fila-txt">
                   <h3>{f.nombre}</h3>
                   <p className="meta">
                     {mostrarMomento && <span>{NOMBRE_CORTO[f.momento]}</span>}
-                    <span>{f.hora}</span>
+                    {f.hora && <span>{f.hora}</span>}
                     {f.provincia && <span>{f.provincia}</span>}
                     {f.km !== null && <span className="dist">{f.km < 10 ? f.km.toFixed(1) : Math.round(f.km)} km</span>}
                     {f.dudosa && (

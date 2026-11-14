@@ -76,6 +76,15 @@ def claridad_aire(
     return clamp(k, 0.25, 1.12), motivos
 
 
+def factor_relieve(relieve: float | None) -> tuple[float, float]:
+    """Cuánto queda de la luz rasante y del color con el horizonte a `relieve` grados hacia el sol: una montaña
+    delante quita la luz directa y tapa el cielo bajo, donde está el color más intenso. Lo usan la previsión
+    (nota_luz) y la idoneidad del lugar (notas.idoneidad): un solo criterio para las dos."""
+    if relieve is None or relieve <= 1.0:
+        return 1.0, 1.0
+    return 1 - clamp((relieve - 1) / 6), 1 - 0.5 * clamp((relieve - 2) / 12)
+
+
 def nota_luz(
     local,
     camino: list[dict],
@@ -143,8 +152,7 @@ def nota_luz(
     # 6) relieve hacia el sol: una montaña delante quita la luz rasante y tapa el cielo bajo, donde
     #    está el color más intenso (rasante.terreno.horizonte, modelo digital de elevaciones)
     if relieve is not None and relieve > 1.0:
-        f_luz = 1 - clamp((relieve - 1) / 6)
-        f_color = 1 - 0.5 * clamp((relieve - 2) / 12)
+        f_luz, f_color = factor_relieve(relieve)
         verbo = "asoma" if momento == "amanecer" else "se esconde"
         total = a.paso(
             f"Relieve hacia el sol a {relieve:.0f}°: {verbo} tras las montañas"

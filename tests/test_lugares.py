@@ -2,6 +2,7 @@
 
 import copy
 
+import pytest
 from conftest import sin_nan
 
 from rasante.comun.territorio import Provincias
@@ -22,7 +23,7 @@ def _spot(id_, nombre, lat, lon, tipo="mirador", origen="osm", **extra):
         "wikidata": None,
         "puntuacion": 7.2,
         "galeria": [],
-        "horizonte": {"elevacion": 1800, "angulos": [0.0] * 45 + [10.0] * 45 + [2.0] * 90},
+        "horizonte": {"elevacion": 1800, "angulos": [0] * 45 + [100] * 45 + [20] * 90},
         "contaminacion": {"zona": "3b", "sqm": 21.38, "bortle": 4, "descripcion": "rural"},
         **extra,
     }
@@ -99,8 +100,9 @@ def test_cada_catalogo_lleva_solo_su_bloque():
     assert pico["luz"]["bortle"] == 4 and pico["luz"]["cielo_mag"] == 21.38
     assert pico["foto"]["autor"] == "Ana"
     assert [f["fuente"] for f in pico["fuentes"]] == ["Wikidata", "Wikimedia Commons"]
-    # horizonte por rumbos: abierto al norte, tapado al sureste
+    # horizonte por rumbos, en grados (el perfil viene en décimas): abierto al norte, tapado al sureste
     assert pico["luz"]["horizonte"]["N"] == 0 and pico["luz"]["horizonte"]["SE"] == 10
+    assert pico["luz"]["horizonte"]["O"] == 2
     faro = por_id["faro-de-fisterra-cccc"]
     assert faro["ccaa"] == "Galicia"  # la comunidad sale de la provincia (decisión 0007), no del dato de entrada
     humedal = por_id["wd-Q55"]
@@ -151,3 +153,31 @@ def test_falla_sin_fuente_sin_provincia_o_con_dos_bloques():
 def test_un_catalogo_puede_faltar():
     doc, _ = construir(SPOTS, None, None, [], PROVINCIAS)
     assert errores(doc) == [] and doc["cuenta"]["catalogo"] == {"luz": 3}
+
+
+def test_idoneidad_del_spot_por_momento():
+    """Spec 013: con el relieve a 10° del este al sur y a 2° al oeste, el amanecer de invierno (sol por el
+    sureste) pierde la luz rasante y el de verano (por el noreste) no; el atardecer casi no se entera."""
+    doc, _ = construir(SPOTS, None, None, [])
+    ido = next(x for x in doc["lugares"] if x["id"].startswith("penalara"))["luz"]["idoneidad"]
+    assert len(ido["amanecer"]) == len(ido["atardecer"]) == 12
+    assert ido["amanecer"][5] == 10 and ido["relieve"]["amanecer"][5] == 0
+    assert ido["relieve"]["amanecer"][11] == 10 and ido["amanecer"][11] == pytest.approx(4.7, abs=0.05)
+    assert all(v == pytest.approx(9.5, abs=0.05) for v in ido["atardecer"])
+    # noche: cielo de 21,38 mag/arcsec² y el sur a 2° (no tapa la Vía Láctea)
+    assert ido["relieve"]["sur"] == 2 and ido["noche"] == pytest.approx(9.4, abs=0.05)
+
+
+def test_idoneidad_usa_los_factores_de_la_prevision():
+    from rasante.notas import idoneidad
+    from rasante.notas.luz import factor_relieve
+    from rasante.notas.noche import factor_sqm
+
+    assert factor_relieve(None) == factor_relieve(0.5) == (1.0, 1.0)
+    assert idoneidad.idoneidad_luz(None) == 10 and idoneidad.idoneidad_luz(30) == 3.5
+    # un cielo urbano no llega al aprobado aunque el sur esté libre; uno oscuro con el sur tapado se queda en 6
+    assert idoneidad.idoneidad_noche(18.0, 0) == round(10 * factor_sqm(18.0), 1) < 3
+    assert idoneidad.idoneidad_noche(21.8, 25) == 6
+    # sin perfil de relieve no se inventa nada: horizonte libre
+    sin = idoneidad.de_lugar(40.0, -3.0, None, None)
+    assert sin["amanecer"] == [10] * 12 and sin["relieve"]["sur"] is None and sin["relieve"]["amanecer"] == [None] * 12

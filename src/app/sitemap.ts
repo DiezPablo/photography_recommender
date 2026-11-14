@@ -17,7 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     url("/", 1),
     url("/luz", 0.9),
-    ...["/luz/calendario", "/luz/alertas", "/luz/metodo"].map((r) => url(r, 0.6)),
+    ...["/luz/calendario", "/luz/habitual", "/luz/alertas", "/luz/metodo"].map((r) => url(r, 0.6)),
     url("/fauna", 0.9),
     ...["/fauna/hides", "/fauna/rarezas", "/fauna/normas", "/fuentes"].map((r) => url(r, 0.6)),
     ...Object.keys(espana?.especies ?? {}).map((k) => url(`/fauna/especie/${k}`, 0.5)),

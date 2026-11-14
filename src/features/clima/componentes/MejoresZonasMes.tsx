@@ -2,6 +2,7 @@
 // spot de cada zona como referencia.
 import Link from "next/link";
 import { cargarClima, climaDe, deCada, NOMBRE_SERIE, type SerieClima } from "@/features/clima/datos";
+import { rutaHabitual, type TipoHabitual } from "@/features/clima/habitual";
 import { cargar } from "@/features/spots/datos";
 import { MESES } from "@/features/eventos/modelo";
 
@@ -57,6 +58,9 @@ export default function MejoresZonasMes({ mes, cuantas = 5 }: { mes: number; cua
                   </li>
                 ))}
             </ol>
+            <Link className="enlace-ficha" href={rutaHabitual(mes, s as TipoHabitual)}>
+              Todos los spots →
+            </Link>
           </div>
         ))}
       </div>
