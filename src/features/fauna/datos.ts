@@ -9,7 +9,7 @@ import { ZONAS_ESPANA, type BloqueEspana, type LugarFauna, type ObsReciente } fr
 
 export interface Espana {
   generado: string;
-  /** lo que más sube cada mes, calculado en el pipeline (safari/espana/cli.py, sube_por_mes): [[clave, ‰, media]] */
+  /** lo que más sube cada mes, calculado en el pipeline (rasante/fauna/cuadricula.py, sube_por_mes): [[clave, ‰, media]] */
   sube?: [string, number, number][][];
   fuente?: { cita?: string };
   especies: BloqueEspana["especies"];

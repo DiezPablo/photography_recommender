@@ -6,5 +6,5 @@ más adelante solo si los dos lo vemos necesario.
 Decisión: se retiran de la web, del pipeline y de los workflows (spec 005). Sus URLs llevan a la portada con una
 redirección temporal. No se borra del historial: el último `main` con todo es el commit `03bbe59`.
 Consecuencias: para recuperarlos, `git checkout 03bbe59 -- <rutas>` o una rama desde ese commit (no hay etiqueta:
-la sesión que hizo la retirada no podía subir etiquetas). El paquete Python sigue llamándose `safari` hasta la
-spec 006. Los ficheros `safaris*.json` de la release `datos` quedan sin uso.
+la sesión que hizo la retirada no podía subir etiquetas). Lo que Fauna usaba de aquel paquete vive en `rasante/fauna`
+(spec 006). Los ficheros `safaris*.json` de la release `datos` quedan sin uso.

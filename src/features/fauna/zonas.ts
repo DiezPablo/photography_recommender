@@ -1,4 +1,4 @@
-// Zonas de España para empezar (las de prueba de la especificación; safari/espana/zonas.py tiene las mismas).
+// Zonas de España para empezar (las de prueba de la especificación; rasante/fauna/zonas.py tiene las mismas).
 export interface ZonaEspana {
   id: string;
   nombre: string;

@@ -27,7 +27,7 @@ fi
 # auditoría, 08-11-2026)
 NOTAS="$(cat "$(dirname "$0")/notas_datos.md")"
 gh release view datos >/dev/null 2>&1 || \
-  gh release create datos --title "Datos de safaris" --notes "$NOTAS" --prerelease
+  gh release create datos --title "Datos de Rasante" --notes "$NOTAS" --prerelease
 # las notas, al día también en la release que ya existía
 gh release edit datos --notes "$NOTAS" >/dev/null || true
 gzip -kf9 "$@"

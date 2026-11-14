@@ -1,0 +1,78 @@
+"""Estacionalidad y backtest de España con filas sintéticas (como las de la descarga SQL de GBIF)."""
+
+from rasante.fauna.estacionalidad import backtest, confianza, estacionalidad, ranking
+from rasante.fauna.gbif_descarga import consulta
+
+AVES = 212
+GRULLA, ANADE, GORRION = 2474953, 9761484, 5231190
+CELDA = "10kmE335N206"
+
+
+def filas():
+    salida = []
+    for anio in (2022, 2023, 2024):
+        for mes in range(1, 13):
+            # la grulla en Gallocanta: de noviembre a febrero
+            if mes in (11, 12, 1, 2):
+                salida.append({"celda": CELDA, "clase": AVES, "especie": GRULLA, "anio": anio, "mes": mes, "n": 40})
+            salida.append({"celda": CELDA, "clase": AVES, "especie": ANADE, "anio": anio, "mes": mes, "n": 10})
+            salida.append({"celda": CELDA, "clase": AVES, "especie": GORRION, "anio": anio, "mes": mes, "n": 5})
+            # otra celda que no cuenta
+            salida.append({"celda": "10kmE1N1", "clase": AVES, "especie": GORRION, "anio": anio, "mes": mes, "n": 999})
+    return salida
+
+
+def test_estacionalidad_y_ranking():
+    est = estacionalidad(filas(), {CELDA})
+    grulla = est[GRULLA]["frecuencia"]
+    assert grulla[11] > grulla[5]  # diciembre frente a junio
+    # julio: sin grullas ni vecinos, pero el ‰ contraído hacia el del año no llega a 0 (poca muestra en el mes)
+    assert grulla[6] is not None and 0 < grulla[6] < grulla[11] / 2
+    assert ranking(est, 12)[0][0] == GRULLA
+    assert ranking(est, 7)[0][0] == ANADE
+    assert est[GORRION]["n"] == 3 * 12 * 5
+
+
+def test_confianza():
+    assert confianza(10) is None
+    assert confianza(50) == "baja"
+    assert confianza(150) == "media"
+    assert confianza(400) == "alta"
+
+
+def test_backtest():
+    r = backtest(filas(), {CELDA}, mes=12, anio=2024, top=2)
+    assert r["observadas"] == 3
+    assert r["aciertos"] == 2
+    assert r["precision"] == 1.0
+
+
+def test_consulta_sql():
+    sql = consulta()
+    assert "GBIF_EEARGCode(10000" in sql
+    assert "countryCode = 'ES'" in sql
+    assert "gbif_classification.classkey IN ('212', '359', '358', '131', '11592253'" in sql
+
+
+def test_por_celda_e_informe(monkeypatch):
+    from rasante.fauna import cuadricula
+
+    celdas = cuadricula.por_celda(filas())
+    assert set(celdas) == {CELDA, "10kmE1N1"}
+    assert celdas[CELDA]["m"]["Aves"][0] > 0
+    assert str(GRULLA) in celdas[CELDA]["e"]
+    monkeypatch.setattr(cuadricula, "ZONAS", [{"nombre": "Gallocanta", "radio_km": 0, "mes_prueba": 12}])
+    monkeypatch.setattr(cuadricula, "celdas", lambda z: [CELDA])
+    texto = cuadricula.informe(filas(), {"clave": "x", "doi": "10.15468/dl.x", "registros": 1}, str)
+    assert "## Gallocanta" in texto
+    assert f"1. {GRULLA}" in texto
+
+
+def test_frecuencia_contraida_hacia_el_ano_segun_la_muestra():
+    from rasante.fauna.frecuencia import frecuencia, frecuencia_contraida
+
+    especie = [0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0]
+    poca, mucha = [10] * 12, [10_000] * 12
+    # con poca muestra, el pico de julio se suaviza mucho hacia la media del año; con mucha, casi no
+    assert frecuencia_contraida(especie, poca)[6] < frecuencia(especie, poca)[6] / 2
+    assert frecuencia_contraida(especie, mucha)[6] >= 0.95 * frecuencia(especie, mucha)[6]

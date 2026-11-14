@@ -73,16 +73,15 @@ antiguos de los dos repos, en `docs/archivo/`.
   necesita ninguno; Telegram es opcional (`TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, variable `WEB_URL`).
 - **URL pública**: `src/lib/sitio.ts` aún apunta por defecto al dominio de safaris. Los `.ics` y el sitemap
   usan esa URL: definir `NEXT_PUBLIC_SITIO` en Vercel con el dominio definitivo.
-- **Dos pipelines con `comun` gemelo** (`rasante/comun`, `safari/comun`): riesgo de divergencia hasta la 006.
+- **Dos pipelines con `comun` gemelo** (`rasante/comun`, `safari/comun`): resuelto en la 006, queda uno.
 - **Aspecto**: las páginas de Luz heredan los estilos de este repo (mismas clases, otros tokens). Funcionan y
   pasan las pruebas, pero no están diseñadas: es trabajo de la 004.
 
 ## 4. Partición (en el backlog)
 - **003 — Núcleo común de lugar**: `lugares.json` con spots y lugares de fauna. Ver su spec.
 - **005 — Safaris del mundo, fuera de esta versión**: hecha (`docs/specs/005-safaris-fuera.md`, decisión 0021).
-- **006 — Un solo pipeline**: `safari/espana` → `rasante/fauna`, un único `comun`, órdenes
-  `python -m rasante fauna …`, workflows `fauna_*.yml`. CA: tests en verde; los nombres de los ficheros
-  publicados no cambian en esta spec; ningún import de `safari.` fuera de safaris.
+- **006 — Un solo pipeline**: hecha (`docs/specs/006-un-pipeline.md`). Fauna en `rasante/fauna`, un único
+  `comun`, órdenes `python -m rasante fauna …`, workflows `fauna_*.yml`.
 - **007 — Limpieza de datos de fauna**: fuera `espana_rutas.json` y `espana_rasante.json`; ficheros `espana_*`
   → `fauna_*` con el prebuild aceptando ambos nombres durante un despliegue. CA: build y e2e en verde.
 - **012 — Consulta común y portada**, **004 — Diseño**, **010 — Ficha de lugar de fauna y de especie con
