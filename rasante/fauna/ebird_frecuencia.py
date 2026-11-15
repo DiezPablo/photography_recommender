@@ -3,7 +3,7 @@ especie («se ve en el 34 % de las listas»). Es más honesta que el ‰ de regi
 fotos. Sale del conjunto de eBird en GBIF (cada registro lleva su lista en eventID) con dos descargas SQL: listas
 por cuadrícula y mes, y listas con cada especie. 2015-2024 para calcular y 2025 para el backtest.
 
-→ espana_ebird.json: {celdas: {celda: {"l": [12 listas], "d": {especie: [12 % o None]}}}} y una sección en el
+→ fauna_ebird.json: {celdas: {celda: {"l": [12 listas], "d": {especie: [12 % o None]}}}} y una sección en el
 informe de viabilidad.
 """
 
@@ -201,7 +201,7 @@ def comparar(entreno: dict, prueba: dict, por_mil: dict[str, float], celdas: set
     }
 
 
-def main(salida: Path = Path("public/datos/espana_ebird.json"), descargar: bool = True) -> None:
+def main(salida: Path = Path("public/datos/fauna_ebird.json"), descargar: bool = True) -> None:
     from rasante.comun.ficheros import escribir_json
     from rasante.fauna.zonas import ZONAS, celdas
 

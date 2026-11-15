@@ -116,7 +116,7 @@ test("ficha de un lugar con contorno Natura 2000: lleva el crédito de la Agenci
 test("ficha de un punto de eBird: listas de los últimos días (si ya se han publicado)", async ({ page, request }) => {
   const r = await request.get("/datos/resumen.json");
   const { ficheros } = (r.ok() ? await r.json() : { ficheros: [] }) as { ficheros: string[] };
-  test.skip(!ficheros.includes("espana_listas.json"), "aún no se han publicado las listas de eBird");
+  test.skip(!ficheros.includes("fauna_listas.json"), "aún no se han publicado las listas de eBird");
   // un punto con mucha actividad: el primero que devuelve el buscador para un humedal conocido
   const b = await request.get("/fauna/lugares?q=donana");
   const { lugares } = (await b.json()) as { lugares: { id: string }[] };
@@ -138,9 +138,9 @@ test("eBird a fondo: actividad de la región y especies de un punto (si ya se ha
   const cerca = (await (await request.get("/fauna/cerca?lat=40.42&lon=-3.70&mes=10&max=20&km=50")).json()) as {
     region: { nombre: string; listas: number; especiesMax: number } | null;
   };
-  if (!ficheros.includes("espana_ebird_regiones.json")) expect(cerca.region ?? null).toBeNull();
+  if (!ficheros.includes("fauna_ebird_regiones.json")) expect(cerca.region ?? null).toBeNull();
   else if (cerca.region) expect(cerca.region.listas).toBeGreaterThan(0);
-  test.skip(!ficheros.includes("espana_especies_punto.json"), "aún no se han publicado las especies por punto");
+  test.skip(!ficheros.includes("fauna_especies_punto.json"), "aún no se han publicado las especies por punto");
   // un punto grande de eBird: el primero de Doñana; si su lista ya está, se ve plegada con nombres en español
   const { lugares } = (await (await request.get("/fauna/lugares?q=donana")).json()) as { lugares: { id: string }[] };
   const punto = lugares.find((l) => l.id.startsWith("eb-"));

@@ -52,15 +52,6 @@ def test_estados_especies():
     assert e["Canis lupus"]["nota"]
 
 
-def test_km_ruta():
-    assert lugares.km_ruta("12.5") == 12.5
-    assert lugares.km_ruta("12,5 km") == 12.5
-    assert lugares.km_ruta("8 mi") == 12.9
-    assert lugares.km_ruta("3500 m") == 3.5
-    assert lugares.km_ruta(None) is None
-    assert lugares.km_ruta("variable") is None
-
-
 def test_observatorios_agrupa_y_filtra(monkeypatch):
     from rasante.fauna import overpass as consultas
 

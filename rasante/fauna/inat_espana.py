@@ -167,7 +167,7 @@ def perfil(cuentas: dict[str, dict[str, int]], grupo_de: dict[str, str]) -> dict
 
 
 def actividad_main(salida, espana_json) -> None:
-    """espana_actividad.json a partir de las especies de espana.json (una petición por especie, con caché de 25
+    """fauna_actividad.json a partir de las especies de fauna_cuadricula.json (una petición por especie, con caché de 25
     días: la primera vez unos 15 minutos)."""
     import json
     from pathlib import Path

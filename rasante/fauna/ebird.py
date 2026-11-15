@@ -150,7 +150,7 @@ def recientes_region(region: str, dias: int = 30, s=None) -> list[dict]:
 
 
 def recientes_espana(salida, s=None) -> int:
-    """espana_recientes.json: lo visto en 30 días. Aves de eBird (la última de cada especie en cada provincia, unas
+    """fauna_recientes.json: lo visto en 30 días. Aves de eBird (la última de cada especie en cada provincia, unas
     52 peticiones; solo con EBIRD_CLAVE) y mamíferos, reptiles y anfibios de iNaturalist (sin clave). `s` dice la
     fuente de cada una («e» o «i»). Devuelve cuántas observaciones guardó."""
     from datetime import UTC, datetime
@@ -218,7 +218,7 @@ def notables_region(region: str, dias: int = 7, s=None) -> list[dict]:
 
 
 def rarezas_espana(salida, s=None) -> int:
-    """espana_rarezas.json: lo notable de los últimos 7 días en cada provincia (unas 52 peticiones; con clave)."""
+    """fauna_rarezas.json: lo notable de los últimos 7 días en cada provincia (unas 52 peticiones; con clave)."""
     from datetime import UTC, datetime
 
     from rasante.comun.ficheros import escribir_json

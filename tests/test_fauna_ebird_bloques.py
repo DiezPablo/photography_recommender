@@ -28,7 +28,7 @@ def test_actividad_por_region_guarda_30_dias_y_rellena(con_clave, monkeypatch, t
         return {"numChecklists": 40, "numContributors": 12, "numSpecies": 95 if "ES-MD" in ruta else 60}
 
     monkeypatch.setattr(ebird, "_get", falso_get)
-    salida = tmp_path / "espana_ebird_regiones.json"
+    salida = tmp_path / "fauna_ebird_regiones.json"
     ebird_actividad.main(salida, date(2026, 11, 15), max_dias=2)
     assert pedidas == [
         "product/stats/ES-CL-SG/2026/11/14",
@@ -64,7 +64,7 @@ def test_el_contador_se_comparte_entre_ordenes(monkeypatch, tmp_path):
 
 
 def test_especies_por_punto_por_tandas_con_nombres_y_sin_sensibles(con_clave, monkeypatch, tmp_path):
-    lugares = tmp_path / "espana_lugares.json"
+    lugares = tmp_path / "fauna_lugares.json"
     lugares.write_text(
         json.dumps(
             {
@@ -94,7 +94,7 @@ def test_especies_por_punto_por_tandas_con_nombres_y_sin_sensibles(con_clave, mo
         return ["comcra", "grebus1", "wescap1", "x00123"] if ruta.endswith("L1") else ["comcra"]
 
     monkeypatch.setattr(ebird, "_get", falso_get)
-    salida = tmp_path / "espana_especies_punto.json"
+    salida = tmp_path / "fauna_especies_punto.json"
     ebird_especies.main(salida, lugares, max_tanda=2)
     # los dos puntos con más especies y una petición de taxonomía
     assert pedidas == ["product/spplist/L1", "product/spplist/L2", "ref/taxonomy/ebird"]
@@ -112,5 +112,5 @@ def test_especies_por_punto_por_tandas_con_nombres_y_sin_sensibles(con_clave, mo
 def test_sin_clave_no_piden_ni_escriben(monkeypatch, tmp_path):
     monkeypatch.delenv("EBIRD_CLAVE", raising=False)
     ebird_actividad.main(tmp_path / "r.json")
-    ebird_especies.main(tmp_path / "e.json", tmp_path / "espana_lugares.json")
+    ebird_especies.main(tmp_path / "e.json", tmp_path / "fauna_lugares.json")
     assert not (tmp_path / "r.json").exists() and not (tmp_path / "e.json").exists()

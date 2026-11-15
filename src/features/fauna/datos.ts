@@ -1,5 +1,5 @@
-// Datos de España en el servidor: espana.json (descarga de GBIF por cuadrícula de 10 km) y los lugares
-// (espana_lugares.json: puntos de eBird, espacios protegidos de Wikidata, observatorios de OSM) para buscar, para
+// Datos de España en el servidor: fauna_cuadricula.json (descarga de GBIF por cuadrícula de 10 km) y los lugares
+// (fauna_lugares.json: puntos de eBird, espacios protegidos de Wikidata, observatorios de OSM) para buscar, para
 // «cerca de aquí» y para nombrar cada celda.
 import "server-only";
 import { leerDatos } from "@/lib/datos";
@@ -16,7 +16,7 @@ export interface Espana {
   celdas: BloqueEspana["celdas"];
 }
 
-/** Listas de eBird en un punto de observación (espana_listas.json, spec 021). */
+/** Listas de eBird en un punto de observación (fauna_listas.json, spec 021). */
 export interface ActividadPunto {
   /** listas en los últimos 7 y 30 días */
   l7: number;
@@ -30,7 +30,7 @@ export interface ActividadPunto {
   r?: string;
 }
 
-/** Lo que se está viendo en una región de eBird (espana_ebird_regiones.json, spec 021 bloque 2), en los últimos 7
+/** Lo que se está viendo en una región de eBird (fauna_ebird_regiones.json, spec 021 bloque 2), en los últimos 7
  * días con datos: listas y observadores sumados, y las especies del mejor día (eBird no da la suma sin repetir). */
 export interface ActividadRegion {
   region: string;
@@ -47,7 +47,7 @@ let regiones:
   | undefined;
 export function actividadRegion(region: string | undefined): ActividadRegion | null {
   if (!region) return null;
-  if (regiones === undefined) regiones = leerDatos("espana_ebird_regiones.json");
+  if (regiones === undefined) regiones = leerDatos("fauna_ebird_regiones.json");
   if (!regiones?.regiones[region]) return null;
   const dias = Object.keys(regiones.dias).sort().slice(-7);
   let listas = 0;
@@ -77,7 +77,7 @@ export function regionDeLugares(ls: { id: string }[]): ActividadRegion | null {
   return mejor ? actividadRegion(mejor[0]) : null;
 }
 
-/** Especies registradas alguna vez en un punto de eBird (espana_especies_punto.json, spec 021 bloque 3). */
+/** Especies registradas alguna vez en un punto de eBird (fauna_especies_punto.json, spec 021 bloque 3). */
 export interface EspecieDelPunto {
   /** nombre científico y en español */
   c: string;
@@ -89,7 +89,7 @@ export interface EspecieDelPunto {
 let especiesPuntos: { taxones: Record<string, [string, string]>; puntos: Record<string, string[]> } | null | undefined;
 export function especiesPunto(id: string): EspecieDelPunto[] | null {
   if (!id.startsWith("eb-")) return null;
-  if (especiesPuntos === undefined) especiesPuntos = leerDatos("espana_especies_punto.json");
+  if (especiesPuntos === undefined) especiesPuntos = leerDatos("fauna_especies_punto.json");
   const codigos = especiesPuntos?.puntos[id.slice(3)];
   if (!codigos || !especiesPuntos) return null;
   return codigos
@@ -104,13 +104,13 @@ let listas: Record<string, ActividadPunto> | null | undefined;
 export function actividadPunto(id: string): ActividadPunto | null {
   if (!id.startsWith("eb-")) return null;
   if (listas === undefined)
-    listas = leerDatos<{ puntos: Record<string, ActividadPunto> }>("espana_listas.json")?.puntos ?? null;
+    listas = leerDatos<{ puntos: Record<string, ActividadPunto> }>("fauna_listas.json")?.puntos ?? null;
   return listas?.[id.slice(3)] ?? null;
 }
 
 let espana: Espana | null | undefined;
 export function cargarEspana(): Espana | null {
-  if (espana === undefined) espana = leerDatos<Espana>("espana.json");
+  if (espana === undefined) espana = leerDatos<Espana>("fauna_cuadricula.json");
   return espana;
 }
 
@@ -125,10 +125,10 @@ export interface SitioNatura {
   g: GeoJSON.Geometry;
 }
 let natura: Record<string, SitioNatura> | null | undefined;
-/** Espacios de la Red Natura 2000 con su contorno y sus cuadrículas (espana_natura.json, de la EEA). */
+/** Espacios de la Red Natura 2000 con su contorno y sus cuadrículas (fauna_natura.json, de la EEA). */
 export function cargarNatura(): Record<string, SitioNatura> {
   if (natura === undefined)
-    natura = leerDatos<{ sitios: Record<string, SitioNatura> }>("espana_natura.json")?.sitios ?? null;
+    natura = leerDatos<{ sitios: Record<string, SitioNatura> }>("fauna_natura.json")?.sitios ?? null;
   return natura ?? {};
 }
 
@@ -188,10 +188,10 @@ function espacioDeCelda(c: string): { nombre: string; id: string } | null {
 }
 
 let lugares: LugarFauna[] | undefined;
-/** Todos los lugares: las zonas destacadas y los de espana_lugares.json (mientras no exista, solo las zonas). */
+/** Todos los lugares: las zonas destacadas y los de fauna_lugares.json (mientras no exista, solo las zonas). */
 export function cargarLugares(): LugarFauna[] {
   if (lugares === undefined) {
-    const propios = leerDatos<{ lugares: LugarFauna[] }>("espana_lugares.json")?.lugares;
+    const propios = leerDatos<{ lugares: LugarFauna[] }>("fauna_lugares.json")?.lugares;
     const zonas: LugarFauna[] = ZONAS_ESPANA.map((z) => ({
       id: `zona-${z.id}`,
       n: z.nombre,
@@ -476,34 +476,14 @@ export function calendarioLugar(l: LugarFauna, porGrupo = 12): { filas: FilaLuga
 }
 
 /** Lo visto en 30 días cerca del lugar (aves de eBird; mamíferos, reptiles y anfibios de iNaturalist), más
- * recientes antes; las domésticas, fuera (no están en espana.json). */
+ * recientes antes; las domésticas, fuera (no están en fauna_cuadricula.json). */
 let recientes: { generado: string; obs: ObsReciente[] } | null | undefined;
 export function recientesLugar(l: LugarFauna, margenKm = 5): ObsReciente[] {
-  if (recientes === undefined) recientes = leerDatos<{ generado: string; obs: ObsReciente[] }>("espana_recientes.json");
+  if (recientes === undefined) recientes = leerDatos<{ generado: string; obs: ObsReciente[] }>("fauna_recientes.json");
   const conocidas = new Set(Object.values(cargarEspana()?.especies ?? {}).map((e) => e.c));
   return (recientes?.obs ?? [])
     .filter((o) => distanciaKm(l, o) <= l.r + margenKm && conocidas.has(o.c))
     .sort((a, b) => b.f.localeCompare(a.f));
-}
-
-interface Ruta {
-  id: number;
-  n: string;
-  ref?: string | null;
-  lat: number;
-  lon: number;
-  km?: number | null;
-}
-let rutas: { rutas: Ruta[] } | null | undefined;
-
-/** Rutas de senderismo de OpenStreetMap que pasan cerca del lugar (por su centro, hasta `maxKm` del borde). */
-export function rutasCerca(l: LugarFauna, maxKm = 10, max = 6): (Ruta & { a: number })[] {
-  if (rutas === undefined) rutas = leerDatos("espana_rutas.json");
-  return (rutas?.rutas ?? [])
-    .map((x) => ({ ...x, a: Math.round(distanciaKm(l, x) * 10) / 10 }))
-    .filter((x) => x.a <= l.r + maxKm)
-    .sort((a, b) => a.a - b.a)
-    .slice(0, max);
 }
 
 export interface Rareza {
@@ -523,7 +503,7 @@ export interface Rareza {
 }
 let rarezas: { generado: string; obs: Rareza[] } | null | undefined;
 export function cargarRarezas(): { generado: string; obs: Rareza[] } | null {
-  if (rarezas === undefined) rarezas = leerDatos<{ generado: string; obs: Rareza[] }>("espana_rarezas.json");
+  if (rarezas === undefined) rarezas = leerDatos<{ generado: string; obs: Rareza[] }>("fauna_rarezas.json");
   return rarezas ?? null;
 }
 
@@ -592,14 +572,14 @@ let actividadEspana: { especies: Record<string, { f: [number, number, number]; n
 /** Perfil de actividad medido (noche, crepúsculo, día) de una especie, si lo hay. */
 export function actividadDe(cientifico: string | null | undefined): { f: [number, number, number]; n: number } | null {
   if (!cientifico) return null;
-  if (actividadEspana === undefined) actividadEspana = leerDatos("espana_actividad.json");
+  if (actividadEspana === undefined) actividadEspana = leerDatos("fauna_actividad.json");
   return actividadEspana?.especies[cientifico] ?? null;
 }
 
 /** Lo visto de una especie en 30 días (eBird o iNaturalist), más reciente antes. */
 export function recientesDe(cientifico: string | null | undefined): ObsReciente[] {
   if (!cientifico) return [];
-  if (recientes === undefined) recientes = leerDatos<{ generado: string; obs: ObsReciente[] }>("espana_recientes.json");
+  if (recientes === undefined) recientes = leerDatos<{ generado: string; obs: ObsReciente[] }>("fauna_recientes.json");
   return (recientes?.obs ?? [])
     .filter((o) => o.c.split(" ").slice(0, 2).join(" ") === cientifico)
     .sort((a, b) => b.f.localeCompare(a.f));
@@ -608,7 +588,7 @@ export function recientesDe(cientifico: string | null | undefined): ObsReciente[
 let ebirdEspana: { celdas: Record<string, { l: number[]; d: Record<string, (number | null)[]> }> } | null | undefined;
 /** Aves: % de listas de eBird con la especie cada mes en toda España (ponderado por listas) y las listas detrás. */
 export function deteccionEspecie(clave: string): { pct: (number | null)[]; listas: number[] } | null {
-  if (ebirdEspana === undefined) ebirdEspana = leerDatos("espana_ebird.json");
+  if (ebirdEspana === undefined) ebirdEspana = leerDatos("fauna_ebird.json");
   if (!ebirdEspana) return null;
   const con = Array(12).fill(0);
   const listas = Array(12).fill(0);

@@ -93,9 +93,8 @@ jobs:
       - name: Lugares
         continue-on-error: true
         run: |
-          for f in espana_lugares.json espana_natura.json; do
-            curl -fsSL "https://github.com/${{ github.repository }}/releases/download/datos/$f.gz" \
-              | gunzip > "public/datos/$f" || rm -f "public/datos/$f"
+          for f in fauna_lugares.json fauna_natura.json; do
+            .github/scripts/bajar_dato.sh "$f" "public/datos/$f"
           done
           python -m rasante lugares --salida salida/lugares.json
 

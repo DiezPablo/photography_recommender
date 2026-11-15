@@ -6,7 +6,7 @@ unas 52 peticiones) y se guardan solo recuentos por punto: ni observadores ni li
 de los últimos 30 (la primera vez, todos) se van rellenando, unos pocos por ejecución. eBird devuelve como mucho
 200 listas por provincia y día: en las provincias con más actividad el recuento es un mínimo.
 
-→ espana_listas.json (resumen por punto) y espana_listas_dias.json (el recuento por día, para continuar).
+→ fauna_listas.json (resumen por punto) y fauna_listas_dias.json (el recuento por día, para continuar).
 """
 
 from __future__ import annotations
@@ -113,7 +113,7 @@ def resumen(dias: dict[str, dict], hoy: date) -> dict[str, dict]:
 
 
 def puntos_de_lugares(ruta: Path | None) -> set[str] | None:
-    """Los puntos de eBird que ya son lugares (ids `eb-L…` de espana_lugares.json); None si no hay fichero."""
+    """Los puntos de eBird que ya son lugares (ids `eb-L…` de fauna_lugares.json); None si no hay fichero."""
     if not ruta or not ruta.exists():
         return None
     lugares = json.loads(ruta.read_text(encoding="utf-8")).get("lugares", [])
@@ -127,7 +127,7 @@ def main(salida: Path, lugares: Path | None = None, hoy: date | None = None, max
         print("eBird: sin EBIRD_CLAVE; no se piden listas", flush=True)
         return
     hoy = hoy or datetime.now(UTC).date()
-    historial = salida.parent / "espana_listas_dias.json"
+    historial = salida.parent / "fauna_listas_dias.json"
     s = sesion()
     regiones = [p["code"] for p in ebird.provincias(s=s)]
     dias: dict[str, dict] = {}

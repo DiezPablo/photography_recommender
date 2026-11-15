@@ -22,7 +22,7 @@ test("los datos no se publican como estáticos: solo el resumen para las pruebas
   expect(texto).not.toMatch(/\bNaN\b|Infinity/);
   expect(Array.isArray(JSON.parse(texto).ficheros)).toBe(true);
   // los datos van comprimidos fuera de public/ (solo los lee el servidor)
-  for (const f of ["espana.json", "informe.json", "espana_lugares.json"])
+  for (const f of ["fauna_cuadricula.json", "informe.json", "fauna_lugares.json"])
     expect((await request.get(`/datos/${f}`)).status()).toBe(404);
 });
 

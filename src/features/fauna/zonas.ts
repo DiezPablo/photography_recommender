@@ -37,7 +37,7 @@ export interface ObsReciente {
   s?: "e" | "i";
 }
 
-/** Un lugar de espana_lugares.json: punto de eBird, espacio protegido u observatorio (r: radio en km; e: especies
+/** Un lugar de fauna_lugares.json: punto de eBird, espacio protegido u observatorio (r: radio en km; e: especies
  * vistas en eBird, solo en los puntos de eBird). */
 export interface LugarFauna {
   id: string;
@@ -47,11 +47,11 @@ export interface LugarFauna {
   lon: number;
   r: number;
   e?: number | null;
-  /** código Natura 2000 (contorno y cuadrículas en espana_natura.json) */
+  /** código Natura 2000 (contorno y cuadrículas en fauna_natura.json) */
   z?: string | null;
 }
 
-/** Nombres de una especie en espana.json; `estado`: «invasora» (Catálogo español de especies exóticas invasoras) o
+/** Nombres de una especie en fauna_cuadricula.json; `estado`: «invasora» (Catálogo español de especies exóticas invasoras) o
  * «aviso» (con `nota`, p. ej. el lobo, que en GBIF va junto con los perros). Las domésticas no llegan. */
 export interface EspecieEspana {
   c: string | null;
@@ -59,7 +59,7 @@ export interface EspecieEspana {
   clase?: string | null;
   estado?: "invasora" | "aviso";
   nota?: string | null;
-  /** actividad medida: [noche, crepúsculo, día] y muestra (espana_actividad.json) */
+  /** actividad medida: [noche, crepúsculo, día] y muestra (fauna_actividad.json) */
   h?: { f: [number, number, number]; n: number } | null;
 }
 

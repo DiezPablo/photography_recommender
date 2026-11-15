@@ -1,4 +1,4 @@
-# Fauna en España: una descarga SQL de GBIF (recuentos por celda de 10 km, especie, año y mes) → espana.json y el
+# Fauna en España: una descarga SQL de GBIF (recuentos por celda de 10 km, especie, año y mes) → fauna_cuadricula.json y el
 # informe de viabilidad (docs/espana-viabilidad.md). Trimestral (decisión de la auditoría, 08-11-2026: los datos de
 # GBIF cambian poco y cada ejecución son horas de Actions), con descarga nueva; a mano, reutiliza la de la caché salvo
 # que se pida otra. Necesita los secretos GBIF_USUARIO y GBIF_CLAVE (sin ellos no hace nada).
@@ -110,6 +110,6 @@ jobs:
       - name: Publicar
         if: ${{ !inputs.experimentos }}
         run: |
-          [ -s public/datos/espana_ebird.json ] && .github/scripts/publicar_release.sh "España eBird ($(date -u +%Y-%m-%d))" public/datos/espana_ebird.json || true
-          [ -s public/datos/espana.json ] || { echo "Nada que publicar"; exit 0; }
-          .github/scripts/publicar_release.sh "España ($(date -u +%Y-%m-%d))" public/datos/espana.json
+          [ -s public/datos/fauna_ebird.json ] && .github/scripts/publicar_release.sh "España eBird ($(date -u +%Y-%m-%d))" public/datos/fauna_ebird.json || true
+          [ -s public/datos/fauna_cuadricula.json ] || { echo "Nada que publicar"; exit 0; }
+          .github/scripts/publicar_release.sh "España ($(date -u +%Y-%m-%d))" public/datos/fauna_cuadricula.json

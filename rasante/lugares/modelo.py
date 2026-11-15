@@ -1,4 +1,4 @@
-"""Convierte spots (spots.geojson) y lugares de fauna (espana_lugares.json, espana_natura.json) al núcleo común
+"""Convierte spots (spots.geojson) y lugares de fauna (fauna_lugares.json, fauna_natura.json) al núcleo común
 de «lugar» (rasante/recursos/lugar.schema.json). Los dos catálogos no se fusionan (decisión 0015): un mismo sitio
 puede estar en los dos, como dos lugares que se enlazan por cercanía."""
 
@@ -161,7 +161,7 @@ def _fuentes_fauna(x: dict) -> list[dict]:
 
 
 def de_fauna(x: dict, sitios: dict[str, dict], provincias: Provincias, celdas_en_radio) -> dict | None:
-    """Un lugar de espana_lugares.json (o un espacio Natura 2000) como lugar del catálogo de fauna. None si cae
+    """Un lugar de fauna_lugares.json (o un espacio Natura 2000) como lugar del catálogo de fauna. None si cae
     fuera de España (o mar adentro: sin provincia no entra en el índice)."""
     info = provincias.de(x["lat"], x["lon"])
     if not info or not info.get("provincia"):

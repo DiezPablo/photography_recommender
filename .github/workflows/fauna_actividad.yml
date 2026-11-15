@@ -1,5 +1,5 @@
 # A qué hora se ve cada especie de España (iNaturalist: altura del sol en cada observación, frente a su grupo) →
-# espana_actividad.json, para el factor «activa a esa hora». Semanal; una petición por especie con caché de 25
+# fauna_actividad.json, para el factor «activa a esa hora». Semanal; una petición por especie con caché de 25
 # días (la primera vez, unos 15 minutos).
 name: Fauna · actividad
 
@@ -37,13 +37,13 @@ jobs:
           key: espana-actividad-v1-${{ github.run_id }}
           restore-keys: espana-actividad-v1-
       - name: Especies de España
-        run: gh release download datos -p espana.json -D salida --clobber
+        run: .github/scripts/bajar_dato.sh fauna_cuadricula.json salida/fauna_cuadricula.json
       - name: Hora de las observaciones
-        run: python -m rasante fauna actividad salida/espana.json --salida salida/espana_actividad.json
+        run: python -m rasante fauna actividad salida/fauna_cuadricula.json --salida salida/fauna_actividad.json
       - uses: actions/cache/save@v6
         if: always()
         with:
           path: cache
           key: espana-actividad-v1-${{ github.run_id }}
       - name: Publicar
-        run: .github/scripts/publicar_release.sh "España actividad $(date -u +%Y-%m-%d)" salida/espana_actividad.json
+        run: .github/scripts/publicar_release.sh "España actividad $(date -u +%Y-%m-%d)" salida/fauna_actividad.json

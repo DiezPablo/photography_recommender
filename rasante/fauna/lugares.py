@@ -6,7 +6,7 @@
   periurbanos…), con su superficie para el radio;
 - observatorios de aves de OpenStreetMap (leisure=bird_hide), agrupados por laguna o paraje.
 
-→ espana_lugares.json: [{id, n, t, lat, lon, r, e, z}] (t: tipo; r: radio en km; e: especies vistas en eBird; z:
+→ fauna_lugares.json: [{id, n, t, lat, lon, r, e, z}] (t: tipo; r: radio en km; e: especies vistas en eBird; z:
 código Natura 2000, si lo tiene).
 """
 
@@ -104,7 +104,7 @@ def protegidos(s: requests.Session | None = None) -> list[dict]:
             "r": radio_km(area),
         }
         if "n2k" in b:
-            lugar["z"] = b["n2k"]["value"]  # código Natura 2000: su contorno y sus cuadrículas en espana_natura.json
+            lugar["z"] = b["n2k"]["value"]  # código Natura 2000: su contorno y sus cuadrículas en fauna_natura.json
         ya = por_id.get(qid)
         # un mismo espacio con varios tipos (ZEPA y ZEC…): el más concreto que no sea el genérico
         if not ya or (ya["t"] in ("Espacio protegido", "Red Natura 2000") and lugar["t"] != "Espacio protegido"):
@@ -302,7 +302,9 @@ def con_codigo_natura(xs: list[dict], sitios: dict[str, dict], km: float = 3) ->
             min(cerca, key=lambda x: _km(x, s))["z"] = codigo
 
 
-PUBLICADO = "https://github.com/DiezPablo/photography_recommender/releases/download/datos/espana_lugares.json.gz"
+RELEASE = "https://github.com/DiezPablo/photography_recommender/releases/download/datos"
+# el nombre de ahora y el de antes de la spec 007, mientras la release no tenga el nuevo
+PUBLICADOS = (f"{RELEASE}/fauna_lugares.json.gz", f"{RELEASE}/espana_lugares.json.gz")
 
 
 def observatorios_publicados(s: requests.Session) -> list[dict]:
@@ -311,13 +313,15 @@ def observatorios_publicados(s: requests.Session) -> list[dict]:
     import gzip
     import json
 
-    try:
-        r = s.get(PUBLICADO, timeout=120)
-        r.raise_for_status()
-        xs = json.loads(gzip.decompress(r.content))["lugares"]
-    except (requests.RequestException, ValueError, KeyError, OSError):
-        return []
-    return [x for x in xs if re.match(r"osm-(node|way|relation)-\d+$", x.get("id", ""))]
+    for url in PUBLICADOS:
+        try:
+            r = s.get(url, timeout=120)
+            r.raise_for_status()
+            xs = json.loads(gzip.decompress(r.content))["lugares"]
+        except (requests.RequestException, ValueError, KeyError, OSError):
+            continue
+        return [x for x in xs if re.match(r"osm-(node|way|relation)-\d+$", x.get("id", ""))]
+    return []
 
 
 def unificar(xs: list[dict], sitios: dict[str, dict] | None = None) -> list[dict]:
@@ -368,7 +372,7 @@ def todos(
 
 
 def main(salida, natura=None) -> None:
-    """`natura`: espana_natura.json ya escrito (para dar su código a los lugares homónimos); puede no existir."""
+    """`natura`: fauna_natura.json ya escrito (para dar su código a los lugares homónimos); puede no existir."""
     import json
     from datetime import date
 
@@ -397,59 +401,3 @@ def main(salida, natura=None) -> None:
         },
     )
     print(f"{salida}: {len(xs)} lugares {cuenta}", flush=True)
-
-
-CONSULTA_RUTAS = """
-[out:json][timeout:300];
-area["ISO3166-1"="ES"][admin_level=2]->.es;
-rel["route"="hiking"](area.es);
-out center tags;
-"""
-
-
-def km_ruta(texto: str | None) -> float | None:
-    """La etiqueta distance de OSM («12.5», «12,5 km», «8 mi») en km."""
-    if not texto:
-        return None
-    m = re.match(r"\s*([\d.,]+)\s*(km|mi|m)?", texto)
-    if not m:
-        return None
-    try:
-        v = float(m.group(1).replace(",", "."))
-    except ValueError:
-        return None
-    return round(v * 1.609 if m.group(2) == "mi" else v / 1000 if m.group(2) == "m" else v, 1)
-
-
-def rutas(salida, s: requests.Session | None = None) -> None:
-    """espana_rutas.json: rutas de senderismo de OpenStreetMap (relaciones route=hiking) con su centro, nombre,
-    código (GR, PR, SL…) y longitud, para «Rutas de senderismo cerca» en la ficha de cada lugar."""
-    from rasante.comun.ficheros import escribir_json
-    from rasante.fauna.overpass import overpass
-
-    d = overpass(CONSULTA_RUTAS, timeout=330)
-    if not d:
-        print("  Rutas: Overpass no respondió; no se escribe nada", flush=True)
-        return
-    xs = []
-    for e in d.get("elements", []):
-        t = e.get("tags", {})
-        c = _centro(e)
-        nombre = t.get("name:es") or t.get("name") or t.get("ref")
-        if not c or not nombre:
-            continue
-        xs.append(
-            {
-                "id": e["id"],
-                "n": nombre,
-                "ref": t.get("ref"),
-                "lat": round(c[0], 4),
-                "lon": round(c[1], 4),
-                "km": km_ruta(t.get("distance")),
-            }
-        )
-    if not xs:
-        print("  Rutas: ninguna; no se escribe nada", flush=True)
-        return
-    escribir_json(salida, {"fuente": "OpenStreetMap (ODbL)", "rutas": xs})
-    print(f"{salida}: {len(xs)} rutas de senderismo", flush=True)
