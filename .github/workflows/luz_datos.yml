@@ -86,7 +86,7 @@ jobs:
       - name: Lugares
         continue-on-error: true
         run: |
-          for f in fauna_lugares.json fauna_natura.json; do
+          for f in fauna_lugares.json fauna_natura.json acceso.json; do
             .github/scripts/bajar_dato.sh "$f" "public/datos/$f"
           done
           python -m rasante lugares --salida salida/lugares.json

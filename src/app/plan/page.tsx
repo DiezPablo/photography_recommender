@@ -11,6 +11,7 @@ import { leerPlan } from "@/features/plan/plan";
 import type { FilaRanking } from "@/features/spots/tipos";
 import { MESES } from "@/lib/fechas";
 import Cifra from "@/ui/Cifra";
+import { accesoDe, textoAcceso } from "@/features/acceso/datos";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 function Spot({ f, que, km }: { f: FilaRanking; que: string; km?: number }) {
+  const acceso = accesoDe("luz", f.id);
   return (
     <li className="item-plan">
       {f.cifra ? <span className={`cifra cifra-habitual ${f.clase}`}>{f.cifra}</span> : <Cifra nota={f.nota} />}
@@ -33,6 +35,7 @@ function Spot({ f, que, km }: { f: FilaRanking; que: string; km?: number }) {
           {f.hora ? `${f.hora} · ` : ""}
           {f.provincia ?? ""}
           {km ? ` · a ${km} km` : ""}
+          {acceso ? ` · ${textoAcceso(acceso)}` : ""}
         </small>
         {f.motivos[0] && <small className="por-que">{f.motivos[0]}</small>}
       </span>
@@ -41,6 +44,7 @@ function Spot({ f, que, km }: { f: FilaRanking; que: string; km?: number }) {
 }
 
 function Dia({ d }: { d: DiaPlan }) {
+  const accesoFauna = d.fauna ? accesoDe("fauna", d.fauna.id) : null;
   return (
     <article className="dia-plan" aria-labelledby={`dia-${d.n}`}>
       <h2 id={`dia-${d.n}`}>
@@ -58,6 +62,7 @@ function Dia({ d }: { d: DiaPlan }) {
               <small>
                 {d.fauna.t} · {d.fauna.km === 0 ? "en la zona" : `a ${d.fauna.km.toLocaleString("es-ES")} km`}
                 {d.fauna.especies > 0 ? ` · ${d.fauna.especies} especies ese mes` : ""}
+                {accesoFauna ? ` · ${textoAcceso(accesoFauna)}` : ""}
               </small>
               {d.fauna.destacadas.length > 0 && <small>{d.fauna.destacadas.join(", ")}</small>}
             </span>

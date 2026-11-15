@@ -12,6 +12,7 @@ import GuardarSinConexion from "@/ui/GuardarSinConexion";
 import TarjetaHide from "@/features/fauna/TarjetaHide";
 import { hidesCerca } from "@/features/fauna/hides";
 import MareasFauna from "@/features/fauna/MareasFauna";
+import { accesoDe, rutaAparcamiento, textoAcceso } from "@/features/acceso/datos";
 import { fenomenosCerca } from "@/features/fauna/fenomenos";
 import { listaFenomenos } from "@/features/fauna/eventoFauna";
 import {
@@ -70,6 +71,7 @@ export default async function PaginaLugar({ params }: Props) {
   const cerca = lugaresCerca(l.lat, l.lon, mesHoy, 9)
     .filter((x) => x.id !== l.id)
     .slice(0, 8);
+  const acceso = accesoDe("fauna", l.id);
   const hides = hidesCerca(l.lat, l.lon, 60).slice(0, 6);
   const actividad = actividadPunto(l.id);
   const region = actividadRegion(actividad?.r);
@@ -124,6 +126,11 @@ export default async function PaginaLugar({ params }: Props) {
             ).
           </p>
         )}
+        {acceso && (
+          <p className="acceso-lugar">
+            <b>Acceso:</b> {textoAcceso(acceso)}.
+          </p>
+        )}
         <p className="enlaces-lugar">
           <Link
             className="boton"
@@ -132,7 +139,13 @@ export default async function PaginaLugar({ params }: Props) {
             Qué veo aquí un día concreto, con luz y tiempo →
           </Link>{" "}
           <span className="enlaces-secundarios">
-            <a href={`https://www.openstreetmap.org/directions?to=${l.lat}%2C${l.lon}`} target="_blank" rel="noopener">
+            <a
+              href={
+                acceso ? rutaAparcamiento(acceso) : `https://www.openstreetmap.org/directions?to=${l.lat}%2C${l.lon}`
+              }
+              target="_blank"
+              rel="noopener"
+            >
               Cómo llegar ↗
             </a>
             {enlace && (

@@ -12,6 +12,7 @@ import ClimaSpot from "@/features/clima/componentes/ClimaSpot";
 import GuardarSinConexion from "@/ui/GuardarSinConexion";
 import FaunaCerca from "@/features/lugares/componentes/FaunaCerca";
 import { SelloDron } from "@/features/dron/Dron";
+import LineaAcceso from "@/features/acceso/LineaAcceso";
 import { textoMarea } from "@/features/spots/mar";
 import type { LineaMapa } from "@/features/spots/componentes/MapaSpots";
 import {
@@ -428,6 +429,7 @@ export default async function PaginaSpot({ params }: Props) {
               </dd>
             </div>
           )}
+          <LineaAcceso catalogo="luz" id={spot.id} />
           <SelloDron id={spot.id} />
           {vista !== null && (
             <div>

@@ -22,7 +22,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [x] 014 — Eventos de fauna con varios lugares: la berrea en `/fauna/evento/berrea`, una sola lista de fenómenos y calendario de fauna (`docs/specs/014-eventos-fauna.md`)
 - [x] 015 — «¿Dónde verlo?» en los eventos de cielo: del calendario a «lo habitual» de noche (`docs/specs/015-donde-verlo.md`)
 - [x] 022 — Poda de «información justa»: fuera alineaciones, panorama, brújula del sol, marcador, Telegram, `.ics` por comunidad, alojamientos y experimentos; dron y mar en una línea (`docs/specs/022-poda.md`)
-- [ ] 023 — Acceso a cada spot: aparcamiento más cercano y minutos andando, en la ficha y en el plan (decisión 0023)
+- [~] 023 — Acceso a cada spot: aparcamiento más cercano y minutos andando, en las fichas y en el plan (`docs/specs/023-acceso.md`). Falta la primera publicación de `acceso.json`
 - [x] 016 — Plan de varios días en `/plan`: cada día una zona con amanecer, fauna, lo que está en temporada, atardecer y, si toca, noche (`docs/specs/016-plan.md`)
 
 ## Después

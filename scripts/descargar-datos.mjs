@@ -12,7 +12,7 @@ import path from "node:path";
 // (siembra de .github/scripts/sembrar.sh), se toman de la release del repositorio anterior.
 const REPO = process.env.DATOS_REPO ?? "DiezPablo/photography_recommender";
 const REPO_ANTERIOR = "DiezPablo/photo_recommender";
-const LUZ = ["informe.json", "spots.geojson", "eventos.json", "clima.json", "dron.json"];
+const LUZ = ["informe.json", "spots.geojson", "eventos.json", "clima.json", "dron.json", "acceso.json"];
 const FICHEROS = [
   ...LUZ,
   "lugares.json",

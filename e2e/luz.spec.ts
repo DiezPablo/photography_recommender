@@ -309,3 +309,21 @@ test("eventos de cielo: del calendario a dónde verlos, con la luna y la Vía L�
   await page.goto("/luz/habitual/agosto/atardecer");
   await expect(page.locator(".cielo-noche-mes")).toHaveCount(0);
 });
+
+test("acceso: aparcamiento más cercano y minutos andando en el plan y en la ficha (spec 023)", async ({
+  page,
+  request,
+}) => {
+  const { ficheros } = await resumen(request);
+  test.skip(!ficheros.includes("acceso.json"), "aún no se ha publicado acceso.json");
+  await page.goto("/plan?ccaa=Comunidad+de+Madrid&cuando=octubre&dias=3");
+  const linea = page.locator(".dia-plan small", { hasText: /min andando|junto al aparcamiento/ }).first();
+  await expect(linea).toBeVisible();
+  // la ficha del primer spot del plan con acceso lo dice en sus datos, con el enlace para llegar en coche
+  const spot = page.locator(".item-plan", { has: linea }).locator('a[href^="/luz/spot/"]');
+  if (await spot.count()) {
+    await spot.first().click();
+    await expect(page.locator("dd.acceso")).toContainText(/min andando|junto al aparcamiento/);
+    await expect(page.locator("dd.acceso a")).toHaveAttribute("href", /openstreetmap\.org\/directions/);
+  }
+});

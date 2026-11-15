@@ -17,6 +17,7 @@ Una orden por subpaquete: `python -m rasante <orden>` (`--help` para verlas).
   `recursos/lugar.schema.json`; lee también `fauna_lugares.json` y `fauna_natura.json`).
 - `auditar` (`lugares/auditoria.py`): informe de cobertura, vacíos y duplicados de `lugares.json` →
   `docs/datos/auditoria-AAAA-MM-DD.md`. Pásalo antes y después de tocar el catálogo.
+- `acceso` (spec 023): aparcamiento más cercano de OSM (extracto PBF; `pip install -e ".[osm]"`) → `acceso.json`.
 - `clima` (ERA5 por mes), `dron` (ENAIRE + AEMA), `verificacion` (METAR), `validacion` (ERA5 + Commons +
   METAR).
 - `fauna`: el modo Fauna entero, con sus propias órdenes (`python -m rasante fauna …`; ver `fauna/CLAUDE.md`).

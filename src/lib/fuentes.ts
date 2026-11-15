@@ -42,7 +42,7 @@ export const FUENTES: Fuente[] = [
     modos: ["luz", "fauna"],
   },
   {
-    uso: "Mapa, miradores, cumbres y observatorios",
+    uso: "Mapa, miradores, cumbres, observatorios y aparcamientos",
     nombre: "© colaboradores de OpenStreetMap",
     url: "https://www.openstreetmap.org/copyright",
     licencia: "ODbL",

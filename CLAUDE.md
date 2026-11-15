@@ -29,7 +29,7 @@ del mundo que traía este repo se retiraron de la versión (decisión 0021).
 - `rasante/`: el pipeline, `python -m rasante <orden>`. Luz en sus subpaquetes; Fauna en `rasante/fauna`
   (`python -m rasante fauna <orden>`).
 - `src/`: web Next.js 16 App Router (`app/` rutas finas, `features/<área>/`, `ui/`, `lib/`, `estilos/`).
-- `.github/workflows/`: `luz_*.yml`, `fauna_*.yml`, `revision.yml` (datos escritos a mano), `pruebas.yml`.
+- `.github/workflows/`: `luz_*.yml` (con `luz_acceso.yml`, mensual), `fauna_*.yml`, `revision.yml` (datos escritos a mano), `pruebas.yml`.
 
 ## Probar
 - `make check` (ruff, pytest sin red, tsc, ESLint, Prettier). E2E: `npm run build && npx playwright test`.
