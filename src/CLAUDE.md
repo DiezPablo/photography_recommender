@@ -15,7 +15,7 @@
   - `/espana/*` redirige a `/fauna/*`, y las URLs de los safaris retirados (decisión 0021), a la portada
     (`next.config.ts`).
 - `features/<área>/`: componentes, modelo y `datos.ts` (solo servidor, con `server-only`). Luz: `spots`,
-  `eventos`, `clima`, `dron`, `alertas` (un solo `.ics`, el de toda España). Fauna: `fauna`, `carta`.
+  `eventos`, `clima`, `dron`, `alertas` (un solo `.ics`, el de toda España), `acceso` (aparcamiento, spec 023). Fauna: `fauna`, `carta`.
 - `ui/`: componentes comunes; `Navegacion.tsx` (modos y menús), `ui/mapa/useMapaBase.ts` para Leaflet.
 - `lib/`: `datos.ts` (`leerDatos`, lee `datos/*.gz`), `almacen.ts` (estado del navegador con
   `useSyncExternalStore`), `sol.ts`, `luna.ts`, `sitio.ts` (URL pública: `NEXT_PUBLIC_SITIO`).

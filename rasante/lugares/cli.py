@@ -1,6 +1,6 @@
 """python -m rasante lugares: índice común de spots de luz y lugares de fauna → lugares.json (spec 003).
 
-Lee spots.geojson (modo Luz) y fauna_lugares.json + fauna_natura.json (modo Fauna), tal como están publicados
+Lee spots.geojson (modo Luz), fauna_lugares.json + fauna_natura.json (modo Fauna) y acceso.json, tal como están publicados
 (sueltos o .gz), los pasa al esquema de rasante/recursos/lugar.schema.json, enlaza cada lugar con los del otro
 catálogo que tiene cerca y con sus eventos, valida y escribe. Falla, sin escribir nada, si algún lugar no cumple
 el esquema o hay identificadores repetidos.
@@ -45,6 +45,7 @@ def construir(
     eventos: list[dict],
     provincias: Provincias | None = None,
     costa=None,
+    acceso: dict | None = None,
 ) -> tuple[dict, int]:
     """El documento lugares.json y cuántos lugares de fauna se descartan por caer fuera de España o en el mar."""
     provincias = provincias or Provincias()
@@ -59,6 +60,11 @@ def construir(
             fuera += 1
     modelo.enlazar_cerca(lugares)
     modelo.enlazar_eventos(lugares, eventos)
+    # el aparcamiento más cercano (acceso.json, spec 023)
+    for x in lugares:
+        a = (acceso or {}).get(x["catalogo"], {}).get(x["id"])
+        if a:
+            x["acceso"]["aparcamiento_m"] = a["m"]
     lugares.sort(key=lambda x: (x["catalogo"] != "luz", x["id"]))
     doc = {
         "esquema": 1,
@@ -111,6 +117,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--spots", type=Path, default=datos / "spots.geojson")
     ap.add_argument("--fauna", type=Path, default=datos / "fauna_lugares.json")
     ap.add_argument("--natura", type=Path, default=datos / "fauna_natura.json")
+    ap.add_argument("--acceso", type=Path, default=datos / "acceso.json")
     ap.add_argument("--salida", type=Path, default=datos / "lugares.json")
     a = ap.parse_args(argv)
 
@@ -121,7 +128,8 @@ def main(argv: list[str] | None = None) -> None:
         if d is None:
             print(f"Aviso: sin {nombre}; el índice sale sin ellos")
     provincias = Provincias()
-    doc, fuera = construir(spots, fauna, natura, naturaleza.cargar(provincias=provincias), provincias, Costa())
+    eventos = naturaleza.cargar(provincias=provincias)
+    doc, fuera = construir(spots, fauna, natura, eventos, provincias, Costa(), leer(a.acceso))
     fallos = errores(doc)
     if fallos:
         raise SystemExit("lugares.json no cumple el esquema:\n  " + "\n  ".join(fallos))

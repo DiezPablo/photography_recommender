@@ -50,6 +50,7 @@ const config: NextConfig = {
   outputFileTracingIncludes: {
     // Modo Luz: la ficha de un spot fuera del top del día se genera al visitarla
     "/luz/spot/[id]": [
+      "./datos/acceso.json.gz",
       "./datos/informe.json.gz",
       "./datos/spots.geojson.gz",
       "./datos/eventos.json.gz",
@@ -89,6 +90,7 @@ const config: NextConfig = {
       "./datos/fauna_ebird_regiones.json.gz",
     ],
     "/fauna/lugar/[id]": [
+      "./datos/acceso.json.gz",
       "./datos/fauna_cuadricula.json.gz",
       "./datos/fauna_rarezas.json.gz",
       "./datos/fauna_lugares.json.gz",
@@ -118,6 +120,7 @@ const config: NextConfig = {
     ],
     // el plan de varios días (spec 016): lo mismo que la consulta, más los puntos de eBird para elegir el de fauna
     "/plan": [
+      "./datos/acceso.json.gz",
       "./datos/informe.json.gz",
       "./datos/spots.geojson.gz",
       "./datos/clima.json.gz",

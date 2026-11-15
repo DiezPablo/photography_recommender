@@ -8,7 +8,7 @@ Revisado el 13-11-2026 (spec 002). «Atribución en la web» está comprobada en
 |---|---|---|---|---|
 | Open-Meteo (previsión, Marine, ERA5, CAMS) | Notas, mareas, climatología | Datos CC BY 4.0; la API gratuita es para uso no comercial | Con plan de pago | Pie y Método ✔ |
 | Wikidata | Candidatos a spot | CC0 | Sí | Pie y Método ✔ |
-| OpenStreetMap | Miradores, cumbres; mapa base | ODbL | Sí, con atribución y compartir-igual de la base derivada | Mapa, pie y Método ✔ |
+| OpenStreetMap | Miradores, cumbres, aparcamientos (acceso, spec 023); mapa base | ODbL | Sí, con atribución y compartir-igual de la base derivada | Mapa, pie y Método ✔ |
 | Wikimedia Commons | Fotos y popularidad | La de cada foto (CC BY, CC BY-SA, dominio público) | Según la foto | Autor y licencia en cada foto ✔ |
 | Atlas de D. Lorenz 2025 (VIIRS) | Contaminación lumínica | Su web no publica licencia ni condiciones (comprobado el 13-11-2026); solo pide no confundir sus mapas con la escala de Bortle | Pedir permiso al autor | Pie, Método y ficha, siempre como «≈ Bortle» ✔ |
 | Terrain Tiles (Mapzen / AWS Open Data) | Horizonte del terreno | Abiertas; la atribución exigida está en `tilezen/joerd/docs/attribution.md` (comprobado el 13-11-2026) | Sí | `/fuentes` y Método, con enlace a esa atribución ✔ |

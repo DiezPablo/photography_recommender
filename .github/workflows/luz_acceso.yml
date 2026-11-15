@@ -1,0 +1,57 @@
+# Acceso a cada spot y a cada lugar de fauna (spec 023): el aparcamiento más cercano de OpenStreetMap y unos minutos
+# andando → acceso.json en la release «datos». Con el extracto PBF de España (sin Overpass). Mensual: los
+# aparcamientos cambian poco. lugares.json lo recoge en la siguiente previsión (luz_datos.yml).
+name: Luz · acceso
+
+on:
+  schedule:
+    - cron: "23 4 10 * *" # día 10 de cada mes (lejos del descubrimiento de spots del día 3)
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - rasante/acceso/**
+      - .github/workflows/luz_acceso.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acceso
+  cancel-in-progress: false
+
+jobs:
+  acceso:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: pip install -e ".[osm]"
+
+      - name: Extracto de OpenStreetMap de España
+        run: |
+          for url in https://download.geofabrik.de/europe/spain-latest.osm.pbf \
+                     https://download.openstreetmap.fr/extracts/europe/spain-latest.osm.pbf; do
+            curl -fsSL --retry 3 -A "rasante/3.0 (proyecto personal; github.com/${{ github.repository }})" \
+              -o spain.osm.pbf "$url" && break
+          done
+          ls -la spain.osm.pbf
+
+      - name: Aparcamiento más cercano
+        run: |
+          for f in spots.geojson fauna_lugares.json; do
+            .github/scripts/bajar_dato.sh "$f" "public/datos/$f"
+          done
+          python -m rasante acceso --pbf spain.osm.pbf --salida salida/acceso.json
+
+      - name: Publicar
+        run: .github/scripts/publicar_release.sh "Acceso $(date -u +%Y-%m-%d)" salida/acceso.json

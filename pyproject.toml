@@ -23,6 +23,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.6"]
+# solo para `python -m rasante acceso` (extracto PBF de OpenStreetMap)
+osm = ["osmium>=4.0"]
 
 [project.scripts]
 rasante = "rasante.__main__:main"
