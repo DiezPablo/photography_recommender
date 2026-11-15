@@ -6,7 +6,7 @@ import { SITIO } from "@/lib/sitio";
 export const metadata: Metadata = {
   title: "Avisos en tu calendario",
   description:
-    "Suscríbete gratis, sin cuenta, al calendario de tu zona: los mejores amaneceres, atardeceres, noches y nieblas previstos, y el calendario del cielo y la naturaleza.",
+    "Suscríbete gratis, sin cuenta, al calendario de Rasante: los mejores amaneceres, atardeceres, noches y nieblas previstos, y el calendario del cielo y la naturaleza.",
 };
 
 export default function PaginaAlertas() {
@@ -17,14 +17,14 @@ export default function PaginaAlertas() {
         <p className="rotulo">Avisos · gratis y sin cuenta</p>
         <h1>Los mejores momentos, en tu calendario</h1>
         <p className="entradilla">
-          Suscríbete al calendario de tu zona desde el móvil o el ordenador. Aparecerán los momentos con nota de{" "}
-          {NOTA_ALERTA} o más en los próximos días (con la hora y el porqué), las lunas, las lluvias de meteoros, las
-          noches de Vía Láctea y los eventos del paisaje y de la fauna. Se actualiza solo, dos veces al día.
+          Suscríbete al calendario desde el móvil o el ordenador. Aparecerán los momentos con nota de {NOTA_ALERTA} o
+          más en los próximos días (con la hora y el porqué), las lunas, las lluvias de meteoros, las noches de Vía
+          Láctea y los eventos del paisaje y de la fauna. Se actualiza solo, dos veces al día.
         </p>
       </header>
 
       <section className="seccion">
-        <h2 className="rotulo">Elige tu zona</h2>
+        <h2 className="rotulo">Suscríbete</h2>
         <ul className="lista-zonas">
           {zonas().map((z) => (
             <li key={z.slug}>

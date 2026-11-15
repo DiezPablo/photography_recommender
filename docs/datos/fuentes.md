@@ -17,7 +17,7 @@ Revisado el 13-11-2026 (spec 002). «Atribución en la web» está comprobada en
 | Fundación Starlight | Reservas y destinos (zonas aproximadas, a mano) | Nombres públicos | Sí | En la ficha ✔ |
 | ENAIRE (zonas UAS) | Dron sí/no | Datos públicos **(confirmar condiciones de reutilización)** | Dudoso | Enlace en el bloque de dron ✔ |
 | Agencia Europea de Medio Ambiente (CDDA, Natura 2000) | Dron; espacios protegidos | CC BY 4.0, uso comercial incluido, citando a la EEA (aviso legal, comprobado el 13-11-2026) | Sí | Bloque de dron y `/fuentes` ✔ |
-| Iowa Environmental Mesonet (METAR) | Marcador de aciertos y validación | Dominio público | Sí | `/fuentes` y Método ✔ |
+| Iowa Environmental Mesonet (METAR) | Verificación y validación (uso interno) | Dominio público | Sí | `/fuentes` y Método ✔ |
 | IGN/CNIG (provincias), Natural Earth (países vecinos) | Territorio | CC BY 4.0; dominio público | Sí | `/fuentes` y Método ✔ |
 | EUMETSAT (GeoColour) | Capa «Nubes ahora» | Libre con atribución | Sí | En el mapa ✔ |
 

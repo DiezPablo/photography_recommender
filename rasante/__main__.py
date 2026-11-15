@@ -9,10 +9,6 @@ ORDENES = {
     "prevision": ("rasante.prevision.cli", "Previsión y notas de cada spot → informe.json"),
     "spots": ("rasante.spots.cli", "Descubrir spots en toda España → spots.geojson"),
     "eventos": ("rasante.eventos.cli", "Calendario del cielo y de naturaleza → eventos.json"),
-    "alineaciones": (
-        "rasante.eventos.cli_alineaciones",
-        "Sol y luna llena por los picos del horizonte → alineaciones.json",
-    ),
     "fauna": ("rasante.fauna.ordenes", "Modo Fauna: cuadrícula, eBird, recientes, lugares… (fauna --help)"),
     "lugares": ("rasante.lugares.cli", "Índice común de spots y lugares de fauna → lugares.json"),
     "auditar": ("rasante.lugares.auditoria", "Auditoría de lugares.json: cobertura, vacíos y duplicados → informe .md"),
@@ -20,7 +16,6 @@ ORDENES = {
     "dron": ("rasante.dron.cli", "¿Se puede volar un dron en cada spot? (ENAIRE y espacios protegidos) → dron.json"),
     "verificar": ("rasante.verificacion.cli", "Lo previsto frente a lo observado (METAR) → verificacion.json"),
     "validar": ("rasante.validacion.cli", "Validación histórica de las notas"),
-    "avisos": ("rasante.avisos.telegram", "Resumen diario por Telegram (opcional)"),
 }
 
 

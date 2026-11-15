@@ -6,7 +6,6 @@ import AvisoAurora from "@/features/eventos/componentes/AvisoAurora";
 import MapaEventos from "@/ui/mapa/MapaEventos";
 import MejoresZonasMes from "@/features/clima/componentes/MejoresZonasMes";
 import { rutaHabitual } from "@/features/clima/habitual";
-import AlineacionesMes from "@/features/eventos/componentes/AlineacionesMes";
 import TarjetaEvento from "@/features/eventos/componentes/TarjetaEvento";
 import NavMeses from "@/features/eventos/componentes/NavMeses";
 import {
@@ -163,7 +162,6 @@ export default function VistaMes({ eventos, mes, mesHoy }: { eventos: Eventos; m
       </div>
 
       <MejoresZonasMes mes={mes} />
-      <AlineacionesMes eventos={eventos} mes={mes} />
 
       {fauna.length > 0 && (
         <Link href={rutaCalendario("fauna", mes)} className="aviso-fauna">

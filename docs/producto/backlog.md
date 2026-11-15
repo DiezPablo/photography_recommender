@@ -7,7 +7,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [~] 001 — Consolidación en photography_recommender (`docs/specs/001-consolidacion.md`): fase 1 hecha (Luz traído, `/luz` y `/fauna`, redirecciones); queda lo de abajo
 - [x] 003 — Núcleo común de "lugar" para los dos catálogos: `lugares.json` y validador (`docs/specs/003-esquema-lugar.md`)
 - [x] 002 — Auditoría de cobertura y licencias: `python -m rasante auditar`, `docs/datos/` (`docs/specs/002-auditoria-datos.md`)
-- [ ] 017 — Cierre del repo anterior: apagar workflows de `photo_recommender` y redirigir su web al dominio nuevo (001 §4)
+- [~] 017 — Cierre del repo anterior: workflows de `photo_recommender` apagados (Pablo, 15-11-2026); falta redirigir su web al dominio nuevo (001 §4)
 - [x] 005 — Safaris del mundo, fuera de esta versión (`docs/specs/005-safaris-fuera.md`)
 - [x] 006 — Un solo pipeline: Fauna en `rasante/fauna`, un único `comun`, workflows `fauna_*.yml` (`docs/specs/006-un-pipeline.md`)
 - [x] 007 — Ficheros de fauna con su nombre: `espana_*` → `fauna_*` con transición sin corte; fuera rutas y `espana_rasante` (`docs/specs/007-ficheros-fauna.md`)
@@ -21,12 +21,12 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [x] 013 — Idoneidad del lugar por momento y «lo habitual» de cada mes en `/luz/habitual` (`docs/specs/013-idoneidad.md`)
 - [x] 014 — Eventos de fauna con varios lugares: la berrea en `/fauna/evento/berrea`, una sola lista de fenómenos y calendario de fauna (`docs/specs/014-eventos-fauna.md`)
 - [x] 015 — «¿Dónde verlo?» en los eventos de cielo: del calendario a «lo habitual» de noche (`docs/specs/015-donde-verlo.md`)
+- [x] 022 — Poda de «información justa»: fuera alineaciones, panorama, brújula del sol, marcador, Telegram, `.ics` por comunidad, alojamientos y experimentos; dron y mar en una línea (`docs/specs/022-poda.md`)
+- [ ] 023 — Acceso a cada spot: aparcamiento más cercano y minutos andando, en la ficha y en el plan (decisión 0023)
 - [x] 016 — Plan de varios días en `/plan`: cada día una zona con amanecer, fauna, lo que está en temporada, atardecer y, si toca, noche (`docs/specs/016-plan.md`)
 
 ## Después
-- [ ] Safaris del mundo: retomarlos solo si lo vemos necesario (decisión 0021; están en el commit `03bbe59`)
-- [ ] Rutas de senderismo: valorar integrarlas cuando Luz y Fauna estén montados (decisión 0019; el código está en `photo_recommender`)
-- [ ] Poda de "información justa": decidir sobre los candidatos de 001 §5 (alineaciones, mareas, dron, `.ics` por comunidad…)
+(vacío)
 
 ## Cubierto por la base (no hace falta spec)
 - Cuadrícula de fauna, recientes, rarezas y actividad, carta de fauna, "cerca de mí / este finde", hides y normas: ya existían en este repo y están en `/fauna`
@@ -34,3 +34,4 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 ## Descartado
 - «Mis especies» y «Diario de salidas»: estado de usuario, no "dónde ir" (0016). Quitados el 13-11-2026
 - Ficha única que fusione spot y lugar de fauna (0015)
+- Safaris del mundo (0022) y catálogo de rutas de senderismo (0023; del que solo se aprovecha el acceso a los spots)

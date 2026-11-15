@@ -3,8 +3,7 @@
 Órdenes: `python -m rasante fauna <orden>` (`ordenes.py`; `--help` las lista).
 
 - `cuadricula`: descarga SQL de GBIF por cuadrícula EEA de 10 km (`rejilla`, `gbif_descarga`), estacionalidad con
-  confianza y backtest (`estacionalidad`, `evaluacion`, `frecuencia`) → `fauna_cuadricula.json`. `experimentos` y
-  `diagnostico` son sus herramientas de análisis.
+  confianza y backtest (`estacionalidad`, `evaluacion`, `frecuencia`) → `fauna_cuadricula.json`.
 - `ebird`: frecuencia de detección de aves con el conjunto de eBird en GBIF (`ebird_frecuencia`) →
   `fauna_ebird.json`.
 - `recientes`: lo visto en 30 días y rarezas (`ebird`, API de eBird; `inat_espana`, iNaturalist) →

@@ -19,18 +19,9 @@ export interface Zona {
   porDia: number;
 }
 
+/** Un solo calendario, el de toda España (spec 022): los de cada comunidad redirigen a él (`next.config.ts`). */
 export function zonas(): Zona[] {
-  const ccaa = [
-    ...new Set(
-      cargar()
-        .spots.map((s) => s.ccaa)
-        .filter((c): c is string => !!c),
-    ),
-  ].sort((a, b) => a.localeCompare(b, "es"));
-  return [
-    { slug: "espana", nombre: "Toda España", ccaa: null, porDia: 5 },
-    ...ccaa.map((c) => ({ slug: slug(c), nombre: c, ccaa: c, porDia: 3 })),
-  ];
+  return [{ slug: "espana", nombre: "Toda España", ccaa: null, porDia: 5 }];
 }
 
 /** Franja horaria del momento: de la hora azul al final de la dorada, la noche sin luna, la madrugada… */
@@ -196,14 +187,4 @@ export function calendarioDeZona(z: Zona): string {
     `Mejores momentos para fotografiar (nota ≥ ${NOTA_ALERTA}) y calendario del cielo y la naturaleza. ${SITIO}`,
     [...momentosBuenos(spots, z, tz), ...eventosDelCielo(z)],
   );
-}
-
-/** «Castilla y León» → «castilla-y-leon». */
-function slug(t: string): string {
-  return t
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 }

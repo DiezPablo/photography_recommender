@@ -7,10 +7,9 @@ Subpaquetes:
   notas       modelos de puntuación 0-10 (luz, noche, niebla, luna)
   prevision   Open-Meteo + notas → informe.json
   spots       descubrimiento de spots en toda España → spots.geojson
-  fauna       modo Fauna: cuadrícula (GBIF), eBird, iNaturalist y lugares → espana*.json
+  fauna       modo Fauna: cuadrícula (GBIF), eBird, iNaturalist y lugares → fauna_*.json
   lugares     índice común de spots y lugares de fauna → lugares.json
   validacion  validación histórica de las notas
-  avisos      resumen diario por Telegram (opcional)
 
 Uso: python -m rasante <orden> [opciones]   (python -m rasante --help)
 """

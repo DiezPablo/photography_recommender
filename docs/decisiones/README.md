@@ -33,6 +33,8 @@ Consecuencias: qué implica y qué queda descartado.
 - [0016](0016-lo-existente-es-un-mock.md) — La web anterior a 11-2026 es un mock
 - [0017](0017-ebird-y-monetizacion.md) — Sin monetización; eBird, a fondo
 - [0018](0018-repo-base.md) — La base es photography_recommender
-- [0019](0019-rutas-aparcadas.md) — Rutas de senderismo, aparcadas
+- [0019](0019-rutas-aparcadas.md) — Rutas de senderismo, aparcadas (sustituida por 0023)
 - [0020](0020-lugares-json.md) — `lugares.json`: un índice, dos catálogos, ids existentes
-- [0021](0021-safaris-fuera.md) — Safaris del mundo, fuera de esta versión
+- [0021](0021-safaris-fuera.md) — Safaris del mundo, fuera de esta versión (sustituida por 0022)
+- [0022](0022-safaris-descartados.md) — Safaris del mundo, descartados
+- [0023](0023-rutas-solo-acceso.md) — De las rutas, solo el acceso a cada spot

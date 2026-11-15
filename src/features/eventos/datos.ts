@@ -2,14 +2,7 @@
 import "server-only";
 import { leerDatos } from "@/lib/datos";
 import { cargar } from "@/features/spots/datos";
-import {
-  type Alineaciones,
-  type Ambito,
-  ambito,
-  distanciaKm,
-  type EventoNaturaleza,
-  type Eventos,
-} from "@/features/eventos/modelo";
+import { type Ambito, ambito, distanciaKm, type EventoNaturaleza, type Eventos } from "@/features/eventos/modelo";
 
 export * from "@/features/eventos/modelo";
 
@@ -55,12 +48,4 @@ export function spotsCerca(e: EventoNaturaleza, n = 8): SpotCercano[] {
     .filter((s) => s.km <= e.radio_km + 15)
     .sort((a, b) => a.km - b.km)
     .slice(0, n);
-}
-
-let cacheAlineaciones: Alineaciones | null | undefined;
-
-export function cargarAlineaciones(): Alineaciones | null {
-  if (cacheAlineaciones !== undefined) return cacheAlineaciones;
-  cacheAlineaciones = leerDatos<Alineaciones>("alineaciones.json");
-  return cacheAlineaciones;
 }

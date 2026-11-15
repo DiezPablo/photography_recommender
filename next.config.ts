@@ -36,6 +36,12 @@ const config: NextConfig = {
       { source: "/fauna/mis-especies", destination: "/fauna", permanent: false },
       { source: "/fauna/diario", destination: "/fauna", permanent: false },
       ...dePortada(["especie", "celda", "mes", "fecha", "c", "z", "sin"], "/fauna"),
+      // un solo calendario .ics, el de toda España (spec 022): los de cada comunidad llevan a él
+      {
+        source: "/luz/alertas/:zona((?!espana\\.ics$).+\\.ics)",
+        destination: "/luz/alertas/espana.ics",
+        permanent: true,
+      },
       ...retiradas,
     ];
   },
@@ -48,7 +54,6 @@ const config: NextConfig = {
       "./datos/spots.geojson.gz",
       "./datos/eventos.json.gz",
       "./datos/clima.json.gz",
-      "./datos/alineaciones.json.gz",
       "./datos/dron.json.gz",
       // la fauna cerca de cada spot (spec 010), solo con los lugares que siguen en el catálogo de fauna
       "./datos/lugares.json.gz",
