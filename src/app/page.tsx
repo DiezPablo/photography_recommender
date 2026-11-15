@@ -141,6 +141,9 @@ export default function Portada() {
             <li>
               <Link href={rutaHabitual((mes + 1) % 12, "atardecer")}>Lo habitual de cada mes, sin previsión</Link>
             </li>
+            <li>
+              <Link href={`/plan?cuando=${MESES[(mes + 1) % 12]}&dias=3`}>Un plan de varios días</Link>
+            </li>
             {faunaMes.map((e) => (
               <li key={e.id}>
                 <Link href={rutaEvento(e)}>{e.nombre}</Link>

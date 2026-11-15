@@ -21,7 +21,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [x] 013 — Idoneidad del lugar por momento y «lo habitual» de cada mes en `/luz/habitual` (`docs/specs/013-idoneidad.md`)
 - [x] 014 — Eventos de fauna con varios lugares: la berrea en `/fauna/evento/berrea`, una sola lista de fenómenos y calendario de fauna (`docs/specs/014-eventos-fauna.md`)
 - [x] 015 — «¿Dónde verlo?» en los eventos de cielo: del calendario a «lo habitual» de noche (`docs/specs/015-donde-verlo.md`)
-- [ ] 016 — Plan de varios días. CA: Asturias-octubre da por día luz + fauna + eventos en temporada; vive en `/plan`
+- [x] 016 — Plan de varios días en `/plan`: cada día una zona con amanecer, fauna, lo que está en temporada, atardecer y, si toca, noche (`docs/specs/016-plan.md`)
 
 ## Después
 - [ ] Safaris del mundo: retomarlos solo si lo vemos necesario (decisión 0021; están en el commit `03bbe59`)

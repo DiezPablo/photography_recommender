@@ -20,6 +20,8 @@ export interface Cuando {
   texto: string;
   /** con previsión o con lo habitual */
   prevision: boolean;
+  /** el día (AAAA-MM-DD) si la consulta es de un día concreto */
+  fecha: string | null;
 }
 
 export function resolverCuando(c: Consulta): Cuando {
@@ -32,13 +34,20 @@ export function resolverCuando(c: Consulta): Cuando {
     fecha = fechas.find((f, i) => i > 0 && [6, 0].includes(new Date(`${f}T12:00:00Z`).getUTCDay())) ?? null;
   else if (/^\d{4}-\d{2}-\d{2}$/.test(c.cuando)) fecha = c.cuando;
   const mesNombre = MESES.indexOf(c.cuando);
-  if (mesNombre >= 0) return { d: null, mes: mesNombre, texto: `en ${MESES[mesNombre]}`, prevision: false };
+  if (mesNombre >= 0)
+    return { d: null, mes: mesNombre, texto: `en ${MESES[mesNombre]}`, prevision: false, fecha: null };
   const d = fecha ? fechas.indexOf(fecha) : -1;
   if (d >= 0)
-    return { d, mes: Number(fechas[d].slice(5, 7)) - 1, texto: etiquetaDia(fechas[d], d).largo, prevision: true };
+    return {
+      d,
+      mes: Number(fechas[d].slice(5, 7)) - 1,
+      texto: etiquetaDia(fechas[d], d).largo,
+      prevision: true,
+      fecha: fechas[d],
+    };
   // una fecha fuera de la previsión (o un finde que aún no entra): lo habitual de su mes
   const mes = fecha ? Number(fecha.slice(5, 7)) - 1 : Number(hoy.slice(5, 7)) % 12;
-  return { d: null, mes, texto: `en ${MESES[mes]} (sin previsión aún)`, prevision: false };
+  return { d: null, mes, texto: `en ${MESES[mes]} (sin previsión aún)`, prevision: false, fecha };
 }
 
 const FILTRO: Record<Consulta["momento"], Filtro> = {
@@ -56,7 +65,11 @@ const TIPO: Record<Consulta["momento"], TipoHabitual> = {
 
 export type FilaLuz = FilaRanking & { km: number | null };
 
-function dondeFiltra<T extends { lat: number; lon: number; ccaa?: string | null }>(c: Consulta, xs: T[]) {
+/** Se queda con lo que cae dentro de «dónde»: a menos de `km` del punto o en la comunidad. También lo usa el plan. */
+export function dondeFiltra<T extends { lat: number; lon: number; ccaa?: string | null }>(
+  c: Pick<Consulta, "lat" | "lon" | "km" | "ccaa">,
+  xs: T[],
+) {
   return xs
     .map((x) => ({ ...x, km: c.lat !== null && c.lon !== null ? distanciaKm({ lat: c.lat, lon: c.lon }, x) : null }))
     .filter((x) => (x.km !== null ? x.km <= c.km : !c.ccaa || x.ccaa === c.ccaa));

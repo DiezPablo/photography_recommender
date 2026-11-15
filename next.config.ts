@@ -110,6 +110,18 @@ const config: NextConfig = {
       "./datos/fauna_natura.json.gz",
       "./datos/fauna_listas.json.gz",
     ],
+    // el plan de varios días (spec 016): lo mismo que la consulta, más los puntos de eBird para elegir el de fauna
+    "/plan": [
+      "./datos/informe.json.gz",
+      "./datos/spots.geojson.gz",
+      "./datos/clima.json.gz",
+      "./datos/lugares.json.gz",
+      "./datos/eventos.json.gz",
+      "./datos/fauna_cuadricula.json.gz",
+      "./datos/fauna_lugares.json.gz",
+      "./datos/fauna_natura.json.gz",
+      "./datos/fauna_listas.json.gz",
+    ],
     "/fauna/lugares-mapa": ["./datos/fauna_lugares.json.gz", "./datos/fauna_natura.json.gz"],
     "/fauna/lugares": ["./datos/fauna_lugares.json.gz", "./datos/fauna_natura.json.gz"],
   },
