@@ -26,7 +26,7 @@ import ResumenDia from "@/features/fauna/ResumenDia";
 import { factorFotografia } from "@/features/fauna/fotografia";
 import { useUbicacionGuardada } from "@/features/fauna/ubicacion";
 import FenomenosEspana from "@/features/fauna/FenomenosEspana";
-import { fenomenosCerca } from "@/features/fauna/fenomenos";
+import { type Fenomeno, fenomenosCerca } from "@/features/fauna/fenomenos";
 import { ZONAS_ESPANA, type BloqueEspana, type ObsReciente } from "@/features/fauna/zonas";
 import Esqueleto from "@/ui/Esqueleto";
 import CitaEbird from "@/features/fauna/citaEbird";
@@ -139,7 +139,7 @@ function especiesDelRadio(bloques: BloqueEspana[], celdas: Set<string>, mes: num
   return { suma, nombres, total };
 }
 
-export default function PlanificadorEspana({ hoy }: { hoy: string }) {
+export default function PlanificadorEspana({ hoy, fenomenos }: { hoy: string; fenomenos: Fenomeno[] }) {
   const [parametros, actualizar] = useParametrosUrl();
   const zona = ZONAS_ESPANA.find((z) => z.id === (parametros.get("zona") ?? "gallocanta")) ?? ZONAS_ESPANA[3];
   // sin punto ni zona en la dirección, la última ubicación elegida (solo en este navegador) o Gallocanta
@@ -338,7 +338,7 @@ export default function PlanificadorEspana({ hoy }: { hoy: string }) {
       />
 
       <FenomenosEspana
-        fenomenos={fenomenosCerca(lat, lon, radio, mes + 1)}
+        fenomenos={fenomenosCerca(fenomenos, lat, lon, radio, mes + 1)}
         mesHoy={mes}
         titulo={`Qué pasa en ${MESES[mes]} cerca de aquí`}
       />

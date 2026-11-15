@@ -4,8 +4,16 @@
 import "server-only";
 import { cargarEventos, type EventoNaturaleza, type FenomenoFauna, mesDe } from "@/features/eventos/datos";
 import { cargarEspana, claveDe } from "@/features/fauna/datos";
+import { type Fenomeno, fenomenoDe } from "@/features/fauna/fenomenos";
 import { confianza, nivelFrecuencia } from "@/features/fauna/frecuencia";
 import { celdasEnRadio } from "@/lib/rejilla";
+
+let lista: Fenomeno[] | undefined;
+/** Todos los eventos de fauna como fenómenos (para las fichas de lugar y de especie y «¿Qué veo aquí?»). */
+export function listaFenomenos(): Fenomeno[] {
+  lista ??= (cargarEventos()?.naturaleza ?? []).filter((e) => e.categoria === "fauna").map(fenomenoDe);
+  return lista;
+}
 
 export function fenomenosFauna(): FenomenoFauna[] {
   return cargarEventos()?.fenomenos ?? [];

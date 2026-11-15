@@ -9,6 +9,7 @@ import {
   type EventoNaturaleza,
   fechaCorta,
   rutaCalendario,
+  rutaEvento,
 } from "@/features/eventos/datos";
 
 /** Días entre dos fechas MM-DD dentro del año (el más corto, cruzando año si hace falta). */
@@ -62,7 +63,7 @@ export default function Temporada({ hoy, max = 3 }: { hoy: string; max?: number 
                 {lista.map((e) => (
                   <li key={e.id} className={`cat-${e.categoria}`}>
                     <span className="punto-cat" aria-hidden />
-                    <Link href={`/luz/evento/${e.id}`}>{e.nombre}</Link>
+                    <Link href={rutaEvento(e)}>{e.nombre}</Link>
                     <small>hasta el {fechaCorta(e.hasta)}</small>
                   </li>
                 ))}

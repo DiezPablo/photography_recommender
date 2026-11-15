@@ -7,7 +7,8 @@
     `/luz/habitual/[mes]/[tipo]` (sin previsión: climatología × idoneidad, spec 013), `/luz/evento/[id]`,
     `/luz/alertas` (.ics), `/luz/metodo`.
   - `/fauna/**`: carta por cuadrícula (`/fauna`; `?modo=aqui|finde`), `/fauna/lugar/[id]`,
-    `/fauna/especie/[clave]`, `/fauna/evento/[id]` (un fenómeno con sus lugares: la berrea, spec 014),
+    `/fauna/especie/[clave]`, `/fauna/evento/[id]` (un fenómeno con sus lugares, `berrea`, o la ficha de uno, `berrea-monfrague`; spec 014),
+    `/fauna/calendario`,
     `/fauna/hides`, `/fauna/rarezas`, `/fauna/normas` y sus rutas JSON.
   - `/espana/*` redirige a `/fauna/*`, y las URLs de los safaris retirados (decisión 0021), a la portada
     (`next.config.ts`).

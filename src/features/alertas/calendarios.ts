@@ -3,7 +3,7 @@
 import { SITIO } from "@/lib/sitio";
 import "server-only";
 import { calendario, type EventoIcs, utcDesdeLocal } from "@/lib/ics";
-import { ambito, anoDelMes, cargarEventos, fechaCorta } from "@/features/eventos/datos";
+import { ambito, anoDelMes, cargarEventos, fechaCorta, rutaEvento } from "@/features/eventos/datos";
 import { cargar } from "@/features/spots/datos";
 import { type Dia, type Momento, MOMENTOS, motivos, NOMBRE_MOMENTO, type Spot } from "@/features/spots/modelo";
 
@@ -182,7 +182,7 @@ function eventosDelCielo(zona: Zona): EventoIcs[] {
       lugar: [n.lugar, n.provincia].filter(Boolean).join(", "),
       geo: { lat: n.lat, lon: n.lon },
       dia: pico,
-      url: `${SITIO}/luz/evento/${n.id}`,
+      url: `${SITIO}${rutaEvento(n)}`,
     });
   }
   return lista;

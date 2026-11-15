@@ -1,6 +1,6 @@
 import Link from "next/link";
 import BarraAnual from "@/features/eventos/componentes/BarraAnual";
-import { type Categoria, type EventoNaturaleza, fechaCorta, mesDe } from "@/features/eventos/modelo";
+import { type Categoria, type EventoNaturaleza, fechaCorta, mesDe, rutaEvento } from "@/features/eventos/modelo";
 
 export default function TarjetaEvento({
   evento: e,
@@ -23,7 +23,7 @@ export default function TarjetaEvento({
         {enPico && <span className="en-pico">En su mejor momento</span>}
       </p>
       <h3>
-        <Link href={`/luz/evento/${e.id}`}>{e.nombre}</Link>
+        <Link href={rutaEvento(e)}>{e.nombre}</Link>
       </h3>
       <p className="meta">
         <span>

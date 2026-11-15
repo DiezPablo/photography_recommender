@@ -94,6 +94,13 @@ const FAUNA: Seccion[] = [
     activa: (r) => r.startsWith("/fauna/rarezas"),
     movil: true,
   },
+  // sin sitio en la barra del móvil (ya son cinco): allí se llega desde las fichas y desde los fenómenos
+  {
+    href: "/fauna/calendario",
+    texto: "Calendario",
+    Icono: IconoCalendario,
+    activa: (r) => r.startsWith("/fauna/calendario") || r.startsWith("/fauna/evento"),
+  },
   { href: "/fauna/normas", texto: "Normas", Icono: IconoLibro, activa: (r) => r.startsWith("/fauna/normas") },
 ];
 

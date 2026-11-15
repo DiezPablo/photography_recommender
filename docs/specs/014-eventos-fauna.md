@@ -1,6 +1,6 @@
 # 014 — Eventos de fauna con varios lugares
 
-Estado: en curso (hecha la primera parte: modelo y página del fenómeno; queda la fusión de `fenomenos.ts`)
+Estado: hecha (falta comprobar la publicación en producción)
 Modo: Fauna
 Situación del fotógrafo: un evento («quiero la berrea»)
 
@@ -24,12 +24,20 @@ sí) y, además, la fauna tiene los mismos fenómenos escritos dos veces (`event
   muestra, las mismas palabras que el resto de Fauna). Ordena la lista. Se enlaza desde la ficha de cada lugar
   del fenómeno y desde la ficha de la especie.
 
-**Segunda parte (pendiente)**
-- Fusionar `src/features/fauna/fenomenos.ts` con `eventos_naturaleza.csv` (una sola lista escrita a mano, con
-  `dormidero` y fuentes por lugar) y que las fichas de lugar y de especie lean de ahí.
-- Sacar las fichas de los eventos de fauna de `/luz/evento/[id]` (a `/fauna/evento/…`, con redirección) y dar a
-  Fauna su calendario de fenómenos.
-- Más fenómenos con varios lugares (invernada de acuáticas, paso del Estrecho, celo de la cabra montés).
+**Segunda parte (hecha)**
+- **Una sola lista escrita a mano**: `eventos_naturaleza.csv` gana tres columnas opcionales para la fauna
+  (`especie`, `dormidero`, `fuentes`) y recibe lo que solo estaba en `src/features/fauna/fenomenos.ts`: la
+  invernada del delta del Ebro, los ánsares de Villafáfila, los buitres de Monfragüe y el paso de primavera por
+  el Estrecho. `fenomenos.ts` se queda en funciones puras sobre esa lista; las fichas de lugar y de especie y
+  «¿Qué veo aquí?» leen de ella (el servidor se la pasa a los componentes de cliente).
+- **Los eventos de fauna viven en Fauna**: su ficha es `/fauna/evento/[id]` (la misma dirección sirve el
+  fenómeno, `berrea`, y cada lugar, `berrea-monfrague`) y la antigua `/luz/evento/[id]` redirige. La ficha
+  enseña ya el dormidero y las fuentes.
+- **Calendario de fauna** en `/fauna/calendario`: lo que pasa cada mes, empezando por el mes en curso, y los
+  fenómenos con varios lugares. En el menú de escritorio; en la barra del móvil no cabe (se llega desde las
+  fichas).
+- Queda fuera, para cuando haga falta: más fenómenos con varios lugares (invernada de acuáticas, celo de la
+  cabra montés) — basta con añadir filas.
 
 - **Fuera de alcance**: ubicaciones de especies sensibles (lince, oso, lobo siguen solo por zona, decisión 0011);
   previsión del tiempo por lugar; reservas de salidas guiadas.
@@ -41,7 +49,12 @@ sí) y, además, la fauna tiene los mismos fenómenos escritos dos veces (`event
 - [x] Sin `fenomenos` publicados (hasta el primer cálculo de eventos tras fusionar), la página no existe y nadie
       la enlaza; nada falla.
 - [ ] Primera publicación comprobada en producción (`/fauna/evento/berrea`).
-- [ ] `fenomenos.ts` fusionado con el CSV; los eventos de fauna fuera de `/luz/evento` (segunda parte).
+- [x] `fenomenos.ts` fusionado con el CSV: ningún fenómeno escrito en la web; los 12 que había siguen saliendo
+      en las fichas (e2e).
+- [x] Los eventos de fauna fuera de `/luz/evento`: `/luz/evento/berrea-monfrague` lleva a
+      `/fauna/evento/berrea-monfrague`; los de paisaje no se mueven (e2e).
+- [x] Todas las fuentes enlazadas responden (comprobadas el 15-11-2026; se corrige la de Villafáfila, que estaba
+      rota).
 
 ## Datos
 Escritos a mano: revisar cada año con el resto de eventos. La fuente del fenómeno es la de su descripción; los
