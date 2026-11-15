@@ -4,10 +4,12 @@
 # si se agota el tiempo, la siguiente continúa.
 name: Luz · descubrir spots
 
-# Solo a mano por ahora: en este repositorio la caché de Commons está vacía y un descubrimiento desde cero
-# publicaría un catálogo peor que el sembrado desde el repositorio anterior (la popularidad se completa en varias
-# ejecuciones). El calendario mensual vuelve con la spec 018 (cobertura de spots).
+# Mensual (spec 018). Mientras la caché de Commons no tenga contada la popularidad de casi todos los candidatos
+# (rasante.spots.cli.MIN_CONTADOS), la ejecución solo la rellena y no publica: un catálogo a medias sería peor
+# que el publicado. Para llenarla antes, lánzalo a mano las veces que haga falta (cada vez sigue donde lo dejó).
 on:
+  schedule:
+    - cron: "37 2 3 * *"
   workflow_dispatch:
     inputs:
       total:
@@ -15,7 +17,7 @@ on:
         default: "1500"
       por_provincia:
         description: "Mínimo de spots por provincia"
-        default: "12"
+        default: "20"
       minutos:
         description: "Tiempo máximo para consultar Commons (min)"
         default: "150"
@@ -58,14 +60,27 @@ jobs:
         run: |
           python -m rasante spots --salida salida \
             --total "${{ inputs.total || '1500' }}" \
-            --por-provincia "${{ inputs.por_provincia || '12' }}" \
+            --por-provincia "${{ inputs.por_provincia || '20' }}" \
             --minutos "${{ inputs.minutos || '150' }}"
 
+      # sin la popularidad completa, aquí se para: la caché queda guardada y la siguiente ejecución sigue
+      - name: ¿Catálogo completo?
+        id: completo
+        run: |
+          if [ -f salida/INCOMPLETO ]; then
+            echo "Popularidad contada en el $(cat salida/INCOMPLETO): se rellena la caché, no se publica"
+            echo "si=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "si=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Previsión con los spots nuevos
+        if: steps.completo.outputs.si == 'true'
         run: python -m rasante prevision --spots salida/spots.geojson --salida salida/informe.json
 
       # ¿Se puede volar un dron en cada spot? (ENAIRE y espacios protegidos). Si no responden, queda el anterior.
       - name: Dron
+        if: steps.completo.outputs.si == 'true'
         continue-on-error: true
         run: python -m rasante dron --spots salida/spots.geojson --salida salida/dron.json
 
@@ -76,6 +91,7 @@ jobs:
           retention-days: 14
 
       - name: Publicar
+        if: steps.completo.outputs.si == 'true'
         run: |
           .github/scripts/publicar_release.sh "Actualizar spots ($(date -u +%Y-%m-%d))" \
             salida/spots.geojson salida/spots.csv salida/informe.json

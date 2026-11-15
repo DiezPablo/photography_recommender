@@ -11,7 +11,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [x] 005 — Safaris del mundo, fuera de esta versión (`docs/specs/005-safaris-fuera.md`)
 - [x] 006 — Un solo pipeline: Fauna en `rasante/fauna`, un único `comun`, workflows `fauna_*.yml` (`docs/specs/006-un-pipeline.md`)
 - [ ] 007 — Limpieza de datos de fauna: fuera `espana_rutas.json` y `espana_rasante.json`; `espana_*` → `fauna_*` (001 §4)
-- [ ] 018 — Cobertura de spots: 30 provincias en el mínimo de 12 y un 32 % en cielo urbano (auditoría 002). CA: criterio de selección revisado (variedad de tipos y cielo, no solo popularidad); ninguna provincia peninsular con menos de 20; informe de auditoría antes y después; `luz_descubrir.yml` vuelve a tener calendario mensual cuando su caché de Commons esté completa
+- [~] 018 — Cobertura de spots (`docs/specs/018-cobertura-spots.md`): selección con 20 por provincia, variedad y tope urbano; el descubrimiento solo publica con la popularidad completa y vuelve a ser mensual. Falta el primer descubrimiento completo y la auditoría de después
 - [x] 019 — Lugares de fauna sin repetir: de 48 y 41 pares duplicados a 3 y 3 (`docs/specs/019-duplicados-fauna.md`)
 - [x] 020 — Página única de fuentes (`/fuentes`) y créditos que faltaban (`docs/specs/020-fuentes.md`)
 - [~] 021 — eBird a fondo (`docs/specs/021-ebird-a-fondo.md`): los tres bloques hechos; falta comprobar en Actions la primera ejecución de actividad por región y especies por punto

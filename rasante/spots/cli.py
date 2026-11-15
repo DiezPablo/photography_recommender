@@ -8,7 +8,8 @@ Candidatos (sin clave de API):
   - OpenStreetMap (Overpass, por bloques): miradores con nombre, cumbres con Wikidata, cascadas,
     faros, cabos y acantilados con nombre.
 Popularidad: número de fotos geolocalizadas en Wikimedia Commons a menos de 500 m.
-Selección: los mejores de cada provincia (para cubrir todo el país) y el resto por puntuación nacional.
+Selección (spec 018): 20 de cada provincia con variedad de tipos y de cielo, y el resto por puntuación nacional
+con el cielo urbano limitado (rasante.spots.seleccion).
 Para cada spot elegido: galería de Commons (autor y licencia), horizonte del terreno (rasante.terreno.horizonte),
 contaminación lumínica (rasante.cielo.contaminacion), provincia y comunidad autónoma.
 
@@ -41,7 +42,10 @@ from . import candidatos
 from .candidatos import candidatos_osm, candidatos_wikidata, fusionar
 from .commons import fotos_cerca, galeria
 from .nombres import limpiar_nombre, nombre_valido
-from .seleccion import PESO_TIPO, ajuste_cielo, entero
+from .seleccion import PESO_TIPO, URBANO, ajuste_cielo, entero, seleccionar
+
+# Fracción de candidatos con la popularidad de Commons contada para que el catálogo se pueda publicar
+MIN_CONTADOS = 0.98
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -50,7 +54,7 @@ def main(argv: list[str] | None = None) -> None:
     )
     a.add_argument("--salida", default="public/datos")
     a.add_argument("--total", type=int, default=1500)
-    a.add_argument("--por-provincia", type=int, default=12)
+    a.add_argument("--por-provincia", type=int, default=20)
     a.add_argument("--minutos", type=float, default=300, help="corta las peticiones a Commons pasado este tiempo")
     a.add_argument("--bbox", help="solo esta caja min_lon,min_lat,max_lon,max_lat (pruebas)")
     args = a.parse_args(argv)
@@ -92,8 +96,13 @@ def main(argv: list[str] | None = None) -> None:
             print(f"      {k}/{len(cand)} ({(time.time() - t0) / 60:.0f} min)", flush=True)
     cand["fotos_cerca"] = pd.to_numeric(pd.Series(n_fotos, index=cand.index), errors="coerce").astype(float)
     cand["sitelinks"] = pd.to_numeric(cand["sitelinks"], errors="coerce").fillna(0).astype(float)
+    contados = cand.fotos_cerca.notna().mean()
     if cortado:
-        print("      Tiempo agotado: los candidatos sin contar usan solo Wikidata; la próxima ejecución sigue.")
+        print(
+            f"      Tiempo agotado con el {contados:.0%} contado: los que faltan usan solo Wikidata; la próxima "
+            "ejecución sigue (la caché guarda lo contado).",
+            flush=True,
+        )
     cand["cielo"] = [ajuste_cielo(la, lo) for la, lo in zip(cand.lat, cand.lon, strict=True)]
     cand["puntuacion"] = (
         np.log1p(cand.fotos_cerca.fillna(0))
@@ -103,12 +112,26 @@ def main(argv: list[str] | None = None) -> None:
         + cand.cielo
     )
 
-    print("[3/5] Selección por provincia y nacional…", flush=True)
-    cand = cand.sort_values("puntuacion", ascending=False)
-    fijos = cand.groupby("provincia").head(args.por_provincia)
-    resto = cand.drop(fijos.index).head(max(0, args.total - len(fijos)))
-    sel = pd.concat([fijos, resto]).sort_values("puntuacion", ascending=False).reset_index(drop=True)
-    print(f"      {len(sel)} spots ({sel.provincia.nunique()} provincias)", flush=True)
+    print("[3/5] Selección por provincia (con variedad) y nacional…", flush=True)
+    sel = seleccionar(cand, args.total, args.por_provincia)
+    urbano = (sel.cielo <= URBANO).mean() * 100
+    por_prov = sel.groupby("provincia").size()
+    print(
+        f"      {len(sel)} spots ({sel.provincia.nunique()} provincias, de {por_prov.min()} a {por_prov.max()} por "
+        f"provincia; {urbano:.0f} % con cielo urbano)",
+        flush=True,
+    )
+
+    # Un catálogo con la popularidad a medias es peor que el publicado: se para aquí (sin galerías ni terreno, que
+    # pedirían a Commons lo que falta sin límite de tiempo) y el workflow no publica. La caché guarda lo contado y la
+    # siguiente ejecución sigue (spec 018).
+    incompleto = salida / "INCOMPLETO"
+    incompleto.unlink(missing_ok=True)
+    if contados < MIN_CONTADOS:
+        salida.mkdir(parents=True, exist_ok=True)
+        incompleto.write_text(f"{contados:.3f}\n")
+        print(f"\nPopularidad contada en el {contados:.0%} (< {MIN_CONTADOS:.0%}): no se publica aún.", flush=True)
+        return
 
     print("[4/5] Galerías, horizonte del terreno y contaminación lumínica…", flush=True)
     features = []
