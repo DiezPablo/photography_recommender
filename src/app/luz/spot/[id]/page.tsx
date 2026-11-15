@@ -12,6 +12,7 @@ import AlineacionesSpot from "@/features/eventos/componentes/AlineacionesSpot";
 import { cargarEventos, starlightDe } from "@/features/eventos/datos";
 import ClimaSpot from "@/features/clima/componentes/ClimaSpot";
 import GuardarSinConexion from "@/ui/GuardarSinConexion";
+import FaunaCerca from "@/features/lugares/componentes/FaunaCerca";
 import Dron, { SelloDron } from "@/features/dron/Dron";
 import { textoMarea, textoOlas } from "@/features/spots/mar";
 import type { LineaMapa } from "@/features/spots/componentes/MapaSpots";
@@ -663,6 +664,7 @@ export default async function PaginaSpot({ params }: Props) {
       </section>
       <ClimaSpot lat={spot.lat} lon={spot.lon} mes={Number(spot.dias[0]?.fecha.slice(5, 7) ?? 1) - 1} />
       <Dron id={spot.id} />
+      <FaunaCerca id={spot.id} lat={spot.lat} lon={spot.lon} />
       <EventosCerca lat={spot.lat} lon={spot.lon} ambito="fauna" max={3} />
       <EventosCerca lat={spot.lat} lon={spot.lon} />
     </main>

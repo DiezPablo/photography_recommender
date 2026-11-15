@@ -195,8 +195,22 @@ def de_fauna(x: dict, sitios: dict[str, dict], provincias: Provincias, celdas_en
     }
 
 
+# Puntos de eBird con al menos estas especies cuentan como lugares de fauna «de verdad» al enlazar desde un spot
+MIN_ESPECIES_CERCA = 100
+
+
+def _rango_fauna(y: dict) -> int:
+    """Cuánto interesa un lugar de fauna visto desde un spot (spec 010): primero los espacios protegidos y los
+    observatorios, después los puntos de eBird con muchas especies y al final el resto (una plaza, una playa)."""
+    if y["id"].startswith(("wd-", "n2k-", "osm-")):
+        return 0
+    return 1 if (y["fauna"].get("especies_ebird") or 0) >= MIN_ESPECIES_CERCA else 2
+
+
 def enlazar_cerca(lugares: list[dict], km_max: float = KM_CERCA, n: int = MAX_CERCA) -> None:
-    """Rellena `cerca`: los lugares del otro catálogo a km_max o menos, del más cercano al más lejano."""
+    """Rellena `cerca`: los lugares del otro catálogo a km_max o menos. Desde un lugar de fauna, los spots del más
+    cercano al más lejano; desde un spot, los lugares de fauna por interés (_rango_fauna) y después por distancia,
+    para que el espacio protegido de al lado no quede detrás de cinco puntos de eBird pequeños."""
     paso = 0.25  # grados; 15 km caben siempre en la celda y sus vecinas
     rejilla: dict[tuple[str, int, int], list[dict]] = defaultdict(list)
     for x in lugares:
@@ -210,8 +224,9 @@ def enlazar_cerca(lugares: list[dict], km_max: float = KM_CERCA, n: int = MAX_CE
                 for y in rejilla.get((otro, i + di, j + dj), ()):
                     d = km(x["lat"], x["lon"], y["lat"], y["lon"])
                     if d <= km_max:
-                        candidatos.append((d, y["id"]))
-        x["cerca"] = [id_ for _, id_ in sorted(candidatos)[:n]]
+                        rango = _rango_fauna(y) if otro == "fauna" else 0
+                        candidatos.append((rango, d, y["id"]))
+        x["cerca"] = [id_ for _, _, id_ in sorted(candidatos)[:n]]
 
 
 def enlazar_eventos(lugares: list[dict], eventos: list[dict]) -> None:

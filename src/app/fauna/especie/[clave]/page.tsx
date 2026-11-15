@@ -121,37 +121,12 @@ export default async function PaginaEspecie({ params }: Props) {
         </p>
       )}
 
-      <FenomenosEspana fenomenos={fenomenosDe(listaFenomenos(), e.c)} mesHoy={mesHoy} titulo="Momentos especiales" />
       {fenomeno && (
         <p className="enlace-fenomeno">
           <Link href={`/fauna/evento/${fenomeno.id}`}>
             {fenomeno.nombre}: los {fenomeno.eventos.length} lugares y sus fechas →
           </Link>
         </p>
-      )}
-
-      {(foto || act) && (
-        <section className="seccion">
-          <h2 className="rotulo">Para fotografiarla</h2>
-          {foto && (
-            <p>
-              Unos {foto.cm} cm ·{" "}
-              {foto.dificultad === 1 ? "fácil" : foto.dificultad === 2 ? "dificultad media" : "difícil"}. {foto.consejo}
-            </p>
-          )}
-          {act && (
-            <p>
-              Más activa {tramos[act.f.indexOf(Math.max(...act.f))]}
-              {act.f.filter((x) => x >= 0.7).length > 1
-                ? ` (también ${act.f
-                    .map((x, i) => (x >= 0.7 && x < Math.max(...act.f) ? tramos[i] : null))
-                    .filter(Boolean)
-                    .join(" y ")})`
-                : ""}
-              , según la hora de {act.n} observaciones en iNaturalist comparadas con las de su grupo.
-            </p>
-          )}
-        </section>
       )}
 
       {lugares.length > 0 && (
@@ -179,17 +154,6 @@ export default async function PaginaEspecie({ params }: Props) {
         </section>
       )}
 
-      {hides.length > 0 && (
-        <section className="seccion">
-          <h2 className="rotulo">Hides y salidas guiadas</h2>
-          <ul className="lista-hides">
-            {hides.map((h) => (
-              <TarjetaHide key={h.id} h={h} />
-            ))}
-          </ul>
-        </section>
-      )}
-
       {recientes.length > 0 && (
         <section className="seccion">
           <h2 className="rotulo">Vista estos días</h2>
@@ -200,6 +164,43 @@ export default async function PaginaEspecie({ params }: Props) {
                 {o.l ? ` · ${o.l.replace(/--/g, " · ")}` : ` · cerca de ${o.lat}, ${o.lon}`}{" "}
                 <small>({o.s === "i" ? "iNaturalist" : "eBird"})</small>
               </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <FenomenosEspana fenomenos={fenomenosDe(listaFenomenos(), e.c)} mesHoy={mesHoy} titulo="Momentos especiales" />
+
+      {(foto || act) && (
+        <section className="seccion">
+          <h2 className="rotulo">Para fotografiarla</h2>
+          {foto && (
+            <p>
+              Unos {foto.cm} cm ·{" "}
+              {foto.dificultad === 1 ? "fácil" : foto.dificultad === 2 ? "dificultad media" : "difícil"}. {foto.consejo}
+            </p>
+          )}
+          {act && (
+            <p>
+              Más activa {tramos[act.f.indexOf(Math.max(...act.f))]}
+              {act.f.filter((x) => x >= 0.7).length > 1
+                ? ` (también ${act.f
+                    .map((x, i) => (x >= 0.7 && x < Math.max(...act.f) ? tramos[i] : null))
+                    .filter(Boolean)
+                    .join(" y ")})`
+                : ""}
+              , según la hora de {act.n} observaciones en iNaturalist comparadas con las de su grupo.
+            </p>
+          )}
+        </section>
+      )}
+
+      {hides.length > 0 && (
+        <section className="seccion">
+          <h2 className="rotulo">Hides y salidas guiadas</h2>
+          <ul className="lista-hides">
+            {hides.map((h) => (
+              <TarjetaHide key={h.id} h={h} />
             ))}
           </ul>
         </section>

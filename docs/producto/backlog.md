@@ -17,7 +17,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [x] 021 — eBird a fondo (`docs/specs/021-ebird-a-fondo.md`): los tres bloques en producción (listas por punto, actividad por región, especies por punto)
 - [ ] 012 — Consulta común "cuándo / dónde / qué" en la URL y portada que la lanza. CA: una URL reproduce cualquier resultado; funciona sin JS; pestañas Luz/Fauna
 - [x] 004 — Sistema de diseño y portada «¿cuándo tienes tiempo?», web instalable, modo noche y poda del CSS (`docs/specs/004-diseno-portada.md`)
-- [ ] 010 — Ficha de lugar de fauna y ficha de especie: "luz cerca" y poda de bloques
+- [x] 010 — Fichas de fauna: «Luz cerca» y «Fauna cerca» entre los dos catálogos, y la de especie empieza por dónde verla (`docs/specs/010-fichas-fauna.md`)
 - [x] 013 — Idoneidad del lugar por momento y «lo habitual» de cada mes en `/luz/habitual` (`docs/specs/013-idoneidad.md`)
 - [x] 014 — Eventos de fauna con varios lugares: la berrea en `/fauna/evento/berrea`, una sola lista de fenómenos y calendario de fauna (`docs/specs/014-eventos-fauna.md`)
 - [x] 015 — «¿Dónde verlo?» en los eventos de cielo: del calendario a «lo habitual» de noche (`docs/specs/015-donde-verlo.md`)

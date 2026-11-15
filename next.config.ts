@@ -50,6 +50,8 @@ const config: NextConfig = {
       "./datos/clima.json.gz",
       "./datos/alineaciones.json.gz",
       "./datos/dron.json.gz",
+      // la fauna cerca de cada spot (spec 010)
+      "./datos/lugares.json.gz",
     ],
     "/fauna/datos/[bloque]": [
       "./datos/fauna_cuadricula.json.gz",
@@ -90,6 +92,10 @@ const config: NextConfig = {
       "./datos/fauna_ebird_regiones.json.gz",
       "./datos/fauna_especies_punto.json.gz",
       "./datos/eventos.json.gz",
+      // la luz cerca de cada lugar, con su nota de hoy (spec 010)
+      "./datos/lugares.json.gz",
+      "./datos/informe.json.gz",
+      "./datos/spots.geojson.gz",
     ],
     "/fauna": ["./datos/fauna_cuadricula.json.gz", "./datos/eventos.json.gz"],
     "/fauna/lugares-mapa": ["./datos/fauna_lugares.json.gz", "./datos/fauna_natura.json.gz"],
