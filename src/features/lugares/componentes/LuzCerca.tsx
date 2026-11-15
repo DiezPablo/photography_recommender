@@ -9,7 +9,8 @@ import Cifra from "@/ui/Cifra";
 export default function LuzCerca({ id, lat, lon }: { id: string; lat: number; lon: number }) {
   const spots = new Map(cargar().spots.map((s) => [s.id, s]));
   const filas = cercaDe(id)
-    .filter((c) => c.catalogo === "luz")
+    // solo spots que siguen en el catálogo publicado (el descubrimiento mensual puede quitar alguno)
+    .filter((c) => c.catalogo === "luz" && spots.has(c.id))
     .map((c) => {
       const s = spots.get(c.id);
       const n = s ? notaDe(s.dias[0], "todos") : null;

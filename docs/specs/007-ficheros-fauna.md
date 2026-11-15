@@ -1,6 +1,6 @@
 # 007 — Ficheros de fauna con su nombre
 
-Estado: hecha (falta que cada workflow publique una vez con el nombre nuevo)
+Estado: hecha (faltan la primera publicación de actividad y cuadrícula con el nombre nuevo)
 Modo: plataforma
 Situación del fotógrafo: —
 
@@ -32,8 +32,9 @@ una versión anterior) y `espana_rutas.json` (rutas de senderismo de OSM, aparca
 - [x] Compilando con la release de hoy (solo nombres antiguos), la web sale completa: build y e2e en verde.
 - [x] `bajar_dato.sh` cae al nombre antiguo y, sin ninguno, no falla (probado contra la release real).
 - [x] Pruebas de Python en verde; ya no hay prueba de rutas.
-- [ ] Primera publicación con el nombre nuevo de `fauna_recientes.yml` y `fauna_actividad.yml` (diario y semanal);
-      la de `fauna_cuadricula.yml` llegará en su ejecución trimestral o lanzándola a mano.
+- [x] Primera publicación con el nombre nuevo de `fauna_recientes.yml` (15-11-2026, 12:20 UTC): recientes, rarezas,
+      lugares, listas, regiones, especies por punto y Natura 2000; producción desplegada con ellos.
+- [ ] Ídem de `fauna_actividad.yml` (semanal, lunes) y `fauna_cuadricula.yml` (lanzada a mano el 15-11-2026).
 
 ## Notas
 Cuando todos los `fauna_*` estén publicados se puede quitar la transición (`nombreAntiguo` y el caso antiguo de

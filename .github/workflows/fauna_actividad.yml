@@ -46,4 +46,4 @@ jobs:
           path: cache
           key: espana-actividad-v1-${{ github.run_id }}
       - name: Publicar
-        run: .github/scripts/publicar_release.sh "España actividad $(date -u +%Y-%m-%d)" salida/fauna_actividad.json
+        run: .github/scripts/publicar_release.sh "Fauna actividad $(date -u +%Y-%m-%d)" salida/fauna_actividad.json

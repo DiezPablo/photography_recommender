@@ -110,6 +110,6 @@ jobs:
       - name: Publicar
         if: ${{ !inputs.experimentos }}
         run: |
-          [ -s public/datos/fauna_ebird.json ] && .github/scripts/publicar_release.sh "España eBird ($(date -u +%Y-%m-%d))" public/datos/fauna_ebird.json || true
+          [ -s public/datos/fauna_ebird.json ] && .github/scripts/publicar_release.sh "Fauna eBird ($(date -u +%Y-%m-%d))" public/datos/fauna_ebird.json || true
           [ -s public/datos/fauna_cuadricula.json ] || { echo "Nada que publicar"; exit 0; }
-          .github/scripts/publicar_release.sh "España ($(date -u +%Y-%m-%d))" public/datos/fauna_cuadricula.json
+          .github/scripts/publicar_release.sh "Fauna cuadrícula ($(date -u +%Y-%m-%d))" public/datos/fauna_cuadricula.json
