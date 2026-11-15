@@ -57,17 +57,14 @@ p {
 }
 
 /* Tarjeta: la superficie base de casi todo */
-.tarjeta,
 .destacado,
 .almanaque,
 .bloque-ranking,
-.filtros-rutas,
 .seccion,
 .panel,
 details.dia,
 .nota-tarjeta,
-.lectura,
-.por-comunidad {
+.lectura {
   background: var(--superficie);
   border: 1px solid var(--borde);
   border-radius: var(--radio);

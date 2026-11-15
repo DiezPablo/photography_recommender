@@ -451,10 +451,6 @@
 .enlace-especie:hover {
   text-decoration-color: currentColor;
 }
-.grupo-especie {
-  font-size: 12px;
-  color: var(--carta-tinta-3);
-}
 .lista-recientes {
   margin: 0;
   padding: 0;
@@ -668,18 +664,6 @@
 }
 
 /* Carta de safaris (fase 3): parques como puntos */
-.carta path.parque-fauna {
-  fill: var(--carta-magenta);
-  stroke: var(--carta-papel);
-}
-.carta path.parque-fuera {
-  fill: var(--carta-papel);
-  stroke: var(--carta-tinta-3);
-  stroke-opacity: 0.7;
-}
-.carta path.parque-elegido {
-  stroke: var(--carta-tinta);
-}
 .muestra-capa.capa-todos {
   width: 10px;
   height: 10px;
@@ -687,97 +671,12 @@
   border: 1px solid var(--carta-tinta-3);
   background: var(--carta-papel);
 }
-.foto-parque-carta {
-  margin: 0;
-}
-.foto-parque-carta img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 3 / 2;
-  object-fit: cover;
-  border-radius: 2px;
-}
-.foto-parque-carta figcaption {
-  margin-top: 4px;
-  font-size: 12px;
-  color: var(--carta-tinta-3);
-}
-.foto-parque-carta a {
-  color: inherit;
-}
-.meses-parque {
-  margin: 0;
-  display: grid;
-  gap: 4px;
-}
-.meses-parque-barras {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 2px;
-  height: 72px;
-}
-.meses-parque-barras span {
-  position: relative;
-  border-bottom: 3px solid var(--carta-linea);
-}
-.meses-parque-barras span.en-temporada {
-  border-bottom-color: var(--carta-tinta);
-}
-.meses-parque-barras span.mes-actual {
-  background: var(--carta-papel-2);
-}
-.meses-parque-barras i,
-.meses-parque-barras b {
-  position: absolute;
-  bottom: 16px;
-  max-height: calc(100% - 16px);
-  width: 40%;
-}
-.meses-parque-barras i {
-  left: 8%;
-  background: var(--carta-agua);
-  opacity: 0.55;
-}
-.meses-parque-barras b {
-  right: 8%;
-  background: var(--carta-magenta);
-  opacity: 0.7;
-}
-.meses-parque-barras em {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font: normal 400 11px/16px var(--f-mono);
-  color: var(--carta-tinta-3);
-}
 .lista-mejores b {
   font-weight: 600;
   flex: 1 1 100%;
 }
 
 /* Carta de un parque, dentro de su ficha: mapa y leyenda en tabla, sin ocupar la pantalla */
-.carta.carta-parque {
-  height: auto;
-  min-height: 0;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  border: 1px solid var(--carta-linea);
-  border-radius: var(--radio);
-  overflow: hidden;
-}
-.carta-parque .carta-mapa {
-  min-height: 460px;
-}
-.carta-parque .carta-panel {
-  gap: 16px;
-  padding: 16px;
-}
-.carta path.parque-area {
-  stroke: var(--carta-tinta);
-  stroke-dasharray: 6 5;
-}
 .carta path.zona-parque {
   stroke: var(--carta-tinta-2);
   fill: var(--carta-tinta-3);
@@ -785,104 +684,4 @@
 .carta path.zona-recomendada {
   stroke: var(--carta-magenta);
   fill: var(--carta-magenta);
-}
-.carta path.punto-alojamiento {
-  fill: var(--carta-tinta);
-  stroke: var(--carta-papel);
-  fill-opacity: 1;
-}
-.carta .punto-aeropuerto span {
-  display: block;
-  padding: 1px 4px;
-  font: 500 11px/14px var(--f-mono);
-  text-align: center;
-  color: var(--carta-papel);
-  background: var(--carta-tinta);
-  border-radius: 2px;
-}
-.carta .leaflet-tooltip.rotulo-zona {
-  padding: 0;
-  border: 0;
-  box-shadow: none;
-  background: none;
-  font: 600 12px/1.2 var(--f-cuerpo);
-  color: var(--carta-tinta);
-  text-shadow:
-    0 0 3px var(--carta-papel),
-    0 0 3px var(--carta-papel);
-}
-.carta .leaflet-tooltip.rotulo-zona::before {
-  display: none;
-}
-.tabla-zonas th small,
-.carta-parque th small {
-  display: block;
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--carta-tinta-3);
-}
-.tabla-zonas tr[data-recomendada] th {
-  border-left: 3px solid var(--carta-magenta);
-  padding-left: 8px;
-}
-.marca-recomendada {
-  color: var(--carta-magenta);
-  font-weight: 600;
-}
-.leyenda-parque {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-}
-.leyenda-parque div {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.leyenda-parque dt {
-  flex: none;
-  width: 18px;
-  display: grid;
-  place-items: center;
-}
-.leyenda-parque dd {
-  margin: 0;
-}
-.muestra-area {
-  width: 18px;
-  height: 0;
-  border-top: 2px dashed var(--carta-tinta);
-}
-.muestra-zona {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid var(--carta-magenta);
-  background: color-mix(in srgb, var(--carta-magenta) 45%, transparent);
-}
-.muestra-alojamiento {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--carta-tinta);
-}
-@media (max-width: 900px) {
-  .carta.carta-parque {
-    display: block;
-    height: auto;
-    min-height: 0;
-  }
-  .carta-parque .carta-mapa {
-    height: 340px;
-    min-height: 0;
-  }
-  .carta-parque .carta-panel {
-    position: static;
-    max-height: none;
-    box-shadow: none;
-    border-top: 1px solid var(--carta-linea);
-    border-radius: 0;
-    padding: 16px;
-    display: grid;
-  }
 }

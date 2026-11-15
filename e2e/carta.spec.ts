@@ -88,7 +88,7 @@ test("la carta vive en /fauna; los enlaces antiguos (portada con parámetros, /e
   // un enlace antiguo a la portada de safaris (retirados) se queda en la portada: sus parámetros se ignoran
   await page.goto("/?ver=5219404");
   await expect(page).toHaveURL(/\/\?ver=5219404$/);
-  await expect(page.locator("h1")).toHaveText("¿Dónde voy a fotografiar?");
+  await expect(page.locator("h1")).toHaveText("¿Cuándo tienes tiempo?");
   await page.goto("/?especie=2474950&mes=noviembre");
   await expect(page).toHaveURL(/\/fauna\?especie=2474950&mes=noviembre/);
   await page.goto("/espana/hides");

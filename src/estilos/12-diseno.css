@@ -63,7 +63,6 @@ h2.rotulo {
   padding: 0 20px 64px;
 }
 .seccion,
-.tarjeta,
 .panel {
   background: none;
   border: 0;
@@ -72,12 +71,10 @@ h2.rotulo {
   box-shadow: none;
   padding: 32px 0;
 }
-.ficha-grid,
-.fauna-grid {
+.ficha-grid {
   gap: 0 48px;
 }
-.ficha-grid > .seccion,
-.fauna-grid > .seccion {
+.ficha-grid > .seccion {
   align-self: stretch;
 }
 
@@ -138,11 +135,6 @@ h2.rotulo {
   text-decoration: none;
   letter-spacing: -0.01em;
 }
-.marca-sub {
-  font: 400 0.95rem var(--f-cuerpo);
-  color: var(--texto-3);
-  letter-spacing: 0;
-}
 .menu {
   display: flex;
   gap: 26px;
@@ -170,37 +162,8 @@ h2.rotulo {
   height: 2px;
   background: var(--ocre);
 }
-.boton-viaje {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  border: 1px solid var(--texto);
-  border-radius: var(--radio);
-  font: 600 0.9rem var(--f-cuerpo);
-  color: var(--texto);
-  text-decoration: none;
-}
-.boton-viaje:hover,
-.boton-viaje[aria-current="page"] {
-  background: var(--texto);
-  color: var(--fondo);
-}
-.contador {
-  display: inline-grid;
-  place-items: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  border-radius: var(--radio);
-  background: var(--ocre);
-  color: #fff;
-  font: 700 0.72rem var(--f-cuerpo);
-}
 @media (max-width: 900px) {
-  .cabecera .menu,
-  .cabecera .boton-viaje,
-  .marca-sub {
+  .cabecera .menu {
     display: none;
   }
   .cabecera-in {
@@ -233,14 +196,6 @@ h2.rotulo {
   right: 30%;
   height: 2px;
   background: var(--ocre);
-}
-.barra-inferior .contador {
-  position: absolute;
-  top: 0;
-  left: calc(50% + 6px);
-  min-width: 16px;
-  height: 16px;
-  font-size: 0.65rem;
 }
 @media (min-width: 901px) {
   .barra-inferior {
@@ -376,86 +331,29 @@ select.boton {
 }
 
 /* ---- Chips de especie: fotos redondas, selección en tinta */
-.chips-especies {
-  gap: 8px;
-}
-.chip-especie {
-  border-radius: var(--radio);
-  background: var(--superficie);
-  border-color: var(--borde);
-  font: 500 0.92rem var(--f-cuerpo);
-  padding: 4px 12px 4px 4px;
-}
-.chip-especie img {
-  border-radius: 4px;
-}
-.chip-especie[aria-pressed="true"] {
-  background: var(--texto);
-  border-color: var(--texto);
-  color: var(--fondo);
-}
-.chip,
-.chips .chip {
+.chip {
   border-radius: 4px;
   background: var(--superficie-2);
   font: 500 0.85rem var(--f-cuerpo);
 }
 
 /* ---- Tarjetas que sí son tarjetas */
-.etapa,
-.resultados-que-ver li,
-.rejilla-safaris li,
-.tarjeta-especie {
-  border-radius: var(--radio);
-  border: 1px solid var(--borde);
-  background: var(--superficie);
-  box-shadow: none;
-}
-.rejilla-safaris li:hover,
-.tarjeta-especie:hover {
-  border-color: color-mix(in srgb, var(--texto) 30%, var(--borde));
-}
-.resultados-que-ver .puesto {
-  font: 400 1.6rem var(--f-titulo);
-  color: var(--ocre);
-}
-.barra-facilidad i,
-.f-muy-frecuente,
-.mini-ano i.si {
+.f-muy-frecuente {
   background: var(--acento);
 }
 
 /* ---- Avisos: una línea ocre a la izquierda, sin caja gris */
-.avisos-plan,
-.aviso-plan,
-.zonas-busqueda,
-.por-tu-cuenta {
+.aviso-plan {
   background: var(--ocre-suave);
   border-left: 3px solid var(--ocre);
   border-radius: 0 6px 6px 0;
 }
 
 /* ---- Traslados con icono (antes con emojis) */
-.traslado {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.traslado svg {
-  flex: none;
-  color: var(--texto-3);
-}
-.traslado.volar svg {
-  color: var(--ocre);
-}
 
 /* ---- Tablas */
 .tabla-comparar th,
-.tabla-comparar td,
-.tabla-presupuesto th,
-.tabla-presupuesto td,
-.tabla-migracion th,
-.tabla-migracion td {
+.tabla-comparar td {
   border-bottom-color: var(--borde);
 }
 .tabla-comparar thead th a,
@@ -473,228 +371,10 @@ select.boton {
 body {
   overflow-x: clip;
 }
-.portada-hero {
-  position: relative;
-  width: 100vw;
-  margin: 0 0 0 calc(50% - 50vw);
-  min-height: min(78vh, 680px);
-  display: grid;
-  align-items: end;
-  color: #fff;
-  overflow: hidden;
-}
-.portada-hero > img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.portada-hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgb(15 12 8 / 82%) 0%, rgb(15 12 8 / 35%) 45%, rgb(15 12 8 / 5%) 75%);
-}
-.portada-hero-texto {
-  position: relative;
-  z-index: 1;
-  max-width: var(--ancho);
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 20px 56px;
-  display: grid;
-  gap: 16px;
-}
-.portada-hero h1 {
-  color: #fff;
-  max-width: 14ch;
-  font-size: clamp(2.6rem, 7vw, 5.4rem);
-}
-.portada-hero p {
-  max-width: 52ch;
-  font-size: 1.15rem;
-  color: rgb(255 255 255 / 88%);
-}
-.portada-hero .rotulo {
-  color: rgb(255 255 255 / 75%);
-}
-.portada-hero .acciones {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 8px;
-}
-.portada-hero .acciones a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 46px;
-  padding: 10px 20px;
-  border-radius: var(--radio);
-  font: 600 0.95rem var(--f-cuerpo);
-  text-decoration: none;
-  background: #fff;
-  color: #1d1a15;
-}
-.portada-hero .acciones a + a {
-  background: transparent;
-  color: #fff;
-  border: 1px solid rgb(255 255 255 / 60%);
-}
-.portada-hero figcaption {
-  position: absolute;
-  z-index: 1;
-  right: 12px;
-  bottom: 8px;
-  font-size: 0.7rem;
-  color: rgb(255 255 255 / 60%);
-}
-.portada-hero figcaption a {
-  color: inherit;
-}
-.que-ver {
-  border-top: 0;
-}
-.que-ver h2 {
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-}
-.portada-cifras {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 16px;
-  padding: 28px 0;
-  border-top: 1px solid var(--borde);
-}
-.portada-cifras b {
-  display: block;
-  font: 400 2.4rem/1 var(--f-titulo);
-}
-.portada-cifras span {
-  color: var(--texto-2);
-  font-size: 0.92rem;
-}
 
 /* ---- Ficha de parque: foto a sangre con el título encima */
-.ficha.safari {
-  padding-top: 0;
-}
-.ficha-hero {
-  position: relative;
-  width: 100vw;
-  margin: 0 0 8px calc(50% - 50vw);
-  min-height: min(62vh, 560px);
-  display: grid;
-  align-items: end;
-  color: #fff;
-  overflow: hidden;
-  background: var(--superficie-2);
-}
-.ficha-hero > img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.ficha-hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgb(15 12 8 / 85%) 0%, rgb(15 12 8 / 30%) 50%, transparent 80%);
-}
-.ficha-hero.sin-foto {
-  min-height: 0;
-  color: var(--texto);
-}
-.ficha-hero.sin-foto::after {
-  display: none;
-}
-.ficha-hero-texto {
-  position: relative;
-  z-index: 1;
-  max-width: var(--ancho);
-  width: 100%;
-  margin: 0 auto;
-  padding: 40px 20px 40px;
-  display: grid;
-  gap: 12px;
-}
-.ficha-hero h1 {
-  color: inherit;
-  max-width: 16ch;
-}
-.ficha-hero .migas,
-.ficha-hero .migas a,
-.ficha-hero .rotulo {
-  color: inherit;
-  opacity: 0.85;
-}
-.ficha-hero .punto-cat {
-  display: none;
-}
-.ficha-hero .entradilla {
-  color: inherit;
-  opacity: 0.9;
-}
-.ficha-hero .chip {
-  background: rgb(255 255 255 / 16%);
-  color: inherit;
-}
-.ficha-hero.sin-foto .chip {
-  background: var(--superficie-2);
-}
-.ficha-hero .enlaces a {
-  color: inherit;
-}
-.ficha-hero .enlaces a:first-child,
-.ficha-hero .boton-comparar button {
-  background: #fff;
-  color: #1d1a15;
-  border-color: #fff;
-}
-.ficha-hero.sin-foto .enlaces a:first-child {
-  background: var(--texto);
-  color: var(--fondo);
-  border-color: var(--texto);
-}
-.ficha-hero figcaption {
-  position: absolute;
-  z-index: 1;
-  right: 12px;
-  bottom: 8px;
-  font-size: 0.7rem;
-  color: rgb(255 255 255 / 65%);
-}
-.ficha-hero figcaption a {
-  color: inherit;
-}
-.boton-comparar button {
-  border-radius: var(--radio);
-  min-height: 44px;
-  padding: 10px 16px;
-  font: 600 0.92rem var(--f-cuerpo);
-}
 
 /* Resumen de la ficha: cinco datos en fila, como una ficha técnica */
-.resumen-parque {
-  padding: 24px 0;
-}
-.resumen-parque dl {
-  gap: 20px 32px;
-}
-.resumen-parque dt {
-  font: 600 0.8rem var(--f-cuerpo);
-  text-transform: none;
-  letter-spacing: 0;
-  color: var(--texto-3);
-}
-.resumen-parque dd {
-  font: 650 1.15rem/1.3 var(--f-titulo);
-}
-.resumen-parque dd small {
-  font-family: var(--f-cuerpo);
-  font-size: 0.85rem;
-}
 
 /* ---- Movimiento reducido */
 @media (prefers-reduced-motion: reduce) {
@@ -704,66 +384,8 @@ body {
 }
 
 /* Portada: parques en buena época, en tarjetas con foto */
-.tarjetas-ahora {
-  list-style: none;
-  margin: 8px 0 0;
-  padding: 0;
-  display: grid;
-  gap: 24px;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-}
-.tarjetas-ahora a {
-  display: grid;
-  gap: 4px;
-  color: inherit;
-  text-decoration: none;
-}
-.tarjetas-ahora img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: var(--radio);
-  background: var(--superficie-2);
-  margin-bottom: 8px;
-  transition: opacity 0.2s;
-}
-.tarjetas-ahora a:hover img {
-  opacity: 0.88;
-}
-.tarjetas-ahora b {
-  font: 650 1.35rem/1.2 var(--f-titulo);
-}
-.tarjetas-ahora small {
-  color: var(--texto-2);
-}
-.franja-migracion {
-  display: grid;
-  gap: 12px;
-}
-.franja-migracion h2 {
-  max-width: 24ch;
-}
-.franja-migracion > p:not(.rotulo):not(.enlaces) {
-  max-width: 62ch;
-  color: var(--texto-2);
-  font-size: 1.08rem;
-}
 @media (max-width: 700px) {
   /* en el móvil, carrusel horizontal en vez de una columna de fotos enormes */
-  .tarjetas-ahora {
-    grid-auto-flow: column;
-    grid-template-columns: none;
-    grid-auto-columns: 78%;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    margin: 8px -16px 0;
-    padding: 0 16px 8px;
-    gap: 14px;
-    scrollbar-width: none;
-  }
-  .tarjetas-ahora li {
-    scroll-snap-align: start;
-  }
 }
 
 /* Botones dentro de secciones: a su medida, no a todo el ancho */
@@ -772,516 +394,29 @@ body {
   justify-self: start;
 }
 /* En las listas de alojamientos, la web es un enlace (treinta botones negros seguidos pesaban demasiado) */
-.lista-alojamientos .enlaces a:first-child {
-  min-height: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--texto);
-  font-weight: 600;
-  text-decoration: underline;
-}
-.lista-alojamientos li {
-  border-radius: var(--radio);
-  border-color: var(--borde);
-  background: var(--superficie);
-  box-shadow: none;
-}
-.meses-migracion button {
-  border-radius: var(--radio);
-}
-.meses-migracion button[aria-pressed="true"] {
-  background: var(--texto);
-  border-color: var(--texto);
-}
 
 /* Índice fijo de la ficha */
-.indice-ficha {
-  position: sticky;
-  top: 64px;
-  z-index: 900;
-  display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  padding: 0 max(20px, calc(50vw - var(--ancho) / 2 + 20px));
-  background: var(--fondo);
-  border-bottom: 1px solid var(--borde);
-}
-.indice-ficha a {
-  flex: none;
-  padding: 14px 0 12px;
-  font: 500 0.92rem var(--f-cuerpo);
-  color: var(--texto-2);
-  text-decoration: none;
-  border-bottom: 2px solid transparent;
-}
-.indice-ficha a:hover,
-.indice-ficha a[aria-current] {
-  color: var(--texto);
-  border-bottom-color: var(--ocre);
-}
-.indice-ficha a[aria-current] {
-  font-weight: 600;
-}
-@media (max-width: 900px) {
-  .indice-ficha {
-    top: 56px;
-    gap: 18px;
-  }
-}
 .ficha [id] {
   scroll-margin-top: 130px;
 }
-.mas-alojamientos summary {
-  cursor: pointer;
-  margin-top: 12px;
-  font: 600 0.95rem var(--f-cuerpo);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.mas-alojamientos[open] summary {
-  margin-bottom: 12px;
-}
 
 /* Tarjetas de parque y de especie: toda la tarjeta es el enlace, foto horizontal, nombre en serif */
-.tarjeta-especie {
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.15s;
-}
-.tarjeta-especie img,
-.tarjeta-especie .sin-foto {
-  aspect-ratio: 3 / 2;
-  border-radius: 0;
-}
-.tarjeta-especie .sin-foto {
-  background:
-    repeating-linear-gradient(-35deg, transparent 0 9px, color-mix(in srgb, var(--borde) 70%, transparent) 9px 10px),
-    var(--superficie-2);
-}
-.tarjeta-especie > div {
-  padding: 12px 14px 14px;
-  gap: 4px;
-}
-.tarjeta-especie h3 {
-  font: 650 1.2rem/1.2 var(--f-titulo);
-}
-.tarjeta-especie h3 a {
-  color: var(--texto);
-  text-decoration: none;
-}
-.tarjeta-especie h3 a::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-}
-.tarjeta-especie:hover h3 a {
-  text-decoration: underline;
-}
-.tarjeta-especie .meta,
-.tarjeta-especie p {
-  font-size: 0.86rem;
-}
-.en-temporada,
-.fuera-temporada {
-  font: 500 0.86rem var(--f-cuerpo);
-}
-.en-temporada::before,
-.fuera-temporada::before {
-  content: "";
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  margin-right: 6px;
-  border-radius: 50%;
-  vertical-align: 1px;
-  background: var(--acento);
-}
-.en-temporada {
-  color: var(--acento);
-}
-.fuera-temporada {
-  color: var(--texto-3);
-}
-.fuera-temporada::before {
-  background: var(--texto-3);
-  opacity: 0.6;
-}
-.resultados-que-ver .en-temporada::before,
-.resumen-parque .en-temporada::before,
-.resumen-parque .fuera-temporada::before {
-  display: none;
-}
 
 /* Guía: índice lateral fijo y texto a un ancho de lectura */
-.guia-cuerpo {
-  display: grid;
-  gap: 0 56px;
-}
-@media (min-width: 1000px) {
-  .guia-cuerpo {
-    grid-template-columns: 220px minmax(0, 1fr);
-  }
-}
-.guia-indice {
-  display: none;
-}
-@media (min-width: 1000px) {
-  .guia-indice {
-    display: grid;
-    gap: 10px;
-    align-content: start;
-    position: sticky;
-    top: 96px;
-    padding-top: 32px;
-  }
-}
-.guia-indice p {
-  font: 600 0.82rem var(--f-cuerpo);
-  color: var(--texto-3);
-}
-.guia-indice a {
-  color: var(--texto-2);
-  text-decoration: none;
-  font-size: 0.95rem;
-}
-.guia-indice a:hover {
-  color: var(--texto);
-}
-.guia-texto > .seccion:not(#paises) {
-  max-width: 72ch;
-}
-.guia-texto .seccion ul {
-  margin: 0;
-  padding-left: 1.2em;
-  display: grid;
-  gap: 8px;
-}
-.guia-texto .seccion li::marker {
-  color: var(--ocre);
-}
-.guia-safari [id] {
-  scroll-margin-top: 90px;
-}
 
 /* ---- Suscribirse a un calendario (.ics) */
-.suscribir {
-  margin-top: 1.25rem;
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--borde);
-  font-size: 0.92rem;
-}
-.suscribir p {
-  margin: 0;
-  display: flex;
-  gap: 0.45rem;
-  align-items: center;
-}
-.suscribir-enlaces {
-  flex-wrap: wrap;
-  gap: 0.4rem 1.1rem !important;
-  margin-top: 0.4rem !important;
-  padding-left: 1.6rem;
-}
-.suscribir-enlaces a {
-  font-weight: 600;
-}
 
 /* ---- Lo que has visto (Mi viaje) */
-.lista-vistos {
-  list-style: none;
-  padding: 0;
-  margin: 0.8rem 0 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
-  gap: 0.6rem;
-}
-.lista-vistos button {
-  width: 100%;
-  display: grid;
-  gap: 0.15rem;
-  padding: 0 0 0.45rem;
-  text-align: left;
-  font: inherit;
-  color: inherit;
-  background: var(--superficie);
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-s);
-  overflow: hidden;
-  cursor: pointer;
-}
-.lista-vistos img,
-.lista-vistos .sin-foto {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  display: block;
-  background: var(--borde);
-  filter: grayscale(0.85) opacity(0.75);
-  transition: filter 0.2s;
-}
-.lista-vistos .lista-vistos-nombre,
-.lista-vistos small {
-  padding: 0 0.55rem;
-}
-.lista-vistos .lista-vistos-nombre {
-  font-weight: 600;
-  line-height: 1.2;
-}
-.lista-vistos small {
-  color: var(--texto-2);
-}
-.lista-vistos button.visto {
-  border-color: var(--acento);
-  box-shadow: inset 0 0 0 1px var(--acento);
-}
-.lista-vistos button.visto img {
-  filter: none;
-}
-.lista-vistos button.visto small {
-  color: var(--acento);
-  font-weight: 600;
-}
-@media print {
-  .lista-vistos img {
-    display: none;
-  }
-}
 
 /* ---- Páginas de respuesta (/safari-en/agosto, /safari-en/tanzania) */
-.lista-respuesta {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  display: grid;
-  gap: 1.1rem;
-}
-.lista-respuesta > li {
-  padding-bottom: 1.1rem;
-  border-bottom: 1px solid var(--borde);
-}
-.lista-respuesta h3 {
-  font-family: var(--f-titulo);
-  font-size: 1.25rem;
-  margin: 0 0 0.25rem;
-}
-.lista-respuesta h3 small {
-  font-family: var(--f-cuerpo);
-  font-size: 0.85rem;
-  color: var(--texto-2);
-  margin-left: 0.3rem;
-}
-.lista-respuesta p {
-  margin: 0;
-  max-width: 68ch;
-}
-.lista-respuesta .suscribir {
-  margin-top: 0.5rem;
-  padding-top: 0;
-  border: 0;
-  font-size: 0.85rem;
-}
-.lista-respuesta.compacta {
-  gap: 0.35rem;
-}
-.lista-respuesta.compacta > li {
-  padding: 0;
-  border: 0;
-}
-.nav-respuestas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 0.9rem;
-  margin-top: 1rem;
-  font-size: 0.92rem;
-}
-.nav-respuestas a[aria-current="page"] {
-  font-weight: 700;
-  color: var(--texto);
-  text-decoration: none;
-}
-.ano-pais .fila-ano {
-  grid-template-columns: minmax(9em, 14em) repeat(12, 1fr);
-}
-.ano-pais .cabecera-ano a {
-  color: inherit;
-  text-decoration: none;
-}
-.columnas-respuesta {
-  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-  gap: 0.5rem 1.5rem !important;
-}
-.columnas-respuesta small {
-  color: var(--texto-2);
-}
-.fechas-etapa {
-  margin: 0.1rem 0 0.2rem;
-  font-size: 0.88rem;
-  color: var(--ocre);
-  font-weight: 600;
-}
-.fila-pareja {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.2rem 1rem;
-}
-.fila-pareja .nav-respuestas {
-  margin: 0;
-  gap: 0.2rem 0.6rem;
-}
-.tabla-paises-mes th[scope="row"] {
-  white-space: nowrap;
-}
-.tabla-paises-mes td {
-  vertical-align: top;
-  min-width: 14rem;
-}
 
 /* ---- De cuándo es cada dato */
-.frescura {
-  margin: 2rem 0 0.5rem;
-  font-size: 0.88rem;
-  color: var(--texto-2);
-}
-.frescura summary {
-  cursor: pointer;
-  font-weight: 600;
-}
-.frescura dl {
-  margin: 0.6rem 0 0;
-  display: grid;
-  gap: 0.3rem;
-}
-.frescura dl > div {
-  display: grid;
-  grid-template-columns: minmax(10rem, 22rem) 1fr;
-  gap: 0.2rem 1rem;
-}
-.frescura dt {
-  color: var(--texto);
-}
-.frescura dd {
-  margin: 0;
-}
-@media (max-width: 640px) {
-  .frescura dl > div {
-    grid-template-columns: 1fr;
-  }
-}
 
 /* ---- Temporada verde */
-.temporada-verde {
-  margin-top: 1.4rem;
-}
-.temporada-verde h3 {
-  font-family: var(--f-titulo);
-  font-size: 1.1rem;
-  margin: 0 0 0.5rem;
-}
-.temporada-verde p {
-  max-width: 68ch;
-}
-.barra-ano.precio i {
-  background: var(--ocre);
-}
-.barra-ano em {
-  align-self: center;
-  margin: auto;
-  color: var(--texto-3);
-  font-style: normal;
-}
-.lista-tarifas {
-  padding-left: 1.1rem;
-  display: grid;
-  gap: 0.35rem;
-  font-size: 0.92rem;
-}
-.tabla-verde th[scope="row"] small {
-  display: block;
-  color: var(--texto-2);
-  font-weight: 400;
-}
-.tabla-verde td.ahorro {
-  font-weight: 700;
-  color: var(--acento);
-  white-space: nowrap;
-}
 
 /* ---- Comparador */
-.meses-comparar {
-  margin: 0.5rem 0 1rem;
-}
-.ganadores {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
-  gap: 0.8rem 1.4rem;
-}
-.ganador {
-  margin: 0;
-  display: grid;
-  gap: 0.1rem;
-  padding-left: 0.7rem;
-  border-left: 2px solid var(--ocre);
-}
-.ganador b {
-  font-family: var(--f-titulo);
-  font-size: 1.15rem;
-  font-weight: 600;
-}
-.ganador small {
-  color: var(--texto-2);
-}
-.comparador tbody th {
-  position: sticky;
-  left: 0;
-  background: var(--fondo);
-  z-index: 1;
-}
-.comparador .mini-ano i.este {
-  outline: 1px solid var(--ocre);
-  outline-offset: -1px;
-}
-.barra-comparar {
-  display: block;
-  width: 7rem;
-  max-width: 100%;
-  height: 0.55rem;
-  background: var(--borde);
-  border-radius: var(--radio-s);
-  overflow: hidden;
-  margin-top: 0.35rem;
-}
-.barra-comparar i {
-  display: block;
-  height: 100%;
-  background: var(--acento);
-}
-.comparador .f-texto-muy-frecuente,
-.comparador .f-texto-frecuente {
-  color: var(--c-fauna);
-  font-weight: 600;
-}
-.comparador .f-texto-escaso,
-.comparador .f-texto-raro {
-  color: var(--texto-3);
-}
 
 /* ---- Cierres estacionales */
-.aviso-cierre {
-  margin: 0.8rem 0 0;
-  padding: 0.6rem 0.8rem;
-  border-left: 3px solid var(--ocre);
-  background: var(--ocre-suave);
-  font-size: 0.92rem;
-  max-width: 70ch;
-}
-.aviso-cierre.ahora {
-  margin: 1rem 0;
-}
 
 /* ---- Confianza de la frecuencia */
 .tabla-frecuencia td.confianza-baja,
@@ -1414,24 +549,6 @@ body {
   float: none;
   color: var(--texto-2);
 }
-.pestanas-espana {
-  display: flex;
-  gap: 0.4rem;
-  margin: 0.4rem 0 1rem;
-  border-bottom: 1px solid var(--borde);
-}
-.pestanas-espana a {
-  padding: 0.5rem 0.9rem;
-  text-decoration: none;
-  color: var(--texto-2);
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  font-weight: 600;
-}
-.pestanas-espana a[aria-current="page"] {
-  color: var(--texto);
-  border-bottom-color: var(--ocre);
-}
 .buscador-especie {
   position: relative;
 }
@@ -1562,30 +679,6 @@ body {
 }
 
 /* España: mi lista de especies vistas */
-.boton-vista {
-  margin-left: 6px;
-  font-size: 0.8em;
-  padding: 1px 8px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-s);
-  background: var(--superficie);
-  cursor: pointer;
-}
-.boton-vista.vista {
-  background: var(--acento-suave);
-  border-color: var(--acento);
-}
-.etiqueta-nueva {
-  color: var(--acento);
-  font-weight: 600;
-}
-.enlace-mis-especies {
-  text-align: right;
-  margin: 4px 0 0;
-}
-.lista-vistas {
-  padding-left: 1.2rem;
-}
 
 /* España: rarezas */
 .lista-rarezas {
@@ -1607,25 +700,6 @@ body {
 }
 
 /* España: portada */
-.entradas-espana {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 14px;
-  margin: 12px 0;
-}
-.entradas-espana .entrada {
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  padding: 14px 16px;
-  background: var(--superficie);
-}
-.entradas-espana h2 {
-  margin: 0 0 6px;
-  font-size: 1.15rem;
-}
-.enlaces-inicio {
-  margin: 8px 0 16px;
-}
 .luz-y-mar p {
   margin: 0 0 8px;
 }
@@ -1646,24 +720,6 @@ body {
 }
 
 /* España: explorador en mapa */
-.mapa-explorador {
-  height: min(70vh, 640px);
-}
-.capas-mapa {
-  border: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-}
-.capas-mapa input[type="checkbox"] {
-  width: auto;
-  margin-right: 4px;
-}
-.capas-mapa label {
-  display: inline-flex;
-  align-items: center;
-}
 
 /* España: plan del fin de semana */
 .plan-dia {
@@ -1677,9 +733,6 @@ body {
 }
 .guardado {
   color: var(--suma);
-}
-.campo-ancho {
-  grid-column: 1 / -1;
 }
 .campo textarea {
   width: 100%;
@@ -1807,61 +860,8 @@ blockquote {
 }
 
 /* Especies del mundo: buscador, filtro y dos columnas en el móvil */
-.filtros-especies {
-  display: grid;
-  gap: 8px;
-  margin: 8px 0 16px;
-}
-.filtros-especies input {
-  width: 100%;
-  max-width: 420px;
-  padding: 10px 12px;
-  font: inherit;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  background: var(--superficie);
-}
-@media (max-width: 600px) {
-  .rejilla-especies {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-  .rejilla-especies .tarjeta-especie i {
-    display: none;
-  }
-  .rejilla-especies .tarjeta-especie h3 {
-    font-size: 0.95rem;
-  }
-}
 
 /* Portada de safaris: en el móvil, la foto no ocupa dos pantallas */
-@media (max-width: 700px) {
-  .portada-hero {
-    min-height: min(58vh, 520px);
-  }
-  .portada-hero-texto .entradilla {
-    font-size: 1rem;
-  }
-}
-.mas-espana {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 8px;
-  margin: 8px 0 20px;
-}
-.mas-espana a {
-  display: grid;
-  gap: 2px;
-  padding: 10px 12px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  text-decoration: none;
-  color: var(--texto);
-  background: var(--superficie);
-}
-.mas-espana small {
-  color: var(--texto-2);
-}
 .confianza-portada {
   text-align: center;
   color: var(--texto-2);
@@ -1870,9 +870,6 @@ blockquote {
 }
 
 /* Créditos de fotos y fotos sin obras derivadas (ND): no se recortan */
-.con-credito {
-  position: relative;
-}
 .credito {
   position: absolute;
   right: 6px;
@@ -1887,10 +884,6 @@ blockquote {
   font: 600 0.75rem var(--f-cuerpo);
   text-decoration: none;
 }
-img.foto-nd {
-  object-fit: contain !important;
-  background: var(--superficie-2);
-}
 
 /* Esqueletos de carga: el hueco con la altura del contenido final (sin saltos al cargar) */
 .esqueleto {
@@ -1898,10 +891,6 @@ img.foto-nd {
   background: linear-gradient(90deg, var(--superficie-2) 25%, var(--superficie) 50%, var(--superficie-2) 75%);
   background-size: 200% 100%;
   animation: esqueleto 1.4s ease-in-out infinite;
-}
-.esqueleto-plan {
-  height: 620px;
-  margin: 12px 0;
 }
 @keyframes esqueleto {
   from {
@@ -1924,107 +913,14 @@ img.foto-nd {
 }
 
 /* Sin foto: silueta de huella, nunca un hueco vacío */
-.sin-foto {
-  background-color: var(--superficie-2);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23b9ab94'%3E%3Cellipse cx='6' cy='9' rx='2' ry='2.6'/%3E%3Cellipse cx='10' cy='5.5' rx='2' ry='2.6'/%3E%3Cellipse cx='14.5' cy='5.5' rx='2' ry='2.6'/%3E%3Cellipse cx='18.5' cy='9' rx='2' ry='2.6'/%3E%3Cpath d='M12 11c-3 0-6 3.6-6 6.4 0 1.7 1.4 2.6 3 2.6 1.2 0 2-.6 3-.6s1.8.6 3 .6c1.6 0 3-.9 3-2.6 0-2.8-3-6.4-6-6.4z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 34%;
-}
 
 /* Portada de España: ciudades para empezar sin dar la ubicación */
-.ciudades-espana {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.ciudades-espana .chip {
-  padding: 6px 12px;
-  min-height: 32px;
-  display: inline-flex;
-  align-items: center;
-  color: var(--texto);
-  text-decoration: none;
-}
-.ciudades-espana .chip:hover {
-  background: var(--borde);
-}
-.mas-organiza summary {
-  cursor: pointer;
-  font-weight: 500;
-  margin: 6px 0;
-}
 /* enlaces del resumen del parque: al menos 24 px de alto para tocarlos con el dedo */
-.resumen-parque dd a {
-  display: inline-block;
-  min-height: 24px;
-  padding: 3px 0;
-}
 
 /* Buscador de la cabecera (T28) */
 .cabecera-in {
   position: relative;
 }
-.buscador-global {
-  position: relative;
-  flex: 0 1 260px;
-  margin-left: auto;
-}
-.buscador-global input {
-  width: 100%;
-  height: 36px;
-  padding: 0 12px 0 34px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-s);
-  background: var(--superficie)
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23685e50' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 4 4'/%3E%3C/svg%3E")
-    no-repeat 12px center;
-  font: 0.9rem var(--f-cuerpo);
-  color: var(--texto);
-}
-.buscador-resultados {
-  position: absolute;
-  z-index: 1500;
-  top: calc(100% + 6px);
-  right: 0;
-  width: min(420px, calc(100vw - 32px));
-  max-height: 70vh;
-  overflow-y: auto;
-  margin: 0;
-  padding: 6px;
-  list-style: none;
-  background: var(--superficie);
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  box-shadow: 0 12px 32px rgb(0 0 0 / 0.16);
-}
-.buscador-resultados li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 44px;
-  padding: 6px 8px;
-  border-radius: var(--radio);
-  cursor: pointer;
-}
-.buscador-resultados li[aria-selected="true"],
-.buscador-resultados li:hover {
-  background: var(--superficie-2);
-}
-.buscador-resultados li > span:last-child {
-  display: grid;
-  min-width: 0;
-}
-.buscador-resultados b {
-  font-weight: 600;
-}
-.buscador-resultados small {
-  color: var(--texto-2);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.buscador-resultados img,
 .buscador-icono {
   flex: none;
   width: 32px;
@@ -2038,68 +934,12 @@ img.foto-nd {
   color: var(--texto-2);
 }
 /* en el móvil: una lupa que al tocarla se abre a todo el ancho bajo la cabecera */
-@media (max-width: 900px) {
-  .buscador-global {
-    position: static;
-    flex: 0 0 36px;
-    margin-left: 0;
-  }
-  .buscador-global input {
-    width: 36px;
-    padding: 0;
-    color: transparent;
-    background-position: center;
-    cursor: pointer;
-  }
-  .buscador-global input::placeholder {
-    color: transparent;
-  }
-  .buscador-global:focus-within input {
-    position: absolute;
-    z-index: 1501;
-    left: 12px;
-    right: 12px;
-    top: calc(100% + 8px);
-    width: auto;
-    height: 44px;
-    padding: 0 12px 0 34px;
-    color: var(--texto);
-    background-position: 12px center;
-    box-shadow: 0 6px 20px rgb(0 0 0 / 0.14);
-    cursor: text;
-  }
-  .buscador-global:focus-within input::placeholder {
-    color: var(--texto-3);
-  }
-  .buscador-resultados {
-    left: 12px;
-    right: 12px;
-    width: auto;
-    top: calc(100% + 58px);
-  }
-}
-.buscador-todos {
-  font-size: 0.85rem;
-  color: var(--texto-2);
-  border-top: 1px solid var(--borde);
-  border-radius: 0 !important;
-}
 
 /* Mes elegido (T32): selector en la cabecera y la columna de ese mes resaltada en todos los calendarios */
-.selector-mes select {
-  height: 36px;
-  padding: 0 28px 0 12px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-s);
-  background-color: var(--superficie);
-  font: 600 0.85rem var(--f-cuerpo);
-  color: var(--texto);
-}
 html[data-mes] .tabla-frecuencia td.mes-actual {
   outline: none;
 }
-html[data-mes] .tabla-frecuencia thead th.mes-actual,
-html[data-mes] .cabecera-ano .actual {
+html[data-mes] .tabla-frecuencia thead th.mes-actual {
   color: var(--texto-3);
   font-weight: inherit;
 }
@@ -2120,44 +960,8 @@ html[data-mes="12"] [data-m="12"] {
   color: var(--texto) !important;
   font-weight: 700;
 }
-@media (max-width: 900px) {
-  .selector-mes select {
-    padding: 0 22px 0 10px;
-    font-size: 0.8rem;
-  }
-}
 
 /* Veredicto del mes (T37) */
-.veredicto-mes {
-  padding: 18px 20px;
-  border-radius: var(--radio);
-  background: var(--superficie);
-  border: 1px solid var(--borde);
-  border-left: 6px solid var(--borde);
-}
-.veredicto-mes h2 {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 8px;
-  margin: 0 0 8px;
-  font: 600 1.35rem var(--f-titulo);
-}
-.veredicto-mes select {
-  font: inherit;
-  border: 0;
-  border-bottom: 2px dashed var(--borde);
-  background: transparent;
-  color: var(--texto);
-  padding: 0 4px;
-}
-.veredicto-mes ul {
-  margin: 0 0 12px;
-  padding-left: 1.1em;
-}
-.veredicto-mes li {
-  margin: 4px 0;
-}
 .nota-excelente {
   border-left-color: var(--c-fauna);
 }
@@ -2171,46 +975,7 @@ html[data-mes="12"] [data-m="12"] {
 .nota-cerrado {
   border-left-color: var(--resta);
 }
-.doce-meses {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 3px;
-  margin: 0;
-}
-.doce-meses button {
-  min-height: 32px;
-  padding: 0;
-  border: 0;
-  border-bottom: 5px solid var(--borde);
-  border-left: 0;
-  border-radius: 4px;
-  background: var(--superficie-2);
-  font: 600 0.68rem var(--f-cuerpo);
-  color: var(--texto-2);
-  cursor: pointer;
-}
-.doce-meses button.nota-excelente {
-  border-bottom-color: var(--c-fauna);
-}
-.doce-meses button.nota-bueno {
-  border-bottom-color: color-mix(in srgb, var(--c-fauna) 55%, var(--superficie));
-}
-.doce-meses button.nota-regular {
-  border-bottom-color: var(--ocre);
-}
-.doce-meses button.nota-malo,
-.doce-meses button.nota-cerrado {
-  border-bottom-color: var(--resta);
-}
-.doce-meses button[aria-pressed="true"] {
-  background: var(--texto);
-  color: var(--fondo);
-}
 /* capas de la ficha (T37) */
-.titulo-capa {
-  margin: 40px 0 8px;
-  font: 600 1.6rem var(--f-titulo);
-}
 /* alojamientos por zona (T38) */
 .zona-alojamientos {
   border-top: 1px solid var(--borde);
@@ -2224,9 +989,6 @@ html[data-mes="12"] [data-m="12"] {
   gap: 8px;
   flex-wrap: wrap;
 }
-.zona-alojamientos.recomendada summary b {
-  color: var(--acento);
-}
 .zona-recomendada {
   padding: 10px 12px;
   border-radius: var(--radio);
@@ -2234,118 +996,8 @@ html[data-mes="12"] [data-m="12"] {
 }
 
 /* Parques de una especie (T43) */
-.orden-parques {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-}
-.orden-parques button {
-  min-height: 32px;
-  padding: 4px 12px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-s);
-  background: var(--superficie);
-  font: 500 0.85rem var(--f-cuerpo);
-  color: var(--texto);
-  cursor: pointer;
-}
-.orden-parques button[aria-pressed="true"] {
-  background: var(--texto);
-  color: var(--fondo);
-  border-color: var(--texto);
-}
-.parques-especie {
-  list-style: none;
-  margin: 12px 0 0;
-  padding: 0;
-  display: grid;
-  gap: 14px;
-}
-.parques-especie > li {
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  gap: 12px;
-  align-items: start;
-}
-.parques-especie img,
-.parques-especie .sin-foto {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radio);
-  object-fit: cover;
-}
-.parques-especie p {
-  margin: 0;
-}
-.parque-especie-cab small {
-  color: var(--texto-2);
-}
-.chip.en-epoca {
-  margin-left: 6px;
-  background: var(--acento-suave);
-  color: var(--acento);
-}
-.barra-obs {
-  height: 4px;
-  margin: 4px 0 !important;
-  background: var(--superficie-2);
-  border-radius: 2px;
-}
-.barra-obs i {
-  display: block;
-  height: 100%;
-  background: var(--c-fauna);
-  border-radius: 2px;
-}
-.meses-parque {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 2px;
-  max-width: 320px;
-  margin-top: 6px;
-}
-.meses-parque span {
-  text-align: center;
-  font: 600 0.62rem var(--f-mono);
-  padding: 2px 0;
-  border-radius: 3px;
-}
-.meses-parque .si {
-  background: var(--c-fauna);
-  color: var(--fondo);
-}
-.meses-parque .no {
-  background: var(--superficie-2);
-  color: var(--texto-3);
-}
-.meses-parque .elegido {
-  outline: 2px solid var(--texto);
-  outline-offset: -1px;
-}
 
 /* Tres entradas del hero (T33) */
-.entradas-hero {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr 1.2fr;
-  gap: 10px;
-  padding: 12px;
-  border-radius: var(--radio);
-  background: var(--superficie);
-  color: var(--texto);
-  box-shadow: 0 12px 32px rgb(0 0 0 / 0.22);
-  max-width: 920px;
-}
-.entrada-hero {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
-}
-.entrada-hero .rotulo {
-  color: var(--texto-2);
-}
-.entrada-hero select,
-.entrada-destino input,
 .selector-especie-campo {
   height: 44px;
   width: 100%;
@@ -2355,31 +1007,6 @@ html[data-mes="12"] [data-m="12"] {
   font: 0.95rem var(--f-cuerpo);
   color: var(--texto);
   padding: 0 10px;
-}
-.entrada-destino {
-  display: flex;
-  gap: 6px;
-}
-.entrada-destino button {
-  flex: none;
-  width: 44px;
-  border: 0;
-  border-radius: var(--radio);
-  background: var(--texto);
-  color: var(--fondo);
-  font-size: 1.1rem;
-  cursor: pointer;
-}
-.entrada-espana {
-  grid-column: 1 / -1;
-  margin: 0;
-  font-size: 0.88rem;
-  color: var(--texto-2);
-}
-@media (max-width: 760px) {
-  .entradas-hero {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Selector de especie (T34) */
@@ -2477,35 +1104,8 @@ html[data-mes="12"] [data-m="12"] {
   .marca {
     font-size: 1.3rem;
   }
-  .marca-sub {
-    display: none;
-  }
   .mundos a {
     padding: 4px 9px;
-  }
-  .selector-mes select {
-    height: 34px;
-    padding: 0 18px 0 8px;
-    background-position: right 4px center;
-  }
-  .buscador-global {
-    flex-basis: 34px;
-  }
-  .buscador-global input {
-    width: 34px;
-    height: 34px;
-  }
-}
-.entrada-espana,
-.entrada-espana a {
-  color: var(--texto-2);
-}
-.entrada-espana a {
-  color: var(--texto);
-}
-@media (max-width: 1400px) {
-  .cabecera .marca-sub {
-    display: none;
   }
 }
 /* nombres de la tabla de probabilidad: 24 px de alto para el dedo */
@@ -2516,67 +1116,8 @@ html[data-mes="12"] [data-m="12"] {
 }
 
 /* Fotografía en la ficha (T23) */
-.datos-foto {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 14px 24px;
-  margin: 0;
-}
-.datos-foto dt {
-  font: 600 0.75rem var(--f-cuerpo);
-  text-transform: none;
-  color: var(--texto-2);
-}
-.datos-foto dd {
-  margin: 2px 0 0;
-}
-.datos-foto small {
-  display: block;
-  margin-top: 2px;
-  color: var(--texto-2);
-}
-.notas-foto {
-  margin: 16px 0 0;
-  padding-left: 1.1em;
-}
 
 /* Galería del parque (T20/T37) */
-.galeria-parque ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 10px;
-}
-.galeria-parque figure {
-  position: relative;
-  margin: 0;
-}
-.galeria-parque img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: var(--radio);
-  background: var(--superficie-2);
-}
-.galeria-parque img.foto-nd {
-  object-fit: contain;
-}
-.galeria-parque figcaption {
-  font-size: 0.85rem;
-  margin-top: 4px;
-}
-@media (max-width: 480px) {
-  .galeria-parque ul {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-.frescura-corta {
-  margin: 8px 0 0;
-  font-size: 0.82rem;
-  color: var(--texto-2);
-}
 
 /* Tabla de probabilidad (T40): puntos además del color; en el móvil, un mes cada vez */
 .tabla-frecuencia td[class*="f-"]::after,
@@ -2679,51 +1220,6 @@ html[data-mes="12"] [data-m="12"] {
 }
 
 /* Acción principal de la ficha (T42): «Añadir a mi viaje»; «Comparar», secundaria */
-.accion-principal {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  padding: 8px 18px;
-  border: 0;
-  border-radius: var(--radio-s);
-  background: var(--acento);
-  color: #fff;
-  font: 600 0.95rem var(--f-cuerpo);
-  text-decoration: none;
-  cursor: pointer;
-}
-.accion-principal small {
-  font-weight: 400;
-  opacity: 0.85;
-}
-.accion-principal.dentro {
-  background: var(--superficie);
-  color: var(--texto);
-  border: 1px solid var(--borde);
-}
-.ficha-hero .boton-comparar button {
-  background: transparent;
-  color: inherit;
-  border-color: currentColor;
-}
-@media (max-width: 900px) {
-  .accion-viaje {
-    position: fixed;
-    z-index: 950;
-    left: 12px;
-    right: 12px;
-    bottom: calc(76px + env(safe-area-inset-bottom));
-  }
-  .accion-viaje .accion-principal {
-    width: 100%;
-    justify-content: center;
-    box-shadow: 0 6px 20px rgb(0 0 0 / 0.22);
-  }
-  body:has(.accion-viaje) {
-    padding-bottom: calc(130px + env(safe-area-inset-bottom));
-  }
-}
 
 /* Imágenes con width y height (T03): el navegador reserva su hueco antes de cargarlas (sin saltos), pero la altura
    la decide el CSS de cada sitio (aspect-ratio); :where() no suma especificidad, así no pisa a nadie */
@@ -2732,129 +1228,13 @@ html[data-mes="12"] [data-m="12"] {
 }
 
 /* Buscador de la portada (T35, T36, T26) */
-.botones-opcion {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.botones-opcion button,
-.vista-resultados button,
-.sin-resultados button {
-  min-height: 36px;
-  padding: 6px 12px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-s);
-  background: var(--superficie);
-  font: 500 0.88rem var(--f-cuerpo);
-  color: var(--texto);
-  cursor: pointer;
-}
-.botones-opcion button[aria-pressed="true"],
-.vista-resultados button[aria-pressed="true"] {
-  background: var(--texto);
-  border-color: var(--texto);
-  color: var(--fondo);
-}
-.sin-resultados {
-  padding: 14px 16px;
-  border-radius: var(--radio);
-  background: var(--superficie);
-  border: 1px solid var(--borde);
-}
-.sin-resultados ul {
-  list-style: none;
-  margin: 8px 0 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.vista-resultados {
-  display: none;
-  gap: 6px;
-  margin: 12px 0 0;
-}
-@media (max-width: 900px) {
-  .vista-resultados {
-    display: flex;
-  }
-  .fauna-grid.vista-lista .resultados-mapa,
-  .fauna-grid.vista-mapa .resultados-lista {
-    display: none;
-  }
-}
-.ejemplos-hero {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 14px;
-  margin: 0;
-  color: #fff;
-  font-size: 0.9rem;
-}
-.ejemplos-hero a {
-  color: #fff;
-}
-.filtros-especies-mas {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 16px;
-  margin: 8px 0 0;
-}
-.filtros-especies-mas select {
-  min-height: 36px;
-  padding: 0 10px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  background: var(--superficie);
-  color: var(--texto);
-  font: inherit;
-}
-.portada-hero .entradas-hero .entrada-espana {
-  color: var(--texto-2);
-}
-.portada-hero .entradas-hero .entrada-espana a {
-  color: var(--texto);
-}
-.casilla-especies {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 36px;
-}
 /* tarjetas de la portada de España (T31) */
-.mas-espana .icono-tarjeta {
-  color: var(--acento);
-  margin-bottom: 4px;
-}
 
 /* Secciones personales (T47) */
-.estado-vacio {
-  padding: 18px 20px;
-  border: 1px dashed var(--borde);
-  border-radius: var(--radio);
-  background: var(--superficie);
-}
-.estado-vacio h2 {
-  margin-top: 0;
-}
-.copia-local {
-  margin: 16px 0;
-}
-.copia-local-botones {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.copia-local-botones label {
-  cursor: pointer;
-}
 
 /* Cabecera con la marca «Atlas de fauna» y el menú de España de ocho secciones (T30): sin saltos de línea */
 .cabecera .marca,
-.menu a,
-.cabecera .boton-viaje {
+.menu a {
   white-space: nowrap;
 }
 @media (min-width: 901px) and (max-width: 1400px) {
@@ -2863,9 +1243,6 @@ html[data-mes="12"] [data-m="12"] {
   }
   .menu a {
     font-size: 0.88rem;
-  }
-  .buscador-global {
-    flex-basis: 200px;
   }
 }
 @media (max-width: 480px) {
@@ -2885,45 +1262,7 @@ html[data-mes="12"] [data-m="12"] {
     padding: 4px 7px;
     font-size: 0.78rem;
   }
-  .selector-mes select {
-    padding: 0 16px 0 6px;
-    font-size: 0.78rem;
-  }
 }
 /* estado UICN (T45) */
-.uicn {
-  display: inline-block;
-  min-width: 2.2em;
-  padding: 1px 6px;
-  border-radius: 4px;
-  font: 700 0.75rem var(--f-mono);
-  text-align: center;
-  color: #fff;
-}
-.uicn-LC,
-.uicn-NT {
-  background: #4f6b57;
-}
-.uicn-VU {
-  background: #8a6a12;
-}
-.uicn-EN {
-  background: #a5502f;
-}
-.uicn-CR {
-  background: #8f2b2b;
-}
 
 /* Rediseño B, fase 2: en la cabecera de una ficha, «la he visto» es un botón secundario a la altura del principal */
-.titular .boton-vista {
-  min-height: 44px;
-  margin-left: 0;
-  padding: 0 16px;
-  font: 500 0.95rem var(--f-cuerpo);
-  color: var(--texto);
-  border-color: var(--texto);
-  background: none;
-}
-.titular .boton-vista.vista {
-  background: var(--acento-suave);
-}

@@ -1,55 +1,129 @@
-/* Portada de Rasante: las dos puertas (Luz y Fauna). Provisional hasta el sistema de diseño (spec 004). */
-.puertas {
+/* Portada de Rasante (spec 004, prototipo): «¿cuándo tienes tiempo?». Manda la foto del mejor plan de hoy con su
+   veredicto; debajo, tres momentos con Luz y Fauna. Móvil primero: una columna; en escritorio, los tres momentos
+   en fila. */
+.portada-rasante {
+  max-width: var(--ancho);
+  margin: 0 auto;
+  padding: 20px 16px 48px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin-top: 24px;
+  gap: 22px;
 }
-.puerta {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 22px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  background: var(--superficie);
+.portada-cabecera h1 {
+  font-size: clamp(2rem, 7vw, 3.4rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 8px 0 6px;
 }
-.puerta h2 {
+.portada-cabecera .entradilla {
   margin: 0;
+  color: var(--texto-2);
 }
-.puerta h2 a {
-  color: inherit;
+.portada-hoy {
+  position: relative;
+  display: grid;
+  min-height: 300px;
+  border-radius: var(--radio);
+  overflow: hidden;
+  background: var(--cielo-noche);
+  color: #fff;
   text-decoration: none;
 }
-.puerta-lista {
-  list-style: none;
-  margin: 4px 0;
-  padding: 0;
+.portada-hoy img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.portada-hoy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0%) 30%, rgb(0 0 0 / 72%) 100%);
+}
+.portada-hoy-texto {
+  position: relative;
+  z-index: 1;
+  align-self: end;
   display: grid;
+  gap: 4px;
+  padding: 18px 18px 30px;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 70%);
+}
+.portada-hoy .rotulo {
+  color: rgb(255 255 255 / 85%);
+}
+.portada-hoy-nombre {
+  font-size: clamp(1.6rem, 6vw, 2.6rem);
+  font-weight: 700;
+  font-variation-settings: "wdth" 80;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.portada-hoy-veredicto {
+  display: flex;
+  align-items: baseline;
   gap: 10px;
+  max-width: 46ch;
+  font-size: 0.98rem;
 }
-.puerta-lista li {
+.portada-hoy .cifra {
+  color: var(--n-buena);
+}
+.portada-hoy-credito {
+  position: absolute;
+  z-index: 1;
+  right: 10px;
+  bottom: 6px;
+  font-size: 0.7rem;
+  color: rgb(255 255 255 / 70%);
+}
+.momentos {
+  display: grid;
+  gap: 14px;
+}
+@media (min-width: 860px) {
+  .momentos {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .portada-hoy {
+    min-height: 420px;
+  }
+}
+.momento {
+  border-top: 2px solid var(--texto);
+  padding-top: 10px;
+}
+.momento h2 {
+  font-size: 1.35rem;
+  margin: 0 0 10px;
+}
+.plan-momento {
   display: flex;
-  align-items: center;
   gap: 12px;
-}
-.puerta-lista li > span,
-ul.puerta-lista li {
-  display: flex;
-  flex-direction: column;
   align-items: flex-start;
+  margin: 0 0 10px;
+}
+.plan-momento > span {
+  display: grid;
   gap: 2px;
 }
-.puerta-lista small {
+.plan-momento a {
+  font-weight: 650;
+}
+.plan-momento small,
+.momento-enlaces small {
   color: var(--texto-3);
 }
-.puerta-acciones {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px;
-  margin-top: auto;
-  padding-top: 8px;
+.momento-enlaces {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.momento-enlaces a::after {
+  content: " →";
 }
 
 /* «Lo habitual» (spec 013): ranking por mes sin previsión */
@@ -172,4 +246,23 @@ ul.puerta-lista li {
 .lista-especies-punto i {
   color: var(--texto-3);
   font-size: 0.85em;
+}
+
+/* Conmutador de modo noche (spec 004): icono en la cabecera, objetivo táctil de 44 px */
+.modo-noche {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-left: 4px;
+  border: 0;
+  border-radius: var(--radio-s);
+  background: none;
+  color: var(--texto-2);
+  cursor: pointer;
+}
+.modo-noche:hover,
+.modo-noche:focus-visible {
+  color: var(--texto);
+  background: var(--superficie-2);
 }

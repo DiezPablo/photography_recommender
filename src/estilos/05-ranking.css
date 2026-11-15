@@ -41,11 +41,6 @@ select.boton {
 .campo select:hover {
   border-color: color-mix(in srgb, var(--texto) 30%, var(--borde));
 }
-.boton.primario {
-  background: var(--texto);
-  border-color: var(--texto);
-  color: var(--fondo);
-}
 select.boton,
 .campo select {
   appearance: none;
@@ -110,8 +105,7 @@ select.boton,
   letter-spacing: -0.015em;
   line-height: 1.25;
 }
-.fila .meta,
-.fila-ruta .meta {
+.fila .meta {
   display: flex;
   flex-wrap: wrap;
   gap: 2px 12px;
@@ -129,8 +123,7 @@ select.boton,
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.fila .dist,
-.fila-ruta .dist {
+.fila .dist {
   color: var(--acento);
   font-weight: 650;
 }
