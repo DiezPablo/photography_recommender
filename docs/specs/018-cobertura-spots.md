@@ -1,6 +1,6 @@
 # 018 — Cobertura de spots
 
-Estado: hecha en código (falta el primer descubrimiento completo en Actions y la auditoría de después)
+Estado: hecha en código (falta repetir el descubrimiento con el corte urbano corregido)
 Modo: Luz
 Situación del fotógrafo: una tarde · un finde (lejos de las ciudades grandes)
 
@@ -32,10 +32,14 @@ vacía y una ejecución desde cero publicaría un catálogo con la popularidad a
       sintéticos).
 - [x] Con la popularidad a medias no se escribe ni se publica nada; el log dice el porcentaje contado.
 - [x] El workflow tiene calendario mensual y no publica si falta popularidad.
-- [ ] Primer descubrimiento completo en Actions: ninguna provincia peninsular con menos de 20 spots y el cielo
-      urbano por debajo del 25 %.
-- [ ] Informe de auditoría de después (`python -m rasante auditar`) en `docs/datos/`, comparado con el del
-      13-11-2026.
+- [x] Primer descubrimiento completo en Actions (15-11-2026, 99 % de popularidad contada, tres ejecuciones):
+      ninguna provincia con menos de 20 spots salvo Ceuta (17) y Melilla (5); mediana de 20 por provincia (era 12).
+- [ ] Cielo urbano (Bortle ≥ 7) por debajo del 25 %: quedó en el 29 % (era el 32 %). La selección contaba como
+      urbano el brillo < 19,5 mag/arcsec², que deja fuera la zona 5b del atlas (Bortle 7): el log decía 18 %. Corte
+      corregido a 20,0 (prueba `test_urbano_es_bortle_7_o_mas`); falta repetir el descubrimiento.
+- [x] Informe de auditoría de después en `docs/datos/auditoria-2026-11-15.md`, comparado con el del 13-11-2026:
+      provincias con menos de 15 spots, de 30 a 1; pares duplicados de fauna, de 48 y 41 a 3 y 3 (spec 019); más
+      cumbres (218 → 261), agua (76 → 163) y cascadas (33 → 56), menos miradores (610 → 528) y costa (451 → 386).
 
 ## Datos
 Mismas fuentes que hoy (Wikidata, OpenStreetMap, Commons, atlas de contaminación lumínica). Con más spots de

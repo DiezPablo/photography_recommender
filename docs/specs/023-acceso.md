@@ -1,6 +1,6 @@
 # 023 — Acceso a cada spot
 
-Estado: hecha (falta la primera publicación de `acceso.json`)
+Estado: hecha
 Modo: ambos
 Situación del fotógrafo: una tarde | un finde | un viaje
 
@@ -29,7 +29,10 @@ mismo que una cumbre a una hora. Rasante no lo decía. De las rutas de senderism
   aparcamiento (mediana 310 m en spots); el Mirador de Buitrago, «aparcamiento a 440 m · unos 8 min andando».
 - [x] e2e: el plan de Madrid enseña el acceso y la ficha del spot lo lleva con el enlace a OpenStreetMap (si ya
   está publicado `acceso.json`).
-- [ ] Primera publicación de `acceso.json` en la release (al fusionar, por el `push`).
+- [x] Primera publicación de `acceso.json` (15-11-2026; rehecha a las 17:29 con los spots nuevos): 1046 de 1500 spots
+  con aparcamiento a ≤ 2 km (mediana 290 m; 806 a ≤ 10 min andando) y 10 728 lugares de fauna (mediana 470 m).
+  Producción lo enseña en las fichas y en `/plan`; `lugares.json` lleva `aparcamiento_m` (spots sin él: del 100 %
+  al 30 %).
 
 ## Datos
 OpenStreetMap (ODbL), ya acreditado; ahora también «aparcamientos» en `/fuentes`. `acceso.json`: unos 25 000
