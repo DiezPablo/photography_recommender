@@ -8,7 +8,6 @@ import { MESES } from "@/lib/fechas";
 import ElegirLugar from "@/features/fauna/ElegirLugar";
 import { useUbicacionGuardada } from "@/features/fauna/ubicacion";
 import { type Fenomeno, fenomenosCerca } from "@/features/fauna/fenomenos";
-import Alojamientos from "@/features/fauna/Alojamientos";
 import GuardarSinConexion from "@/ui/GuardarSinConexion";
 import { luzDia } from "@/lib/luz";
 import { horaLocal } from "@/lib/sol";
@@ -245,7 +244,6 @@ export default function FindeEspana({ hoy, fenomenos }: { hoy: string; fenomenos
                 {plan.km !== null && (
                   <p className="nota-pie">Entre los dos sitios, unos {plan.km} km en línea recta.</p>
                 )}
-                <Alojamientos {...salidas[salidas.length - 1]} nombre={salidas[salidas.length - 1].lugar} />
               </div>
             ) : null,
           )}

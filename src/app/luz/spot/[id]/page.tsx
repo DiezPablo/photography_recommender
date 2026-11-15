@@ -6,15 +6,13 @@ import Desglose from "@/features/spots/componentes/Desglose";
 import PlanDelDia from "@/features/spots/componentes/PlanDelDia";
 import MapaSpot from "@/features/spots/componentes/MapaSpot";
 import { filasRanking, TOP_HTML } from "@/features/spots/ranking";
-import Panorama from "@/features/spots/componentes/Panorama";
 import EventosCerca from "@/features/eventos/componentes/EventosCerca";
-import AlineacionesSpot from "@/features/eventos/componentes/AlineacionesSpot";
 import { cargarEventos, starlightDe } from "@/features/eventos/datos";
 import ClimaSpot from "@/features/clima/componentes/ClimaSpot";
 import GuardarSinConexion from "@/ui/GuardarSinConexion";
 import FaunaCerca from "@/features/lugares/componentes/FaunaCerca";
-import Dron, { SelloDron } from "@/features/dron/Dron";
-import { textoMarea, textoOlas } from "@/features/spots/mar";
+import { SelloDron } from "@/features/dron/Dron";
+import { textoMarea } from "@/features/spots/mar";
 import type { LineaMapa } from "@/features/spots/componentes/MapaSpots";
 import {
   calificacion,
@@ -145,12 +143,6 @@ function BloqueLuz({ dia, momento }: { dia: Dia; momento: "amanecer" | "atardece
           <>
             <dt>Marea</dt>
             <dd>{textoMarea(mar)}</dd>
-          </>
-        )}
-        {mar && textoOlas(mar) && (
-          <>
-            <dt>Olas</dt>
-            <dd>{textoOlas(mar)}</dd>
           </>
         )}
         {m && (
@@ -606,56 +598,6 @@ export default async function PaginaSpot({ params }: Props) {
         </section>
       </div>
 
-      {desc?.horizonte?.angulos?.length ? (
-        <section className="seccion" aria-label="Horizonte del terreno">
-          <h2 className="rotulo">Horizonte y orientación</h2>
-          <Panorama
-            angulos={desc.horizonte.angulos}
-            marcas={[
-              ...(hoy?.sol.az_amanecer != null
-                ? [
-                    {
-                      azimut: hoy.sol.az_amanecer,
-                      texto: `Sale el sol ${hoy.sol.amanecer_relieve ?? hoy.sol.amanecer}`,
-                      color: "var(--sol)",
-                    },
-                  ]
-                : []),
-              ...(hoy?.sol.az_atardecer != null
-                ? [
-                    {
-                      azimut: hoy.sol.az_atardecer,
-                      texto: `Se pone ${hoy.sol.atardecer_relieve ?? hoy.sol.atardecer}`,
-                      color: "var(--n-top)",
-                    },
-                  ]
-                : []),
-              ...(hoy?.noche.luna.evento
-                ? [
-                    {
-                      azimut: hoy.noche.luna.evento.azimut,
-                      texto: `Luna ${hoy.noche.luna.evento.hora}`,
-                      color: "var(--luna)",
-                      altura: hoy.noche.luna.evento.horizonte,
-                    },
-                  ]
-                : []),
-              ...(hoy?.noche.via_lactea.azimut_max != null
-                ? [
-                    {
-                      azimut: hoy.noche.via_lactea.azimut_max,
-                      texto: `Vía Láctea ${hoy.noche.via_lactea.hora_max}`,
-                      color: "var(--vl)",
-                      altura: hoy.noche.via_lactea.altura_max ?? undefined,
-                    },
-                  ]
-                : []),
-            ]}
-          />
-          <AlineacionesSpot id={spot.id} />
-        </section>
-      ) : null}
-
       <section className="dias" aria-label="Previsión por días">
         <h2 className="rotulo">Previsión día a día · el desglose suma exactamente la nota</h2>
         {spot.dias.map((d, i) => (
@@ -663,7 +605,6 @@ export default async function PaginaSpot({ params }: Props) {
         ))}
       </section>
       <ClimaSpot lat={spot.lat} lon={spot.lon} mes={Number(spot.dias[0]?.fecha.slice(5, 7) ?? 1) - 1} />
-      <Dron id={spot.id} />
       <FaunaCerca id={spot.id} lat={spot.lat} lon={spot.lon} />
       <EventosCerca lat={spot.lat} lon={spot.lon} ambito="fauna" max={3} />
       <EventosCerca lat={spot.lat} lon={spot.lon} />

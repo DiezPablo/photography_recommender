@@ -11,8 +11,7 @@ import ListaRarezas from "@/features/fauna/ListaRarezas";
 import GuardarSinConexion from "@/ui/GuardarSinConexion";
 import TarjetaHide from "@/features/fauna/TarjetaHide";
 import { hidesCerca } from "@/features/fauna/hides";
-import LuzYMar from "@/features/fauna/LuzYMar";
-import { direccionesSol, rumbo } from "@/lib/sol";
+import MareasFauna from "@/features/fauna/MareasFauna";
 import { fenomenosCerca } from "@/features/fauna/fenomenos";
 import { listaFenomenos } from "@/features/fauna/eventoFauna";
 import {
@@ -76,7 +75,6 @@ export default async function PaginaLugar({ params }: Props) {
   const region = actividadRegion(actividad?.r);
   const especiesEbird = especiesPunto(l.id);
   const rarezas = rarezasCerca(l.lat, l.lon, 30).slice(0, 12);
-  const sol = direccionesSol(hoy, l.lat, l.lon);
   const espana = cargarEspana();
   const cita = espana?.fuente?.cita;
   const probables = filas.filter((f) => (f.meses[mesHoy] ?? 0) >= 5).length;
@@ -161,14 +159,6 @@ export default async function PaginaLugar({ params }: Props) {
             forma: contornoDe(l),
           },
         ]}
-        rumbos={[
-          ...(sol.sale !== null
-            ? [{ grados: sol.sale, etiqueta: `Sale el sol (${rumbo(sol.sale)})`, color: "#e3a020" }]
-            : []),
-          ...(sol.pone !== null
-            ? [{ grados: sol.pone, etiqueta: `Se pone el sol (${rumbo(sol.pone)})`, color: "#b0533c" }]
-            : []),
-        ]}
       />
       {contornoDe(l) && (
         <p className="nota-pie credito-contorno">
@@ -251,10 +241,7 @@ export default async function PaginaLugar({ params }: Props) {
         </section>
       )}
 
-      <details className="seccion plegable">
-        <summary className="rotulo">Luz y mareas hoy</summary>
-        <LuzYMar lat={l.lat} lon={l.lon} fecha={hoy} />
-      </details>
+      <MareasFauna lat={l.lat} lon={l.lon} fecha={hoy} />
 
       {rarezas.length > 0 && (
         <details className="seccion plegable">

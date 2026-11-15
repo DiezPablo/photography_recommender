@@ -40,7 +40,7 @@ test("fauna en España: luz, tiempo y especies (o aviso sin datos)", async ({ pa
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Cerca de mí");
   await expect(page.locator(".resumen-dia")).toContainText("Mejor momento");
   // la luz y el tiempo por horas van plegados debajo
-  await page.getByText("Luz, mar y tiempo hora a hora").click();
+  await page.getByText("Luz, mareas y tiempo hora a hora").click();
   await expect(page.locator(".luz-dia")).toContainText("Hora dorada");
   await expect(page.locator(".luz-dia")).toContainText(/\d{2}:\d{2}/);
   const especies = page.locator("section", { hasText: "Qué se registra más en noviembre" });

@@ -21,7 +21,7 @@ import {
 import { confianza, nivelFrecuencia, textoFrecuencia } from "@/features/fauna/frecuencia";
 import { actividadPorDefecto, puntuar, type Puntuacion } from "@/features/fauna/puntuacion";
 import ElegirLugar from "@/features/fauna/ElegirLugar";
-import LuzYMar from "@/features/fauna/LuzYMar";
+import MareasFauna from "@/features/fauna/MareasFauna";
 import ResumenDia from "@/features/fauna/ResumenDia";
 import { factorFotografia } from "@/features/fauna/fotografia";
 import { useUbicacionGuardada } from "@/features/fauna/ubicacion";
@@ -444,12 +444,11 @@ export default function PlanificadorEspana({ hoy, fenomenos }: { hoy: string; fe
       </section>
 
       <details className="seccion detalles-dia">
-        <summary className="rotulo">Luz, mar y tiempo hora a hora</summary>
+        <summary className="rotulo">Luz, mareas y tiempo hora a hora</summary>
         <section className="seccion" aria-labelledby="luz-titulo">
           <h2 className="rotulo" id="luz-titulo">
             Luz
           </h2>
-          <LuzYMar lat={lat} lon={lon} fecha={fecha} />
           <p className="nota-pie">
             Luna: {fasesLuna.nombre}, {Math.round(fasesLuna.iluminada * 100)} % iluminada
             {fasesLuna.iluminada < 0.2
@@ -483,6 +482,7 @@ export default function PlanificadorEspana({ hoy, fenomenos }: { hoy: string; fe
               <dd>{franja(luz.azulTarde)}</dd>
             </div>
           </dl>
+          <MareasFauna lat={lat} lon={lon} fecha={fecha} />
         </section>
 
         <section className="seccion" aria-labelledby="tiempo-titulo" aria-live="polite">

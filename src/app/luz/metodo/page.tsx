@@ -1,7 +1,6 @@
 import TablaFuentes from "@/ui/TablaFuentes";
 import Link from "next/link";
 import type { Metadata } from "next";
-import Marcador from "@/features/verificacion/Marcador";
 
 export const metadata: Metadata = { title: "Método" };
 
@@ -135,9 +134,6 @@ export default function Acerca() {
           mediocres.
         </li>
       </ul>
-
-      <h2>Cuánto acierta, día a día</h2>
-      <Marcador />
 
       <h2>Fuentes</h2>
       <TablaFuentes modo="luz" />

@@ -485,43 +485,6 @@
   color: var(--texto-2);
 }
 
-/* Alineaciones de sol y luna con los picos del horizonte */
-.alineaciones h3 {
-  font: 650 0.95rem var(--f-cuerpo);
-  margin: 6px 0;
-}
-.alineaciones ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-.alineaciones li {
-  padding-left: 22px;
-  position: relative;
-  line-height: 1.45;
-}
-.alineaciones li::before {
-  content: "";
-  position: absolute;
-  left: 2px;
-  top: 5px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-.alineacion-sol::before {
-  background: var(--sol);
-}
-.alineacion-luna::before {
-  background: var(--luna);
-}
-.alineaciones li span {
-  display: block;
-  color: var(--texto-2);
-  font-size: 0.9rem;
-}
 .tabla-clima .corto {
   display: none;
 }
@@ -667,32 +630,6 @@
 .dron-libre {
   --color-dron: #27ae60;
 }
-.punto-dron {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--color-dron);
-}
-.zonas-dron {
-  margin: 8px 0 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 6px;
-}
-.zonas-dron summary {
-  cursor: pointer;
-}
-.zonas-dron small {
-  color: var(--texto-3);
-}
-.texto-dron {
-  white-space: pre-line;
-  font-size: 0.9rem;
-  color: var(--texto-2);
-  margin: 6px 0 0 18px;
-}
 
 /* Mareas del día en la ficha del spot */
 .mareas {
@@ -700,9 +637,6 @@
 }
 .mareas small {
   color: var(--texto-3);
-}
-.dron {
-  scroll-margin-top: 90px; /* que la cabecera fija no tape el título al llegar desde el sello */
 }
 
 /* Safaris: tarjetas, chips, el año del parque, avistamientos recientes y alojamientos */

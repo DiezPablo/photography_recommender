@@ -77,7 +77,7 @@ export const FUENTES: Fuente[] = [
     modos: ["luz"],
   },
   {
-    uso: "Marcador de aciertos (METAR)",
+    uso: "Comprobar la previsión con lo observado (METAR, uso interno)",
     nombre: "Iowa Environmental Mesonet",
     url: "https://mesonet.agron.iastate.edu/",
     licencia: "Dominio público",

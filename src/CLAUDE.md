@@ -7,7 +7,7 @@
     (la lista está en `lib/fuentes.ts`; al añadir una fuente, añádela ahí y en `docs/datos/fuentes.md`).
   - `/luz/**`: ranking del día (`/luz`, `/luz/dia/[d]/[tipo]`), `/luz/spot/[id]`, `/luz/calendario`,
     `/luz/habitual/[mes]/[tipo]` (sin previsión: climatología × idoneidad, spec 013), `/luz/evento/[id]`,
-    `/luz/alertas` (.ics), `/luz/metodo`.
+    `/luz/alertas` (un `.ics` nacional; los de comunidad redirigen a él), `/luz/metodo`.
   - `/fauna/**`: carta por cuadrícula (`/fauna`; `?modo=aqui|finde`), `/fauna/lugar/[id]`,
     `/fauna/especie/[clave]`, `/fauna/evento/[id]` (un fenómeno con sus lugares, `berrea`, o la ficha de uno, `berrea-monfrague`; spec 014),
     `/fauna/calendario`,
@@ -15,7 +15,7 @@
   - `/espana/*` redirige a `/fauna/*`, y las URLs de los safaris retirados (decisión 0021), a la portada
     (`next.config.ts`).
 - `features/<área>/`: componentes, modelo y `datos.ts` (solo servidor, con `server-only`). Luz: `spots`,
-  `eventos`, `clima`, `dron`, `alertas`, `verificacion`. Fauna: `fauna`, `carta`.
+  `eventos`, `clima`, `dron`, `alertas` (un solo `.ics`, el de toda España). Fauna: `fauna`, `carta`.
 - `ui/`: componentes comunes; `Navegacion.tsx` (modos y menús), `ui/mapa/useMapaBase.ts` para Leaflet.
 - `lib/`: `datos.ts` (`leerDatos`, lee `datos/*.gz`), `almacen.ts` (estado del navegador con
   `useSyncExternalStore`), `sol.ts`, `luna.ts`, `sitio.ts` (URL pública: `NEXT_PUBLIC_SITIO`).

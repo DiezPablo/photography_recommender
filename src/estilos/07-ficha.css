@@ -179,20 +179,6 @@
 .galeria figcaption a {
   color: inherit;
 }
-.panorama svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-.panorama text {
-  font-family: var(--f-cuerpo);
-  font-weight: 550;
-}
-.panorama figcaption {
-  margin-top: 6px;
-  font: 0.72rem/1.5 var(--f-cuerpo) !important;
-  color: var(--texto-3);
-}
 
 /* Línea del día */
 .plan {

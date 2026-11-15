@@ -27,7 +27,7 @@ Todo parte de tres datos, siempre en la URL (funciona sin JS, decisión 0014):
 | 6 | **Plan** (varios días) | "¿Cómo reparto el finde o el viaje?" | Por día: amanecer, atardecer y noche con su lugar | Por día: lugar de fauna y franja; eventos en marcha |
 
 Fuera de las seis: Método (cómo se puntúa), Normas, Hides (catálogo) y Sin conexión son páginas de apoyo.
-`/rutas`, dron, logística, alineaciones y mareas dependen de la poda (backlog, "Después").
+Sin `/rutas` ni alineaciones (decisiones 0023 y spec 022); dron y mareas, en una línea de la ficha.
 
 ## Recorridos
 

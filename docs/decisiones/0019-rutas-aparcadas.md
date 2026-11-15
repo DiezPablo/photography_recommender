@@ -1,5 +1,5 @@
 # 0019 — Rutas de senderismo, aparcadas
-Fecha: 2026-11-13 · Estado: vigente
+Fecha: 2026-11-13 · Estado: sustituida por 0023
 Contexto: las rutas (8500 fichas, GPX, «llegar andando», logística de OSM) no responden a «dónde fotografiar»
 y complicaban la consolidación.
 Decisión: no se traen al repo base. Cuando Luz y Fauna estén montados se valorará integrarlas.

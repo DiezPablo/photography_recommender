@@ -699,11 +699,6 @@ body {
   margin: 8px 0 16px;
 }
 
-/* España: portada */
-.luz-y-mar p {
-  margin: 0 0 8px;
-}
-
 /* España: hides y salidas */
 .lista-hides {
   list-style: none;
@@ -974,20 +969,6 @@ html[data-mes="12"] [data-m="12"] {
 .nota-malo,
 .nota-cerrado {
   border-left-color: var(--resta);
-}
-/* capas de la ficha (T37) */
-/* alojamientos por zona (T38) */
-.zona-alojamientos {
-  border-top: 1px solid var(--borde);
-  padding: 8px 0;
-}
-.zona-alojamientos summary {
-  cursor: pointer;
-  min-height: 32px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
 }
 .zona-recomendada {
   padding: 10px 12px;

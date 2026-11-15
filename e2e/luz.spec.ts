@@ -29,9 +29,6 @@ async function resumen(request: APIRequestContext): Promise<{ ficheros: string[]
   const r = await request.get("/datos/resumen.json");
   return r.ok() ? r.json() : { ficheros: [], spot_costa: null };
 }
-async function hay(request: APIRequestContext, fichero: string) {
-  return (await resumen(request)).ficheros.includes(fichero);
-}
 
 test("portada: ranking, mapa con marcadores y filtros", async ({ page }, info) => {
   const errores = vigilar(page);
@@ -175,9 +172,6 @@ test("calendario: el cielo del mes, eventos de naturaleza y ficha de evento", as
   await expect(page.locator(".tarjeta-evento", { hasText: "Otoño en Ordesa" })).toBeVisible();
   await expect(page.locator(".tarjeta-evento", { hasText: "Berrea" })).toHaveCount(0);
   await expect(page.locator(".aviso-fauna")).toContainText("Fauna en octubre");
-  // sol y luna llena por los picos del horizonte de los spots (si ya se han publicado las alineaciones)
-  if (await hay(page.request, "alineaciones.json"))
-    await expect(page.locator(".alineaciones-mes li").first()).toBeVisible();
   await expect(page.locator(".mapa-caja[data-listo=si]")).toBeVisible();
   await expect(page.locator(".leaflet-overlay-pane path").first()).toBeVisible();
   await esperarTeselas(page);
@@ -224,21 +218,19 @@ test("avisos: zonas para suscribirse y calendario .ics válido", async ({ page, 
   for (const l of ics.split("\r\n")) expect(new TextEncoder().encode(l).length).toBeLessThanOrEqual(75);
 });
 
-test("spot de costa: mareas, oleaje y si se puede volar un dron", async ({ page, request }, info) => {
+test("spot de costa: mareas y, en una línea, si se puede volar un dron (spec 022)", async ({ page, request }, info) => {
   const { spot_costa: costa, ficheros } = await resumen(request);
   test.skip(!costa, "el informe publicado aún no trae el mar");
   const errores = vigilar(page);
   await page.goto(`/luz/spot/${costa}`);
   await expect(page.locator(".mareas").first()).toContainText("Mareas");
   if (ficheros.includes("dron.json")) {
-    await page.locator(".sello-dron").first().click();
-    await expect(page).toHaveURL(/#dron$/);
-    await expect(page.locator("#dron")).toContainText("ENAIRE");
+    // el dron es una línea de los datos del spot, con el enlace a ENAIRE; ya no hay bloque propio
+    const dron = page.locator("dd", { has: page.locator(".sello-dron") }).first();
+    await expect(dron.getByRole("link", { name: /ENAIRE/ })).toHaveAttribute("href", /drones\.enaire\.es/);
+    await expect(page.locator("#dron")).toHaveCount(0);
+    await dron.screenshot({ path: `${CAPTURAS}/dron-${info.project.name}.png` }).catch(() => {});
   }
-  await page
-    .locator("#dron")
-    .screenshot({ path: `${CAPTURAS}/dron-${info.project.name}.png` })
-    .catch(() => {});
   expect(errores).toEqual([]);
 });
 

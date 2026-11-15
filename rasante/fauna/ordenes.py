@@ -9,8 +9,6 @@ el de --salida).
   regiones      actividad diaria de eBird por región (listas, observadores, especies) → fauna_ebird_regiones.json
   especies      especies registradas en cada punto de eBird, por tandas → fauna_especies_punto.json
   actividad F   hora de actividad por especie (iNaturalist) a partir de un fauna_cuadricula.json → fauna_actividad.json
-  diagnostico   consultas SQL de prueba a GBIF
-  experimentos  compara modelos de recomendación con la caché de GBIF
 """
 
 from __future__ import annotations
@@ -28,8 +26,6 @@ ORDENES = (
     "regiones",
     "especies",
     "actividad",
-    "diagnostico",
-    "experimentos",
 )
 
 
@@ -80,14 +76,6 @@ def main(argv: list[str] | None = None) -> None:
         destino = a.salida or DATOS / "fauna_recientes.json"
         ebird.recientes_espana(destino)
         ebird.rarezas_espana(destino.parent / "fauna_rarezas.json")
-    elif a.orden == "experimentos":
-        from rasante.fauna import experimentos
-
-        experimentos.main()
-    elif a.orden == "diagnostico":
-        from rasante.fauna import diagnostico
-
-        diagnostico.main()
     else:
         from rasante.fauna import cuadricula
 

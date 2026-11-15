@@ -1,5 +1,5 @@
 # 0021 — Safaris del mundo, fuera de esta versión
-Fecha: 2026-11-13 · Estado: vigente
+Fecha: 2026-11-13 · Estado: sustituida por 0022
 Contexto: los safaris (parques del mundo, planificador, presupuesto…) venían en el repo base, pero no aportan a
 «dónde ir a fotografiar en España» y complicaban cerrar esta versión. Pablo decide dejarlos fuera y retomarlos
 más adelante solo si los dos lo vemos necesario.
