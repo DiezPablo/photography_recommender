@@ -18,6 +18,15 @@ export interface EventoNaturaleza {
   radio_km: number;
   descripcion: string;
   consejo: string;
+  /** solo en fauna (spec 014): nombre científico, cuándo entran y salen del dormidero y fuentes */
+  especie?: string | null;
+  dormidero?: string | null;
+  fuentes?: string[];
+}
+
+/** La ficha de un evento: los de fauna viven en el modo Fauna. */
+export function rutaEvento(e: Pick<EventoNaturaleza, "id" | "categoria">): string {
+  return `${e.categoria === "fauna" ? "/fauna" : "/luz"}/evento/${e.id}`;
 }
 
 /** Un fenómeno de fauna que se da en varios lugares (la berrea, las grullas): reúne eventos de `naturaleza`. */
@@ -44,8 +53,7 @@ export function ambito(e: Pick<EventoNaturaleza, "categoria">): Ambito {
 
 /** Calendario de cada ámbito (la ficha de un evento enlaza al suyo). */
 export function rutaCalendario(a: Ambito, mes?: number): string {
-  // los eventos de fauna aún no tienen calendario propio (spec 014): van al modo Fauna
-  if (a === "fauna") return "/fauna";
+  if (a === "fauna") return mes === undefined ? "/fauna/calendario" : `/fauna/calendario#${MESES[mes]}`;
   return mes === undefined ? "/luz/calendario" : `/luz/calendario/${MESES[mes]}`;
 }
 

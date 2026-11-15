@@ -9,7 +9,8 @@ Una orden por subpaquete: `python -m rasante <orden>` (`--help` para verlas).
 - `prevision`: Open-Meteo (+ Marine en costa) → `informe.json`. `spots`: Commons + Wikidata + OSM →
   `spots.geojson`. `eventos`: luna, meteoros, Vía Láctea, eclipses, auroras, Starlight y
   `recursos/eventos_naturaleza.csv` → `eventos.json`; alineaciones. Los fenómenos de fauna con varios lugares
-  (`recursos/fenomenos_fauna.csv`, spec 014) reúnen los eventos cuyo id empieza por el suyo (`berrea-…`).
+  (`recursos/fenomenos_fauna.csv`, spec 014) reúnen los eventos cuyo id empieza por el suyo (`berrea-…`). Los
+  eventos de fauna son la única lista de fenómenos (con `especie`, `dormidero` y `fuentes` opcionales).
 - `notas/idoneidad.py`: lo que da de sí un spot sin el tiempo (relieve hacia el sol de cada mes, cielo), con los
   factores de la previsión; va en `lugares.json` (`luz.idoneidad`, spec 013).
 - `lugares`: índice común de spots y lugares de fauna → `lugares.json` (contrato en

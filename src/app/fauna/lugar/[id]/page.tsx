@@ -13,6 +13,7 @@ import { hidesCerca } from "@/features/fauna/hides";
 import LuzYMar from "@/features/fauna/LuzYMar";
 import { direccionesSol, rumbo } from "@/lib/sol";
 import { fenomenosCerca } from "@/features/fauna/fenomenos";
+import { listaFenomenos } from "@/features/fauna/eventoFauna";
 import {
   actividadPunto,
   calendarioLugar,
@@ -64,7 +65,7 @@ export default async function PaginaLugar({ params }: Props) {
   const mesHoy = Number(hoy.slice(5, 7)) - 1;
   const { filas } = calendarioLugar(l);
   const recientes = recientesLugar(l).slice(0, 25);
-  const fenomenos = fenomenosCerca(l.lat, l.lon, l.r);
+  const fenomenos = fenomenosCerca(listaFenomenos(), l.lat, l.lon, l.r);
   const cerca = lugaresCerca(l.lat, l.lon, mesHoy, 9)
     .filter((x) => x.id !== l.id)
     .slice(0, 8);

@@ -20,7 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url("/luz", 0.9),
     ...["/luz/calendario", "/luz/habitual", "/luz/alertas", "/luz/metodo"].map((r) => url(r, 0.6)),
     url("/fauna", 0.9),
-    ...["/fauna/hides", "/fauna/rarezas", "/fauna/normas", "/fuentes"].map((r) => url(r, 0.6)),
+    ...["/fauna/calendario", "/fauna/hides", "/fauna/rarezas", "/fauna/normas", "/fuentes"].map((r) => url(r, 0.6)),
     ...fenomenosFauna().map((f) => url(`/fauna/evento/${f.id}`, 0.6)),
     ...Object.keys(espana?.especies ?? {}).map((k) => url(`/fauna/especie/${k}`, 0.5)),
     // fichas de lugares: espacios protegidos, observatorios y los puntos de eBird con 100 especies o más

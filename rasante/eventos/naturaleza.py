@@ -9,6 +9,8 @@ from rasante.comun.territorio import RECURSOS, Provincias, ccaa_de
 
 CSV = RECURSOS / "eventos_naturaleza.csv"
 FENOMENOS = RECURSOS / "fenomenos_fauna.csv"
+# columnas que pueden ir vacías: las demás son obligatorias
+OPCIONALES = ("especie", "dormidero", "fuentes")
 CATEGORIAS = {
     "flora": "Floración",
     "otono": "Otoño",
@@ -33,8 +35,13 @@ def cargar(ruta: Path = CSV, provincias: Provincias | None = None) -> list[dict]
     with open(ruta, encoding="utf-8") as f:
         for n, fila in enumerate(csv.DictReader(f), start=2):
             # una coma sin comillas en un texto desplaza los campos: mejor fallar que publicar datos cruzados
-            if None in fila or any(v is None or v == "" for v in fila.values()):
+            if None in fila or any(v is None or (v == "" and k not in OPCIONALES) for k, v in fila.items()):
                 raise ValueError(f"línea {n}: campos de más o vacíos (¿una coma sin comillas?)")
+            fuentes = fila["fuentes"].split()
+            if any(not u.startswith("https://") for u in fuentes):
+                raise ValueError(f"{fila['id']}: las fuentes tienen que ser direcciones https separadas por espacios")
+            if (fila["especie"] or fila["dormidero"]) and fila["categoria"] != "fauna":
+                raise ValueError(f"{fila['id']}: especie y dormidero son solo para eventos de fauna")
             if fila["categoria"] not in CATEGORIAS:
                 raise ValueError(f"{fila['id']}: categoría desconocida {fila['categoria']}")
             for campo in ("desde", "hasta", "pico"):
@@ -57,6 +64,10 @@ def cargar(ruta: Path = CSV, provincias: Provincias | None = None) -> list[dict]
                     "radio_km": float(fila["radio_km"]),
                     "descripcion": fila["descripcion"],
                     "consejo": fila["consejo"],
+                    # solo en fauna (spec 014): nombre científico, cuándo entran y salen del dormidero y fuentes
+                    "especie": fila["especie"] or None,
+                    "dormidero": fila["dormidero"] or None,
+                    "fuentes": fuentes,
                 }
             )
     ids = [e["id"] for e in eventos]

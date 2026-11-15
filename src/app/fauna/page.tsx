@@ -6,6 +6,7 @@ import CartaEspana from "@/features/carta/CartaEspana";
 import { especiesPorMes } from "@/features/fauna/datos";
 import PlanificadorEspana from "@/features/fauna/PlanificadorEspana";
 import FindeEspana from "@/features/fauna/FindeEspana";
+import { listaFenomenos } from "@/features/fauna/eventoFauna";
 import { redirect } from "next/navigation";
 import { fechaLocal } from "@/lib/sol";
 import { MESES } from "@/lib/fechas";
@@ -57,7 +58,11 @@ export default async function PaginaEspana({ searchParams }: Props) {
         <h1>{TITULOS[finde ? "finde" : "aqui"][0]}</h1>
         <p className="entradilla">{TITULOS[finde ? "finde" : "aqui"][1]}</p>
       </header>
-      {finde ? <FindeEspana hoy={hoy} /> : <PlanificadorEspana hoy={hoy} />}
+      {finde ? (
+        <FindeEspana hoy={hoy} fenomenos={listaFenomenos()} />
+      ) : (
+        <PlanificadorEspana hoy={hoy} fenomenos={listaFenomenos()} />
+      )}
       <details className="fuentes">
         <summary>De dónde salen los datos</summary>
         <p className="nota-pie">

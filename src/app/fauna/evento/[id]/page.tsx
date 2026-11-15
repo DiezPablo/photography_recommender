@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fechaCorta } from "@/features/eventos/datos";
+import FichaEvento from "@/features/eventos/componentes/FichaEvento";
+import { cargarEventos, fechaCorta, getEvento } from "@/features/eventos/datos";
 import { claveDe } from "@/features/fauna/datos";
 import { fenomenosFauna, getFenomeno, lugaresDelFenomeno } from "@/features/fauna/eventoFauna";
 import MapaEventos from "@/ui/mapa/MapaEventos";
@@ -11,15 +12,25 @@ type Props = { params: Promise<{ id: string }> };
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  // sin fenómenos publicados aún (datos anteriores a la spec 014), Next necesita al menos un parámetro
-  const ids = fenomenosFauna().map((f) => ({ id: f.id }));
-  return ids.length ? ids : [{ id: "berrea" }];
+  // un fenómeno con sus lugares («berrea») o la ficha de uno de ellos («berrea-monfrague»)
+  const ids = [
+    ...fenomenosFauna().map((f) => f.id),
+    ...(cargarEventos()?.naturaleza ?? []).filter((e) => e.categoria === "fauna").map((e) => e.id),
+  ];
+  // sin datos publicados, Next necesita al menos un parámetro
+  return (ids.length ? ids : ["berrea"]).map((id) => ({ id }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const f = getFenomeno((await params).id);
-  if (!f) return {};
-  return { title: `${f.nombre}: dónde y cuándo`, description: f.descripcion };
+  const { id } = await params;
+  const f = getFenomeno(id);
+  if (f) return { title: `${f.nombre}: dónde y cuándo`, description: f.descripcion };
+  const e = getEvento(id);
+  if (!e) return {};
+  return {
+    title: e.nombre,
+    description: `${e.descripcion} Habitualmente del ${fechaCorta(e.desde)} al ${fechaCorta(e.hasta)}.`,
+  };
 }
 
 /** La comunidad solo si añade algo: «Zamora (Castilla y León)», pero «Navarra» o «Asturias» a secas. */
@@ -28,8 +39,13 @@ function conComunidad(provincia: string | null, ccaa: string | null): boolean {
 }
 
 export default async function PaginaFenomeno({ params }: Props) {
-  const f = getFenomeno((await params).id);
-  if (!f) notFound();
+  const { id } = await params;
+  const f = getFenomeno(id);
+  if (!f) {
+    const e = getEvento(id);
+    if (!e || e.categoria !== "fauna") notFound();
+    return <FichaEvento e={e} />;
+  }
   const lugares = lugaresDelFenomeno(f);
   const comunidades = new Set(lugares.map((l) => l.evento.ccaa).filter(Boolean));
   const desde = lugares.map((l) => l.evento.desde).sort()[0];
@@ -42,6 +58,7 @@ export default async function PaginaFenomeno({ params }: Props) {
     <main className="ficha evento cat-fauna fenomeno-fauna">
       <nav className="migas rotulo" aria-label="Migas">
         <Link href="/fauna">Fauna</Link>
+        <Link href="/fauna/calendario">Calendario</Link>
       </nav>
       <header className="ficha-cab">
         <p className="rotulo cat-fauna">
@@ -89,7 +106,7 @@ export default async function PaginaFenomeno({ params }: Props) {
           {lugares.map(({ evento: e, fiabilidad }) => (
             <li key={e.id}>
               <h3>
-                <Link href={`/luz/evento/${e.id}`}>{e.lugar}</Link>
+                <Link href={`/fauna/evento/${e.id}`}>{e.lugar}</Link>
               </h3>
               <p className="meta">
                 <span>

@@ -8,7 +8,7 @@ import FenomenosEspana from "@/features/fauna/FenomenosEspana";
 import TarjetaHide from "@/features/fauna/TarjetaHide";
 import CitaEbird from "@/features/fauna/citaEbird";
 import { fenomenosDe } from "@/features/fauna/fenomenos";
-import { fenomenoDeEspecie } from "@/features/fauna/eventoFauna";
+import { fenomenoDeEspecie, listaFenomenos } from "@/features/fauna/eventoFauna";
 import { hidesDe } from "@/features/fauna/hides";
 import { fotografiaDe } from "@/features/fauna/fotografia";
 import {
@@ -121,7 +121,7 @@ export default async function PaginaEspecie({ params }: Props) {
         </p>
       )}
 
-      <FenomenosEspana fenomenos={fenomenosDe(e.c)} mesHoy={mesHoy} titulo="Momentos especiales" />
+      <FenomenosEspana fenomenos={fenomenosDe(listaFenomenos(), e.c)} mesHoy={mesHoy} titulo="Momentos especiales" />
       {fenomeno && (
         <p className="enlace-fenomeno">
           <Link href={`/fauna/evento/${fenomeno.id}`}>

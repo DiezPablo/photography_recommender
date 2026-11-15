@@ -17,7 +17,7 @@ from pathlib import Path
 FEATURES = Path(__file__).resolve().parents[2] / "src" / "features"
 RAICES = [FEATURES / "fauna"]
 QUE = {
-    "fenomenos.ts": "Fenómenos de fauna en España (berrea, grullas, Estrecho…): meses en las fuentes.",
+    "fenomenos.ts": "Eventos de fauna (rasante/recursos/eventos_naturaleza.csv y fenomenos_fauna.csv): fechas, lugares y fuentes.",
     "hides.ts": "Hides y salidas guiadas en España: que la web siga activa, temporadas y precios.",
     "fotografia.ts": "Dificultad y consejos de fotografía por especie en España.",
     "normas.ts": "Normas de fotografía de fauna: enlaces oficiales (BOE, AESA, ENAIRE, parques nacionales).",

@@ -1,4 +1,5 @@
-// Fenómenos de fauna en España (fenomenos.ts) con sus meses, «ahora» si caen en el mes y sus fuentes.
+// Fenómenos de fauna en España (los eventos de fauna de eventos.json, spec 014) con sus meses, «ahora» si caen en el mes y sus fuentes.
+import Link from "next/link";
 import { MESES, rangoMeses } from "@/lib/fechas";
 import type { Fenomeno } from "@/features/fauna/fenomenos";
 import { horaLocal, horaSol } from "@/lib/sol";
@@ -32,7 +33,9 @@ export default function FenomenosEspana({
           const ahora = f.meses.includes(mesHoy + 1);
           return (
             <li key={f.id} className={ahora ? "ahora" : undefined}>
-              <b>{f.titulo}</b>{" "}
+              <b>
+                <Link href={`/fauna/evento/${f.id}`}>{f.titulo}</Link>
+              </b>{" "}
               <small>
                 {rangoMeses(f.meses)}
                 {f.pico ? `; mejor en ${rangoMeses(f.pico)}` : ""}

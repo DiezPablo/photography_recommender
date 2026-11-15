@@ -95,15 +95,45 @@ def test_fenomenos_rechaza_errores(tmp_path):
 
 def test_naturaleza_rechaza_errores(tmp_path):
     malo = tmp_path / "e.csv"
-    cabecera = "id,nombre,categoria,desde,hasta,pico,lugar,lat,lon,radio_km,descripcion,consejo\n"
-    malo.write_text(cabecera + "x,X,volcanes,01-01,02-01,01-15,L,40,-3,5,d,c\n")
+    cabecera = (
+        "id,nombre,categoria,desde,hasta,pico,lugar,lat,lon,radio_km,descripcion,consejo,especie,dormidero,fuentes\n"
+    )
+    malo.write_text(cabecera + "x,X,volcanes,01-01,02-01,01-15,L,40,-3,5,d,c,,,\n")
     with pytest.raises(ValueError, match="categoría"):
         naturaleza.cargar(malo)
-    malo.write_text(cabecera + "x,X,flora,01-01,02-01,01-15,L,40,-3,5,texto, con coma,c\n")
+    malo.write_text(cabecera + "x,X,flora,01-01,02-01,01-15,L,40,-3,5,texto, con coma,c,,,\n")
     with pytest.raises(ValueError, match="coma"):
         naturaleza.cargar(malo)
-    malo.write_text(cabecera + "x,X,flora,13-01,02-01,01-15,L,40,-3,5,d,c\n")
+    malo.write_text(cabecera + "x,X,flora,13-01,02-01,01-15,L,40,-3,5,d,c,,,\n")
     with pytest.raises(ValueError, match="MM-DD"):
+        naturaleza.cargar(malo)
+
+
+def test_naturaleza_campos_de_fauna(tmp_path):
+    """Spec 014: una sola lista escrita a mano. Los eventos de fauna pueden llevar especie, dormidero y fuentes."""
+    eventos = {e["id"]: e for e in naturaleza.cargar()}
+    grullas = eventos["grullas-gallocanta"]
+    assert grullas["especie"] == "Grus grus" and "amanecer" in grullas["dormidero"]
+    assert all(u.startswith("https://") for u in grullas["fuentes"]) and len(grullas["fuentes"]) == 2
+    jerte = eventos["cerezo-jerte"]
+    assert jerte["especie"] is None and jerte["dormidero"] is None and jerte["fuentes"] == []
+    # lo que solo estaba en la web: invernada del Ebro, ánsares de Villafáfila, buitres y el paso de primavera
+    assert {"ebro-invernada", "ansares-villafafila", "buitres-monfrague", "migracion-estrecho-primavera"} <= set(
+        eventos
+    )
+    malo = tmp_path / "e.csv"
+    cabecera = (
+        "id,nombre,categoria,desde,hasta,pico,lugar,lat,lon,radio_km,descripcion,consejo,especie,dormidero,fuentes\n"
+    )
+    malo.write_text(cabecera + "x,X,flora,01-01,02-01,01-15,L,40,-3,5,d,c,Grus grus,,\n")
+    with pytest.raises(ValueError, match="solo para eventos de fauna"):
+        naturaleza.cargar(malo)
+    malo.write_text(cabecera + "x,X,fauna,01-01,02-01,01-15,L,40,-3,5,d,c,,,wikipedia.org\n")
+    with pytest.raises(ValueError, match="https"):
+        naturaleza.cargar(malo)
+    # una fila corta (falta un campo) sigue fallando aunque las últimas columnas puedan ir vacías
+    malo.write_text(cabecera + "x,X,fauna,01-01,02-01,01-15,L,40,-3,5,d,c,,\n")
+    with pytest.raises(ValueError, match="coma"):
         naturaleza.cargar(malo)
 
 

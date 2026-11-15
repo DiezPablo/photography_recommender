@@ -76,7 +76,7 @@ test("fauna en España: ficha de un lugar", async ({ page, request }) => {
   await page.goto(`/fauna/lugar/${encodeURIComponent(lugares[0].id)}`);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(lugares[0].n);
   await expect(page.getByRole("link", { name: /Qué veo aquí un día concreto/ })).toHaveAttribute("href", /lat=/);
-  await expect(page.locator(".fenomenos")).toContainText("Grullas en Gallocanta");
+  await expect(page.locator(".fenomenos")).toContainText("Grullas en la Laguna de Gallocanta");
 });
 
 test("fauna en España: lugar que no existe da 404", async ({ request }) => {
@@ -188,7 +188,7 @@ test("la berrea: un evento de fauna con sus lugares, fechas, franja y fiabilidad
   const r = await page.goto("/fauna/evento/berrea");
   // los fenómenos llegan con el siguiente cálculo de eventos: hasta entonces la página no existe ni se enlaza
   if (r?.status() === 404) {
-    await page.goto("/luz/evento/berrea-monfrague");
+    await page.goto("/fauna/evento/berrea-monfrague");
     await expect(page.locator(".enlace-fenomeno")).toHaveCount(0);
     return;
   }
@@ -202,9 +202,33 @@ test("la berrea: un evento de fauna con sus lugares, fechas, franja y fiabilidad
     expect(texto).toContain(ccaa);
   await expect(lugares.first().locator(".meta")).toContainText(/del \d+ sep al \d+ oct · mejor hacia el \d+/);
   await expect(lugares.first().locator(".fiabilidad")).toContainText(/‰|sin registros suficientes/);
-  // ida y vuelta con la ficha de cada lugar
+  // ida y vuelta con la ficha de cada lugar, que vive ya en el modo Fauna
   await lugares.filter({ hasText: "Monfragüe" }).getByRole("link").first().click();
-  await expect(page).toHaveURL(/\/luz\/evento\/berrea-monfrague$/);
+  await expect(page).toHaveURL(/\/fauna\/evento\/berrea-monfrague$/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Berrea del ciervo en Monfragüe");
   await page.locator(".enlace-fenomeno a").click();
   await expect(page).toHaveURL(/\/fauna\/evento\/berrea$/);
+  // la dirección antigua de un evento de fauna lleva a la nueva; las de paisaje siguen en /luz
+  await page.goto("/luz/evento/berrea-monfrague");
+  await expect(page).toHaveURL(/\/fauna\/evento\/berrea-monfrague$/);
+  await page.goto("/luz/evento/cerezo-jerte");
+  await expect(page).toHaveURL(/\/luz\/evento\/cerezo-jerte$/);
+});
+
+test("calendario de fauna: los fenómenos de cada mes, de una sola lista (spec 014)", async ({ page }) => {
+  await page.goto("/fauna/calendario");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("fauna cada mes");
+  const meses = page.locator(".mes-fauna");
+  expect(await meses.count()).toBeGreaterThanOrEqual(10);
+  // septiembre: la berrea en varios sitios, cada uno con su ficha en /fauna/evento
+  const septiembre = page.locator("#septiembre");
+  await expect(septiembre).toContainText("Berrea del ciervo en Monfragüe");
+  await septiembre.getByRole("link", { name: "Berrea del ciervo en Cabañeros" }).click();
+  await expect(page).toHaveURL(/\/fauna\/evento\/berrea-cabaneros$/);
+  // la ficha de un lugar de fauna cercano enseña el fenómeno con su fuente (antes salía de otra lista)
+  // (con los eventos publicados antes de esta spec aún no hay dormidero ni fuentes: llegan con el siguiente cálculo)
+  if ((await page.goto("/fauna/evento/ebro-invernada"))?.status() === 404) return;
+  await page.goto("/fauna/evento/grullas-gallocanta");
+  await expect(page.locator("main")).toContainText("Dormidero");
+  await expect(page.locator('main a[href*="wikipedia.org/wiki/Grus_grus"]')).toHaveCount(1);
 });

@@ -7,7 +7,7 @@ import { useParametrosUrl } from "@/lib/almacen";
 import { MESES } from "@/lib/fechas";
 import ElegirLugar from "@/features/fauna/ElegirLugar";
 import { useUbicacionGuardada } from "@/features/fauna/ubicacion";
-import { fenomenosCerca } from "@/features/fauna/fenomenos";
+import { type Fenomeno, fenomenosCerca } from "@/features/fauna/fenomenos";
 import Alojamientos from "@/features/fauna/Alojamientos";
 import GuardarSinConexion from "@/ui/GuardarSinConexion";
 import { luzDia } from "@/lib/luz";
@@ -40,7 +40,7 @@ const DIAS_SEMANA = ["domingo", "lunes", "martes", "miércoles", "jueves", "vier
 const nombreDia = (f: string) =>
   `${DIAS_SEMANA[new Date(`${f}T12:00:00Z`).getUTCDay()]} ${Number(f.slice(8, 10))} de ${MESES[Number(f.slice(5, 7)) - 1]}`;
 
-export default function FindeEspana({ hoy }: { hoy: string }) {
+export default function FindeEspana({ hoy, fenomenos }: { hoy: string; fenomenos: Fenomeno[] }) {
   const [parametros, actualizar] = useParametrosUrl();
   const guardada = useUbicacionGuardada();
   const base = parametros.has("lat") ? null : (guardada ?? null);
@@ -86,7 +86,7 @@ export default function FindeEspana({ hoy }: { hoy: string }) {
     dia,
     lista: (datos?.lugares ?? [])
       .map((l, i) => {
-        const f = fenomenosCerca(l.lat, l.lon, l.r, mes + 1)[0];
+        const f = fenomenosCerca(fenomenos, l.lat, l.lon, l.r, mes + 1)[0];
         const tiempo = datos?.horas?.[i] ? tiempoDia(datos.horas[i], dia) : null;
         return {
           l,
@@ -110,7 +110,7 @@ export default function FindeEspana({ hoy }: { hoy: string }) {
   const planes = dias.map((dia) => {
     const nota = (i: number, franja: "mañana" | "tarde") => {
       const l = lugaresD[i];
-      const f = fenomenosCerca(l.lat, l.lon, l.r, mes + 1)[0];
+      const f = fenomenosCerca(fenomenos, l.lat, l.lon, l.r, mes + 1)[0];
       const t = datos?.horas?.[i] ? tiempoFranja(datos.horas[i], dia, franja) : null;
       return puntuarFinde({
         especies: l.especies,
