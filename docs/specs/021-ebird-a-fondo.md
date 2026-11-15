@@ -1,6 +1,6 @@
 # 021 — eBird a fondo
 
-Estado: en curso (bloque 1 hecho y comprobado en producción; 2 y 3 pendientes)
+Estado: hecha en código (bloques 2 y 3 a la espera de su primera ejecución en Actions)
 Modo: Fauna
 Situación del fotógrafo: una tarde | un finde | un viaje
 
@@ -41,13 +41,21 @@ Tres bloques, cada uno implementable por separado y en este orden:
 - [x] Comprobado en la ejecución del 14-11-2026 tras el arreglo: Madrid pasa de 0 a 190 observaciones de eBird
       (Asturias 221, Cantabria 225, Murcia 195, Navarra 195, La Rioja 147, Baleares 194, Ceuta 59, Melilla 17);
       53 provincias con datos (antes 45), rarezas de 361 a 510 y listas de 1 805 a 2 330 (Madrid, 171).
-- [ ] Bloque 2: serie de 30 días por provincia en la release; una línea en «Este finde»; sin clave, la web no
-      enseña el bloque.
-- [ ] Bloque 3: lista de especies con nombre en español en la ficha de los puntos cubiertos; tanda diaria
-      ≤ 300 peticiones; progreso visible en el log.
-- [ ] En total, ≤ 500 peticiones al día a eBird (hoy ~110) y un solo despliegue diario por estos datos.
-- [ ] Especies sensibles: eBird ya las oculta en su API; test de que ninguna de la lista de 0011 sale con punto.
-- [ ] Atribución a eBird en cada bloque nuevo y en `/fuentes`.
+- [x] Bloque 2: `python -m rasante fauna regiones` → `espana_ebird_regiones.json` (listas, observadores y
+      especies por región y día, 30 días; el fichero publicado hace de historial). Línea en «Este finde» y en la
+      ficha de cada punto de eBird («En Madrid, estos días: N listas en 7 días, hasta M especies en un día»); sin
+      el fichero, la web no enseña nada.
+- [x] Bloque 3: `python -m rasante fauna especies` → `espana_especies_punto.json`: lista plegable de especies
+      con nombre en español (taxonomía de eBird) en la ficha de los 4 455 puntos con 100 especies o más, por
+      tandas de ≤ 250 al día dentro del presupuesto, de más a menos especies; el log dice cuántos quedan.
+- [x] En total, ≤ 500 peticiones al día a eBird: las órdenes de una ejecución comparten un contador
+      (`EBIRD_CONTADOR`) y las que rellenan (regiones, especies) se ajustan a lo que queda (test). Un solo
+      despliegue diario: todo se publica en el mismo paso.
+- [x] Especies sensibles: eBird ya las oculta en su API y además se quitan las de `AVES_SENSIBLES`
+      (urogallo, águila imperial y perdicera, quebrantahuesos, cigüeña negra, hubara) de las listas por punto
+      (test del pipeline y e2e).
+- [x] Atribución a eBird en cada bloque nuevo (ya estaba en `/fuentes`).
+- [ ] Primera ejecución en Actions de los bloques 2 y 3 y su publicación comprobadas.
 
 ## Datos
 API de eBird 2.0 (condiciones de uso de eBird, no comercial, con atribución). Ficheros nuevos pequeños

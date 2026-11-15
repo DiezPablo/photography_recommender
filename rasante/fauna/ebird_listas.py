@@ -71,8 +71,11 @@ def dias_que_faltan(dias: dict[str, dict], hoy: date, maximo: int = MAX_DIAS) ->
     return [d for d in todos if d.isoformat() not in dias][:maximo]
 
 
-def pedir_dia(dia: date, regiones: list[str], puntos: set[str] | None, s) -> dict[str, list[int]] | None:
-    """Las listas de un día en todas las regiones; None si fallaron demasiadas (el día se reintenta otra vez)."""
+def pedir_dia(
+    dia: date, regiones: list[str], puntos: set[str] | None, s, region_de: dict[str, str] | None = None
+) -> dict[str, list[int]] | None:
+    """Las listas de un día en todas las regiones; None si fallaron demasiadas (el día se reintenta otra vez).
+    En `region_de` se apunta de qué región es cada punto visto (la del listado en el que sale)."""
     salida: dict[str, list[int]] = {}
     bien = 0
     for region in regiones:
@@ -86,7 +89,10 @@ def pedir_dia(dia: date, regiones: list[str], puntos: set[str] | None, s) -> dic
         bien += 1
         if len(listas) >= MAX_LISTAS:
             print(f"  eBird listas {region} {dia}: {MAX_LISTAS} o más (el recuento es un mínimo)", flush=True)
-        unir(salida, resumen_dia(listas, puntos))
+        del_dia = resumen_dia(listas, puntos)
+        if region_de is not None:
+            region_de.update(dict.fromkeys(del_dia, region))
+        unir(salida, del_dia)
     return salida if regiones and bien >= MIN_PROVINCIAS * len(regiones) else None
 
 
@@ -125,12 +131,14 @@ def main(salida: Path, lugares: Path | None = None, hoy: date | None = None, max
     s = sesion()
     regiones = [p["code"] for p in ebird.provincias(s=s)]
     dias: dict[str, dict] = {}
+    region_de: dict[str, str] = {}
     if historial.exists():
         guardado = json.loads(historial.read_text(encoding="utf-8"))
         # los días guardados solo valen si se pidieron con las mismas regiones: si la lista cambia (como al
         # añadir las comunidades de una sola provincia), se vuelven a pedir en vez de quedar a medias 30 días
         if guardado.get("regiones") == sorted(regiones):
             dias = guardado.get("dias", {})
+            region_de = guardado.get("region_de", {})
         else:
             print("eBird listas: cambian las regiones; se vuelve a pedir el histórico", flush=True)
     desde = (hoy - timedelta(days=DIAS)).isoformat()
@@ -138,7 +146,7 @@ def main(salida: Path, lugares: Path | None = None, hoy: date | None = None, max
     puntos = puntos_de_lugares(lugares)
     nuevos = 0
     for dia in dias_que_faltan(dias, hoy, max_dias):
-        r = pedir_dia(dia, regiones, puntos, s)
+        r = pedir_dia(dia, regiones, puntos, s, region_de)
         if r is None:
             print(f"  eBird listas {dia}: demasiadas provincias sin respuesta; se reintentará", flush=True)
             continue
@@ -147,8 +155,11 @@ def main(salida: Path, lugares: Path | None = None, hoy: date | None = None, max
     if not dias:
         print("eBird listas: sin datos; no se escribe nada", flush=True)
         return
-    escribir_json(historial, {"regiones": sorted(regiones), "dias": dias})
+    escribir_json(historial, {"regiones": sorted(regiones), "dias": dias, "region_de": region_de})
     por_punto = resumen(dias, hoy)
+    for p, x in por_punto.items():
+        if p in region_de:
+            x["r"] = region_de[p]  # la región de eBird del punto: enlaza con la actividad por región (bloque 2)
     escribir_json(
         salida,
         {

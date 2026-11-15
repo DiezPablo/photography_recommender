@@ -1,6 +1,6 @@
 // «Cerca de aquí»: los lugares de fauna más cercanos a un punto (?lat&lon&mes=0-11) con cuántas especies hay en
 // sus cuadrículas ese mes y las más destacadas de cada grupo.
-import { lugaresCerca } from "@/features/fauna/datos";
+import { lugaresCerca, regionDeLugares } from "@/features/fauna/datos";
 
 export const dynamic = "force-dynamic";
 
@@ -15,8 +15,10 @@ export function GET(req: Request) {
   // «Este finde» pide más lugares y más lejos (hasta 30 y 100 km)
   const max = Math.min(30, Math.max(1, Number(q.get("max") ?? 12) || 12));
   const km = Math.min(100, Math.max(5, Number(q.get("km") ?? 30) || 30));
+  const lugares = lugaresCerca(lat, lon, m, max, km);
   return Response.json(
-    { lugares: lugaresCerca(lat, lon, m, max, km) },
+    // la región de eBird de la zona y lo que se está viendo en ella estos días (spec 021, bloque 2)
+    { lugares, region: regionDeLugares(lugares) },
     { headers: { "Cache-Control": "public, max-age=3600, s-maxage=86400" } },
   );
 }
