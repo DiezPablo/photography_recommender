@@ -364,3 +364,38 @@
 .resultados .por-que {
   color: var(--texto-2);
 }
+
+/* Plan de varios días (spec 016): un bloque por día con su zona */
+.dia-plan {
+  margin-top: 28px;
+  padding-top: 14px;
+  border-top: 1px solid var(--borde);
+}
+.dia-plan h2 {
+  font-family: var(--f-titulo);
+  font-size: 1.25rem;
+  margin: 0 0 4px;
+}
+.dia-plan h2::first-letter {
+  text-transform: uppercase;
+}
+.dia-plan h2 small {
+  font-family: var(--f-cuerpo);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--texto-2);
+}
+.que-plan {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--texto-2);
+}
+.nota-plan {
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--texto-2);
+  margin: -6px 0 0 48px;
+}

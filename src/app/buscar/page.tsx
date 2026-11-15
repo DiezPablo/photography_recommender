@@ -3,6 +3,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { leerConsulta, urlConsulta } from "@/features/consulta/consulta";
+import { urlPlan } from "@/features/plan/plan";
+import { MESES } from "@/lib/fechas";
 import FormularioConsulta from "@/features/consulta/FormularioConsulta";
 import { resolverCuando, resultadosFauna, resultadosLuz } from "@/features/consulta/resultados";
 import { fechaCorta, rutaEvento } from "@/features/eventos/datos";
@@ -36,6 +38,20 @@ export default async function Buscar({ searchParams }: Props) {
         </h1>
       </header>
       <FormularioConsulta c={c} />
+      <p className="nota-pie enlace-plan">
+        <Link
+          href={urlPlan({
+            cuando: w.fecha ?? MESES[w.mes],
+            dias: 3,
+            ccaa: c.ccaa,
+            lat: c.lat,
+            lon: c.lon,
+            km: c.km,
+          })}
+        >
+          ¿Varios días? Haz un plan con luz y fauna →
+        </Link>
+      </p>
       <nav className="pestanas" aria-label="Qué">
         <Link href={urlConsulta(c, { que: "luz" })} aria-current={c.que === "luz" ? "page" : undefined}>
           Luz y cielo

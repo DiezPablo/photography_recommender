@@ -337,3 +337,37 @@ test("consulta común: cuándo, dónde y qué en la URL, con pestañas y sin Jav
   await expect(page.locator(".titular .rotulo")).toContainText("a menos de 50 km de ti");
   await ctx.close();
 });
+
+test("plan de varios días: Asturias en octubre da por día luz, fauna y lo que está en temporada (spec 016)", async ({
+  browser,
+  baseURL,
+}) => {
+  // sin JavaScript: la URL reproduce el plan
+  // sin movimiento: con el desplazamiento suave, el clic de la prueba caía en lo que pasaba por encima
+  const ctx = await browser.newContext({ javaScriptEnabled: false, baseURL, reducedMotion: "reduce" });
+  const page = await ctx.newPage();
+  await page.goto("/");
+  await page.getByRole("link", { name: "Un plan de varios días" }).click();
+  await expect(page).toHaveURL(/\/plan\?/);
+  await page.goto("/plan?ccaa=Principado+de+Asturias&cuando=octubre&dias=3");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("3 días en octubre");
+  const dias = page.locator(".dia-plan");
+  await expect(dias).toHaveCount(3);
+  for (const dia of await dias.all()) {
+    await expect(dia.locator('a[href^="/luz/spot/"]').first()).toBeVisible();
+    await expect(dia.locator('a[href^="/fauna/lugar/"]')).toHaveCount(1);
+  }
+  // cada día, una zona distinta: ningún spot se repite
+  const spots = await page
+    .locator('.dia-plan a[href^="/luz/spot/"]')
+    .evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+  expect(new Set(spots).size).toBe(spots.length);
+  await expect(page.getByRole("heading", { name: /En temporada/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "El cielo en octubre" })).toBeVisible();
+  // el formulario vuelve a /plan con lo elegido
+  await page.locator('select[name="dias"]').selectOption("2");
+  await page.getByRole("button", { name: "Hacer el plan" }).click();
+  await expect(page.locator(".dia-plan")).toHaveCount(2);
+  expect(new URL(page.url()).searchParams.get("ccaa")).toBe("Principado de Asturias");
+  await ctx.close();
+});
