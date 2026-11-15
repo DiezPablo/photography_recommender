@@ -293,3 +293,70 @@
 .lista-cerca-catalogo .punto-cat {
   margin-top: 7px;
 }
+
+/* Consulta común (spec 012): formulario de la portada y de /buscar, y pestañas Luz / Fauna */
+.consulta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px 12px;
+  margin: 16px 0 4px;
+  align-items: end;
+}
+.consulta label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: var(--texto-3);
+}
+.consulta select {
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-s);
+  background: var(--superficie);
+  color: var(--texto);
+  font: inherit;
+  font-size: 1rem;
+}
+.consulta-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 0;
+  grid-column: 1 / -1;
+}
+.consulta .boton {
+  min-height: 44px;
+}
+.boton-principal {
+  background: var(--texto);
+  color: var(--fondo);
+  border-color: var(--texto);
+}
+.buscar {
+  max-width: var(--ancho);
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+}
+.pestanas {
+  display: flex;
+  gap: 4px;
+  margin: 18px 0 8px;
+  border-bottom: 1px solid var(--borde);
+}
+.pestanas a {
+  padding: 10px 14px;
+  text-decoration: none;
+  color: var(--texto-2);
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+}
+.pestanas a[aria-current="page"] {
+  color: var(--texto);
+  border-bottom-color: var(--texto);
+}
+.resultados .por-que {
+  color: var(--texto-2);
+}

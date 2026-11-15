@@ -26,7 +26,7 @@ const config: NextConfig = {
       "/viaje",
       "/mapa",
       "/mapa/:ruta*",
-      "/buscar",
+      // «/buscar» era de los safaris; desde la spec 012 es la consulta común
     ].map((source) => ({ source, destination: "/", permanent: false }));
     return [
       // el modo Fauna vivía en /espana
@@ -98,6 +98,18 @@ const config: NextConfig = {
       "./datos/spots.geojson.gz",
     ],
     "/fauna": ["./datos/fauna_cuadricula.json.gz", "./datos/eventos.json.gz"],
+    // la consulta común (spec 012): luz con previsión o lo habitual, y fauna cerca
+    "/buscar": [
+      "./datos/informe.json.gz",
+      "./datos/spots.geojson.gz",
+      "./datos/clima.json.gz",
+      "./datos/lugares.json.gz",
+      "./datos/eventos.json.gz",
+      "./datos/fauna_cuadricula.json.gz",
+      "./datos/fauna_lugares.json.gz",
+      "./datos/fauna_natura.json.gz",
+      "./datos/fauna_listas.json.gz",
+    ],
     "/fauna/lugares-mapa": ["./datos/fauna_lugares.json.gz", "./datos/fauna_natura.json.gz"],
     "/fauna/lugares": ["./datos/fauna_lugares.json.gz", "./datos/fauna_natura.json.gz"],
   },

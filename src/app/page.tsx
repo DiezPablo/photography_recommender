@@ -1,11 +1,12 @@
 // Portada de Rasante (spec 004, prototipo): responde «¿cuándo tienes tiempo?». Arriba, el mejor plan de hoy con su
 // foto y su veredicto; debajo, tres momentos (hoy, este finde, más adelante) con lo de Luz y lo de Fauna de cada
 // uno, y lo que está en temporada. Es la pantalla 1 de docs/producto/modos.md; la consulta común en la URL llega con
-// la spec 012. Los enlaces antiguos a la carta de fauna, que vivía aquí con sus parámetros, se redirigen en
+// el formulario de la consulta común (spec 012), que lleva a /buscar. Los enlaces antiguos a la carta de fauna, que vivía aquí con sus parámetros, se redirigen en
 // next.config.ts.
 import type { Metadata } from "next";
 import Link from "next/link";
 import { filasHabituales, rutaHabitual } from "@/features/clima/habitual";
+import FormularioConsulta from "@/features/consulta/FormularioConsulta";
 import Temporada from "@/features/eventos/componentes/Temporada";
 import { activoEnMes, cargarEventos, rutaEvento } from "@/features/eventos/datos";
 import { rutaDia } from "@/features/spots/componentes/VistaDia";
@@ -65,6 +66,7 @@ export default function Portada() {
       <header className="portada-cabecera">
         <h1>¿Cuándo tienes tiempo?</h1>
         <p className="entradilla">Te decimos dónde ir a fotografiar en España: luz, cielo y fauna.</p>
+        <FormularioConsulta />
       </header>
 
       {mejor && (

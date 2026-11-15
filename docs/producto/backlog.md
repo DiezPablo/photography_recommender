@@ -15,7 +15,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [x] 019 — Lugares de fauna sin repetir: de 48 y 41 pares duplicados a 3 y 3 (`docs/specs/019-duplicados-fauna.md`)
 - [x] 020 — Página única de fuentes (`/fuentes`) y créditos que faltaban (`docs/specs/020-fuentes.md`)
 - [x] 021 — eBird a fondo (`docs/specs/021-ebird-a-fondo.md`): los tres bloques en producción (listas por punto, actividad por región, especies por punto)
-- [ ] 012 — Consulta común "cuándo / dónde / qué" en la URL y portada que la lanza. CA: una URL reproduce cualquier resultado; funciona sin JS; pestañas Luz/Fauna
+- [x] 012 — Consulta común «cuándo / dónde / qué» en la URL (`/buscar`), lanzada desde la portada, sin JS y con pestañas Luz/Fauna (`docs/specs/012-consulta.md`)
 - [x] 004 — Sistema de diseño y portada «¿cuándo tienes tiempo?», web instalable, modo noche y poda del CSS (`docs/specs/004-diseno-portada.md`)
 - [x] 010 — Fichas de fauna: «Luz cerca» y «Fauna cerca» entre los dos catálogos, y la de especie empieza por dónde verla (`docs/specs/010-fichas-fauna.md`)
 - [x] 013 — Idoneidad del lugar por momento y «lo habitual» de cada mes en `/luz/habitual` (`docs/specs/013-idoneidad.md`)
