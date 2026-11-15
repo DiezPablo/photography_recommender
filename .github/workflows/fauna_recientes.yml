@@ -59,10 +59,10 @@ jobs:
           echo "Peticiones a eBird hoy: $(cat salida/ebird_peticiones.txt 2>/dev/null || echo 0)"
       - name: Publicar
         run: |
-          .github/scripts/publicar_release.sh "España recientes $(date -u +%Y-%m-%dT%H:%MZ)" salida/fauna_recientes.json
-          [ -s salida/fauna_rarezas.json ] && .github/scripts/publicar_release.sh "España rarezas $(date -u +%Y-%m-%d)" salida/fauna_rarezas.json || true
-          [ -s salida/fauna_lugares.json ] && .github/scripts/publicar_release.sh "España lugares $(date -u +%Y-%m-%d)" salida/fauna_lugares.json || true
-          [ -s salida/fauna_listas.json ] && .github/scripts/publicar_release.sh "España listas de eBird $(date -u +%Y-%m-%d)" salida/fauna_listas.json salida/fauna_listas_dias.json || true
+          .github/scripts/publicar_release.sh "Fauna recientes $(date -u +%Y-%m-%dT%H:%MZ)" salida/fauna_recientes.json
+          [ -s salida/fauna_rarezas.json ] && .github/scripts/publicar_release.sh "Fauna rarezas $(date -u +%Y-%m-%d)" salida/fauna_rarezas.json || true
+          [ -s salida/fauna_lugares.json ] && .github/scripts/publicar_release.sh "Fauna lugares $(date -u +%Y-%m-%d)" salida/fauna_lugares.json || true
+          [ -s salida/fauna_listas.json ] && .github/scripts/publicar_release.sh "Fauna listas de eBird $(date -u +%Y-%m-%d)" salida/fauna_listas.json salida/fauna_listas_dias.json || true
           [ -s salida/fauna_ebird_regiones.json ] && .github/scripts/publicar_release.sh "eBird por región $(date -u +%Y-%m-%d)" salida/fauna_ebird_regiones.json || true
           [ -s salida/fauna_especies_punto.json ] && .github/scripts/publicar_release.sh "eBird especies por punto $(date -u +%Y-%m-%d)" salida/fauna_especies_punto.json || true
-          [ -s salida/fauna_natura.json ] && .github/scripts/publicar_release.sh "España Natura 2000 $(date -u +%Y-%m-%d)" salida/fauna_natura.json || true
+          [ -s salida/fauna_natura.json ] && .github/scripts/publicar_release.sh "Fauna Natura 2000 $(date -u +%Y-%m-%d)" salida/fauna_natura.json || true
