@@ -1,5 +1,6 @@
 // Ficha de un lugar de fauna en España (punto de eBird, espacio protegido u observatorio): qué se ve cada mes en
 // sus cuadrículas, fenómenos, aves vistas estos días, cómo llegar y lugares cercanos. Se genera al visitarla (ISR).
+import LuzCerca from "@/features/lugares/componentes/LuzCerca";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -233,6 +234,8 @@ export default async function PaginaLugar({ params }: Props) {
           </p>
         </details>
       )}
+
+      <LuzCerca id={l.id} lat={l.lat} lon={l.lon} />
 
       {hides.length > 0 && (
         <section className="seccion">

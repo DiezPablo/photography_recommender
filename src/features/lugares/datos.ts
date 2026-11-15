@@ -1,6 +1,5 @@
 // Lectura de lugares.json (índice común de spots y lugares de fauna, spec 003) en el build: solo servidor.
-// Hoy la web solo usa de él la idoneidad de los spots (spec 013); mientras el pipeline no la haya publicado,
-// no hay y las páginas que la usan lo dicen.
+// La web usa de él la idoneidad de los spots (spec 013) y los enlaces entre los dos catálogos (`cerca`, spec 010).
 import "server-only";
 import { leerDatos } from "@/lib/datos";
 
@@ -20,13 +19,41 @@ export interface LuzLugar {
   idoneidad?: Idoneidad;
 }
 
-let cache: Map<string, LuzLugar> | undefined;
+/** Lo común de un lugar de cualquiera de los dos catálogos (spec 003) y los del otro catálogo que tiene cerca. */
+export interface LugarComun {
+  id: string;
+  catalogo: "luz" | "fauna";
+  nombre: string;
+  tipo: string;
+  lat: number;
+  lon: number;
+  provincia: string;
+  cerca: string[];
+  luz?: LuzLugar;
+}
+
+let indice: Map<string, LugarComun> | undefined;
+
+/** Todos los lugares de lugares.json por identificador (se lee una vez). */
+function lugares(): Map<string, LugarComun> {
+  if (indice) return indice;
+  indice = new Map();
+  for (const l of leerDatos<{ lugares: LugarComun[] }>("lugares.json")?.lugares ?? []) indice.set(l.id, l);
+  return indice;
+}
+
+/** Los lugares del otro catálogo que un lugar tiene a menos de 15 km: desde un spot, los de fauna que más
+ * interesan; desde un lugar de fauna, los spots más cercanos (spec 010). */
+export function cercaDe(id: string): LugarComun[] {
+  const l = lugares().get(id);
+  return (l?.cerca ?? []).map((c) => lugares().get(c)).filter((c): c is LugarComun => !!c);
+}
 
 /** El bloque `luz` de cada spot, por identificador. */
+let luz: Map<string, LuzLugar> | undefined;
 export function luzDeLugares(): Map<string, LuzLugar> {
-  if (cache) return cache;
-  cache = new Map();
-  const doc = leerDatos<{ lugares: { id: string; catalogo: string; luz?: LuzLugar }[] }>("lugares.json");
-  for (const l of doc?.lugares ?? []) if (l.catalogo === "luz" && l.luz) cache.set(l.id, l.luz);
-  return cache;
+  if (luz) return luz;
+  luz = new Map();
+  for (const l of lugares().values()) if (l.catalogo === "luz" && l.luz) luz.set(l.id, l.luz);
+  return luz;
 }

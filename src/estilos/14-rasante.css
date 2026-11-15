@@ -266,3 +266,30 @@
   color: var(--texto);
   background: var(--superficie-2);
 }
+
+/* Los dos catálogos enlazados (spec 010): «Luz cerca» en la ficha de fauna y «Fauna cerca» en la de un spot */
+.lista-cerca-catalogo {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.lista-cerca-catalogo li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.lista-cerca-catalogo li > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+.lista-cerca-catalogo a {
+  font-weight: 650;
+}
+.lista-cerca-catalogo small {
+  color: var(--texto-3);
+}
+.lista-cerca-catalogo .punto-cat {
+  margin-top: 7px;
+}

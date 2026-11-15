@@ -287,3 +287,20 @@ test("web instalable y modo noche (spec 004)", async ({ page, request }) => {
   await page.getByRole("button", { name: "Pasar a modo día" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-tema", "claro");
 });
+
+test("los dos catálogos enlazados: luz cerca de un lugar de fauna y fauna cerca de un spot (spec 010)", async ({
+  page,
+}) => {
+  await page.goto("/fauna/lugar/wd-Q463141"); // Parque Nacional de Doñana
+  const luz = page.locator(".luz-cerca");
+  test.skip((await luz.count()) === 0, "sin lugares.json publicado");
+  const spot = luz.locator("a").first();
+  const href = await spot.getAttribute("href");
+  expect(href).toMatch(/^\/luz\/spot\//);
+  await expect(luz.locator("li").first()).toContainText(/a [\d,.]+ km/);
+  // y de vuelta: el spot enlaza a la fauna de su alrededor
+  await page.goto(href!);
+  const fauna = page.locator(".fauna-cerca");
+  await expect(fauna).toBeVisible();
+  await expect(fauna.locator('a[href^="/fauna/lugar/"]').first()).toBeVisible();
+});

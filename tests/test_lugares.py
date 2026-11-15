@@ -124,8 +124,8 @@ def test_cerca_solo_del_otro_catalogo_y_a_15_km():
             y = por_id[c]
             assert y["catalogo"] != x["catalogo"]
             assert modelo.km(x["lat"], x["lon"], y["lat"], y["lon"]) <= modelo.KM_CERCA
-    # del más cercano al más lejano
-    assert por_id["mirador-de-los-robledos-aaaa"]["cerca"][0] == "eb-L1"
+    # desde un spot, el espacio Natura 2000 que tiene a menos de 15 km va antes que el punto de eBird (spec 010)
+    assert por_id["mirador-de-los-robledos-aaaa"]["cerca"][:2] == ["n2k-ES3110002", "eb-L1"]
     assert por_id["eb-L1"]["cerca"] == ["mirador-de-los-robledos-aaaa", "penalara-bbbb"]
     assert por_id["faro-de-fisterra-cccc"]["cerca"] == [] and por_id["wd-Q55"]["cerca"] == []
 
@@ -181,3 +181,23 @@ def test_idoneidad_usa_los_factores_de_la_prevision():
     # sin perfil de relieve no se inventa nada: horizonte libre
     sin = idoneidad.de_lugar(40.0, -3.0, None, None)
     assert sin["amanecer"] == [10] * 12 and sin["relieve"]["sur"] is None and sin["relieve"]["amanecer"] == [None] * 12
+
+
+def test_desde_un_spot_primero_los_lugares_de_fauna_que_interesan():
+    """Spec 010: el espacio protegido a 8 km va antes que el punto de eBird pequeño a 1 km."""
+
+    def fauna(id_, lat, lon, e=None):
+        return {"id": id_, "catalogo": "fauna", "lat": lat, "lon": lon, "fauna": {"especies_ebird": e}}
+
+    spot = {"id": "mirador-x", "catalogo": "luz", "lat": 40.0, "lon": -3.0}
+    lugares = [
+        spot,
+        fauna("eb-pequeno", 40.009, -3.0, e=12),
+        fauna("eb-grande", 40.05, -3.0, e=180),
+        fauna("wd-Q1", 40.07, -3.0),
+        fauna("eb-lejos", 40.3, -3.0, e=300),  # a más de 15 km
+    ]
+    modelo.enlazar_cerca(lugares)
+    assert spot["cerca"] == ["wd-Q1", "eb-grande", "eb-pequeno"]
+    # desde la fauna, los spots siguen yendo por distancia
+    assert lugares[1]["cerca"] == ["mirador-x"]
