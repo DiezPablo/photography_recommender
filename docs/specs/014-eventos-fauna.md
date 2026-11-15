@@ -1,6 +1,6 @@
 # 014 — Eventos de fauna con varios lugares
 
-Estado: hecha (falta comprobar la publicación en producción)
+Estado: hecha
 Modo: Fauna
 Situación del fotógrafo: un evento («quiero la berrea»)
 
@@ -48,7 +48,7 @@ sí) y, además, la fauna tiene los mismos fenómenos escritos dos veces (`event
 - [x] Un fenómeno con menos de dos lugares, sin fuente `https` o con campos vacíos no se publica (test).
 - [x] Sin `fenomenos` publicados (hasta el primer cálculo de eventos tras fusionar), la página no existe y nadie
       la enlaza; nada falla.
-- [ ] Primera publicación comprobada en producción (`/fauna/evento/berrea`).
+- [x] Primera publicación comprobada en producción (15-11-2026): `/fauna/evento/berrea` con sus 11 lugares.
 - [x] `fenomenos.ts` fusionado con el CSV: ningún fenómeno escrito en la web; los 12 que había siguen saliendo
       en las fichas (e2e).
 - [x] Los eventos de fauna fuera de `/luz/evento`: `/luz/evento/berrea-monfrague` lleva a
