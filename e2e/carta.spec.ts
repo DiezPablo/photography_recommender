@@ -127,3 +127,29 @@ test("ficha de un punto de eBird: listas de los últimos días (si ya se han pub
   const linea = page.locator(".actividad-ebird");
   if (await linea.count()) await expect(linea).toContainText(/listas? de eBird en los últimos (7|30) días/);
 });
+
+test("eBird a fondo: actividad de la región y especies de un punto (si ya se han publicado, spec 021)", async ({
+  page,
+  request,
+}) => {
+  const r = await request.get("/datos/resumen.json");
+  const { ficheros } = (r.ok() ? await r.json() : { ficheros: [] }) as { ficheros: string[] };
+  // «Este finde» cerca de Madrid: la línea de la región sale cuando hay actividad por región publicada
+  const cerca = (await (await request.get("/fauna/cerca?lat=40.42&lon=-3.70&mes=10&max=20&km=50")).json()) as {
+    region: { nombre: string; listas: number; especiesMax: number } | null;
+  };
+  if (!ficheros.includes("espana_ebird_regiones.json")) expect(cerca.region ?? null).toBeNull();
+  else if (cerca.region) expect(cerca.region.listas).toBeGreaterThan(0);
+  test.skip(!ficheros.includes("espana_especies_punto.json"), "aún no se han publicado las especies por punto");
+  // un punto grande de eBird: el primero de Doñana; si su lista ya está, se ve plegada con nombres en español
+  const { lugares } = (await (await request.get("/fauna/lugares?q=donana")).json()) as { lugares: { id: string }[] };
+  const punto = lugares.find((l) => l.id.startsWith("eb-"));
+  test.skip(!punto, "sin puntos de eBird");
+  await page.goto(`/fauna/lugar/${encodeURIComponent(punto!.id)}`);
+  const especies = page.locator(".especies-punto");
+  if (await especies.count()) {
+    await expect(especies.locator("summary")).toContainText(/Especies registradas aquí en eBird \(\d+\)/);
+    // nunca especies sensibles por punto (decisión 0011)
+    await expect(especies).not.toContainText("Tetrao urogallus");
+  }
+});

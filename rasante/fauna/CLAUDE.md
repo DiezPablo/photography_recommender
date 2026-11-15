@@ -12,9 +12,13 @@
 - `lugares`: puntos de eBird, espacios protegidos de Wikidata y observatorios de OSM, sin repetir (`lugares`,
   `nombres_lugares`, `overpass`), y Natura 2000 (`natura`) → `espana_lugares.json`, `espana_natura.json`.
 - `listas`: listas de eBird por punto en 7 y 30 días (`ebird_listas`) → `espana_listas.json`.
+- `regiones`: actividad diaria de eBird por región, 30 días (`ebird_actividad`) → `espana_ebird_regiones.json`.
+- `especies`: especies registradas en cada punto de eBird, por tandas (`ebird_especies`) →
+  `espana_especies_punto.json`. Las dos se ajustan al presupuesto diario de peticiones (`ebird.PRESUPUESTO`,
+  compartido entre órdenes con `EBIRD_CONTADOR`).
 - `actividad`: hora de actividad por especie (`inat_espana`, con el cliente de `inat.py`) → `espana_actividad.json`.
 
-Workflows: `fauna_cuadricula.yml` (trimestral), `fauna_recientes.yml` (diario: recientes, lugares y listas) y
+Workflows: `fauna_cuadricula.yml` (trimestral), `fauna_recientes.yml` (diario: recientes, lugares, listas, regiones y especies) y
 `fauna_actividad.yml` (semanal). Los ficheros publicados conservan el prefijo `espana_` hasta la spec 007.
 
 Reglas: sin `GBIF_USUARIO`/`GBIF_CLAVE` o `EBIRD_CLAVE` no se pide nada y la web sigue igual; ≤ 1 petición/s a

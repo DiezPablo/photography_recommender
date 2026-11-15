@@ -6,6 +6,8 @@ el de --salida).
   recientes     vistas en 30 días y rarezas (eBird con EBIRD_CLAVE, iNaturalist) → espana_recientes.json
   lugares       lugares, Natura 2000 y rutas de OSM → espana_lugares.json
   listas        listas de eBird por punto en 7 y 30 días → espana_listas.json
+  regiones      actividad diaria de eBird por región (listas, observadores, especies) → espana_ebird_regiones.json
+  especies      especies registradas en cada punto de eBird, por tandas → espana_especies_punto.json
   actividad F   hora de actividad por especie (iNaturalist) a partir de un espana.json → espana_actividad.json
   diagnostico   consultas SQL de prueba a GBIF
   experimentos  compara modelos de recomendación con la caché de GBIF
@@ -17,7 +19,18 @@ import argparse
 from pathlib import Path
 
 DATOS = Path("public/datos")
-ORDENES = ("cuadricula", "ebird", "recientes", "lugares", "listas", "actividad", "diagnostico", "experimentos")
+ORDENES = (
+    "cuadricula",
+    "ebird",
+    "recientes",
+    "lugares",
+    "listas",
+    "regiones",
+    "especies",
+    "actividad",
+    "diagnostico",
+    "experimentos",
+)
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -53,6 +66,15 @@ def main(argv: list[str] | None = None) -> None:
 
         destino = a.salida or DATOS / "espana_listas.json"
         ebird_listas.main(destino, destino.parent / "espana_lugares.json")
+    elif a.orden == "regiones":
+        from rasante.fauna import ebird_actividad
+
+        ebird_actividad.main(a.salida or DATOS / "espana_ebird_regiones.json")
+    elif a.orden == "especies":
+        from rasante.fauna import ebird_especies
+
+        destino = a.salida or DATOS / "espana_especies_punto.json"
+        ebird_especies.main(destino, destino.parent / "espana_lugares.json")
     elif a.orden == "recientes":
         from rasante.fauna import ebird
 

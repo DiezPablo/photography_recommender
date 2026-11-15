@@ -26,6 +26,77 @@ export interface ActividadPunto {
   e: number;
   /** especies de la lista más larga de los 30 días */
   m: number;
+  /** región de eBird del punto («ES-MD», «ES-CL-SG»), para su actividad por región */
+  r?: string;
+}
+
+/** Lo que se está viendo en una región de eBird (espana_ebird_regiones.json, spec 021 bloque 2), en los últimos 7
+ * días con datos: listas y observadores sumados, y las especies del mejor día (eBird no da la suma sin repetir). */
+export interface ActividadRegion {
+  region: string;
+  nombre: string;
+  dias: number;
+  listas: number;
+  observadores: number;
+  especiesMax: number;
+}
+
+let regiones:
+  | { regiones: Record<string, string>; dias: Record<string, Record<string, [number, number, number]>> }
+  | null
+  | undefined;
+export function actividadRegion(region: string | undefined): ActividadRegion | null {
+  if (!region) return null;
+  if (regiones === undefined) regiones = leerDatos("espana_ebird_regiones.json");
+  if (!regiones?.regiones[region]) return null;
+  const dias = Object.keys(regiones.dias).sort().slice(-7);
+  let listas = 0;
+  let observadores = 0;
+  let especiesMax = 0;
+  let conDatos = 0;
+  for (const d of dias) {
+    const x = regiones.dias[d][region];
+    if (!x) continue;
+    conDatos++;
+    listas += x[0];
+    observadores += x[1];
+    especiesMax = Math.max(especiesMax, x[2]);
+  }
+  if (!conDatos) return null;
+  return { region, nombre: regiones.regiones[region], dias: conDatos, listas, observadores, especiesMax };
+}
+
+/** La región más representada entre los puntos de eBird de una lista de lugares (la de «Este finde»). */
+export function regionDeLugares(ls: { id: string }[]): ActividadRegion | null {
+  const cuenta = new Map<string, number>();
+  for (const l of ls) {
+    const r = actividadPunto(l.id)?.r;
+    if (r) cuenta.set(r, (cuenta.get(r) ?? 0) + 1);
+  }
+  const [mejor] = [...cuenta.entries()].sort((a, b) => b[1] - a[1]);
+  return mejor ? actividadRegion(mejor[0]) : null;
+}
+
+/** Especies registradas alguna vez en un punto de eBird (espana_especies_punto.json, spec 021 bloque 3). */
+export interface EspecieDelPunto {
+  /** nombre científico y en español */
+  c: string;
+  n: string;
+  /** clave de la especie en la cuadrícula, si la tiene (para enlazar a su ficha) */
+  clave: string | null;
+}
+
+let especiesPuntos: { taxones: Record<string, [string, string]>; puntos: Record<string, string[]> } | null | undefined;
+export function especiesPunto(id: string): EspecieDelPunto[] | null {
+  if (!id.startsWith("eb-")) return null;
+  if (especiesPuntos === undefined) especiesPuntos = leerDatos("espana_especies_punto.json");
+  const codigos = especiesPuntos?.puntos[id.slice(3)];
+  if (!codigos || !especiesPuntos) return null;
+  return codigos
+    .map((k) => especiesPuntos!.taxones[k])
+    .filter((t): t is [string, string] => !!t)
+    .map(([c, n]) => ({ c, n: n || c, clave: claveDe(c) }))
+    .sort((a, b) => a.n.localeCompare(b.n, "es"));
 }
 
 let listas: Record<string, ActividadPunto> | null | undefined;

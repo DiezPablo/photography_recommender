@@ -16,6 +16,8 @@ import { fenomenosCerca } from "@/features/fauna/fenomenos";
 import { listaFenomenos } from "@/features/fauna/eventoFauna";
 import {
   actividadPunto,
+  actividadRegion,
+  especiesPunto,
   calendarioLugar,
   cargarEspana,
   contornoDe,
@@ -72,6 +74,8 @@ export default async function PaginaLugar({ params }: Props) {
   const rutas = rutasCerca(l);
   const hides = hidesCerca(l.lat, l.lon, 60).slice(0, 6);
   const actividad = actividadPunto(l.id);
+  const region = actividadRegion(actividad?.r);
+  const especiesEbird = especiesPunto(l.id);
   const rarezas = rarezasCerca(l.lat, l.lon, 30).slice(0, 12);
   const sol = direccionesSol(hoy, l.lat, l.lon);
   const espana = cargarEspana();
@@ -111,6 +115,16 @@ export default async function PaginaLugar({ params }: Props) {
             )}{" "}
             La última, el {fechaCorta(actividad.u)}
             {actividad.e > 0 ? `, con ${actividad.e} especies` : ""}.
+          </p>
+        )}
+        {region && (
+          <p className="actividad-region">
+            En {region.nombre}, estos días: {region.listas.toLocaleString("es-ES")} listas de eBird en {region.dias}{" "}
+            días, hasta {region.especiesMax} especies en un solo día (
+            <a href="https://ebird.org" target="_blank" rel="noopener">
+              eBird
+            </a>
+            ).
           </p>
         )}
         <p className="enlaces-lugar">
@@ -200,6 +214,24 @@ export default async function PaginaLugar({ params }: Props) {
             A menos de {l.r + 5} km: aves de <a href="https://ebird.org">eBird</a> (Cornell Lab of Ornithology, la
             última de cada especie en la provincia) y mamíferos, reptiles y anfibios de{" "}
             <a href="https://www.inaturalist.org">iNaturalist</a> (sin especies sensibles).
+          </p>
+        </details>
+      )}
+
+      {especiesEbird && especiesEbird.length > 0 && (
+        <details className="seccion plegable especies-punto">
+          <summary className="rotulo">Especies registradas aquí en eBird ({especiesEbird.length})</summary>
+          <ul className="lista-especies-punto">
+            {especiesEbird.map((e) => (
+              <li key={e.c}>
+                {e.clave ? <Link href={`/fauna/especie/${e.clave}`}>{e.n}</Link> : e.n} <i>{e.c}</i>
+              </li>
+            ))}
+          </ul>
+          <p className="nota-pie">
+            Todas las especies que alguien ha anotado alguna vez en este punto, en cualquier época: dice qué puede
+            aparecer, no qué hay ahora. Fuente: <a href="https://ebird.org">eBird</a> (Cornell Lab of Ornithology); sin
+            especies sensibles.
           </p>
         </details>
       )}

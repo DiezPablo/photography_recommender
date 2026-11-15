@@ -70,8 +70,8 @@ def test_main_rellena_dias_guarda_el_historial_y_continua(monkeypatch, tmp_path)
     d = json.loads(salida.read_text())
     assert d["dias"] == ["2026-11-11", "2026-11-12"]
     assert d["puntos"] == {
-        "L1": {"l7": 2, "l30": 2, "u": "2026-11-12", "e": 20, "m": 20},
-        "L2": {"l7": 2, "l30": 2, "u": "2026-11-12", "e": 9, "m": 9},
+        "L1": {"l7": 2, "l30": 2, "u": "2026-11-12", "e": 20, "m": 20, "r": "ES-MD"},
+        "L2": {"l7": 2, "l30": 2, "u": "2026-11-12", "e": 9, "m": 9, "r": "ES-CL-SG"},
     }  # L7 no es un lugar: fuera
     # la siguiente ejecución sigue con los días que faltan, sin repetir los que ya están
     pedidas.clear()

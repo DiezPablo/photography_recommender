@@ -1,13 +1,17 @@
 """eBird API 2.0: aves vistas en los últimos días cerca de un punto y puntos de observación (hotspots).
 
 Necesita EBIRD_CLAVE en el entorno (gratuita: https://ebird.org/api/keygen); sin ella, devuelve listas vacías.
-Solo se usa en el servidor o en Actions: la clave nunca va al navegador. Unas 1000 peticiones al día como mucho.
+Solo se usa en el servidor o en Actions: la clave nunca va al navegador. Como mucho PRESUPUESTO peticiones al
+día (spec 021): con EBIRD_CONTADOR (un fichero) las órdenes de una misma ejecución comparten la cuenta, y las
+que rellenan históricos (actividad por región, especies por punto) se ajustan a lo que queda.
 """
 
 from __future__ import annotations
 
+import atexit
 import os
 import time
+from pathlib import Path
 
 import requests
 
@@ -15,6 +19,40 @@ from rasante.comun.red import sesion
 
 API = "https://api.ebird.org/v2"
 PAUSA_S = 1.0
+PRESUPUESTO = 500
+_hechas = 0
+
+
+def _contador() -> Path | None:
+    ruta = os.environ.get("EBIRD_CONTADOR")
+    return Path(ruta) if ruta else None
+
+
+def _anteriores() -> int:
+    c = _contador()
+    try:
+        return int(c.read_text().strip()) if c and c.exists() else 0
+    except ValueError:
+        return 0
+
+
+def gastadas() -> int:
+    """Peticiones hechas hoy: las de órdenes anteriores de esta ejecución (EBIRD_CONTADOR) más las de esta."""
+    return _anteriores() + _hechas
+
+
+def quedan() -> int:
+    return max(0, PRESUPUESTO - gastadas())
+
+
+@atexit.register
+def _guardar_contador() -> None:
+    global _hechas
+    c = _contador()
+    if c and _hechas:
+        c.parent.mkdir(parents=True, exist_ok=True)
+        c.write_text(str(_anteriores() + _hechas))
+        _hechas = 0
 
 
 def clave() -> str | None:
@@ -25,8 +63,10 @@ def _get(ruta: str, params: dict, s: requests.Session | None = None) -> list[dic
     k = clave()
     if not k:
         return []
+    global _hechas
     s = s or sesion()
     time.sleep(PAUSA_S)
+    _hechas += 1
     r = s.get(f"{API}/{ruta}", params=params, headers={"X-eBirdApiToken": k}, timeout=60)
     r.raise_for_status()
     return r.json()

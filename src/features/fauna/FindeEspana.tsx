@@ -26,6 +26,14 @@ import {
 import type { HoraTiempo } from "@/lib/tiempo";
 import type { LugarFauna } from "@/features/fauna/zonas";
 
+/** Lo que se está viendo en la región de eBird de la zona (spec 021, bloque 2). */
+interface RegionEbird {
+  nombre: string;
+  dias: number;
+  listas: number;
+  especiesMax: number;
+}
+
 interface LugarCerca extends LugarFauna {
   km: number;
   especies: number;
@@ -54,12 +62,17 @@ export default function FindeEspana({ hoy, fenomenos }: { hoy: string; fenomenos
   const mes = Number(dias[0].slice(5, 7)) - 1;
 
   const clave = `${lat.toFixed(3)},${lon.toFixed(3)},${km},${dias.join(",")}`;
-  const [res, setRes] = useState<{ clave: string; lugares: LugarCerca[]; horas: HoraTiempo[][] | null }>();
+  const [res, setRes] = useState<{
+    clave: string;
+    lugares: LugarCerca[];
+    horas: HoraTiempo[][] | null;
+    region?: RegionEbird | null;
+  }>();
   useEffect(() => {
     let vivo = true;
     fetch(`/fauna/cerca?lat=${lat}&lon=${lon}&mes=${mes}&max=20&km=${km}`)
       .then((r) => (r.ok ? r.json() : { lugares: [] }))
-      .then(async (d: { lugares: LugarCerca[] }) => {
+      .then(async (d: { lugares: LugarCerca[]; region?: RegionEbird | null }) => {
         let horas: HoraTiempo[][] | null = null;
         if (d.lugares.length) {
           try {
@@ -69,7 +82,7 @@ export default function FindeEspana({ hoy, fenomenos }: { hoy: string; fenomenos
             horas = null;
           }
         }
-        if (vivo) setRes({ clave, lugares: d.lugares, horas });
+        if (vivo) setRes({ clave, lugares: d.lugares, horas, region: d.region });
       })
       .catch(() => vivo && setRes({ clave, lugares: [], horas: null }));
     return () => {
@@ -194,6 +207,18 @@ export default function FindeEspana({ hoy, fenomenos }: { hoy: string; fenomenos
       {!datos && <p className="nota-pie">Buscando lugares y previsión…</p>}
       {datos && !datos.lugares.length && (
         <p className="nota-pie">No hay lugares de fauna a menos de {km} km. Prueba con más distancia.</p>
+      )}
+      {datos?.region && (
+        <p className="actividad-region">
+          Estos días en {datos.region.nombre}: {datos.region.listas.toLocaleString("es-ES")} listas de eBird en{" "}
+          {datos.region.dias} días, hasta {datos.region.especiesMax} especies en un solo día.{" "}
+          <small>
+            Fuente:{" "}
+            <a href="https://ebird.org" target="_blank" rel="noopener">
+              eBird
+            </a>
+          </small>
+        </p>
       )}
       {datos && datos.lugares.length > 0 && !datos.horas && (
         <p className="nota-pie">

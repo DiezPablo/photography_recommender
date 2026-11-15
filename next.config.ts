@@ -64,13 +64,22 @@ const config: NextConfig = {
       "./datos/espana_natura.json.gz",
       "./datos/espana_recientes.json.gz",
       "./datos/espana_actividad.json.gz",
+      // los fenómenos de fauna salen de eventos.json (spec 014)
+      "./datos/eventos.json.gz",
     ],
     "/fauna/especie-datos/[clave]": [
       "./datos/espana.json.gz",
       "./datos/espana_lugares.json.gz",
       "./datos/espana_natura.json.gz",
     ],
-    "/fauna/cerca": ["./datos/espana.json.gz", "./datos/espana_lugares.json.gz", "./datos/espana_natura.json.gz"],
+    "/fauna/cerca": [
+      "./datos/espana.json.gz",
+      "./datos/espana_lugares.json.gz",
+      "./datos/espana_natura.json.gz",
+      // la actividad de eBird elige el punto de cada cuadrícula y da la de la región (spec 021)
+      "./datos/espana_listas.json.gz",
+      "./datos/espana_ebird_regiones.json.gz",
+    ],
     "/fauna/lugar/[id]": [
       "./datos/espana.json.gz",
       "./datos/espana_rutas.json.gz",
@@ -79,8 +88,11 @@ const config: NextConfig = {
       "./datos/espana_natura.json.gz",
       "./datos/espana_recientes.json.gz",
       "./datos/espana_listas.json.gz",
+      "./datos/espana_ebird_regiones.json.gz",
+      "./datos/espana_especies_punto.json.gz",
+      "./datos/eventos.json.gz",
     ],
-    "/fauna": ["./datos/espana.json.gz"],
+    "/fauna": ["./datos/espana.json.gz", "./datos/eventos.json.gz"],
     "/fauna/lugares-mapa": ["./datos/espana_lugares.json.gz", "./datos/espana_natura.json.gz"],
     "/fauna/lugares": ["./datos/espana_lugares.json.gz", "./datos/espana_natura.json.gz"],
   },

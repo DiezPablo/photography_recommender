@@ -31,6 +31,8 @@ const FICHEROS = [
   "espana_rutas.json",
   "espana_rarezas.json",
   "espana_listas.json",
+  "espana_ebird_regiones.json",
+  "espana_especies_punto.json",
   "espana_natura.json",
   "espana_ebird.json",
 ];

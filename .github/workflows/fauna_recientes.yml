@@ -24,6 +24,8 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       EBIRD_CLAVE: ${{ secrets.EBIRD_CLAVE }}
+      # las órdenes de eBird de esta ejecución comparten la cuenta de peticiones (≤ 500 al día, spec 021)
+      EBIRD_CONTADOR: salida/ebird_peticiones.txt
     steps:
       - uses: actions/checkout@v7
         with:
@@ -45,6 +47,18 @@ jobs:
           curl -fsSL "https://github.com/${{ github.repository }}/releases/download/datos/espana_listas_dias.json.gz" \
             | gunzip > salida/espana_listas_dias.json || rm -f salida/espana_listas_dias.json
           python -m rasante fauna listas --salida salida/espana_listas.json
+      # Bloques 2 y 3 de la spec 021: actividad por región (30 días) y especies de cada punto (por tandas). Los
+      # ficheros publicados hacen de historial y de caché; lo que no quepa en el presupuesto del día, mañana.
+      - name: Actividad por región y especies por punto (eBird)
+        continue-on-error: true
+        run: |
+          for f in espana_ebird_regiones espana_especies_punto; do
+            curl -fsSL "https://github.com/${{ github.repository }}/releases/download/datos/$f.json.gz" \
+              | gunzip > salida/$f.json || rm -f salida/$f.json
+          done
+          python -m rasante fauna regiones --salida salida/espana_ebird_regiones.json
+          python -m rasante fauna especies --salida salida/espana_especies_punto.json
+          echo "Peticiones a eBird hoy: $(cat salida/ebird_peticiones.txt 2>/dev/null || echo 0)"
       - name: Publicar
         run: |
           .github/scripts/publicar_release.sh "España recientes $(date -u +%Y-%m-%dT%H:%MZ)" salida/espana_recientes.json
@@ -52,4 +66,6 @@ jobs:
           [ -s salida/espana_lugares.json ] && .github/scripts/publicar_release.sh "España lugares $(date -u +%Y-%m-%d)" salida/espana_lugares.json || true
           [ -s salida/espana_rutas.json ] && .github/scripts/publicar_release.sh "España rutas $(date -u +%Y-%m-%d)" salida/espana_rutas.json || true
           [ -s salida/espana_listas.json ] && .github/scripts/publicar_release.sh "España listas de eBird $(date -u +%Y-%m-%d)" salida/espana_listas.json salida/espana_listas_dias.json || true
+          [ -s salida/espana_ebird_regiones.json ] && .github/scripts/publicar_release.sh "eBird por región $(date -u +%Y-%m-%d)" salida/espana_ebird_regiones.json || true
+          [ -s salida/espana_especies_punto.json ] && .github/scripts/publicar_release.sh "eBird especies por punto $(date -u +%Y-%m-%d)" salida/espana_especies_punto.json || true
           [ -s salida/espana_natura.json ] && .github/scripts/publicar_release.sh "España Natura 2000 $(date -u +%Y-%m-%d)" salida/espana_natura.json || true
