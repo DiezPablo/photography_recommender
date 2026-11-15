@@ -2,6 +2,7 @@
 // protegidos y observatorios. El catálogo de fauna es otro (decisión 0015): aquí solo se enlaza.
 import Link from "next/link";
 import { cercaDe } from "@/features/lugares/datos";
+import { lugarPorId } from "@/features/fauna/datos";
 import { distanciaKm } from "@/lib/fechas";
 
 const TIPO: Record<string, string> = {
@@ -12,7 +13,9 @@ const TIPO: Record<string, string> = {
 };
 
 export default function FaunaCerca({ id, lat, lon }: { id: string; lat: number; lon: number }) {
-  const lugares = cercaDe(id).filter((c) => c.catalogo === "fauna");
+  // lugares.json sale del cálculo de luz y el catálogo de fauna se publica aparte (a diario): solo se enlaza lo que
+  // sigue en él, o la ficha daría 404
+  const lugares = cercaDe(id).filter((c) => c.catalogo === "fauna" && lugarPorId(c.id));
   if (!lugares.length) return null;
   return (
     <section className="seccion fauna-cerca" aria-labelledby="fauna-cerca">

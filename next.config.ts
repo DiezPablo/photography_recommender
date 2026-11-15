@@ -50,8 +50,9 @@ const config: NextConfig = {
       "./datos/clima.json.gz",
       "./datos/alineaciones.json.gz",
       "./datos/dron.json.gz",
-      // la fauna cerca de cada spot (spec 010)
+      // la fauna cerca de cada spot (spec 010), solo con los lugares que siguen en el catálogo de fauna
       "./datos/lugares.json.gz",
+      "./datos/fauna_lugares.json.gz",
     ],
     "/fauna/datos/[bloque]": [
       "./datos/fauna_cuadricula.json.gz",
