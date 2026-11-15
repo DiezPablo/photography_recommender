@@ -49,5 +49,10 @@ flota (mapas a pantalla completa, menús). Separación de secciones con un filet
 - **Rótulo** (`.rotulo`): versalitas pequeñas para situar («Lo mejor de hoy · atardecer · 18:02»).
 - **Nota al pie** (`.nota-pie`): fuente, método o advertencia, siempre en una línea corta.
 
-## Pendiente (spec 004)
-Web instalable (manifiesto e iconos), conmutador visible de modo noche y poda del CSS que solo usaban los safaris.
+## Modo noche e instalación
+El modo oscuro sigue al sistema; el conmutador de la cabecera (`ui/ModoNoche.tsx`) lo fija en claro u oscuro con
+`data-tema` en `<html>`. La web es instalable (`src/app/manifest.ts`, iconos en `public/iconos/`).
+
+## Cómo podar
+Antes de quitar CSS, comprueba que la clase no se compone en el código (`cat-${…}`) ni la pone una librería
+(`leaflet-*`), y compara capturas de antes y después de las páginas principales.

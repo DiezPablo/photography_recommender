@@ -263,3 +263,27 @@ test("portada: ¿cuándo tienes tiempo? Hoy, este finde y más adelante (spec 00
     await expect(page).toHaveURL(/\/luz\/spot\//);
   }
 });
+
+test("web instalable y modo noche (spec 004)", async ({ page, request }) => {
+  const m = (await (await request.get("/manifest.webmanifest")).json()) as {
+    short_name: string;
+    display: string;
+    icons: { src: string; purpose?: string }[];
+  };
+  expect(m.short_name).toBe("Rasante");
+  expect(m.display).toBe("standalone");
+  for (const i of m.icons) expect((await request.get(i.src)).ok()).toBeTruthy();
+  expect(m.icons.some((i) => i.purpose === "maskable")).toBeTruthy();
+  // el conmutador fija el tema, lo recuerda al recargar y se puede volver
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/");
+  const boton = page.getByRole("button", { name: "Pasar a modo noche" });
+  await boton.click();
+  await expect(page.locator("html")).toHaveAttribute("data-tema", "oscuro");
+  const fondo = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-tema", "oscuro");
+  expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe(fondo);
+  await page.getByRole("button", { name: "Pasar a modo día" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-tema", "claro");
+});

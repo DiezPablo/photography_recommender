@@ -1,6 +1,6 @@
 # 004 — Sistema de diseño y portada
 
-Estado: en curso (prototipo de portada para revisar con Pablo; el resto, después de su visto bueno)
+Estado: hecha (falta llevar el sistema a las fichas, con la spec 010)
 Modo: los dos
 Situación del fotógrafo: una tarde · un finde · un viaje
 
@@ -22,8 +22,14 @@ diseño solo está en el CSS (sin documentar) y quedan restos de los safaris.
 ## Criterios de aceptación
 - [x] Sistema de diseño escrito en `docs/diseno/sistema.md`.
 - [x] Prototipo de portada en móvil y escritorio, sin JavaScript, con datos reales; e2e en verde.
-- [ ] Visto bueno de Pablo a la dirección visual (capturas en el PR).
-- [ ] Web instalable, modo noche y poda del CSS de safaris.
+- [x] Pablo sigue adelante tras ver las capturas (15-11-2026).
+- [x] Web instalable: `manifest.webmanifest` con iconos de 192 y 512 px (también «maskable») y accesos directos
+      (luz de hoy, fauna cerca, este finde); con el service worker que ya había, abre sin conexión lo visitado.
+- [x] Modo noche: conmutador en la cabecera; por defecto sigue al sistema y lo elegido se recuerda en el
+      navegador, aplicado antes de pintar (sin parpadeo). e2e.
+- [x] Poda del CSS sin uso (safaris, rutas y versiones anteriores): de 7 909 a 4 897 líneas. Se quitan solo los
+      selectores con clases que no aparecen en el código (respetando las que el código compone, `cat-${…}`, y
+      las de Leaflet); 38 capturas de 19 páginas en móvil y escritorio, iguales antes y después.
 
 ## Diseño
 **Móvil** (una columna): título → foto del mejor plan de hoy a todo el ancho (300 px de alto) con rótulo

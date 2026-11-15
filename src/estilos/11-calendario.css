@@ -554,90 +554,10 @@
 }
 
 /* Planificador de viaje */
-.form-viaje {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  gap: 12px;
-}
-.form-viaje .campo {
-  flex: 1 1 160px;
-}
-.form-viaje input[type="date"] {
-  width: 100%;
-  font: inherit;
-  min-height: 42px;
-  padding: 8px 12px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-m);
-  background: var(--superficie);
-  color: var(--texto);
-}
-.acciones-viaje {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-.boton-principal {
-  background: var(--texto) !important;
-  color: var(--fondo) !important;
-  border-color: var(--texto) !important;
-}
-.resumen-viaje {
-  padding: 0 4px;
-  color: var(--texto-2);
-}
-.resumen-viaje a {
-  color: var(--acento);
-  font-weight: 600;
-}
-.dias-viaje {
-  display: grid;
-  gap: 14px;
-}
-.tarjeta-dia-viaje {
-  display: grid;
-  gap: 14px;
-  padding: 18px;
-  background: var(--superficie);
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  box-shadow: var(--sombra);
-}
-.tarjeta-dia-viaje header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px 12px;
-}
-.tarjeta-dia-viaje h2 {
-  font: 700 1.25rem var(--f-cuerpo);
-  letter-spacing: -0.02em;
-}
-.tarjeta-dia-viaje h2::first-letter {
-  text-transform: uppercase;
-}
-.etiqueta-fuente {
-  padding: 2px 9px;
-  border-radius: var(--radio-s);
-  font: 600 0.72rem var(--f-cuerpo);
-  background: var(--superficie-2);
-  color: var(--texto-2);
-}
-.etiqueta-fuente.previsto {
-  background: var(--acento-suave);
-  color: var(--acento);
-}
 .luna-dia {
   margin-left: auto;
   font-size: 0.82rem;
   color: var(--texto-3);
-}
-.plan-momentos {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
 }
 .plan-momento {
   display: grid;
@@ -648,108 +568,14 @@
   background: var(--superficie-2);
   border-top: 3px solid var(--c-momento, var(--borde));
 }
-.plan-amanecer {
-  --c-momento: var(--n-buena);
-}
-.plan-atardecer {
-  --c-momento: var(--n-top);
-}
-.plan-noche {
-  --c-momento: var(--vl);
-}
-.plan-spot {
-  font: 650 1rem var(--f-cuerpo);
-  color: var(--texto);
-}
 .plan-momento small {
   color: var(--texto-2);
   line-height: 1.4;
 }
-.plan-ruta a,
-.plan-ruta-dia a,
-.plan-extras a {
-  color: var(--texto);
-  font-weight: 600;
-}
-.plan-ruta-dia {
-  font-size: 0.92rem;
-}
-.plan-extras {
-  margin: 0;
-  padding-left: 18px;
-  display: grid;
-  gap: 4px;
-  font-size: 0.88rem;
-  color: var(--texto-2);
-}
 
 /* Logística: aparcamientos, agua, refugios… */
-.lista-logistica {
-  margin: 0;
-  display: grid;
-  gap: 10px 24px;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-}
-.lista-logistica dt {
-  font: 600 0.7rem var(--f-cuerpo);
-  text-transform: none;
-  color: var(--texto-3);
-  margin-bottom: 2px;
-}
-.lista-logistica dd {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--texto-2);
-  line-height: 1.45;
-}
-.lista-logistica a {
-  color: var(--texto);
-  font-weight: 600;
-}
-.mapa-viaje {
-  height: 380px;
-}
-.parada-viaje {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font: 700 0.75rem var(--f-cuerpo);
-  color: #fff;
-  border: 2px solid var(--superficie);
-  box-shadow: 0 1px 4px rgb(0 0 0 / 30%);
-}
 
 /* Fauna: buscador, lista de especies y observaciones por mes */
-.explorador-fauna {
-  display: grid;
-  gap: 16px;
-}
-.filtros-fauna {
-  display: grid;
-  gap: 12px;
-}
-.filtros-fauna input[type="search"] {
-  width: 100%;
-}
-.fauna-grid {
-  display: grid;
-  gap: 16px;
-}
-@media (min-width: 1000px) {
-  .fauna-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-    align-items: start;
-  }
-  .fauna-grid .mapa-mes {
-    position: sticky;
-    top: 84px;
-  }
-}
-.lista-fauna {
-  grid-template-columns: 1fr;
-}
 .especies {
   margin: 0;
   padding: 0;
@@ -763,45 +589,12 @@
   border-radius: var(--radio-s);
   overflow: hidden;
 }
-.barra-especie {
-  position: absolute;
-  inset: 0 auto 0 0;
-  background: color-mix(in srgb, var(--c-fauna) 18%, transparent);
-  z-index: -1;
-}
 .especies li {
   z-index: 0;
 }
 .especies i {
   color: var(--texto-3);
   font-size: 0.85rem;
-}
-.meses-fauna {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 4px;
-  height: 120px;
-  align-items: end;
-}
-.meses-fauna > div {
-  display: grid;
-  grid-template-rows: 1fr auto;
-  height: 100%;
-  text-align: center;
-}
-.meses-fauna span {
-  align-self: end;
-  background: var(--c-fauna);
-  border-radius: 4px 4px 0 0;
-  opacity: 0.8;
-}
-.meses-fauna .actual span {
-  opacity: 1;
-  box-shadow: 0 0 0 2px var(--texto);
-}
-.meses-fauna small {
-  font-size: 0.7rem;
-  color: var(--texto-3);
 }
 
 /* Pestañas entre los dos calendarios (paisaje y fauna) y entre lugares y calendario de fauna */
@@ -837,9 +630,6 @@
 .aviso-fauna b {
   color: var(--texto);
 }
-.rejilla-eventos.una-columna {
-  grid-template-columns: 1fr;
-}
 .columnas-temporada {
   display: grid;
   gap: 14px;
@@ -854,103 +644,6 @@
 }
 
 /* Especies emblemáticas: rejilla de tarjetas con foto y ficha con zonas */
-.rejilla-especies {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
-}
-.tarjeta-especie {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  background: var(--superficie);
-  overflow: hidden;
-}
-.tarjeta-especie img,
-.tarjeta-especie .sin-foto {
-  display: block;
-  width: 100%;
-  aspect-ratio: 3 / 2;
-  object-fit: cover;
-  background: var(--superficie-2);
-}
-.tarjeta-especie > div {
-  padding: 10px 12px 12px;
-}
-.tarjeta-especie h3 {
-  margin: 0;
-  font-size: 1.05rem;
-}
-.tarjeta-especie p {
-  margin: 2px 0 0;
-}
-.tarjeta-especie i {
-  color: var(--texto-3);
-  font-size: 0.85rem;
-}
-.tarjeta-especie .meta {
-  color: var(--texto-2);
-  font-size: 0.85rem;
-}
-.cabecera-especie {
-  display: grid;
-  gap: 16px;
-}
-@media (min-width: 800px) {
-  .cabecera-especie {
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    align-items: start;
-  }
-}
-.cabecera-especie figure {
-  margin: 0;
-}
-.cabecera-especie img {
-  display: block;
-  width: 100%;
-  max-height: 420px;
-  object-fit: cover;
-  border-radius: var(--radio);
-}
-.cabecera-especie figcaption {
-  font-size: 0.75rem;
-  color: var(--texto-3);
-  margin-top: 4px;
-}
-.cabecera-especie .meta {
-  color: var(--texto-2);
-}
-.zonas-especie {
-  margin: 12px 0 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 6px;
-}
-.zonas-especie li {
-  position: relative;
-  z-index: 0;
-  padding: 6px 10px;
-  border-radius: var(--radio-s);
-  overflow: hidden;
-}
-.sugerencia-especie {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0 0 12px;
-}
-.sugerencia-especie a {
-  padding: 8px 14px;
-  border-radius: var(--radio-s);
-  background: color-mix(in srgb, var(--c-fauna) 16%, var(--superficie));
-  color: var(--texto);
-  text-decoration: none;
-}
 
 /* Dron: sello en la ficha del spot y zonas que le afectan */
 .sello-dron {
@@ -1013,383 +706,16 @@
 }
 
 /* Safaris: tarjetas, chips, el año del parque, avistamientos recientes y alojamientos */
-.en-temporada {
-  color: var(--c-fauna);
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-.fuera-temporada {
-  color: var(--texto-3);
-  font-size: 0.85rem;
-}
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
 .chip {
   padding: 3px 10px;
   border-radius: var(--radio-s);
   background: var(--superficie-2);
   font-size: 0.85rem;
 }
-.enlaces-especies {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 14px;
-}
-.ano-safari {
-  display: grid;
-  gap: 4px;
-  font-size: 0.8rem;
-}
-.fila-ano {
-  display: grid;
-  grid-template-columns: 7.5em repeat(12, 1fr);
-  gap: 3px;
-  align-items: end;
-}
-.fila-ano > span:first-child {
-  color: var(--texto-2);
-  align-self: center;
-}
-.cabecera-ano span {
-  text-align: center;
-  color: var(--texto-3);
-}
-.cabecera-ano .actual {
-  color: var(--texto);
-  font-weight: 700;
-}
-.temporada-si,
-.temporada-no {
-  height: 14px;
-  border-radius: 4px;
-}
-.temporada-si {
-  background: var(--c-fauna);
-}
-.temporada-no {
-  background: var(--superficie-2);
-}
-.barra-ano {
-  height: 40px;
-  display: flex;
-  align-items: flex-end;
-}
-.barra-ano i {
-  display: block;
-  width: 100%;
-  border-radius: 3px 3px 0 0;
-  background: color-mix(in srgb, var(--c-fauna) 70%, transparent);
-}
-.barra-ano.lluvia i {
-  background: color-mix(in srgb, #3b82c4 70%, transparent);
-}
-.fila-ano.numeros span:not(:first-child) {
-  text-align: center;
-  color: var(--texto-2);
-}
-.lista-visto {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 8px;
-}
-.lista-visto li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.lista-visto img,
-.lista-visto .sin-foto {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radio);
-  object-fit: cover;
-  background: var(--superficie-2);
-  flex: none;
-}
-.lista-visto small,
-.lista-especies-safari small,
-.lista-alojamientos small {
-  color: var(--texto-3);
-}
-.grupos-safari {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-}
-.grupos-safari h3 {
-  margin: 0 0 6px;
-  font-size: 1rem;
-}
-.lista-especies-safari {
-  margin: 0;
-  padding-left: 1.4em;
-  display: grid;
-  gap: 3px;
-}
-.lista-alojamientos {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 8px;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-}
-.lista-alojamientos li {
-  padding: 10px 12px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-m);
-  display: grid;
-  gap: 4px;
-}
-.lista-alojamientos .enlaces {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  font-size: 0.9rem;
-}
-.lista-reservar {
-  padding-left: 1.2em;
-  display: grid;
-  gap: 6px;
-}
-.guia-safari .seccion h2 {
-  margin-top: 0;
-}
-.tipos-safari dt {
-  font-weight: 700;
-  margin-top: 10px;
-}
-.tipos-safari dd {
-  margin: 2px 0 0;
-}
-.rejilla-estrella {
-  grid-template-columns: repeat(auto-fill, minmax(min(46%, 180px), 1fr));
-}
-.rejilla-estrella .tarjeta-especie h3 {
-  font-size: 0.95rem;
-}
-.campo-casilla {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  align-self: end;
-  padding-bottom: 10px;
-}
-.organiza-grid {
-  display: grid;
-  gap: 8px 24px;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-}
-.organiza h3 {
-  font-size: 1rem;
-  margin: 14px 0 6px;
-}
-.lista-organiza {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 8px;
-}
-.lista-organiza li {
-  display: grid;
-  gap: 2px;
-}
-.lista-organiza small {
-  color: var(--texto-3);
-}
-.lista-organiza .enlaces,
-.organiza .lista-alojamientos .enlaces {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  font-size: 0.9rem;
-}
-.empresas-safari {
-  margin-top: 18px;
-  padding-top: 12px;
-  border-top: 1px solid var(--borde);
-}
-.lista-checks {
-  margin: 0;
-  padding-left: 1.2em;
-  display: grid;
-  gap: 4px;
-}
-.cinco-grandes {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 8px;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
-}
-.cinco-grandes li {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 8px;
-  padding: 8px 10px;
-  border-radius: var(--radio-s);
-  background: var(--superficie-2);
-}
-.cinco-grandes li.si span {
-  color: var(--c-fauna);
-  font-weight: 700;
-}
-.cinco-grandes li.no {
-  opacity: 0.6;
-}
-.cinco-grandes small {
-  grid-column: 2;
-  color: var(--texto-3);
-}
 
 /* «¿Qué quieres ver y cuándo?» */
-.que-ver h2 {
-  margin: 0 0 4px;
-  font-size: clamp(1.4rem, 3vw, 2rem);
-}
-.chips-especies {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 12px 0;
-}
-.chip-especie {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px 4px 4px;
-  border-radius: var(--radio-s);
-  border: 1px solid var(--borde);
-  background: var(--superficie);
-  color: var(--texto);
-  font: 600 0.9rem var(--f-cuerpo);
-  cursor: pointer;
-}
-.chip-especie img {
-  border-radius: 50%;
-  object-fit: cover;
-}
-.chip-especie.mas {
-  padding: 6px 12px;
-}
-.chip-especie[aria-pressed="true"] {
-  background: color-mix(in srgb, var(--c-fauna) 22%, var(--superficie));
-  border-color: var(--c-fauna);
-}
-.campo-mes {
-  max-width: 260px;
-}
-.resultados-que-ver {
-  margin: 16px 0 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 10px;
-}
-.resultados-que-ver li {
-  display: grid;
-  grid-template-columns: 2em 1fr minmax(60px, 120px);
-  gap: 10px;
-  align-items: center;
-  padding: 10px 12px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-m);
-}
-.resultados-que-ver .puesto {
-  font: 700 1.2rem var(--f-mono);
-  color: var(--texto-3);
-}
-.resultados-que-ver p {
-  margin: 2px 0 0;
-}
-.especies-ok {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  font-size: 0.9rem;
-}
-.especies-ok .no {
-  color: var(--texto-3);
-}
-.barra-facilidad {
-  height: 8px;
-  border-radius: 4px;
-  background: var(--superficie-2);
-  overflow: hidden;
-}
-.barra-facilidad i {
-  display: block;
-  height: 100%;
-  background: var(--c-fauna);
-}
-@media (max-width: 600px) {
-  .resultados-que-ver li {
-    grid-template-columns: 2em 1fr;
-  }
-  .barra-facilidad {
-    grid-column: 2;
-  }
-}
-.chip-especie:not(:has(img)) {
-  padding-left: 12px;
-}
 
 /* Comparador */
-.boton-comparar {
-  display: inline-flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.boton-comparar button {
-  padding: 4px 12px;
-  border-radius: var(--radio-s);
-  border: 1px solid var(--borde);
-  background: var(--superficie);
-  color: var(--texto);
-  font: 600 0.9rem var(--f-cuerpo);
-  cursor: pointer;
-}
-.boton-comparar button[aria-pressed="true"] {
-  border-color: var(--c-fauna);
-  background: color-mix(in srgb, var(--c-fauna) 18%, var(--superficie));
-}
-.anadir-comparar {
-  position: relative;
-  max-width: 420px;
-  margin: 0 0 16px;
-}
-.anadir-comparar input {
-  width: 100%;
-}
-.opciones-comparar {
-  list-style: none;
-  margin: 4px 0 0;
-  padding: 4px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-m);
-  background: var(--superficie);
-}
-.opciones-comparar button {
-  width: 100%;
-  text-align: left;
-  padding: 6px 8px;
-  border: 0;
-  background: none;
-  color: var(--texto);
-  font: inherit;
-  cursor: pointer;
-}
-.opciones-comparar button:hover {
-  background: var(--superficie-2);
-}
 .tabla-desliza {
   overflow-x: auto;
   margin: 0 0 16px;
@@ -1434,35 +760,12 @@
   font-size: 0.8rem;
   font-weight: 400;
 }
-.tabla-comparar .separador th {
-  padding-top: 18px;
-  font: 700 0.75rem var(--f-mono);
-  text-transform: none;
-  color: var(--texto-3);
-}
 .tabla-comparar td.mejor {
   font-weight: 700;
   color: var(--c-fauna);
 }
 .tabla-comparar td.no {
   color: var(--texto-3);
-}
-.mini-ano {
-  display: inline-flex;
-  gap: 2px;
-}
-.mini-ano i {
-  width: 1.3em;
-  text-align: center;
-  font: 600 0.7rem/1.6 var(--f-mono);
-  font-style: normal;
-  border-radius: 3px;
-  background: var(--superficie-2);
-  color: var(--texto-3);
-}
-.mini-ano i.si {
-  background: var(--c-fauna);
-  color: #fff;
 }
 .tabla-comparar tbody th[scope="row"] {
   position: sticky;
@@ -1478,75 +781,6 @@
 }
 
 /* Migración */
-.meses-migracion {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0 0 12px;
-}
-.meses-migracion button {
-  padding: 6px 10px;
-  border-radius: var(--radio-s);
-  border: 1px solid var(--borde);
-  background: var(--superficie);
-  color: var(--texto);
-  font: 600 0.85rem var(--f-cuerpo);
-  text-transform: capitalize;
-  cursor: pointer;
-}
-.meses-migracion button[aria-pressed="true"] {
-  background: var(--c-fauna);
-  border-color: var(--c-fauna);
-  color: #fff;
-}
-.tarjeta-mes {
-  margin: 0 0 12px;
-}
-.tarjeta-mes h2 {
-  margin: 2px 0 4px;
-}
-.tarjeta-mes p {
-  margin: 4px 0;
-}
-.migracion .mapa-caja {
-  height: min(60vh, 480px);
-}
-.leyenda-migracion .pto {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  vertical-align: middle;
-}
-.pto.zona {
-  background: var(--c-fauna);
-  opacity: 0.6;
-}
-.pto.visto {
-  background: var(--acento);
-}
-.pto.crater {
-  background: var(--texto-3);
-}
-.tabla-migracion {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.92rem;
-}
-.tabla-migracion th,
-.tabla-migracion td {
-  padding: 6px 8px;
-  border-bottom: 1px solid var(--borde);
-  text-align: left;
-  vertical-align: top;
-}
-.tabla-migracion tbody th {
-  text-transform: capitalize;
-  white-space: nowrap;
-}
-.tabla-migracion tr.actual {
-  background: color-mix(in srgb, var(--c-fauna) 12%, transparent);
-}
 
 /* Planificador */
 .formulario-plan {
@@ -1561,7 +795,6 @@
 .plan h2 {
   margin: 0 0 8px;
 }
-.avisos-plan,
 .aviso-plan {
   margin: 0 0 12px;
   padding: 10px 14px 10px 30px;
@@ -1572,84 +805,8 @@
 .aviso-plan {
   padding-left: 14px;
 }
-.etapas-plan {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.etapas-plan .traslado {
-  margin: 0;
-  padding: 8px 0 8px 18px;
-  border-left: 2px dashed var(--borde);
-  margin-left: 22px;
-  color: var(--texto-2);
-  font-size: 0.9rem;
-}
-.etapas-plan .traslado.volar {
-  color: var(--c-fauna);
-  font-weight: 600;
-}
-.etapa {
-  display: grid;
-  grid-template-columns: 96px 1fr;
-  gap: 12px;
-  align-items: start;
-  padding: 10px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-m);
-  background: var(--superficie);
-}
-.etapa img {
-  width: 96px;
-  height: 72px;
-  object-fit: cover;
-  border-radius: var(--radio);
-}
-.etapa h3 {
-  margin: 2px 0;
-  font-size: 1.1rem;
-}
-.etapa p {
-  margin: 2px 0;
-}
-.etapa > div:only-child {
-  grid-column: 1 / -1;
-}
-
-.zonas-busqueda {
-  margin: 0 0 12px;
-  padding: 10px 14px 10px 30px;
-  border-left: 3px solid var(--c-fauna);
-  background: var(--superficie-2);
-  border-radius: 0 var(--radio-m) var(--radio-m) 0;
-}
-.zonas-busqueda li + li {
-  margin-top: 4px;
-}
 
 /* Presupuesto */
-.presupuesto h2 small {
-  font-size: 0.6em;
-  color: var(--texto-3);
-  font-weight: 500;
-}
-.etapas-presupuesto {
-  margin: 12px 0;
-  padding-left: 1.4em;
-}
-.etapas-presupuesto li {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  align-items: center;
-  padding: 4px 0;
-}
-.etapas-presupuesto input {
-  width: 4.5em;
-}
-.etapas-presupuesto small {
-  color: var(--texto-3);
-}
 button.quitar {
   border: 0;
   background: none;
@@ -1658,35 +815,6 @@ button.quitar {
   font: inherit;
   font-size: 0.85rem;
   cursor: pointer;
-}
-.campo .ayuda {
-  color: var(--texto-3);
-  font-size: 0.8rem;
-}
-.tabla-presupuesto {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-}
-.tabla-presupuesto th,
-.tabla-presupuesto td {
-  padding: 6px 8px;
-  border-bottom: 1px solid var(--borde);
-  text-align: left;
-  vertical-align: top;
-}
-.tabla-presupuesto th {
-  font-weight: 500;
-}
-.tabla-presupuesto th small {
-  display: block;
-  color: var(--texto-3);
-  font-size: 0.8rem;
-}
-.tabla-presupuesto td:nth-child(2) {
-  text-align: right;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
 }
 .origen {
   font-size: 0.75rem;
@@ -1697,76 +825,8 @@ button.quitar {
 .origen.oficial {
   background: color-mix(in srgb, var(--c-fauna) 20%, transparent);
 }
-.origen.estimación {
-  background: var(--superficie-2);
-  color: var(--texto-2);
-}
-textarea.solicitud {
-  width: 100%;
-  font: 0.9rem/1.5 var(--f-mono);
-  padding: 10px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-m);
-  background: var(--superficie);
-  color: var(--texto);
-  margin-bottom: 8px;
-}
-.tabla-ofertas {
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-.tabla-ofertas th,
-.tabla-ofertas td {
-  padding: 6px;
-  border-bottom: 1px solid var(--borde);
-  text-align: center;
-  vertical-align: middle;
-}
-.tabla-ofertas th:first-child,
-.tabla-ofertas td:first-child {
-  text-align: left;
-}
-.tabla-ofertas input:not([type="checkbox"]) {
-  width: 8em;
-}
-.tabla-ofertas .comparable {
-  text-align: right;
-  min-width: 10em;
-}
-.tabla-ofertas .comparable small {
-  display: block;
-  color: var(--texto-3);
-}
 
 /* Resumen de la ficha de parque */
-.resumen-parque dl {
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 14px 18px;
-}
-.resumen-parque dt {
-  font: 600 0.72rem var(--f-mono);
-  text-transform: none;
-  color: var(--texto-3);
-  margin-bottom: 2px;
-}
-.resumen-parque dd {
-  margin: 0;
-  font-weight: 600;
-}
-.resumen-parque dd small {
-  display: block;
-  font-weight: 400;
-  color: var(--texto-2);
-}
-.resumen-parque dd .corto {
-  font-weight: 400;
-  font-size: 0.9rem;
-}
-.resumen-parque .en-temporada {
-  color: var(--c-fauna);
-}
 
 /* Frecuencia de avistamientos */
 .tabla-frecuencia {
@@ -1830,18 +890,6 @@ textarea.solicitud {
   border-radius: 3px;
   vertical-align: middle;
 }
-.especies-ok .nivel {
-  color: var(--texto-2);
-}
-.especies-ok .f-texto-muy-frecuente,
-.especies-ok .f-texto-frecuente {
-  color: var(--c-fauna);
-  font-weight: 600;
-}
-.resumen-parque .nivel-mes {
-  font-weight: 400;
-  color: var(--texto-2);
-}
 @media (max-width: 600px) {
   .tabla-frecuencia {
     border-spacing: 2px;
@@ -1859,48 +907,10 @@ textarea.solicitud {
 }
 
 /* Mi viaje */
-.resumen-viaje {
-  margin: 12px 0 0;
-  font-size: 1.05rem;
-}
-.noches-etapa input {
-  width: 4.5em;
-}
-.lista-viaje {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: 8px;
-}
-.lista-viaje label {
-  display: flex;
-  gap: 8px;
-  align-items: baseline;
-}
-.lista-viaje input:checked + span {
-  color: var(--texto-3);
-  text-decoration: line-through;
-}
-.tabla-ver td {
-  font-size: 0.9rem;
-}
-.tabla-ver td.f-texto-muy-frecuente,
-.tabla-ver td.f-texto-frecuente,
-.tabla-ver td.si {
-  color: var(--c-fauna);
-  font-weight: 600;
-}
-.tabla-ver td.no,
-.tabla-ver td.f-texto-raro,
-.tabla-ver td.f-texto-sin-datos {
-  color: var(--texto-3);
-}
 @media print {
   .cabecera,
   .pie,
-  footer,
-  .no-imprimir {
+  footer {
     display: none !important;
   }
   .seccion {
@@ -1910,29 +920,6 @@ textarea.solicitud {
 }
 
 /* Por tu cuenta */
-.por-tu-cuenta {
-  margin-top: 12px;
-  padding: 10px 14px;
-  border-left: 3px solid var(--c-fauna);
-  background: var(--superficie-2);
-  border-radius: 0 var(--radio-m) var(--radio-m) 0;
-}
-.por-tu-cuenta h3 {
-  margin: 0 0 4px;
-  font-size: 1rem;
-}
-.por-tu-cuenta p {
-  margin: 4px 0;
-}
-.lista-viaje .detalle-lista {
-  display: block;
-  color: var(--texto-2);
-  margin-top: 2px;
-}
-.tabla-paises td {
-  min-width: 12em;
-  font-size: 0.85rem;
-}
 .nota-etapa {
   font-size: 0.9rem;
   color: var(--texto-2);

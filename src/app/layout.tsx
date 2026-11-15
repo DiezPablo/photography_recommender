@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { SITIO } from "@/lib/sitio";
 import { Logo } from "@/ui/Iconos";
+import ModoNoche, { SCRIPT_TEMA } from "@/ui/ModoNoche";
 import { BarraInferior, MenuPrincipal, Mundos } from "@/ui/Navegacion";
 import "./globals.css";
 
@@ -31,6 +32,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" suppressHydrationWarning className={`${ui.variable} ${mono.variable}`}>
+      <head>
+        {/* el tema elegido (modo noche), antes de pintar: sin parpadeo */}
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA }} />
+      </head>
       <body>
         <a href="#contenido" className="saltar">
           Ir al contenido
@@ -45,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Mundos />
               <MenuPrincipal />
             </Suspense>
+            <ModoNoche />
           </div>
         </header>
         <div id="contenido">{children}</div>

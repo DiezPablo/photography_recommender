@@ -247,3 +247,22 @@
   color: var(--texto-3);
   font-size: 0.85em;
 }
+
+/* Conmutador de modo noche (spec 004): icono en la cabecera, objetivo táctil de 44 px */
+.modo-noche {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-left: 4px;
+  border: 0;
+  border-radius: var(--radio-s);
+  background: none;
+  color: var(--texto-2);
+  cursor: pointer;
+}
+.modo-noche:hover,
+.modo-noche:focus-visible {
+  color: var(--texto);
+  background: var(--superficie-2);
+}
