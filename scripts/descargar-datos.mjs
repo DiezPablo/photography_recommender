@@ -24,17 +24,16 @@ const LUZ = [
 const FICHEROS = [
   ...LUZ,
   "lugares.json",
-  "espana.json",
-  "espana_recientes.json",
-  "espana_lugares.json",
-  "espana_actividad.json",
-  "espana_rutas.json",
-  "espana_rarezas.json",
-  "espana_listas.json",
-  "espana_ebird_regiones.json",
-  "espana_especies_punto.json",
-  "espana_natura.json",
-  "espana_ebird.json",
+  "fauna_cuadricula.json",
+  "fauna_recientes.json",
+  "fauna_lugares.json",
+  "fauna_actividad.json",
+  "fauna_rarezas.json",
+  "fauna_listas.json",
+  "fauna_ebird_regiones.json",
+  "fauna_especies_punto.json",
+  "fauna_natura.json",
+  "fauna_ebird.json",
 ];
 // los que pide el navegador directamente (hoy, ninguno: todo lo sirve el servidor)
 const PUBLICOS = [];
@@ -49,10 +48,19 @@ async function existe(f) {
   }
 }
 
+/** El nombre que tenía un fichero de fauna antes de la spec 007 («fauna_lugares.json» era «espana_lugares.json»):
+ * mientras los workflows no lo hayan publicado con el nuevo, se descarga el antiguo y se guarda con el nuevo. */
+function nombreAntiguo(nombre) {
+  if (nombre === "fauna_cuadricula.json") return "espana.json";
+  return nombre.startsWith("fauna_") ? `espana_${nombre.slice("fauna_".length)}` : null;
+}
+
 async function descargar(nombre) {
   for (const repo of LUZ.includes(nombre) && !process.env.DATOS_REPO ? [REPO, REPO_ANTERIOR] : [REPO]) {
-    const gz = await descargarDe(repo, nombre);
-    if (gz) return gz;
+    for (const n of [nombre, nombreAntiguo(nombre)].filter(Boolean)) {
+      const gz = await descargarDe(repo, n);
+      if (gz) return gz;
+    }
   }
   return null;
 }
