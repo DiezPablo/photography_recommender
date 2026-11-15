@@ -58,3 +58,12 @@ def test_el_cielo_urbano_no_pasa_del_tope_en_el_resto_nacional(monkeypatch):
     sel = seleccionar(_cand(filas), total=20, por_provincia=2)
     urbanos = (sel.cielo <= seleccion.URBANO).sum()
     assert len(sel) == 20 and urbanos == 4  # el 20 % de 20: el resto, de cielo oscuro aunque puntúe menos
+
+
+def test_urbano_es_bortle_7_o_mas(monkeypatch):
+    # el corte de «urbano» de la selección es el mismo que el de la auditoría (Bortle ≥ 7 del atlas)
+    from rasante.cielo.contaminacion import PALETA
+
+    for _, sqm, bortle in PALETA.values():
+        monkeypatch.setattr(seleccion, "contaminacion", lambda la, lo, s=sqm: {"sqm": s})
+        assert (seleccion.ajuste_cielo(40, -3) <= seleccion.URBANO) == (bortle >= 7), (sqm, bortle)

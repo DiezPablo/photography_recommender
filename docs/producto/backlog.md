@@ -11,7 +11,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [x] 005 — Safaris del mundo, fuera de esta versión (`docs/specs/005-safaris-fuera.md`)
 - [x] 006 — Un solo pipeline: Fauna en `rasante/fauna`, un único `comun`, workflows `fauna_*.yml` (`docs/specs/006-un-pipeline.md`)
 - [x] 007 — Ficheros de fauna con su nombre: `espana_*` → `fauna_*` con transición sin corte; fuera rutas y `espana_rasante` (`docs/specs/007-ficheros-fauna.md`)
-- [~] 018 — Cobertura de spots (`docs/specs/018-cobertura-spots.md`): selección con 20 por provincia, variedad y tope urbano; el descubrimiento solo publica con la popularidad completa y vuelve a ser mensual. Falta el primer descubrimiento completo y la auditoría de después
+- [~] 018 — Cobertura de spots (`docs/specs/018-cobertura-spots.md`): selección con 20 por provincia, variedad y tope urbano; el descubrimiento solo publica con la popularidad completa y vuelve a ser mensual. Primer descubrimiento completo y auditoría hechos (15-11); falta repetirlo con el corte urbano corregido (29 % con Bortle ≥ 7, objetivo < 25 %)
 - [x] 019 — Lugares de fauna sin repetir: de 48 y 41 pares duplicados a 3 y 3 (`docs/specs/019-duplicados-fauna.md`)
 - [x] 020 — Página única de fuentes (`/fuentes`) y créditos que faltaban (`docs/specs/020-fuentes.md`)
 - [x] 021 — eBird a fondo (`docs/specs/021-ebird-a-fondo.md`): los tres bloques en producción (listas por punto, actividad por región, especies por punto)
@@ -22,7 +22,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [x] 014 — Eventos de fauna con varios lugares: la berrea en `/fauna/evento/berrea`, una sola lista de fenómenos y calendario de fauna (`docs/specs/014-eventos-fauna.md`)
 - [x] 015 — «¿Dónde verlo?» en los eventos de cielo: del calendario a «lo habitual» de noche (`docs/specs/015-donde-verlo.md`)
 - [x] 022 — Poda de «información justa»: fuera alineaciones, panorama, brújula del sol, marcador, Telegram, `.ics` por comunidad, alojamientos y experimentos; dron y mar en una línea (`docs/specs/022-poda.md`)
-- [~] 023 — Acceso a cada spot: aparcamiento más cercano y minutos andando, en las fichas y en el plan (`docs/specs/023-acceso.md`). Falta la primera publicación de `acceso.json`
+- [x] 023 — Acceso a cada spot: aparcamiento más cercano y minutos andando, en las fichas y en el plan (`docs/specs/023-acceso.md`)
 - [x] 016 — Plan de varios días en `/plan`: cada día una zona con amanecer, fauna, lo que está en temporada, atardecer y, si toca, noche (`docs/specs/016-plan.md`)
 
 ## Después

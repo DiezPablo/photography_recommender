@@ -35,7 +35,8 @@ def ajuste_cielo(lat: float, lon: float) -> float:
     if not lp:
         return 0.0
     sqm = lp["sqm"]
-    return -1.6 if sqm < 18.5 else -0.9 if sqm < 19.5 else -0.3 if sqm < 20.5 else 0.3 if sqm >= 21.3 else 0.0
+    # 20,0: la zona 5b del atlas (19,76) ya es Bortle 7, urbana; con 19,5 se quedaba fuera (auditoría del 15-11)
+    return -1.6 if sqm < 18.5 else -0.9 if sqm < 20.0 else -0.3 if sqm < 20.5 else 0.3 if sqm >= 21.3 else 0.0
 
 
 def entero(v) -> int:
@@ -50,7 +51,7 @@ def entero(v) -> int:
 # Spec 018: variedad dentro de cada provincia y tope al cielo urbano en el total
 MAX_MISMO_TIPO = 0.4  # de la cuota de una provincia, como mucho este tanto de un mismo tipo (miradores, cumbres…)
 MIN_OSCURO = 0.25  # y al menos este tanto con cielo oscuro o sin medir (ajuste_cielo ≥ 0), si los hay
-URBANO = -0.9  # ajuste_cielo ≤ esto: cielo urbano (Bortle ≥ 7, brillo < 19,5 mag/arcsec²)
+URBANO = -0.9  # ajuste_cielo ≤ esto: cielo urbano (Bortle ≥ 7, brillo < 20,0 mag/arcsec²: zonas 5b y más claras)
 MAX_URBANO = 0.2  # del total, como mucho este tanto con cielo urbano
 
 
