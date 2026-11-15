@@ -1,11 +1,11 @@
 """python -m rasante lugares: índice común de spots de luz y lugares de fauna → lugares.json (spec 003).
 
-Lee spots.geojson (modo Luz) y espana_lugares.json + espana_natura.json (modo Fauna), tal como están publicados
+Lee spots.geojson (modo Luz) y fauna_lugares.json + fauna_natura.json (modo Fauna), tal como están publicados
 (sueltos o .gz), los pasa al esquema de rasante/recursos/lugar.schema.json, enlaza cada lugar con los del otro
 catálogo que tiene cerca y con sus eventos, valida y escribe. Falla, sin escribir nada, si algún lugar no cumple
 el esquema o hay identificadores repetidos.
 
-  python -m rasante lugares --spots spots.geojson --fauna espana_lugares.json --natura espana_natura.json
+  python -m rasante lugares --spots spots.geojson --fauna fauna_lugares.json --natura fauna_natura.json
 """
 
 from __future__ import annotations
@@ -109,8 +109,8 @@ def main(argv: list[str] | None = None) -> None:
     datos = Path("public/datos")
     ap = argparse.ArgumentParser(prog="python -m rasante lugares", description=__doc__.split("\n")[0])
     ap.add_argument("--spots", type=Path, default=datos / "spots.geojson")
-    ap.add_argument("--fauna", type=Path, default=datos / "espana_lugares.json")
-    ap.add_argument("--natura", type=Path, default=datos / "espana_natura.json")
+    ap.add_argument("--fauna", type=Path, default=datos / "fauna_lugares.json")
+    ap.add_argument("--natura", type=Path, default=datos / "fauna_natura.json")
     ap.add_argument("--salida", type=Path, default=datos / "lugares.json")
     a = ap.parse_args(argv)
 

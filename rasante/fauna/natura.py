@@ -1,7 +1,7 @@
 """Red Natura 2000 en España con sus límites reales (servicio de mapas de la Agencia Europea de Medio Ambiente,
 sin clave): para cada espacio, las cuadrículas de 10 km que toca, un punto dentro y el contorno simplificado.
 
-→ espana_natura.json: {sitios: {código: {n, t, a, lat, lon, celdas, g}}}; t es el tipo («A» ZEPA, «B» LIC/ZEC,
+→ fauna_natura.json: {sitios: {código: {n, t, a, lat, lon, celdas, g}}}; t es el tipo («A» ZEPA, «B» LIC/ZEC,
 «C» las dos), a la superficie en km² y g la geometría GeoJSON simplificada (unos 300 m) para el mapa.
 """
 

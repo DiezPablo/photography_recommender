@@ -60,7 +60,7 @@ export function factorActividad(actividad: Actividad, momento: "noche" | "azul" 
   return tabla[actividad][momento];
 }
 
-/** Perfil de actividad medido (espana_actividad.json): [noche, crepúsculo, día] en 0-1 frente a su grupo, y cuántas
+/** Perfil de actividad medido (fauna_actividad.json): [noche, crepúsculo, día] en 0-1 frente a su grupo, y cuántas
  * observaciones con hora hay detrás. */
 export interface PerfilActividad {
   f: [number, number, number];

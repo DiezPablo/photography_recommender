@@ -14,7 +14,7 @@ Una orden por subpaquete: `python -m rasante <orden>` (`--help` para verlas).
 - `notas/idoneidad.py`: lo que da de sí un spot sin el tiempo (relieve hacia el sol de cada mes, cielo), con los
   factores de la previsión; va en `lugares.json` (`luz.idoneidad`, spec 013).
 - `lugares`: índice común de spots y lugares de fauna → `lugares.json` (contrato en
-  `recursos/lugar.schema.json`; lee también `espana_lugares.json` y `espana_natura.json`).
+  `recursos/lugar.schema.json`; lee también `fauna_lugares.json` y `fauna_natura.json`).
 - `auditar` (`lugares/auditoria.py`): informe de cobertura, vacíos y duplicados de `lugares.json` →
   `docs/datos/auditoria-AAAA-MM-DD.md`. Pásalo antes y después de tocar el catálogo.
 - `clima` (ERA5 por mes), `dron` (ENAIRE + AEMA), `verificacion` (METAR), `validacion` (ERA5 + Commons +

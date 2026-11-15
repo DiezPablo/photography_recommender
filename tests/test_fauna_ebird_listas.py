@@ -61,9 +61,9 @@ def test_main_rellena_dias_guarda_el_historial_y_continua(monkeypatch, tmp_path)
 
     monkeypatch.setenv("EBIRD_CLAVE", "x")
     monkeypatch.setattr(ebird, "_get", falso_get)
-    lugares = tmp_path / "espana_lugares.json"
+    lugares = tmp_path / "fauna_lugares.json"
     lugares.write_text(json.dumps({"lugares": [{"id": "eb-L1"}, {"id": "eb-L2"}, {"id": "wd-Q1"}]}))
-    salida = tmp_path / "espana_listas.json"
+    salida = tmp_path / "fauna_listas.json"
     hoy = date(2026, 11, 13)
     ebird_listas.main(salida, lugares, hoy, max_dias=2)
     assert pedidas[:2] == ["product/lists/ES-CL-SG/2026/11/12", "product/lists/ES-MD/2026/11/12"] and len(pedidas) == 4
@@ -77,17 +77,17 @@ def test_main_rellena_dias_guarda_el_historial_y_continua(monkeypatch, tmp_path)
     pedidas.clear()
     ebird_listas.main(salida, lugares, hoy, max_dias=1)
     assert pedidas == ["product/lists/ES-CL-SG/2026/11/10", "product/lists/ES-MD/2026/11/10"]
-    guardado = json.loads((tmp_path / "espana_listas_dias.json").read_text())
+    guardado = json.loads((tmp_path / "fauna_listas_dias.json").read_text())
     assert len(guardado["dias"]) == 3 and guardado["regiones"] == ["ES-CL-SG", "ES-MD"]
     # un historial pedido con otras regiones (el de antes de incluir Madrid) no vale: se empieza de nuevo
-    (tmp_path / "espana_listas_dias.json").write_text(json.dumps({"dias": guardado["dias"]}))
+    (tmp_path / "fauna_listas_dias.json").write_text(json.dumps({"dias": guardado["dias"]}))
     pedidas.clear()
     ebird_listas.main(salida, lugares, hoy, max_dias=1)
     assert pedidas == ["product/lists/ES-CL-SG/2026/11/12", "product/lists/ES-MD/2026/11/12"]
-    assert list(json.loads((tmp_path / "espana_listas_dias.json").read_text())["dias"]) == ["2026-11-12"]
+    assert list(json.loads((tmp_path / "fauna_listas_dias.json").read_text())["dias"]) == ["2026-11-12"]
 
 
 def test_sin_clave_no_pide_ni_escribe(monkeypatch, tmp_path):
     monkeypatch.delenv("EBIRD_CLAVE", raising=False)
-    ebird_listas.main(tmp_path / "espana_listas.json")
-    assert not (tmp_path / "espana_listas.json").exists()
+    ebird_listas.main(tmp_path / "fauna_listas.json")
+    assert not (tmp_path / "fauna_listas.json").exists()

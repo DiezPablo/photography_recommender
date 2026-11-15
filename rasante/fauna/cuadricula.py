@@ -2,7 +2,7 @@
 
 1. Descarga de GBIF (si hay GBIF_USUARIO y GBIF_CLAVE): recuentos por celda de 10 km, especie, año y mes; las filas
    se guardan en cache/espana_filas.json.gz para no repetirla (tarda de minutos a horas en los servidores de GBIF).
-2. espana.json: por celda, la frecuencia por mes de sus especies más vistas y la muestra de cada clase; nombres en
+2. fauna_cuadricula.json: por celda, la frecuencia por mes de sus especies más vistas y la muestra de cada clase; nombres en
    español de GBIF.
 3. docs/espana-viabilidad.md: para las zonas de prueba (Doñana, Gredos, Picos, Gallocanta), observaciones por mes,
    especies del mes de prueba con su confianza y el backtest del último año completo.
@@ -192,7 +192,7 @@ def evaluar_y_vigilar(filas: list[dict]) -> dict:
     return ev
 
 
-def main(salida: Path = Path("public/datos/espana.json"), descargar: bool = True) -> None:
+def main(salida: Path = Path("public/datos/fauna_cuadricula.json"), descargar: bool = True) -> None:
     r = cargar_filas(descargar)
     if r is None:
         print("España: sin filas de GBIF (faltan GBIF_USUARIO/GBIF_CLAVE): nada que hacer", flush=True)

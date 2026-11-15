@@ -23,7 +23,6 @@ import {
   contornoDe,
   lugarPorId,
   lugaresCerca,
-  rutasCerca,
   rarezasCerca,
   claveDe,
   recientesLugar,
@@ -71,7 +70,6 @@ export default async function PaginaLugar({ params }: Props) {
   const cerca = lugaresCerca(l.lat, l.lon, mesHoy, 9)
     .filter((x) => x.id !== l.id)
     .slice(0, 8);
-  const rutas = rutasCerca(l);
   const hides = hidesCerca(l.lat, l.lon, 60).slice(0, 6);
   const actividad = actividadPunto(l.id);
   const region = actividadRegion(actividad?.r);
@@ -267,25 +265,6 @@ export default async function PaginaLugar({ params }: Props) {
             Observaciones notables de <a href="https://ebird.org">eBird</a>.{" "}
             <Link href="/fauna/rarezas">Todas las de España →</Link>
           </p>
-        </details>
-      )}
-
-      {rutas.length > 0 && (
-        <details className="seccion plegable">
-          <summary className="rotulo">Rutas de senderismo cerca ({rutas.length})</summary>
-          <ul className="lista-lugares">
-            {rutas.map((x) => (
-              <li key={x.id}>
-                <a href={`https://www.openstreetmap.org/relation/${x.id}`} target="_blank" rel="noopener">
-                  {x.ref && !x.n.includes(x.ref) ? `${x.ref} · ${x.n}` : x.n}
-                </a>{" "}
-                <small>
-                  {x.km ? `${x.km.toLocaleString("es-ES")} km · ` : ""}su centro a {x.a.toLocaleString("es-ES")} km
-                </small>
-              </li>
-            ))}
-          </ul>
-          <p className="nota-pie">Rutas señalizadas de OpenStreetMap (ODbL).</p>
         </details>
       )}
 
