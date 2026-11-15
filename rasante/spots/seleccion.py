@@ -3,7 +3,10 @@ cielo (los centros de ciudad acumulan fotos pero son malos para paisaje y noctur
 
 from __future__ import annotations
 
+import math
+
 import numpy as np
+import pandas as pd
 import requests
 
 from rasante.cielo.contaminacion import contaminacion
@@ -42,3 +45,57 @@ def entero(v) -> int:
     except (TypeError, ValueError):
         return 0
     return int(v) if np.isfinite(v) else 0
+
+
+# Spec 018: variedad dentro de cada provincia y tope al cielo urbano en el total
+MAX_MISMO_TIPO = 0.4  # de la cuota de una provincia, como mucho este tanto de un mismo tipo (miradores, cumbres…)
+MIN_OSCURO = 0.25  # y al menos este tanto con cielo oscuro o sin medir (ajuste_cielo ≥ 0), si los hay
+URBANO = -0.9  # ajuste_cielo ≤ esto: cielo urbano (Bortle ≥ 7, brillo < 19,5 mag/arcsec²)
+MAX_URBANO = 0.2  # del total, como mucho este tanto con cielo urbano
+
+
+def _de_provincia(c: pd.DataFrame, cuota: int) -> list:
+    """Los `cuota` mejores de una provincia (ya ordenados por puntuación) con variedad: ningún tipo pasa de
+    MAX_MISMO_TIPO de la cuota y al menos MIN_OSCURO tiene cielo oscuro, si la provincia los tiene. Si los topes
+    dejan huecos, se rellenan por puntuación."""
+    if len(c) <= cuota:
+        return list(c.index)
+    tope = max(1, math.ceil(MAX_MISMO_TIPO * cuota))
+    elegidos, por_tipo = [], {}
+    for i, t in zip(c.index, c.tipo.fillna("otro"), strict=True):
+        if len(elegidos) == cuota:
+            break
+        if por_tipo.get(t, 0) < tope:
+            elegidos.append(i)
+            por_tipo[t] = por_tipo.get(t, 0) + 1
+    elegidos += [i for i in c.index if i not in elegidos][: cuota - len(elegidos)]
+    # cielo oscuro: se cambian los peores de cielo claro por los mejores oscuros que se quedaron fuera
+    oscuros = c.cielo >= 0
+    faltan = math.ceil(MIN_OSCURO * cuota) - int(oscuros[elegidos].sum())
+    if faltan > 0:
+        entran = [i for i in c.index if oscuros[i] and i not in elegidos][:faltan]
+        salen = [i for i in reversed(elegidos) if not oscuros[i]][: len(entran)]
+        elegidos = [i for i in elegidos if i not in salen] + entran
+    return elegidos
+
+
+def seleccionar(cand: pd.DataFrame, total: int, por_provincia: int) -> pd.DataFrame:
+    """Los spots: `por_provincia` de cada provincia con variedad (todas cubiertas) y el resto hasta `total` por
+    puntuación nacional, sin que el cielo urbano pase de MAX_URBANO del total. Necesita las columnas puntuacion,
+    provincia, tipo y cielo."""
+    cand = cand.sort_values("puntuacion", ascending=False, kind="stable")
+    fijos = [i for _, c in cand.groupby("provincia", sort=True) for i in _de_provincia(c, por_provincia)]
+    urbanos = int((cand.loc[fijos, "cielo"] <= URBANO).sum())
+    tope_urbano = max(urbanos, int(MAX_URBANO * total))
+    resto = []
+    for i, cielo in zip(cand.index, cand.cielo, strict=True):
+        if len(fijos) + len(resto) >= total:
+            break
+        if i in fijos or i in resto:
+            continue
+        if cielo <= URBANO:
+            if urbanos >= tope_urbano:
+                continue
+            urbanos += 1
+        resto.append(i)
+    return cand.loc[fijos + resto].sort_values("puntuacion", ascending=False, kind="stable").reset_index(drop=True)
