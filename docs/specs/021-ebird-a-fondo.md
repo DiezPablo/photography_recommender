@@ -1,6 +1,6 @@
 # 021 — eBird a fondo
 
-Estado: hecha en código (bloques 2 y 3 a la espera de su primera ejecución en Actions)
+Estado: hecha
 Modo: Fauna
 Situación del fotógrafo: una tarde | un finde | un viaje
 
@@ -55,7 +55,9 @@ Tres bloques, cada uno implementable por separado y en este orden:
       (urogallo, águila imperial y perdicera, quebrantahuesos, cigüeña negra, hubara) de las listas por punto
       (test del pipeline y e2e).
 - [x] Atribución a eBird en cada bloque nuevo (ya estaba en `/fuentes`).
-- [ ] Primera ejecución en Actions de los bloques 2 y 3 y su publicación comprobadas.
+- [x] Primera ejecución en Actions de los bloques 2 y 3 (15-11-2026): actividad de 57 regiones y listas de
+      especies de los 34 primeros puntos (554 especies, ninguna sensible), con las 500 peticiones del día justas;
+      quedan 4 421 puntos, que irán entrando por tandas.
 
 ## Datos
 API de eBird 2.0 (condiciones de uso de eBird, no comercial, con atribución). Ficheros nuevos pequeños
