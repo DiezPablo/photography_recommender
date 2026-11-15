@@ -161,7 +161,7 @@ test("safaris retirados de esta versión: sus páginas llevan a la portada y sus
   for (const ruta of ["/safaris", "/parque/serengeti", "/especie/panthera-leo", "/planificar?pais=Kenia", "/mapa"]) {
     await page.goto(ruta);
     await expect(page).toHaveURL(/^https?:\/\/[^/]+\/(\?.*)?$/);
-    await expect(page.locator("h1")).toHaveText("¿Dónde voy a fotografiar?");
+    await expect(page.locator("h1")).toHaveText("¿Cuándo tienes tiempo?");
   }
   // la carta de fauna tuvo /fauna/mapa y /fauna/especie: no se confunden con las de safaris
   await page.goto("/fauna/mapa");
@@ -231,4 +231,35 @@ test("calendario de fauna: los fenómenos de cada mes, de una sola lista (spec 0
   await page.goto("/fauna/evento/grullas-gallocanta");
   await expect(page.locator("main")).toContainText("Dormidero");
   await expect(page.locator('main a[href*="wikipedia.org/wiki/Grus_grus"]')).toHaveCount(1);
+});
+
+test("portada: ¿cuándo tienes tiempo? Hoy, este finde y más adelante (spec 004)", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("¿Cuándo tienes tiempo?");
+  await expect(page.locator(".momento h2")).toHaveText(["Hoy", "Este finde", "Más adelante"]);
+  // cada momento lleva a Luz y a Fauna
+  await expect(
+    page
+      .locator("#m-hoy")
+      .locator("..")
+      .getByRole("link", { name: /fauna veo cerca/ }),
+  ).toHaveAttribute("href", "/fauna?modo=aqui");
+  await expect(
+    page
+      .locator("#m-finde")
+      .locator("..")
+      .getByRole("link", { name: /fauna para el finde/ }),
+  ).toHaveAttribute("href", "/fauna?modo=finde");
+  await expect(
+    page
+      .locator("#m-luego")
+      .locator("..")
+      .getByRole("link", { name: /Calendario de fauna/ }),
+  ).toBeVisible();
+  // con previsión publicada, arriba manda el mejor plan de hoy, que lleva a su ficha
+  const hoy = page.locator(".portada-hoy");
+  if (await hoy.count()) {
+    await hoy.click();
+    await expect(page).toHaveURL(/\/luz\/spot\//);
+  }
 });
