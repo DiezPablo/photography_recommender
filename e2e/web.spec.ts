@@ -304,3 +304,36 @@ test("los dos catálogos enlazados: luz cerca de un lugar de fauna y fauna cerca
   await expect(fauna).toBeVisible();
   await expect(fauna.locator('a[href^="/fauna/lugar/"]').first()).toBeVisible();
 });
+
+test("consulta común: cuándo, dónde y qué en la URL, con pestañas y sin JavaScript (spec 012)", async ({
+  browser,
+  baseURL,
+}) => {
+  // sin JavaScript: el formulario de la portada lleva a /buscar y la URL reproduce el resultado
+  const ctx = await browser.newContext({ javaScriptEnabled: false, baseURL });
+  const page = await ctx.newPage();
+  await page.goto("/");
+  const form = page.locator("form.consulta").first();
+  await form.locator("select[name=ccaa]").selectOption("Comunidad de Madrid");
+  await form.getByRole("button", { name: "Buscar" }).click();
+  await expect(page).toHaveURL(/\/buscar\?/);
+  const p = new URL(page.url()).searchParams;
+  expect([p.get("cuando"), p.get("que"), p.get("ccaa")]).toEqual(["hoy", "luz", "Comunidad de Madrid"]);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Luz");
+  const filas = page.locator("ol.resultados li");
+  if (await filas.count()) await expect(filas.first()).toContainText("Madrid");
+  // la pestaña Fauna conserva la consulta
+  await page.locator(".pestanas").getByRole("link", { name: "Fauna" }).click();
+  await expect(page).toHaveURL(/que=fauna/);
+  await expect(page).toHaveURL(/ccaa=Comunidad/);
+  await expect(page.locator(".pestanas a[aria-current=page]")).toHaveText("Fauna");
+  // un mes sin previsión: lo habitual, en porcentaje
+  await page.goto("/buscar?cuando=octubre&que=luz&momento=atardecer");
+  await expect(page.locator(".titular .rotulo")).toContainText("Lo habitual");
+  const primera = page.locator("ol.resultados li").first();
+  if (await primera.count()) await expect(primera.locator(".cifra-habitual")).toContainText("%");
+  // fauna alrededor de un punto: lugares cerca con lo que hay ese mes
+  await page.goto("/buscar?cuando=hoy&que=fauna&lat=40.42&lon=-3.7&km=50");
+  await expect(page.locator(".titular .rotulo")).toContainText("a menos de 50 km de ti");
+  await ctx.close();
+});

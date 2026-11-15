@@ -1,7 +1,8 @@
 # src/ — web (Next.js 16, App Router)
 
 - `app/`: rutas finas; la lógica va en `features/`.
-  - `/` portada «¿cuándo tienes tiempo?» (spec 004; la consulta común en la URL llegará con la 012). `/fuentes`: fuentes y licencias de los dos modos
+  - `/` portada «¿cuándo tienes tiempo?» (spec 004) con el formulario de la consulta común; `/buscar`: la
+    consulta en la URL (`cuando`, `que`, `momento`, `ccaa` o `lat`/`lon`/`km`; spec 012, `features/consulta`). `/fuentes`: fuentes y licencias de los dos modos
     (la lista está en `lib/fuentes.ts`; al añadir una fuente, añádela ahí y en `docs/datos/fuentes.md`).
   - `/luz/**`: ranking del día (`/luz`, `/luz/dia/[d]/[tipo]`), `/luz/spot/[id]`, `/luz/calendario`,
     `/luz/habitual/[mes]/[tipo]` (sin previsión: climatología × idoneidad, spec 013), `/luz/evento/[id]`,
