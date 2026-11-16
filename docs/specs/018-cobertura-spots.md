@@ -1,6 +1,6 @@
 # 018 — Cobertura de spots
 
-Estado: hecha en código (falta repetir el descubrimiento con el corte urbano corregido)
+Estado: hecha
 Modo: Luz
 Situación del fotógrafo: una tarde · un finde (lejos de las ciudades grandes)
 
@@ -34,9 +34,11 @@ vacía y una ejecución desde cero publicaría un catálogo con la popularidad a
 - [x] El workflow tiene calendario mensual y no publica si falta popularidad.
 - [x] Primer descubrimiento completo en Actions (15-11-2026, 99 % de popularidad contada, tres ejecuciones):
       ninguna provincia con menos de 20 spots salvo Ceuta (17) y Melilla (5); mediana de 20 por provincia (era 12).
-- [ ] Cielo urbano (Bortle ≥ 7) por debajo del 25 %: quedó en el 29 % (era el 32 %). La selección contaba como
-      urbano el brillo < 19,5 mag/arcsec², que deja fuera la zona 5b del atlas (Bortle 7): el log decía 18 %. Corte
-      corregido a 20,0 (prueba `test_urbano_es_bortle_7_o_mas`); falta repetir el descubrimiento.
+- [x] Cielo urbano (Bortle ≥ 7) por debajo del 25 %: **20 %** (300 de 1500) tras el descubrimiento del 16-11-2026
+      (`docs/datos/auditoria-2026-11-16.md`); era el 32 % el 13-11 y el 29 % el 15-11. El primer intento contaba como
+      urbano el brillo < 19,5 mag/arcsec² y dejaba fuera la zona 5b del atlas (Bortle 7): corte a 20,0, con la prueba
+      `test_urbano_es_bortle_7_o_mas`. Tuvo que repetirse dos veces por los límites de Open-Meteo (PR que espera al
+      límite por hora en vez de rendirse).
 - [x] Informe de auditoría de después en `docs/datos/auditoria-2026-11-15.md`, comparado con el del 13-11-2026:
       provincias con menos de 15 spots, de 30 a 1; pares duplicados de fauna, de 48 y 41 a 3 y 3 (spec 019); más
       cumbres (218 → 261), agua (76 → 163) y cascadas (33 → 56), menos miradores (610 → 528) y costa (451 → 386).
