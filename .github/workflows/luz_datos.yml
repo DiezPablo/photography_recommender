@@ -36,7 +36,7 @@ concurrency:
 jobs:
   datos:
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 120 # una espera al límite por hora de Open-Meteo cabe (rasante.prevision.openmeteo.espera_limite)
     env:
       GH_TOKEN: ${{ github.token }}
     steps:

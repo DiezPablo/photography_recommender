@@ -99,3 +99,29 @@ def test_canarias_en_su_hora_y_series_sin_desfase():
         )
         == 2
     )
+
+
+def test_espera_ante_los_limites_de_open_meteo():
+    import requests
+
+    from rasante.prevision.openmeteo import espera_limite
+
+    def r429(reason: str | None, cuerpo: str | None = None, retry: str | None = None) -> requests.Response:
+        r = requests.Response()
+        r.status_code = 429
+        r.url = "https://api.open-meteo.com/v1/forecast"
+        r._content = (cuerpo if cuerpo is not None else json.dumps({"error": True, "reason": reason})).encode()
+        if retry:
+            r.headers["Retry-After"] = retry
+        return r
+
+    # por minuto: un minuto (o lo que diga Retry-After)
+    assert espera_limite(r429("Minutely API request limit exceeded. Please try again in one minute.")) == 65
+    assert espera_limite(r429("Too many", retry="20")) == 20
+    # por hora: hasta la hora siguiente (a las 12:40:00, 20 min y medio)
+    ahora = 12 * 3600 + 40 * 60
+    assert espera_limite(r429("Hourly API request limit exceeded. Please try again in the next hour."), ahora) == 1230
+    # diario: no se espera
+    assert espera_limite(r429("Daily API request limit exceeded. Please try again tomorrow.")) is None
+    # cuerpo que no es JSON: un minuto
+    assert espera_limite(r429(None, cuerpo="<html>Too Many Requests</html>")) == 65

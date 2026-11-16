@@ -67,6 +67,29 @@ LLAMADAS_POR_MINUTO = 450
 LOTE_COORDS = 100
 
 
+def motivo(r: requests.Response) -> str:
+    """El «reason» que Open-Meteo da en sus errores, o el principio del cuerpo."""
+    try:
+        return str(r.json().get("reason") or r.text[:200])
+    except ValueError:
+        return r.text[:200]
+
+
+def espera_limite(r: requests.Response, ahora: float | None = None) -> float | None:
+    """Cuánto esperar ante un 429 de Open-Meteo, según el límite que se ha pasado (600 llamadas/minuto, 5000/hora,
+    10000/día; una llamada con muchos puntos cuenta como varias): un minuto, hasta la hora siguiente o, si es el
+    diario, None (no se arregla esperando). Lo dice en el log, que antes solo decía «no responde»."""
+    m = motivo(r)
+    print(f"  {r.url.split('/')[2] if r.url else 'Open-Meteo'}: 429 · {m}", flush=True)
+    texto = m.lower()
+    if "daily" in texto or "diari" in texto:
+        return None
+    if "hour" in texto or "hora" in texto:
+        ahora = time.time() if ahora is None else ahora
+        return 3600 - ahora % 3600 + 30
+    return float(r.headers.get("Retry-After") or 65)
+
+
 def obtener(url: str, params: dict, obligatorio: bool = True):
     clave = url + json.dumps(params, sort_keys=True)
     datos = CACHE.leer(clave)
@@ -79,7 +102,13 @@ def obtener(url: str, params: dict, obligatorio: bool = True):
             print(f"  {url.split('/')[2]}: {e.__class__.__name__}, reintento")
             time.sleep(5 * (intento + 1))
             continue
-        if r.status_code in (429, 502, 503, 504):
+        if r.status_code == 429:
+            espera = espera_limite(r)
+            if espera is None:  # límite diario: no se arregla esperando minutos
+                break
+            time.sleep(espera)
+            continue
+        if r.status_code in (502, 503, 504):
             time.sleep(10 * (intento + 1))
             continue
         if r.status_code >= 400 and not obligatorio:
@@ -95,7 +124,7 @@ def obtener(url: str, params: dict, obligatorio: bool = True):
         CACHE.guardar(clave, datos)
         return datos
     if obligatorio:
-        raise SystemExit(f"{url} no responde")
+        raise SystemExit(f"{url} no responde (el motivo, si lo dio, está arriba)")
     return None
 
 
