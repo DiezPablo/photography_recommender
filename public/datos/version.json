@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-16T02:48:47+00:00",
+ "actualizado": "2026-11-16T04:08:33+00:00",
  "ficheros": {
   "safaris_recientes.json": "b5190e9cacfb",
   "safaris.json": "3843840dca83",
@@ -37,6 +37,7 @@
   "fauna_ebird.json": "69a30aba4fdb",
   "fauna_cuadricula.json": "4ba0ddbe8412",
   "acceso.json": "f456e228b245",
-  "spots.csv": "a214fdfc9a07"
+  "spots.csv": "a214fdfc9a07",
+  "fauna_actividad.json": "520975dd4b8b"
  }
 }
