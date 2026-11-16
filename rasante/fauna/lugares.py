@@ -303,8 +303,7 @@ def con_codigo_natura(xs: list[dict], sitios: dict[str, dict], km: float = 3) ->
 
 
 RELEASE = "https://github.com/DiezPablo/photography_recommender/releases/download/datos"
-# el nombre de ahora y el de antes de la spec 007, mientras la release no tenga el nuevo
-PUBLICADOS = (f"{RELEASE}/fauna_lugares.json.gz", f"{RELEASE}/espana_lugares.json.gz")
+PUBLICADOS = (f"{RELEASE}/fauna_lugares.json.gz",)
 
 
 def observatorios_publicados(s: requests.Session) -> list[dict]:

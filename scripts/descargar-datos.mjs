@@ -40,19 +40,10 @@ async function existe(f) {
   }
 }
 
-/** El nombre que tenía un fichero de fauna antes de la spec 007 («fauna_lugares.json» era «espana_lugares.json»):
- * mientras los workflows no lo hayan publicado con el nuevo, se descarga el antiguo y se guarda con el nuevo. */
-function nombreAntiguo(nombre) {
-  if (nombre === "fauna_cuadricula.json") return "espana.json";
-  return nombre.startsWith("fauna_") ? `espana_${nombre.slice("fauna_".length)}` : null;
-}
-
 async function descargar(nombre) {
   for (const repo of LUZ.includes(nombre) && !process.env.DATOS_REPO ? [REPO, REPO_ANTERIOR] : [REPO]) {
-    for (const n of [nombre, nombreAntiguo(nombre)].filter(Boolean)) {
-      const gz = await descargarDe(repo, n);
-      if (gz) return gz;
-    }
+    const gz = await descargarDe(repo, nombre);
+    if (gz) return gz;
   }
   return null;
 }

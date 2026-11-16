@@ -1,6 +1,6 @@
 # 007 — Ficheros de fauna con su nombre
 
-Estado: hecha (faltan la primera publicación de actividad y cuadrícula con el nombre nuevo)
+Estado: hecha
 Modo: plataforma
 Situación del fotógrafo: —
 
@@ -34,7 +34,10 @@ una versión anterior) y `espana_rutas.json` (rutas de senderismo de OSM, aparca
 - [x] Pruebas de Python en verde; ya no hay prueba de rutas.
 - [x] Primera publicación con el nombre nuevo de `fauna_recientes.yml` (15-11-2026, 12:20 UTC): recientes, rarezas,
       lugares, listas, regiones, especies por punto y Natura 2000; producción desplegada con ellos.
-- [ ] Ídem de `fauna_actividad.yml` (semanal, lunes) y `fauna_cuadricula.yml` (lanzada a mano el 15-11-2026).
+- [x] Ídem de `fauna_cuadricula.yml` (15-11-2026, 12:50 UTC, a mano: `fauna_cuadricula` y `fauna_ebird`) y
+      `fauna_actividad.yml` (16-11-2026, 04:08 UTC, a mano: el cron del lunes no saltó).
+- [x] Fuera la transición: `nombreAntiguo` en `descargar-datos.mjs`, el nombre antiguo en `bajar_dato.sh` y en
+      `rasante/fauna/lugares.py`.
 
 ## Notas
 Cuando todos los `fauna_*` estén publicados se puede quitar la transición (`nombreAntiguo` y el caso antiguo de

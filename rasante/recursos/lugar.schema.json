@@ -141,7 +141,7 @@
           "additionalProperties": false,
           "properties": {
             "celdas": {
-              "description": "Cuadrículas EEA de 10 km que cubre el lugar; las especies salen de ellas (espana.json)",
+              "description": "Cuadrículas EEA de 10 km que cubre el lugar; las especies salen de ellas (fauna_cuadricula.json)",
               "type": "array",
               "items": { "type": "string", "pattern": "^10kmE\\d+N\\d+$" }
             },
