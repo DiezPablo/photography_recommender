@@ -4,18 +4,37 @@ name: Fauna · recientes
 
 on:
   schedule:
-    - cron: "23 4 * * *"
+    - cron: "23 * * * *" # cada hora; «cuando» decide (GitHub retrasa los cron horas, decisión 0024)
   workflow_dispatch:
 
 permissions:
   contents: write
+  actions: read
 
 concurrency:
   group: publicar-recientes
   cancel-in-progress: false
 
 jobs:
+  # GitHub retrasa los cron horas: se programa cada hora y aquí se decide si toca (decisión 0024)
+  cuando:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      toca: ${{ steps.toca.outputs.toca }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/scripts
+      - id: toca
+        # una vez al día, entre las 5 y las 12 hora peninsular
+        run: python3 .github/scripts/toca.py fauna_recientes.yml "5-12"
+
   recientes:
+    needs: cuando
+    if: needs.cuando.outputs.toca == 'true'
     runs-on: ubuntu-24.04
     # la ejecución completa ronda los 14 min mientras se rellena el histórico de listas (5 días por vez)
     timeout-minutes: 30

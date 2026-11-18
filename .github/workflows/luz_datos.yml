@@ -1,14 +1,14 @@
 # Modo Luz. Previsión para todos los spots de España, dos veces al día (madrugada, con los modelos de la noche,
 # y mediodía, para decidir el atardecer). Los datos van a la release "datos" y Vercel reconstruye la
 # web. Calcula también el calendario de eventos (eventos.json).
-# Dos ejecuciones al día para no pasar del límite gratuito de Open-Meteo (10 000 llamadas/día).
-# GitHub interpreta el cron en UTC y suele ejecutarlo con retraso.
+# Dos ejecuciones al día para no pasar del límite gratuito de Open-Meteo (10 000 llamadas/día): una en cada ventana.
+# GitHub retrasa los cron de 7 a 9 horas (11-2026): se programa cada hora y el paso «cuando» deja seguir solo la
+# primera que cae en una ventana (decisión 0024).
 name: Luz · previsión
 
 on:
   schedule:
-    - cron: "47 3 * * *" # ~05:47 hora peninsular en verano, 04:47 en invierno
-    - cron: "47 12 * * *" # ~14:47 / 13:47: previsión fresca para el atardecer
+    - cron: "47 * * * *" # cada hora; «cuando» decide
   workflow_dispatch:
   push:
     branches: [main]
@@ -28,13 +28,32 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 concurrency:
   group: publicar-datos
   cancel-in-progress: false
 
 jobs:
+  # GitHub retrasa los cron horas: se programa cada hora y aquí se decide si toca (decisión 0024)
+  cuando:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      toca: ${{ steps.toca.outputs.toca }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/scripts
+      - id: toca
+        # de 4 a 7 (antes del amanecer, con los modelos de la noche) y de 12 a 16 (para el atardecer), hora peninsular
+        run: python3 .github/scripts/toca.py luz_datos.yml "4-7,12-16"
+
   datos:
+    needs: cuando
+    if: needs.cuando.outputs.toca == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 120 # una espera al límite por hora de Open-Meteo cabe (rasante.prevision.openmeteo.espera_limite)
     env:
