@@ -33,5 +33,12 @@ export default defineConfig({
   ],
   webServer: process.env.BASE_URL
     ? undefined
-    : { command: "npx next start -H 0.0.0.0 -p 3100", url: base, reuseExistingServer: true, timeout: 60_000 },
+    : {
+        // keep-alive de 60 s (Next deja el de Node, 5 s): el cliente de Playwright reutiliza conexiones que el
+        // servidor acaba de cerrar y la petición se corta con ECONNRESET (spec 024, punto 3). Solo en local.
+        command: "npx next start -H 0.0.0.0 -p 3100 --keepAliveTimeout 60000",
+        url: base,
+        reuseExistingServer: true,
+        timeout: 60_000,
+      },
 });

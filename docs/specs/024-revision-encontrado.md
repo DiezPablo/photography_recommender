@@ -1,6 +1,6 @@
 # 024 — Revisión de lo encontrado por el camino
 
-Estado: propuesta
+Estado: en curso (punto 3 hecho)
 Modo: ambos
 Situación del fotógrafo: —
 
@@ -41,7 +41,10 @@ medias. Esta spec las junta para revisarlas de una vez: cada punto dice qué se 
 - [ ] 1: *Larus argentatus* es «Gaviota argéntea»; informe de cuántos nombres de aves cambian con eBird y lista de
   los no aves sin revisar.
 - [ ] 2: ningún nombre de lugar empieza ni acaba en comillas.
-- [ ] 3: causa del `ECONNRESET` encontrada y la e2e completa en verde en local tres veces seguidas.
+- [x] 3: causa del `ECONNRESET` encontrada y la e2e completa en verde en local tres veces seguidas. Era la carrera
+  de *keep-alive*: `next start` deja el de Node (5 s) y el cliente de Playwright reutilizaba una conexión que el
+  servidor acababa de cerrar. Con un solo worker no fallaba; con el keep-alive a 60 s (`playwright.config.ts`), 4 de 4
+  tandas completas en verde (antes fallaba en todas). No afecta a producción (Vercel no usa `next start`).
 - [ ] 4: tras un descubrimiento, `informe.json` y `lugares.json` publicados tienen los mismos spots que
   `spots.geojson`.
 - [ ] 5: el mensaje del dron lleva la fecha del día en que se publica.
