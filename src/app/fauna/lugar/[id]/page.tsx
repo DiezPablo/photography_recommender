@@ -93,43 +93,52 @@ export default async function PaginaLugar({ params }: Props) {
           <Link href="/fauna">Fauna</Link> · {l.t}
         </p>
         <h1>{l.n}</h1>
-        <p className="entradilla">
-          {probables} especies frecuentes en los registros de {MESES[mesHoy]}
-          {l.e ? ` · ${l.e} aves vistas en eBird` : ""}
-          {fenomenos.some((f) => f.meses.includes(mesHoy + 1)) ? " · hay un fenómeno de temporada ahora" : ""}
+        {/* el veredicto (sistema de diseño): cuánto se ve ahora, y lo de estos días en la rejilla de datos */}
+        <p className="ficha-veredicto claro">
+          <span className="cifra cifra-fauna">{probables}</span>
+          <span>
+            <b>especies frecuentes en {MESES[mesHoy]}</b>
+            <small>
+              {[
+                l.e ? `${l.e} aves vistas en eBird` : null,
+                fenomenos.some((f) => f.meses.includes(mesHoy + 1)) ? "hay un fenómeno de temporada ahora" : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </small>
+          </span>
         </p>
-        {actividad && (
-          <p className="actividad-ebird">
-            {actividad.l7 > 0 ? (
-              <>
-                <b>
-                  {actividad.l7} {actividad.l7 === 1 ? "lista" : "listas"} de eBird en los últimos 7 días
-                </b>{" "}
-                ({actividad.l30} en 30).
-              </>
-            ) : (
-              <>
-                {actividad.l30} {actividad.l30 === 1 ? "lista" : "listas"} de eBird en los últimos 30 días.
-              </>
-            )}{" "}
-            La última, el {fechaCorta(actividad.u)}
-            {actividad.e > 0 ? `, con ${actividad.e} especies` : ""}.
-          </p>
-        )}
-        {region && (
-          <p className="actividad-region">
-            En {region.nombre}, estos días: {region.listas.toLocaleString("es-ES")} listas de eBird en {region.dias}{" "}
-            días, hasta {region.especiesMax} especies en un solo día (
-            <a href="https://ebird.org" target="_blank" rel="noopener">
-              eBird
-            </a>
-            ).
-          </p>
-        )}
-        {acceso && (
-          <p className="acceso-lugar">
-            <b>Acceso:</b> {textoAcceso(acceso)}.
-          </p>
+        {(actividad || region || acceso) && (
+          <dl className="ficha-datos">
+            {actividad && (
+              <div>
+                <dt>eBird aquí</dt>
+                <dd className="actividad-ebird">
+                  {actividad.l7 > 0
+                    ? `${actividad.l7} ${actividad.l7 === 1 ? "lista" : "listas"} de eBird en los últimos 7 días (${actividad.l30} en 30)`
+                    : `${actividad.l30} ${actividad.l30 === 1 ? "lista" : "listas"} de eBird en los últimos 30 días`}
+                  {" · la última, el "}
+                  {fechaCorta(actividad.u)}
+                  {actividad.e > 0 ? `, con ${actividad.e} especies` : ""}
+                </dd>
+              </div>
+            )}
+            {region && (
+              <div>
+                <dt>En {region.nombre}</dt>
+                <dd className="actividad-region">
+                  {region.listas.toLocaleString("es-ES")} listas en {region.dias} días · hasta {region.especiesMax}{" "}
+                  especies en un día
+                </dd>
+              </div>
+            )}
+            {acceso && (
+              <div>
+                <dt>Acceso</dt>
+                <dd className="acceso">{textoAcceso(acceso)}</dd>
+              </div>
+            )}
+          </dl>
         )}
         <p className="enlaces-lugar">
           <Link
