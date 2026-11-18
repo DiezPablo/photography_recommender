@@ -38,3 +38,4 @@ Consecuencias: qué implica y qué queda descartado.
 - [0021](0021-safaris-fuera.md) — Safaris del mundo, fuera de esta versión (sustituida por 0022)
 - [0022](0022-safaris-descartados.md) — Safaris del mundo, descartados
 - [0023](0023-rutas-solo-acceso.md) — De las rutas, solo el acceso a cada spot
+- [0024](0024-cron-cada-hora.md) — Los workflows diarios, cada hora con ventana (GitHub retrasa los cron horas)
