@@ -83,9 +83,20 @@ export default async function PaginaEspecie({ params }: Props) {
           <Link href="/fauna">Fauna</Link> · {GRUPO[e.clase ?? ""] ?? "Especie"}
         </p>
         <h1>{nombre}</h1>
-        <p className="entradilla">
-          <i>{e.c}</i>. Registrada en {curva.celdas.toLocaleString("es-ES")} cuadrículas de 10 km de España
-          {buenos.length ? `; mejor época: ${rangoMeses(buenos)}` : ""}.
+        {/* el veredicto (sistema de diseño): si este mes es buena época y, si no, cuál es la mejor */}
+        <p className="ficha-veredicto claro">
+          <span>
+            <b>
+              {!buenos.length
+                ? `Su mejor mes en España: ${MESES[curva.meses.reduce<number>((a, v, i) => ((v ?? 0) > (curva.meses[a] ?? 0) ? i : a), 0)]}`
+                : buenos.includes(mesHoy + 1)
+                  ? `${MESES[mesHoy][0].toUpperCase()}${MESES[mesHoy].slice(1)} es buena época · la mejor, ${rangoMeses(buenos)}`
+                  : `Mejor época: ${rangoMeses(buenos)}`}
+            </b>
+            <small>
+              <i>{e.c}</i> · registrada en {curva.celdas.toLocaleString("es-ES")} cuadrículas de 10 km de España
+            </small>
+          </span>
         </p>
         <p>
           <Link className="boton" href={`/fauna?especie=${clave}`}>

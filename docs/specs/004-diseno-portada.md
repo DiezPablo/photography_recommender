@@ -1,6 +1,6 @@
 # 004 — Sistema de diseño y portada
 
-Estado: hecha (falta llevar el sistema a las fichas, con la spec 010)
+Estado: hecha
 Modo: los dos
 Situación del fotógrafo: una tarde · un finde · un viaje
 
@@ -16,7 +16,8 @@ diseño solo está en el CSS (sin documentar) y quedan restos de los safaris.
   plan del primer día de finde con previsión) y **más adelante** (lo habitual del mes que viene y los fenómenos de
   fauna del mes)—, cada uno con sus enlaces a Luz y a Fauna; al final, lo que está en temporada.
 - Después del visto bueno: web instalable (manifiesto e iconos), modo noche con conmutador visible, poda del CSS de
-  los safaris y llevar el sistema a las fichas (con 010).
+  los safaris y llevar el sistema a las fichas (hecho el 18-11-2026: spot, lugar de fauna y especie con
+  cabecera de veredicto; ver «Ficha» en `docs/diseno/sistema.md`).
 - **Fuera de alcance**: la consulta común en la URL (012) y el plan de varios días (016).
 
 ## Criterios de aceptación

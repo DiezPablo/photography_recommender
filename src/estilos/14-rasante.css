@@ -399,3 +399,98 @@
   color: var(--texto-2);
   margin: -6px 0 0 48px;
 }
+
+/* Ficha (sistema de diseño, spec 004): cabecera con foto y veredicto, como la portada; lo secundario, plegado */
+.ficha-portada {
+  position: relative;
+  display: grid;
+  min-height: 280px;
+  margin: 8px 0 14px;
+  border-radius: var(--radio);
+  overflow: hidden;
+  background: var(--cielo-noche);
+  color: #fff;
+}
+.ficha-portada > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ficha-portada::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0%) 25%, rgb(0 0 0 / 75%) 100%);
+}
+.ficha-portada.sin-foto {
+  min-height: 0;
+}
+.ficha-portada.sin-foto::after {
+  display: none;
+}
+.ficha-portada-texto {
+  position: relative;
+  z-index: 1;
+  align-self: end;
+  display: grid;
+  gap: 6px;
+  padding: 18px 18px 30px;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 70%);
+}
+.ficha-portada .rotulo {
+  margin: 0;
+  color: rgb(255 255 255 / 85%);
+}
+.ficha-portada h1 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2rem, 7vw, 3.4rem);
+  line-height: 1.02;
+}
+.ficha-veredicto {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 0;
+  max-width: 52ch;
+}
+.ficha-veredicto > span {
+  display: grid;
+  gap: 2px;
+}
+.ficha-portada .ficha-veredicto small {
+  color: rgb(255 255 255 / 85%);
+}
+.ficha-portada .cifra {
+  /* sobre la foto, en blanco: el color de la escala no se lee y una nota floja no debe parecer buena */
+  color: #fff;
+}
+.ficha-portada-credito {
+  position: absolute;
+  z-index: 1;
+  right: 10px;
+  bottom: 6px;
+  font-size: 0.7rem;
+  color: rgb(255 255 255 / 75%);
+}
+.ficha-portada-credito a {
+  color: inherit;
+}
+.mas-datos {
+  margin-top: 10px;
+}
+.mas-datos .ficha-datos {
+  margin-top: 8px;
+}
+/* sin foto (fauna): el veredicto en claro, con la cifra en el color de la fauna */
+.ficha-veredicto.claro {
+  margin: 10px 0 12px;
+}
+.ficha-veredicto.claro small {
+  color: var(--texto-2);
+}
+.cifra.cifra-fauna {
+  color: var(--c-fauna);
+}

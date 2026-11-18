@@ -46,6 +46,13 @@ flota (mapas a pantalla completa, menús). Separación de secciones con un filet
   enlaces a Luz y a Fauna.
 - **Lista de resultados** (`Ranking`): posición, cifra, nombre, cuándo y por qué en una línea, miniatura.
 - **Ficha**: cabecera con foto y veredicto; bloques plegables (`details.plegable`) para lo secundario.
+  - Spot: `.ficha-portada` (la foto de Commons de fondo, como `.portada-hoy`): rótulo «tipo · provincia», nombre y
+    `.ficha-veredicto` (cifra en blanco + «Lo mejor de hoy: momento» + hora y porqué), crédito de la foto. Debajo,
+    solo los datos que deciden (`dl.ficha-datos`: altitud, cielo, Starlight, acceso, dron) y los enlaces; vista,
+    fotos en Commons y fuente, en «Más datos del sitio» plegado.
+  - Lugar de fauna y especie (sin foto): `.ficha-veredicto.claro`, con la cifra de especies frecuentes del mes en
+    `--c-fauna` (lugar) o si este mes es buena época (especie); la actividad de eBird y el acceso, en la misma
+    rejilla `dl.ficha-datos` que el spot.
 - **Rótulo** (`.rotulo`): versalitas pequeñas para situar («Lo mejor de hoy · atardecer · 18:02»).
 - **Nota al pie** (`.nota-pie`): fuente, método o advertencia, siempre en una línea corta.
 

@@ -1,6 +1,6 @@
 # 001 — Consolidación en photography_recommender
 
-Estado: en curso (fase 1 hecha; quedan las specs de §4)
+Estado: hecha (18-11-2026: las specs de §4 hechas; la 017 cierra el repo anterior)
 Modo: ambos · plataforma
 Situación del fotógrafo: —
 
@@ -110,7 +110,7 @@ antiguos de los dos repos, en `docs/archivo/`.
 - [x] `/espana/hides` → `/fauna/hides`; `/?especie=…` → `/fauna?especie=…`; `/fauna/mis-especies` → `/fauna`.
 - [x] Ninguna referencia a rutas, logística, «Mis especies» ni «Diario» en `src/`.
 - [x] Tamaños de datos y de build anotados (§3).
-- [ ] Primer `luz_datos.yml` en Actions siembra y publica (se comprueba al fusionar).
+- [x] Primer `luz_datos.yml` en Actions siembra y publica (13-11-2026).
 
 ## Datos
 Sin fuentes nuevas. La release `datos` de este repo pasa a tener también los ficheros de Luz.

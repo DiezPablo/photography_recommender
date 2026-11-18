@@ -24,6 +24,8 @@ import {
   MESES_LARGOS,
   miniatura,
   MOMENTOS,
+  motivos,
+  notaDe,
   NOMBRE_CORTO,
   rumbo,
   type Spot,
@@ -381,6 +383,9 @@ export default async function PaginaSpot({ params }: Props) {
       discontinua: true,
     });
   const portada = desc?.galeria?.[0] ?? null;
+  // el veredicto de la cabecera (sistema de diseño): el mejor momento de hoy, con su hora y su porqué
+  const mejorHoy = notaDe(hoy, "todos");
+  const porQue = mejorHoy ? motivos(mejorHoy.nota, 1)[0]?.texto : null;
   const provincia = spot.provincia ?? desc?.provincia;
   const ccaa = spot.ccaa ?? desc?.ccaa;
   const maxMes = Math.max(...(desc?.meses ?? [0]), 1);
@@ -396,15 +401,47 @@ export default async function PaginaSpot({ params }: Props) {
         {provincia && <span>{provincia}</span>}
         {ccaa && <span>{ccaa}</span>}
       </nav>
-      <header className="ficha-cab">
-        <h1>{spot.nombre}</h1>
-        <dl className="ficha-datos">
-          {spot.tipo && (
-            <div>
-              <dt>Tipo</dt>
-              <dd>{spot.tipo}</dd>
-            </div>
+      <header className={`ficha-portada${portada ? "" : " sin-foto"}`}>
+        {portada && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={miniatura(portada.url, 960) ?? portada.url}
+            alt={portada.titulo || spot.nombre}
+            fetchPriority="high"
+          />
+        )}
+        <div className="ficha-portada-texto">
+          <p className="rotulo">{[spot.tipo, provincia].filter(Boolean).join(" · ")}</p>
+          <h1>{spot.nombre}</h1>
+          {mejorHoy ? (
+            <p className="ficha-veredicto">
+              <Cifra nota={mejorHoy.nota.nota} />
+              <span>
+                <b>Lo mejor de hoy: {NOMBRE_CORTO[mejorHoy.momento].toLowerCase()}</b>
+                <small>
+                  {horaDe(hoy, mejorHoy.momento)}
+                  {porQue ? ` · ${porQue}` : ""}
+                </small>
+              </span>
+            </p>
+          ) : (
+            <p className="ficha-veredicto">Sin previsión para hoy: mira lo habitual de cada mes más abajo.</p>
           )}
+        </div>
+        {portada && (
+          <small className="ficha-portada-credito">
+            Foto:{" "}
+            <a href={portada.enlace} target="_blank" rel="noopener">
+              {portada.autor}
+            </a>{" "}
+            · {portada.licencia || "Wikimedia Commons"}
+            {portada.fecha ? ` · ${portada.fecha.slice(0, 4)}` : ""}
+          </small>
+        )}
+      </header>
+
+      <section className="ficha-cab" aria-label="Datos del sitio">
+        <dl className="ficha-datos">
           {spot.elevacion !== null && (
             <div>
               <dt>Altitud</dt>
@@ -431,32 +468,6 @@ export default async function PaginaSpot({ params }: Props) {
           )}
           <LineaAcceso catalogo="luz" id={spot.id} />
           <SelloDron id={spot.id} />
-          {vista !== null && (
-            <div>
-              <dt>Vista</dt>
-              <dd>{rumbo(vista)}</dd>
-            </div>
-          )}
-          {desc && desc.fotografos > 0 && (
-            <div>
-              <dt>En Commons</dt>
-              <dd>
-                {desc.fotos} fotos · {desc.fotografos} autores
-              </dd>
-            </div>
-          )}
-          {spot.origen === "osm" && (
-            <div>
-              <dt>Fuente</dt>
-              <dd>Mirador de OpenStreetMap</dd>
-            </div>
-          )}
-          {spot.origen === "propio" && (
-            <div>
-              <dt>Fuente</dt>
-              <dd>Spot propio</dd>
-            </div>
-          )}
         </dl>
         <p className="enlaces">
           <a href={gmaps} target="_blank" rel="noopener">
@@ -470,26 +481,38 @@ export default async function PaginaSpot({ params }: Props) {
           </a>
           <GuardarSinConexion />
         </p>
-      </header>
-
-      {portada && (
-        <figure className="foto-tira grande">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={miniatura(portada.url, 960) ?? portada.url}
-            alt={portada.titulo || spot.nombre}
-            fetchPriority="high"
-          />
-          <figcaption>
-            Foto:{" "}
-            <a href={portada.enlace} target="_blank" rel="noopener">
-              {portada.autor}
-            </a>{" "}
-            · {portada.licencia || "Wikimedia Commons"}
-            {portada.fecha ? ` · ${portada.fecha.slice(0, 4)}` : ""}
-          </figcaption>
-        </figure>
-      )}
+        <details className="plegable mas-datos">
+          <summary className="rotulo">Más datos del sitio</summary>
+          <dl className="ficha-datos">
+            {vista !== null && (
+              <div>
+                <dt>Vista</dt>
+                <dd>{rumbo(vista)}</dd>
+              </div>
+            )}
+            {desc && desc.fotografos > 0 && (
+              <div>
+                <dt>En Commons</dt>
+                <dd>
+                  {desc.fotos} fotos · {desc.fotografos} autores
+                </dd>
+              </div>
+            )}
+            {spot.origen === "osm" && (
+              <div>
+                <dt>Fuente</dt>
+                <dd>Mirador de OpenStreetMap</dd>
+              </div>
+            )}
+            {spot.origen === "propio" && (
+              <div>
+                <dt>Fuente</dt>
+                <dd>Spot propio</dd>
+              </div>
+            )}
+          </dl>
+        </details>
+      </section>
 
       {hoy && (
         <section className="lectura" aria-label="Notas de hoy">
