@@ -24,6 +24,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [x] 022 — Poda de «información justa»: fuera alineaciones, panorama, brújula del sol, marcador, Telegram, `.ics` por comunidad, alojamientos y experimentos; dron y mar en una línea (`docs/specs/022-poda.md`)
 - [x] 023 — Acceso a cada spot: aparcamiento más cercano y minutos andando, en las fichas y en el plan (`docs/specs/023-acceso.md`)
 - [x] 016 — Plan de varios días en `/plan`: cada día una zona con amanecer, fauna, lo que está en temporada, atardecer y, si toca, noche (`docs/specs/016-plan.md`)
+- [ ] 024 — Revisión de lo encontrado por el camino: nombres de especies, comillas en lugares, e2e con ECONNRESET, previsión pisada tras un descubrimiento, cupo de Open-Meteo y restos (`docs/specs/024-revision-encontrado.md`)
 
 ## Después
 (vacío)
