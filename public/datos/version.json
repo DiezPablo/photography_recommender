@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-19T04:33:06+00:00",
+ "actualizado": "2026-11-19T14:18:22+00:00",
  "ficheros": {
   "safaris_recientes.json": "b5190e9cacfb",
   "safaris.json": "3843840dca83",
@@ -17,11 +17,11 @@
   "spots.geojson": "d5b5f60ee7ce",
   "clima.json": "7a90a382ad7e",
   "dron.json": "449645a51c11",
-  "verificacion.json": "b2c1b5fedefc",
-  "informe.json": "80cf2d6a4db1",
-  "eventos.json": "9f92b7151b9e",
+  "verificacion.json": "7ed47b3a5ac9",
+  "informe.json": "e70f562143c5",
+  "eventos.json": "95ea6659100e",
   "alineaciones.json": "4dea76d3e434",
-  "lugares.json": "c14fa8f0f905",
+  "lugares.json": "a0259dc2591b",
   "espana_listas.json": "d550a6a0f588",
   "espana_listas_dias.json": "d9f84b3b5518",
   "espana_ebird_regiones.json": "4f73cb01cd0f",
