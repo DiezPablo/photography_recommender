@@ -1,6 +1,6 @@
 # Viabilidad de la fauna en España (GBIF por cuadrícula de 10 km)
 
-Generado el 15-11-2026 con `python -m rasante fauna cuadricula`. Descarga GBIF 0026105-261023074918325 (DOI 10.15468/dl.up9m6q, 11641928 registros agregados).
+Generado el 22-11-2026 con `python -m rasante fauna cuadricula`. Descarga GBIF 0026105-261023074918325 (DOI 10.15468/dl.up9m6q, 11641928 registros agregados).
 
 ## Doñana (22 celdas, 20 km)
 
@@ -12,13 +12,13 @@ Las más frecuentes en enero por grupo (‰ de su grupo, confianza); la frecuenc
 
 1. Gaviota sombría (Larus fuscus): 32 ‰ (alta)
 2. Mosquitero común (Phylloscopus collybita): 22 ‰ (alta)
-3. Tarabilla común (Saxicola rubicola): 20 ‰ (alta)
+3. Tarabilla europea (Saxicola rubicola): 20 ‰ (alta)
 4. Garza real (Ardea cinerea): 20 ‰ (alta)
-5. Espátula (Platalea leucorodia): 19 ‰ (alta)
-6. Petirrojo (Erithacus rubecula): 19 ‰ (alta)
+5. Espátula común (Platalea leucorodia): 19 ‰ (alta)
+6. Petirrojo europeo (Erithacus rubecula): 19 ‰ (alta)
 7. Aguilucho lagunero occidental (Circus aeruginosus): 18 ‰ (alta)
 8. Cigüeña blanca (Ciconia ciconia): 17 ‰ (alta)
-9. Cigüeñela (Himantopus himantopus): 17 ‰ (alta)
+9. Cigüeñuela común (Himantopus himantopus): 17 ‰ (alta)
 10. Flamenco común (Phoenicopterus roseus): 17 ‰ (alta)
 11. Garceta común (Egretta garzetta): 17 ‰ (alta)
 12. Cernícalo vulgar (Falco tinnunculus): 16 ‰ (alta)
@@ -29,7 +29,7 @@ Las más frecuentes en enero por grupo (‰ de su grupo, confianza); la frecuenc
 17. Cuchara común (Spatula clypeata): 14 ‰ (alta)
 18. Ánsar común (Anser anser): 14 ‰ (alta)
 19. Lavandera blanca (Motacilla alba): 14 ‰ (alta)
-20. Bisbita común (Anthus pratensis): 14 ‰ (alta)
+20. Bisbita pratense (Anthus pratensis): 14 ‰ (alta)
 
 ### Mamíferos
 
@@ -65,7 +65,7 @@ Las más frecuentes en enero por grupo (‰ de su grupo, confianza); la frecuenc
 4. Ranita meridional (Hyla meridionalis): 139 ‰ (alta)
 5. Sapo de espuelas (Pelobates cultripes): 68 ‰ (alta)
 6. Sapo partero ibérico (Alytes cisternasii): 55 ‰ (alta)
-7. Sapillo pintojo meridional (Discoglossus galganoi): 55 ‰ (alta)
+7. Sapillo pintojo ibérico (Discoglossus galganoi): 55 ‰ (alta)
 8. Tritón pigmeo (Triturus pygmaeus): 38 ‰ (alta)
 9. Gallipato (Pleurodeles waltl): 27 ‰ (alta)
 10. Tritón ibérico (Lissotriton boscai): 4 ‰ (alta)
@@ -81,7 +81,7 @@ Las más frecuentes en mayo por grupo (‰ de su grupo, confianza); la frecuenci
 ### Aves
 
 1. Pinzón vulgar (Fringilla coelebs): 33 ‰ (alta)
-2. Mirlo (Turdus merula): 28 ‰ (alta)
+2. Mirlo común (Turdus merula): 28 ‰ (alta)
 3. Escribano montesino (Emberiza cia): 25 ‰ (alta)
 4. Colirrojo tizón (Phoenicurus ochruros): 24 ‰ (alta)
 5. Verdecillo (Serinus serinus): 23 ‰ (alta)
@@ -90,8 +90,8 @@ Las más frecuentes en mayo por grupo (‰ de su grupo, confianza); la frecuenci
 8. Curruca capirotada (Sylvia atricapilla): 21 ‰ (alta)
 9. Acentor común (Prunella modularis): 21 ‰ (alta)
 10. Carbonero garrapinos (Periparus ater): 21 ‰ (alta)
-11. Petirrojo (Erithacus rubecula): 20 ‰ (alta)
-12. Tarabilla común (Saxicola rubicola): 20 ‰ (alta)
+11. Petirrojo europeo (Erithacus rubecula): 20 ‰ (alta)
+12. Tarabilla europea (Saxicola rubicola): 20 ‰ (alta)
 13. Milano negro (Milvus migrans): 19 ‰ (alta)
 14. Aguililla calzada (Hieraaetus pennatus): 18 ‰ (alta)
 15. Carbonero común (Parus major): 18 ‰ (alta)
@@ -138,7 +138,7 @@ Las más frecuentes en mayo por grupo (‰ de su grupo, confianza); la frecuenci
 7. Tritón ibérico (Lissotriton boscai): 27 ‰ (media)
 8. Tritón pigmeo (Triturus pygmaeus): 15 ‰ (media)
 9. Sapo de espuelas (Pelobates cultripes): 14 ‰ (media)
-10. Sapillo pintojo meridional (Discoglossus galganoi): 13 ‰ (media)
+10. Sapillo pintojo ibérico (Discoglossus galganoi): 13 ‰ (media)
 
 Backtest de aves 2025 (mayo): 20 de 126 especies observadas estaban entre las 20 primeras (precisión 1.0, cobertura 0.16).
 
@@ -151,23 +151,23 @@ Las más frecuentes en octubre por grupo (‰ de su grupo, confianza); la frecue
 ### Aves
 
 1. Buitre leonado (Gyps fulvus): 48 ‰ (alta)
-2. Petirrojo (Erithacus rubecula): 47 ‰ (alta)
+2. Petirrojo europeo (Erithacus rubecula): 47 ‰ (alta)
 3. Colirrojo tizón (Phoenicurus ochruros): 36 ‰ (alta)
-4. Mirlo (Turdus merula): 32 ‰ (alta)
-5. Corneja (Corvus corone): 31 ‰ (alta)
+4. Mirlo común (Turdus merula): 32 ‰ (alta)
+5. Corneja negra (Corvus corone): 31 ‰ (alta)
 6. Chova piquirroja (Pyrrhocorax pyrrhocorax): 30 ‰ (alta)
 7. Chova piquigualda (Pyrrhocorax graculus): 30 ‰ (alta)
 8. Pinzón vulgar (Fringilla coelebs): 29 ‰ (alta)
 9. Busardo ratonero (Buteo buteo): 29 ‰ (alta)
 10. Lavandera blanca (Motacilla alba): 28 ‰ (alta)
 11. Carbonero común (Parus major): 26 ‰ (alta)
-12. Cuervo (Corvus corax): 25 ‰ (alta)
+12. Cuervo grande (Corvus corax): 25 ‰ (alta)
 13. Chochín común (Troglodytes troglodytes): 20 ‰ (alta)
 14. Bisbita alpino (Anthus spinoletta): 20 ‰ (alta)
-15. Arrendajo (Garrulus glandarius): 18 ‰ (alta)
+15. Arrendajo euroasiático (Garrulus glandarius): 18 ‰ (alta)
 16. Pardillo común (Linaria cannabina): 17 ‰ (alta)
-17. Gorrión (Passer domesticus): 17 ‰ (alta)
-18. Tarabilla común (Saxicola rubicola): 17 ‰ (alta)
+17. Gorrión común (Passer domesticus): 17 ‰ (alta)
+18. Tarabilla europea (Saxicola rubicola): 17 ‰ (alta)
 19. Acentor alpino (Prunella collaris): 17 ‰ (alta)
 20. Jilguero europeo (Carduelis carduelis): 16 ‰ (alta)
 
@@ -225,21 +225,21 @@ Las más frecuentes en noviembre por grupo (‰ de su grupo, confianza); la frec
 3. Cernícalo vulgar (Falco tinnunculus): 32 ‰ (alta)
 4. Escribano triguero (Emberiza calandra): 29 ‰ (alta)
 5. Tarro blanco (Tadorna tadorna): 28 ‰ (alta)
-6. Corneja (Corvus corone): 28 ‰ (alta)
+6. Corneja negra (Corvus corone): 28 ‰ (alta)
 7. Ánade azulón (Anas platyrhynchos): 28 ‰ (alta)
 8. Pardillo común (Linaria cannabina): 26 ‰ (alta)
 9. Aguilucho pálido (Circus cyaneus): 25 ‰ (alta)
 10. Avefría europea (Vanellus vanellus): 23 ‰ (alta)
 11. Cuchara común (Spatula clypeata): 22 ‰ (alta)
 12. Cerceta común (Anas crecca): 21 ‰ (alta)
-13. Tarabilla común (Saxicola rubicola): 21 ‰ (alta)
-14. Gaviota encapuchada (Chroicocephalus ridibundus): 20 ‰ (alta)
+13. Tarabilla europea (Saxicola rubicola): 21 ‰ (alta)
+14. Gaviota reidora (Chroicocephalus ridibundus): 20 ‰ (alta)
 15. Focha común (Fulica atra): 19 ‰ (alta)
 16. Flamenco común (Phoenicopterus roseus): 19 ‰ (alta)
 17. Gorrión molinero (Passer montanus): 18 ‰ (alta)
 18. Jilguero europeo (Carduelis carduelis): 18 ‰ (alta)
 19. Alondra común (Alauda arvensis): 17 ‰ (alta)
-20. Bisbita común (Anthus pratensis): 17 ‰ (alta)
+20. Bisbita pratense (Anthus pratensis): 17 ‰ (alta)
 
 ### Mamíferos
 
@@ -248,7 +248,7 @@ Las más frecuentes en noviembre por grupo (‰ de su grupo, confianza); la frec
 3. Jabalí (Sus scrofa): 50 ‰ (media)
 4. Visón americano (Mustela vison): 49 ‰ (media)
 5. Cabra montesa (Capra pyrenaica): 33 ‰ (media)
-6. Musga (Neomys anomalus): 17 ‰ (media)
+6. Musgaño de Cabrera (Neomys anomalus): 17 ‰ (media)
 7. Topillo campesino (Microtus arvalis): 14 ‰ (media)
 8. Ciervo (Cervus elaphus): 14 ‰ (media)
 9. Ratón moruno (Mus spretus): 11 ‰ (media)
