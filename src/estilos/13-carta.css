@@ -663,25 +663,7 @@
   }
 }
 
-/* Carta de safaris (fase 3): parques como puntos */
-.muestra-capa.capa-todos {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 1px solid var(--carta-tinta-3);
-  background: var(--carta-papel);
-}
 .lista-mejores b {
   font-weight: 600;
   flex: 1 1 100%;
-}
-
-/* Carta de un parque, dentro de su ficha: mapa y leyenda en tabla, sin ocupar la pantalla */
-.carta path.zona-parque {
-  stroke: var(--carta-tinta-2);
-  fill: var(--carta-tinta-3);
-}
-.carta path.zona-recomendada {
-  stroke: var(--carta-magenta);
-  fill: var(--carta-magenta);
 }

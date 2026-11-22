@@ -1,6 +1,6 @@
 # 024 — Revisión de lo encontrado por el camino
 
-Estado: en curso (puntos 1 y 3 hechos)
+Estado: hecha (queda el punto 1b, duplicados por sinónimo, y el 9, que es de Pablo)
 Modo: ambos
 Situación del fotógrafo: —
 
@@ -43,16 +43,23 @@ medias. Esta spec las junta para revisarlas de una vez: cada punto dice qué se 
   `docs/datos/nombres-2026-11-22.md`. Se ven en la web cuando vuelva a correr `fauna_cuadricula.yml`.
 - [ ] 1b (nuevo): unir las especies duplicadas por sinónimo (*Sylvia* y *Curruca melanocephala*…) con la taxonomía
   aceptada de GBIF.
-- [ ] 2: ningún nombre de lugar empieza ni acaba en comillas.
+- [x] 2: ningún nombre de lugar empieza ni acaba en comillas: eran 33 etiquetas de Wikidata envueltas en comillas
+  («"Peñas de Iregua, Leza y Jubera"»); `nombres_lugares.wikidata` las quita y deja las de dentro (`Gravera "La
+  Longaniza"`). Se ve en la web con la siguiente ejecución de `fauna_recientes.yml`.
 - [x] 3: causa del `ECONNRESET` encontrada y la e2e completa en verde en local tres veces seguidas. Era la carrera
   de *keep-alive*: `next start` deja el de Node (5 s) y el cliente de Playwright reutilizaba una conexión que el
   servidor acababa de cerrar. Con un solo worker no fallaba; con el keep-alive a 60 s (`playwright.config.ts`), 4 de 4
   tandas completas en verde (antes fallaba en todas). No afecta a producción (Vercel no usa `next start`).
-- [ ] 4: tras un descubrimiento, `informe.json` y `lugares.json` publicados tienen los mismos spots que
-  `spots.geojson`.
-- [ ] 5: el mensaje del dron lleva la fecha del día en que se publica.
-- [ ] 6: una tercera previsión el mismo día no llama a Open-Meteo salvo a la fuerza.
-- [ ] 7 y 8: decisión anotada y CSS podado con capturas de antes y después.
+- [x] 4: tras un descubrimiento, `informe.json` y `lugares.json` publicados tienen los mismos spots que
+  `spots.geojson`: antes de publicar, la previsión compara sus spots con los publicados
+  (`.github/scripts/mismos_spots.py`) y, si cambiaron, no publica esos dos ficheros.
+- [x] 5: el mensaje del dron lleva la fecha del día en que se publica (estaba escrita a mano en
+  `luz_descubrir.yml`).
+- [x] 6: una tercera previsión el mismo día no llama a Open-Meteo salvo a la fuerza (`toca.py --maximo 2`; a mano,
+  con «forzar»).
+- [x] 7 y 8: la verificación queda como informe interno (decisión de la spec 022; dónde mirarla, en
+  `rasante/CLAUDE.md`). CSS: fuera las reglas sin uso de los safaris (carta de parques, portada) y 25 cabeceras de
+  comentario de secciones ya borradas (−96 líneas); siete páginas en móvil, idénticas píxel a píxel antes y después.
 
 ## Datos
 Taxonomía de eBird (términos de eBird, ya en `/fuentes`). Nada más nuevo.

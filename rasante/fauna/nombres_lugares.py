@@ -63,7 +63,14 @@ def ebird(nombre: str) -> str:
     return " · ".join(x for x in tramos if x).strip(" ·-")
 
 
+# nombre entero entre comillas, sin otras dentro («"Peñas de Iregua, Leza y Jubera"», etiquetas de Wikidata)
+_ENTRE_COMILLAS = re.compile(r'^\s*["«“]([^"«»“”]+)["»”]\s*$')
+
+
 def wikidata(nombre: str) -> str:
+    """«X Nature Park» → «Parque natural de X»; y sin las comillas que envuelven algunas etiquetas (spec 024)."""
+    if m := _ENTRE_COMILLAS.match(nombre):
+        nombre = m.group(1).strip()
     for patron, plantilla in _TIPOS_EN:
         if m := patron.match(nombre.strip()):
             return plantilla.format(m.group(1))

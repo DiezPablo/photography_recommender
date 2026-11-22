@@ -34,3 +34,10 @@ def test_observatorios_de_osm():
     assert n.observatorio("Bird Watching") is None
     assert n.observatorio("Hide") is None
     assert n.observatorio("Observatorio del Cerrillo") == "Observatorio del Cerrillo"
+
+
+def test_wikidata_sin_comillas_que_envuelven_el_nombre():
+    assert n.wikidata('"Peñas de Iregua, Leza y Jubera"') == "Peñas de Iregua, Leza y Jubera"
+    assert n.wikidata("«Sierra de Artxuga»") == "Sierra de Artxuga"
+    # las comillas de dentro son parte del nombre
+    assert n.wikidata('Gravera "La Longaniza"') == 'Gravera "La Longaniza"'
