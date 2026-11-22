@@ -9,6 +9,7 @@ el de --salida).
   regiones      actividad diaria de eBird por región (listas, observadores, especies) → fauna_ebird_regiones.json
   especies      especies registradas en cada punto de eBird, por tandas → fauna_especies_punto.json
   actividad F   hora de actividad por especie (iNaturalist) a partir de un fauna_cuadricula.json → fauna_actividad.json
+  nombres       renueva los nombres en español de las aves (taxonomía de eBird) → recursos/nombres_aves_ebird.csv
 """
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ ORDENES = (
     "regiones",
     "especies",
     "actividad",
+    "nombres",
 )
 
 
@@ -39,6 +41,11 @@ def main(argv: list[str] | None = None) -> None:
     )
     ap.add_argument("--salida", type=Path, help="fichero de salida (por defecto, el de cada orden en public/datos)")
     a = ap.parse_args(argv)
+    if a.orden == "nombres":
+        from rasante.fauna import nombres
+
+        print(f"{nombres.renovar_aves_ebird()} especies en {nombres.AVES_EBIRD}")
+        return
     if a.orden == "actividad":
         from rasante.fauna import inat_espana
 
