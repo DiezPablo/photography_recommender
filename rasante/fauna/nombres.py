@@ -61,11 +61,46 @@ def correcciones() -> dict[str, str]:
         return {r["cientifico"]: r["nombre"] for r in csv.DictReader(f)}
 
 
+AVES_EBIRD = Path(__file__).resolve().parent.parent / "recursos" / "nombres_aves_ebird.csv"
+TAXONOMIA_EBIRD = "https://api.ebird.org/v2/ref/taxonomy/ebird"
+
+
+@cache
+def aves_ebird() -> dict[str, str]:
+    """Nombre en español de cada ave según la taxonomía de eBird (spec 024): GBIF da a veces uno de otro país o
+    equivocado («Gallego europeo» para *Larus argentatus*). Se renueva con `python -m rasante fauna nombres`."""
+    if not AVES_EBIRD.exists():
+        return {}
+    with AVES_EBIRD.open(encoding="utf-8") as f:
+        return {r["cientifico"]: r["nombre"] for r in csv.DictReader(f)}
+
+
+def renovar_aves_ebird(destino: Path = AVES_EBIRD, s: requests.Session | None = None) -> int:
+    """Baja la taxonomía de eBird en español (no pide clave) y guarda nombre científico y común de cada especie."""
+    s = s or sesion()
+    r = s.get(TAXONOMIA_EBIRD, params={"fmt": "csv", "locale": "es", "cat": "species"}, timeout=120)
+    r.raise_for_status()
+    filas = sorted(
+        (x["SCIENTIFIC_NAME"], x["COMMON_NAME"]) for x in csv.DictReader(r.text.splitlines()) if x.get("COMMON_NAME")
+    )
+    if len(filas) < 5000:  # la taxonomía tiene unas 11 000 especies: una respuesta corta es un error
+        raise RuntimeError(f"Taxonomía de eBird incompleta ({len(filas)} especies)")
+    with destino.open("w", encoding="utf-8", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["cientifico", "nombre"])
+        w.writerows(filas)
+    aves_ebird.cache_clear()
+    return len(filas)
+
+
 def nombre_es(cientifico: str | None, bruto: str | None) -> str | None:
-    """El nombre común que se muestra: el corregido a mano o el de GBIF limpio («"Golondrina Tijereta, …"» →
+    """El nombre común que se muestra, por este orden: el corregido a mano (SEO/BirdLife y SECEM, los de uso en
+    España), el de la taxonomía de eBird para las aves y el de GBIF limpio («"Golondrina Tijereta, …"» →
     «Golondrina tijereta»), en minúsculas salvo la inicial y los nombres propios."""
     if cientifico and cientifico in correcciones():
         return correcciones()[cientifico]
+    if cientifico and cientifico in aves_ebird():
+        return aves_ebird()[cientifico]
     if not bruto:
         return None
     t = re.split(r"[,|;]", bruto.strip().strip('"').strip())[0].strip()

@@ -1,6 +1,6 @@
 # 024 — Revisión de lo encontrado por el camino
 
-Estado: en curso (punto 3 hecho)
+Estado: en curso (puntos 1 y 3 hechos)
 Modo: ambos
 Situación del fotógrafo: —
 
@@ -38,8 +38,11 @@ medias. Esta spec las junta para revisarlas de una vez: cada punto dice qué se 
 - **Fuera de alcance**: cambios de producto nuevos; cada punto que crezca pasa a su propia spec.
 
 ## Criterios de aceptación
-- [ ] 1: *Larus argentatus* es «Gaviota argéntea»; informe de cuántos nombres de aves cambian con eBird y lista de
-  los no aves sin revisar.
+- [x] 1: *Larus argentatus* es «Gaviota argéntea europea» (el de eBird y el de SEO/BirdLife); 186 de 516 aves
+  cambian con eBird; informe con las aves sin nombre de eBird, los repetidos y los no aves sin revisar en
+  `docs/datos/nombres-2026-11-22.md`. Se ven en la web cuando vuelva a correr `fauna_cuadricula.yml`.
+- [ ] 1b (nuevo): unir las especies duplicadas por sinónimo (*Sylvia* y *Curruca melanocephala*…) con la taxonomía
+  aceptada de GBIF.
 - [ ] 2: ningún nombre de lugar empieza ni acaba en comillas.
 - [x] 3: causa del `ECONNRESET` encontrada y la e2e completa en verde en local tres veces seguidas. Era la carrera
   de *keep-alive*: `next start` deja el de Node (5 s) y el cliente de Playwright reutilizaba una conexión que el

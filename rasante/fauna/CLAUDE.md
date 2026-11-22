@@ -4,6 +4,8 @@
 
 - `cuadricula`: descarga SQL de GBIF por cuadrícula EEA de 10 km (`rejilla`, `gbif_descarga`), estacionalidad con
   confianza y backtest (`estacionalidad`, `evaluacion`, `frecuencia`) → `fauna_cuadricula.json`.
+- `nombres`: renueva `recursos/nombres_aves_ebird.csv` (taxonomía de eBird en español). El nombre común sale de
+  `nombres_espana.csv` (a mano), luego de eBird (aves) y luego de GBIF (`nombres.nombre_es`, spec 024).
 - `ebird`: frecuencia de detección de aves con el conjunto de eBird en GBIF (`ebird_frecuencia`) →
   `fauna_ebird.json`.
 - `recientes`: lo visto en 30 días y rarezas (`ebird`, API de eBird; `inat_espana`, iNaturalist) →

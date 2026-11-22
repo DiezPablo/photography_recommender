@@ -154,3 +154,34 @@ def test_unificar_y_codigo_natura():
     assert espacio["e"] == 140
     # el punto que se llama como el espacio Natura 2000 de al lado se queda con su código; el homónimo lejano, no
     assert punto["z"] == "ES6110001" and "z" not in homonimo_lejos
+
+
+def test_nombres_de_aves_de_ebird_con_las_correcciones_por_delante():
+    from rasante.fauna import nombres
+
+    # GBIF daba «Gallego europeo» (spec 024): manda la taxonomía de eBird
+    assert nombres.nombre_es("Larus argentatus", "Gallego europeo") == "Gaviota argéntea europea"
+    assert nombres.nombre_es("Megaceryle alcyon", "Martín pescador") == "Martín gigante norteamericano"
+    # las corregidas a mano (SEO/BirdLife, uso en España) van antes que eBird («Cetia ruiseñor»)
+    assert nombres.nombre_es("Cettia cetti", None) == "Ruiseñor bastardo"
+    # lo que no es ave sigue con GBIF limpio
+    assert nombres.nombre_es("Vulpes vulpes", '"Zorro Rojo, raposa"') == "Zorro rojo"
+
+
+def test_renovar_aves_ebird_rechaza_una_respuesta_corta(tmp_path):
+    import pytest
+
+    from rasante.fauna import nombres
+
+    class Falsa:
+        def get(self, *a, **k):
+            class R:
+                text = "SCIENTIFIC_NAME,COMMON_NAME\nLarus argentatus,Gaviota argéntea europea\n"
+
+                def raise_for_status(self):
+                    pass
+
+            return R()
+
+    with pytest.raises(RuntimeError):
+        nombres.renovar_aves_ebird(tmp_path / "x.csv", Falsa())
