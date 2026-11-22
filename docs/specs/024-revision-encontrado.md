@@ -1,6 +1,6 @@
 # 024 — Revisión de lo encontrado por el camino
 
-Estado: hecha (queda el punto 1b, duplicados por sinónimo, y el 9, que es de Pablo)
+Estado: hecha (el punto 9 es de Pablo)
 Modo: ambos
 Situación del fotógrafo: —
 
@@ -41,8 +41,11 @@ medias. Esta spec las junta para revisarlas de una vez: cada punto dice qué se 
 - [x] 1: *Larus argentatus* es «Gaviota argéntea europea» (el de eBird y el de SEO/BirdLife); 186 de 516 aves
   cambian con eBird; informe con las aves sin nombre de eBird, los repetidos y los no aves sin revisar en
   `docs/datos/nombres-2026-11-22.md`. Se ven en la web cuando vuelva a correr `fauna_cuadricula.yml`.
-- [ ] 1b (nuevo): unir las especies duplicadas por sinónimo (*Sylvia* y *Curruca melanocephala*…) con la taxonomía
-  aceptada de GBIF.
+- [x] 1b (nuevo): unir las especies duplicadas por sinónimo. GBIF tiene dos claves aceptadas para siete especies
+  (*Sylvia*/*Curruca melanocephala*, *cantillans*, *balearica* y *subalpina*; *Coluber*/*Hierophis viridiflavus*;
+  *Saxicola torquatus*/*rubicola*; *Rana dalmatina* dudosa): `rasante/fauna/sinonimos.py` las une en las filas de la
+  descarga (mapa por clave en `recursos/sinonimos_gbif.csv`), en la cuadrícula y en la frecuencia de eBird. Las
+  demás currucas, que GBIF guarda como *Sylvia*, toman el nombre de eBird como *Curruca* («Curruca rabilarga»).
 - [x] 2: ningún nombre de lugar empieza ni acaba en comillas: eran 33 etiquetas de Wikidata envueltas en comillas
   («"Peñas de Iregua, Leza y Jubera"»); `nombres_lugares.wikidata` las quita y deja las de dentro (`Gravera "La
   Longaniza"`). Se ve en la web con la siguiente ejecución de `fauna_recientes.yml`.

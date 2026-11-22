@@ -93,14 +93,23 @@ def renovar_aves_ebird(destino: Path = AVES_EBIRD, s: requests.Session | None = 
     return len(filas)
 
 
+# géneros que eBird ya usa con el nombre nuevo y GBIF todavía con el antiguo (las currucas)
+GENEROS_EBIRD = {"Sylvia": "Curruca"}
+
+
+def _nombre_ebird(cientifico: str) -> str:
+    genero, _, resto = cientifico.partition(" ")
+    return f"{GENEROS_EBIRD.get(genero, genero)} {resto}"
+
+
 def nombre_es(cientifico: str | None, bruto: str | None) -> str | None:
     """El nombre común que se muestra, por este orden: el corregido a mano (SEO/BirdLife y SECEM, los de uso en
     España), el de la taxonomía de eBird para las aves y el de GBIF limpio («"Golondrina Tijereta, …"» →
     «Golondrina tijereta»), en minúsculas salvo la inicial y los nombres propios."""
     if cientifico and cientifico in correcciones():
         return correcciones()[cientifico]
-    if cientifico and cientifico in aves_ebird():
-        return aves_ebird()[cientifico]
+    if cientifico and (en_ebird := aves_ebird().get(cientifico) or aves_ebird().get(_nombre_ebird(cientifico))):
+        return en_ebird
     if not bruto:
         return None
     t = re.split(r"[,|;]", bruto.strip().strip('"').strip())[0].strip()

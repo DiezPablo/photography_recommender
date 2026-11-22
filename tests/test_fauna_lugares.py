@@ -185,3 +185,27 @@ def test_renovar_aves_ebird_rechaza_una_respuesta_corta(tmp_path):
 
     with pytest.raises(RuntimeError):
         nombres.renovar_aves_ebird(tmp_path / "x.csv", Falsa())
+
+
+def test_sinonimos_de_gbif_se_unen_en_las_filas():
+    from rasante.fauna import sinonimos
+    from rasante.fauna.estacionalidad import estacionalidad
+
+    # Sylvia melanocephala (2492962) y Curruca melanocephala (9990095): la misma curruca con dos claves aceptadas
+    filas = [
+        {"celda": "c1", "clase": 212, "especie": 2492962, "anio": 2020, "mes": 5, "n": 3},
+        {"celda": "c1", "clase": 212, "especie": 9990095, "anio": 2020, "mes": 5, "n": 7},
+        {"celda": "c1", "clase": 212, "especie": 1, "anio": 2020, "mes": 5, "n": 90},
+    ]
+    unidas = sinonimos.unir(filas)
+    assert {f["especie"] for f in unidas} == {9990095, 1}
+    assert filas[0]["especie"] == 2492962  # no toca las de entrada
+    est = estacionalidad(unidas)
+    assert est[9990095]["n"] == 10
+
+
+def test_currucas_con_el_nombre_de_ebird_aunque_gbif_diga_sylvia():
+    from rasante.fauna import nombres
+
+    assert nombres.nombre_es("Sylvia undata", "Curruca rabilarga") == "Curruca rabilarga"
+    assert nombres.nombre_es("Sylvia conspicillata", None) == nombres.aves_ebird()["Curruca conspicillata"]
