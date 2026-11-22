@@ -2,8 +2,8 @@
  "anio": 2025,
  "grupos": {
   "212": {
-   "auc": 0.885,
-   "auc_ingenuo": 0.8626,
+   "auc": 0.8854,
+   "auc_ingenuo": 0.8629,
    "casos": 25695
   },
   "359": {
