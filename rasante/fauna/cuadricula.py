@@ -18,7 +18,7 @@ from datetime import date
 from pathlib import Path
 
 from rasante.comun.ficheros import escribir_json
-from rasante.fauna import evaluacion, gbif_descarga, nombres
+from rasante.fauna import evaluacion, gbif_descarga, nombres, sinonimos
 from rasante.fauna.estacionalidad import backtest, estacionalidad, ranking
 from rasante.fauna.frecuencia import muestra
 from rasante.fauna.zonas import ZONAS, celdas
@@ -198,6 +198,8 @@ def main(salida: Path = Path("public/datos/fauna_cuadricula.json"), descargar: b
         print("España: sin filas de GBIF (faltan GBIF_USUARIO/GBIF_CLAVE): nada que hacer", flush=True)
         return
     filas, meta = r
+    # la misma especie con dos claves de GBIF (nombre antiguo y nuevo) cuenta como una (spec 024)
+    filas = sinonimos.unir(filas)
     print(f"España: {len(filas)} filas", flush=True)
     evaluar_y_vigilar(filas)
     celdas_ = por_celda(filas)

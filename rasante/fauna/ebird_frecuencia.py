@@ -15,7 +15,7 @@ from collections import defaultdict
 from datetime import date
 from pathlib import Path
 
-from rasante.fauna import gbif_descarga
+from rasante.fauna import gbif_descarga, sinonimos
 
 EBIRD = "4fa7b334-ce0d-4e88-aaae-2e0c138d049e"
 DESDE, PRUEBA = 2015, 2025
@@ -209,6 +209,7 @@ def main(salida: Path = Path("public/datos/fauna_ebird.json"), descargar: bool =
     if r is None:
         return
     listas, especies, meta = r
+    especies = sinonimos.unir(especies)  # la misma especie con dos claves de GBIF cuenta como una (spec 024)
     entreno = frecuencias(listas, especies)
     prueba = frecuencias(listas, especies, prueba=True)
     escribir_json(
