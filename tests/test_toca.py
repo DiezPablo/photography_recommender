@@ -36,3 +36,14 @@ def test_fuera_de_ventana_no_y_a_mano_siempre():
     assert not toca.decidir("schedule", datetime(2026, 11, 18, 9, 47, tzinfo=M), VENTANAS, None)[0]
     assert toca.decidir("workflow_dispatch", datetime(2026, 11, 18, 9, 47, tzinfo=M), VENTANAS, None)[0]
     assert toca.decidir("push", datetime(2026, 11, 18, 23, 0, tzinfo=M), VENTANAS, None)[0]
+
+
+def test_tope_diario_por_el_cupo_de_open_meteo():
+    hora = datetime(2026, 11, 18, 12, 47, tzinfo=M)
+    # dos buenas hoy (p. ej. por push): ni la programada ni otro push
+    assert not toca.decidir("schedule", hora, VENTANAS, None, hoy=2, maximo=2)[0]
+    assert not toca.decidir("push", hora, VENTANAS, None, hoy=2, maximo=2)[0]
+    # a mano y forzada, sí; sin tope, como antes
+    assert toca.decidir("workflow_dispatch", hora, VENTANAS, None, hoy=5, maximo=2, forzar=True)[0]
+    assert toca.decidir("push", hora, VENTANAS, None, hoy=5)[0]
+    assert toca.decidir("schedule", hora, VENTANAS, None, hoy=1, maximo=2)[0]

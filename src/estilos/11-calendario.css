@@ -536,8 +536,6 @@
   line-height: 1.4;
 }
 
-/* Logística: aparcamientos, agua, refugios… */
-
 /* Fauna: buscador, lista de especies y observaciones por mes */
 .especies {
   margin: 0;
@@ -606,8 +604,6 @@
   color: var(--texto);
 }
 
-/* Especies emblemáticas: rejilla de tarjetas con foto y ficha con zonas */
-
 /* Dron: sello en la ficha del spot y zonas que le afectan */
 .sello-dron {
   display: inline-block;
@@ -639,15 +635,13 @@
   color: var(--texto-3);
 }
 
-/* Safaris: tarjetas, chips, el año del parque, avistamientos recientes y alojamientos */
+/* Chips (planificador de fauna) */
 .chip {
   padding: 3px 10px;
   border-radius: var(--radio-s);
   background: var(--superficie-2);
   font-size: 0.85rem;
 }
-
-/* «¿Qué quieres ver y cuándo?» */
 
 /* Comparador */
 .tabla-desliza {
@@ -714,8 +708,6 @@
   }
 }
 
-/* Migración */
-
 /* Planificador */
 .formulario-plan {
   display: grid;
@@ -759,8 +751,6 @@ button.quitar {
 .origen.oficial {
   background: color-mix(in srgb, var(--c-fauna) 20%, transparent);
 }
-
-/* Resumen de la ficha de parque */
 
 /* Frecuencia de avistamientos */
 .tabla-frecuencia {

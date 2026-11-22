@@ -1,10 +1,9 @@
-/* Diseño (rediseño B, 11-2026; antes «guía de campo editorial» de 27-10-2026). Va la última y redefine las piezas
-   heredadas de Rasante con los tokens de la carta (01-tokens.css):
+/* Diseño (rediseño B, 11-2026). Va la última y redefine las piezas heredadas con los tokens de 01-tokens.css:
    - títulos en Archivo estrecha (eje de anchura) y seminegra; sin serif;
    - secciones separadas por una línea fina y aire, sin tarjetas con sombra; solo son tarjetas las cosas que se
-     pueden «coger» (un parque, una etapa, un resultado);
+     pueden «coger» (un spot, un lugar, un resultado);
    - botones rectangulares de esquina de 2-4 px: uno principal (tinta) y el resto como enlaces subrayados;
-   - un solo color de dato (magenta) y el naranja del sol. */
+   - un solo color de dato (magenta) y el naranja del sol. Detalle en docs/diseno/sistema.md. */
 
 /* ---- Tipografía */
 body {
@@ -349,8 +348,6 @@ select.boton {
   border-radius: 0 6px 6px 0;
 }
 
-/* ---- Traslados con icono (antes con emojis) */
-
 /* ---- Tablas */
 .tabla-comparar th,
 .tabla-comparar td {
@@ -372,10 +369,6 @@ body {
   overflow-x: clip;
 }
 
-/* ---- Ficha de parque: foto a sangre con el título encima */
-
-/* Resumen de la ficha: cinco datos en fila, como una ficha técnica */
-
 /* ---- Movimiento reducido */
 @media (prefers-reduced-motion: reduce) {
   * {
@@ -393,30 +386,11 @@ body {
 .seccion > button.boton {
   justify-self: start;
 }
-/* En las listas de alojamientos, la web es un enlace (treinta botones negros seguidos pesaban demasiado) */
 
 /* Índice fijo de la ficha */
 .ficha [id] {
   scroll-margin-top: 130px;
 }
-
-/* Tarjetas de parque y de especie: toda la tarjeta es el enlace, foto horizontal, nombre en serif */
-
-/* Guía: índice lateral fijo y texto a un ancho de lectura */
-
-/* ---- Suscribirse a un calendario (.ics) */
-
-/* ---- Lo que has visto (Mi viaje) */
-
-/* ---- Páginas de respuesta (/safari-en/agosto, /safari-en/tanzania) */
-
-/* ---- De cuándo es cada dato */
-
-/* ---- Temporada verde */
-
-/* ---- Comparador */
-
-/* ---- Cierres estacionales */
 
 /* ---- Confianza de la frecuencia */
 .tabla-frecuencia td.confianza-baja,
@@ -678,8 +652,6 @@ body {
   color: var(--acento);
 }
 
-/* España: mi lista de especies vistas */
-
 /* España: rarezas */
 .lista-rarezas {
   display: grid;
@@ -714,8 +686,6 @@ body {
   margin: 4px 0;
 }
 
-/* España: explorador en mapa */
-
 /* España: plan del fin de semana */
 .plan-dia {
   margin: 8px 0 16px;
@@ -742,7 +712,7 @@ blockquote {
   padding: 2px 12px;
 }
 
-/* Conmutador de mundos (Safaris / España), junto a la marca */
+/* Conmutador de modos (Luz / Fauna), junto a la marca */
 .mundos {
   display: inline-flex;
   border: 1px solid var(--borde);
@@ -854,16 +824,6 @@ blockquote {
   align-items: center;
 }
 
-/* Especies del mundo: buscador, filtro y dos columnas en el móvil */
-
-/* Portada de safaris: en el móvil, la foto no ocupa dos pantallas */
-.confianza-portada {
-  text-align: center;
-  color: var(--texto-2);
-  font-size: 0.9rem;
-  margin: 4px 0 16px;
-}
-
 /* Créditos de fotos y fotos sin obras derivadas (ND): no se recortan */
 .credito {
   position: absolute;
@@ -907,11 +867,6 @@ blockquote {
   background: var(--superficie-2);
 }
 
-/* Sin foto: silueta de huella, nunca un hueco vacío */
-
-/* Portada de España: ciudades para empezar sin dar la ubicación */
-/* enlaces del resumen del parque: al menos 24 px de alto para tocarlos con el dedo */
-
 /* Buscador de la cabecera (T28) */
 .cabecera-in {
   position: relative;
@@ -928,8 +883,6 @@ blockquote {
   cursor: default !important;
   color: var(--texto-2);
 }
-/* en el móvil: una lupa que al tocarla se abre a todo el ancho bajo la cabecera */
-
 /* Mes elegido (T32): selector en la cabecera y la columna de ese mes resaltada en todos los calendarios */
 html[data-mes] .tabla-frecuencia td.mes-actual {
   outline: none;
@@ -975,8 +928,6 @@ html[data-mes="12"] [data-m="12"] {
   border-radius: var(--radio);
   background: var(--acento-suave);
 }
-
-/* Parques de una especie (T43) */
 
 /* Tres entradas del hero (T33) */
 .selector-especie-campo {
@@ -1096,10 +1047,6 @@ html[data-mes="12"] [data-m="12"] {
   padding: 3px 0;
 }
 
-/* Fotografía en la ficha (T23) */
-
-/* Galería del parque (T20/T37) */
-
 /* Tabla de probabilidad (T40): puntos además del color; en el móvil, un mes cada vez */
 .tabla-frecuencia td[class*="f-"]::after,
 .leyenda-frecuencia i[class*="f-"]::after {
@@ -1200,18 +1147,11 @@ html[data-mes="12"] [data-m="12"] {
   line-height: 14px;
 }
 
-/* Acción principal de la ficha (T42): «Añadir a mi viaje»; «Comparar», secundaria */
-
 /* Imágenes con width y height (T03): el navegador reserva su hueco antes de cargarlas (sin saltos), pero la altura
    la decide el CSS de cada sitio (aspect-ratio); :where() no suma especificidad, así no pisa a nadie */
 :where(img[width][height]) {
   height: auto;
 }
-
-/* Buscador de la portada (T35, T36, T26) */
-/* tarjetas de la portada de España (T31) */
-
-/* Secciones personales (T47) */
 
 /* Cabecera con la marca «Atlas de fauna» y el menú de España de ocho secciones (T30): sin saltos de línea */
 .cabecera .marca,
@@ -1244,6 +1184,3 @@ html[data-mes="12"] [data-m="12"] {
     font-size: 0.78rem;
   }
 }
-/* estado UICN (T45) */
-
-/* Rediseño B, fase 2: en la cabecera de una ficha, «la he visto» es un botón secundario a la altura del principal */

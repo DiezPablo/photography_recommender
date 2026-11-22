@@ -95,7 +95,7 @@ jobs:
         run: |
           .github/scripts/publicar_release.sh "Actualizar spots ($(date -u +%Y-%m-%d))" \
             salida/spots.geojson salida/spots.csv salida/informe.json
-          [ -s salida/dron.json ] && .github/scripts/publicar_release.sh "Dron (2026-11-12)" salida/dron.json || true
+          [ -s salida/dron.json ] && .github/scripts/publicar_release.sh "Dron ($(date -u +%Y-%m-%d))" salida/dron.json || true
 
       - uses: actions/cache/save@v6
         if: always()

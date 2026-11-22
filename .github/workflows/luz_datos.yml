@@ -10,6 +10,11 @@ on:
   schedule:
     - cron: "47 * * * *" # cada hora; «cuando» decide
   workflow_dispatch:
+    inputs:
+      forzar:
+        description: "Correr aunque ya haya dos previsiones con éxito hoy (gasta cupo de Open-Meteo)"
+        type: boolean
+        default: false
   push:
     branches: [main]
     paths:
@@ -49,7 +54,10 @@ jobs:
           sparse-checkout: .github/scripts
       - id: toca
         # de 4 a 7 (antes del amanecer, con los modelos de la noche) y de 12 a 16 (para el atardecer), hora peninsular
-        run: python3 .github/scripts/toca.py luz_datos.yml "4-7,12-16"
+        env:
+          FORZAR: ${{ inputs.forzar }}
+        # y como mucho dos previsiones con éxito al día, vengan de donde vengan (cupo de Open-Meteo, spec 024)
+        run: python3 .github/scripts/toca.py luz_datos.yml "4-7,12-16" --maximo 2
 
   datos:
     needs: cuando
@@ -125,9 +133,19 @@ jobs:
 
       - name: Publicar
         run: |
+          # si mientras tanto el descubrimiento publicó otro catálogo, la previsión y el índice de esta ejecución
+          # son del anterior: no se publican (la siguiente previsión los hace con el nuevo; spec 024, punto 4)
+          mismo_catalogo=si
+          if curl -fsSL https://github.com/${{ github.repository }}/releases/download/datos/spots.geojson.gz \
+              | gunzip > /tmp/spots_ahora.geojson; then
+            python3 .github/scripts/mismos_spots.py public/datos/spots.geojson /tmp/spots_ahora.geojson || mismo_catalogo=no
+          fi
           # publicar_release.sh no publica nada si falta un fichero: la lista lleva solo los que existen
-          ficheros="salida/informe.json"
-          for f in salida/eventos.json salida/verificacion.json salida/lugares.json; do
+          ficheros=""
+          [ "$mismo_catalogo" = si ] && ficheros="salida/informe.json"
+          for f in salida/eventos.json salida/verificacion.json; do
             [ -s "$f" ] && ficheros="$ficheros $f"
           done
+          [ "$mismo_catalogo" = si ] && [ -s salida/lugares.json ] && ficheros="$ficheros salida/lugares.json"
+          [ -n "$ficheros" ] || { echo "Nada que publicar"; exit 0; }
           .github/scripts/publicar_release.sh "Datos $(date -u +%Y-%m-%dT%H:%MZ)" $ficheros
