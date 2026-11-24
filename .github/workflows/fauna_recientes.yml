@@ -29,8 +29,8 @@ jobs:
         with:
           sparse-checkout: .github/scripts
       - id: toca
-        # una vez al día, entre las 5 y las 12 hora peninsular
-        run: python3 .github/scripts/toca.py fauna_recientes.yml "5-12"
+        # una vez al día, entre las 5 y las 12 hora peninsular, o a cualquier hora si la última tiene 20 h (decisión 0025)
+        run: python3 .github/scripts/toca.py fauna_recientes.yml "5-12" --vencida 20
 
   recientes:
     needs: cuando

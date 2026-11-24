@@ -3,7 +3,8 @@
 # web. Calcula también el calendario de eventos (eventos.json).
 # Dos ejecuciones al día para no pasar del límite gratuito de Open-Meteo (10 000 llamadas/día): una en cada ventana.
 # GitHub retrasa los cron de 7 a 9 horas (11-2026): se programa cada hora y el paso «cuando» deja seguir solo la
-# primera que cae en una ventana (decisión 0024).
+# primera que cae en una ventana (decisión 0024). Como GitHub se salta horas enteras, si la última previsión
+# tiene 8 h o más sigue aunque no haya ventana (decisión 0025).
 name: Luz · previsión
 
 on:
@@ -56,8 +57,9 @@ jobs:
         # de 4 a 7 (antes del amanecer, con los modelos de la noche) y de 12 a 16 (para el atardecer), hora peninsular
         env:
           FORZAR: ${{ inputs.forzar }}
-        # y como mucho dos previsiones con éxito al día, vengan de donde vengan (cupo de Open-Meteo, spec 024)
-        run: python3 .github/scripts/toca.py luz_datos.yml "4-7,12-16" --maximo 2
+        # y como mucho dos previsiones con éxito al día, vengan de donde vengan (cupo de Open-Meteo, spec 024);
+        # con 8 h sin previsión, sigue fuera de ventana (decisión 0025)
+        run: python3 .github/scripts/toca.py luz_datos.yml "4-7,12-16" --maximo 2 --vencida 8
 
   datos:
     needs: cuando

@@ -1,5 +1,5 @@
 # 0024 — Los workflows diarios, cada hora con ventana
-Fecha: 2026-11-18 · Estado: vigente
+Fecha: 2026-11-18 · Estado: vigente, ampliada por 0025
 Contexto: GitHub ejecuta los `schedule` de este repo con 7 a 9 horas de retraso (11-2026): la previsión «de las
 03:47» salía hacia las 11-12 h, después del amanecer, y la del mediodía, de noche. No es cuestión de elegir otra
 hora: el retraso varía.
