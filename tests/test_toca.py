@@ -47,3 +47,29 @@ def test_tope_diario_por_el_cupo_de_open_meteo():
     assert toca.decidir("workflow_dispatch", hora, VENTANAS, None, hoy=5, maximo=2, forzar=True)[0]
     assert toca.decidir("push", hora, VENTANAS, None, hoy=5)[0]
     assert toca.decidir("schedule", hora, VENTANAS, None, hoy=1, maximo=2)[0]
+
+
+def test_vencida_corre_fuera_de_ventana():
+    # 23-11-2026: GitHub solo lanzó la de las 02:08, 10:51 y 23:14; ninguna en ventana y la previsión se quedó del 22
+    ultima = datetime(2026, 11, 22, 4, 30, tzinfo=M)
+    assert toca.decidir("schedule", datetime(2026, 11, 23, 10, 51, tzinfo=M), VENTANAS, ultima, vencida=8)[0]
+    # sin --vencida, como antes: fuera de ventana, no
+    assert not toca.decidir("schedule", datetime(2026, 11, 23, 10, 51, tzinfo=M), VENTANAS, ultima)[0]
+    # reciente y fuera de ventana, no; sin ninguna buena, sí
+    reciente = datetime(2026, 11, 23, 6, 0, tzinfo=M)
+    assert not toca.decidir("schedule", datetime(2026, 11, 23, 10, 51, tzinfo=M), VENTANAS, reciente, vencida=8)[0]
+    assert toca.decidir("schedule", datetime(2026, 11, 23, 10, 51, tzinfo=M), VENTANAS, None, vencida=8)[0]
+    # el tope diario manda también sobre la vencida
+    assert not toca.decidir(
+        "schedule", datetime(2026, 11, 23, 23, 14, tzinfo=M), VENTANAS, ultima, hoy=2, maximo=2, vencida=8
+    )[0]
+
+
+def test_un_no_toca_no_es_una_ejecucion_buena():
+    # la ejecución acaba en success aunque «cuando» dijera que no: solo cuenta si corrió el trabajo
+    assert not toca.hizo_trabajo(
+        [{"name": "cuando", "conclusion": "success"}, {"name": "datos", "conclusion": "skipped"}]
+    )
+    assert toca.hizo_trabajo([{"name": "cuando", "conclusion": "success"}, {"name": "datos", "conclusion": "success"}])
+    # por push o a mano no hay más trabajos que el de verdad
+    assert toca.hizo_trabajo([{"name": "recientes", "conclusion": "success"}])

@@ -34,7 +34,7 @@ Reglas:
 - Tests: pytest sin red con respuestas reales grabadas en `tests/fixtures` (no las leas enteras).
 
 Workflows: `luz_datos.yml` (previsión, 2 veces al día, en las ventanas de 4-7 y 12-16 h: cron cada hora con el
-paso `cuando`, decisión 0024; la primera vez siembra `spots.geojson`, `clima.json`,
+paso `cuando`, decisión 0024, y fuera de ventana si la última tiene 8 h, decisión 0025; la primera vez siembra `spots.geojson`, `clima.json`,
 `dron.json` y `verificacion.json` desde la release del repo anterior con `.github/scripts/sembrar.sh`),
 `luz_descubrir.yml` (mensual; solo publica cuando la popularidad de Commons está contada en casi todos los
 candidatos, spec 018; spots + dron), `luz_clima.yml` (solo a mano), `luz_validar.yml`.
