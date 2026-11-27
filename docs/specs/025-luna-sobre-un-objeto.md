@@ -1,6 +1,6 @@
 # 025 — La luna llena sobre un objeto
 
-Estado: en curso
+Estado: hecha
 Modo: Luz
 Situación del fotógrafo: un evento
 
@@ -26,13 +26,13 @@ intentó con las Cuatro Torres y no supo por dónde empezar (decisión 0026).
   la Vía Láctea, buscar el objeto por nombre, guardar planes.
 
 ## Criterios de aceptación
-- [ ] Con las Cuatro Torres desde el 1-12-2026 sale el 24-12-2026 a ~8 km hacia el oeste-suroeste hacia las
+- [x] Con las Cuatro Torres desde el 1-12-2026 sale el 24-12-2026 a ~8 km hacia el oeste-suroeste hacia las
       18:4x, como en el cálculo hecho a mano con astropy (diferencia ≤ 3 min y ≤ 1° de rumbo) (test).
-- [ ] La posición de la luna coincide con astropy en tres instantes de prueba: ≤ 0,02° de azimut y ≤ 0,2° de
+- [x] La posición de la luna coincide con astropy en tres instantes de prueba: ≤ 0,02° de azimut y ≤ 0,2° de
       altura (la diferencia es el modelo de refracción) (test).
-- [ ] Sin JavaScript, el formulario envía y la página lista las fechas (e2e).
-- [ ] Coordenadas fuera de España o altura no válida: mensaje claro, sin error (e2e).
-- [ ] `make check` y la e2e en verde.
+- [x] Sin JavaScript, el formulario envía y la página lista las fechas (e2e).
+- [x] Coordenadas fuera de España o altura no válida: mensaje claro, sin error (e2e).
+- [x] `make check` y la e2e en verde.
 
 ## Datos
 Ninguna fuente nueva: todo se calcula al pedir la página (`astronomy-engine`, MIT, en el servidor). Coste: unos

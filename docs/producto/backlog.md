@@ -25,7 +25,7 @@ Lo crea y reordena `/producto`; lo marca como hecho `/implementar`.
 - [x] 023 — Acceso a cada spot: aparcamiento más cercano y minutos andando, en las fichas y en el plan (`docs/specs/023-acceso.md`)
 - [x] 016 — Plan de varios días en `/plan`: cada día una zona con amanecer, fauna, lo que está en temporada, atardecer y, si toca, noche (`docs/specs/016-plan.md`)
 - [x] 024 — Revisión de lo encontrado por el camino: nombres de especies, comillas en lugares, e2e con ECONNRESET, previsión pisada tras un descubrimiento, cupo de Open-Meteo y restos (`docs/specs/024-revision-encontrado.md`)
-- [~] 025 — La luna llena sobre un objeto en `/luz/alinear`: fechas, hora y dónde ponerse a cada distancia (`docs/specs/025-luna-sobre-un-objeto.md`, decisión 0026)
+- [x] 025 — La luna llena sobre un objeto en `/luz/alinear`: fechas, hora y dónde ponerse a cada distancia (`docs/specs/025-luna-sobre-un-objeto.md`, decisión 0026)
 
 ## Después
 (vacío)
