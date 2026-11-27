@@ -7,7 +7,8 @@
     (la lista está en `lib/fuentes.ts`; al añadir una fuente, añádela ahí y en `docs/datos/fuentes.md`).
   - `/luz/**`: ranking del día (`/luz`, `/luz/dia/[d]/[tipo]`), `/luz/spot/[id]`, `/luz/calendario`,
     `/luz/habitual/[mes]/[tipo]` (sin previsión: climatología × idoneidad, spec 013), `/luz/evento/[id]`,
-    `/luz/alertas` (un `.ics` nacional; los de comunidad redirigen a él), `/luz/metodo`.
+    `/luz/alertas` (un `.ics` nacional; los de comunidad redirigen a él), `/luz/metodo`, `/luz/alinear` (la luna
+    llena sobre un objeto, spec 025, `features/alinear`, con `astronomy-engine` en el servidor).
   - `/fauna/**`: carta por cuadrícula (`/fauna`; `?modo=aqui|finde`), `/fauna/lugar/[id]`,
     `/fauna/especie/[clave]`, `/fauna/evento/[id]` (un fenómeno con sus lugares, `berrea`, o la ficha de uno, `berrea-monfrague`; spec 014),
     `/fauna/calendario`,

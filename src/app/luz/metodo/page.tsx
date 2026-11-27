@@ -117,6 +117,16 @@ export default function Acerca() {
         ni está validado como tal.
       </p>
 
+      <h2>La luna sobre un objeto</h2>
+      <p>
+        <Link href="/luz/alinear">La luna sobre…</Link> busca en los próximos doce meses las salidas y puestas de la
+        luna casi llena (85 % o más) con el sol entre 12° bajo el horizonte y 8° sobre él. Para cada una y cada
+        distancia, calcula a qué altura se ve lo alto del objeto (con la curvatura de la Tierra y la refracción), el
+        minuto en que la luna queda apoyada encima y el punto justo enfrente, en la dirección contraria a la luna. La
+        posición de la luna es la de Astronomy Engine, contrastada con astropy. Solo es geometría: no sabe si algo tapa
+        la vista entre medias.
+      </p>
+
       <h2>Cómo se ha validado</h2>
       <ul>
         <li>
