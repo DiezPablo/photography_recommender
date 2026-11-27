@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-27T05:28:33+00:00",
+ "actualizado": "2026-11-27T05:28:38+00:00",
  "ficheros": {
   "safaris_recientes.json": "b5190e9cacfb",
   "safaris.json": "3843840dca83",
@@ -29,8 +29,8 @@
   "fauna_recientes.json": "4a1585e8262b",
   "fauna_rarezas.json": "1c15fb88c227",
   "fauna_lugares.json": "c9c759c57f44",
-  "fauna_listas.json": "ee94bbdd1b84",
-  "fauna_listas_dias.json": "051a96dbc1ca",
+  "fauna_listas.json": "d94431d6c87a",
+  "fauna_listas_dias.json": "1d7172f7b128",
   "fauna_ebird_regiones.json": "3388787f1f23",
   "fauna_especies_punto.json": "4df8af0879e6",
   "fauna_natura.json": "39f5b6ee3aa9",
