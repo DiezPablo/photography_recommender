@@ -11,6 +11,7 @@ import {
   IconoHuella,
   IconoInfo,
   IconoLibro,
+  IconoLunaLlena,
   IconoMarcador,
   IconoPrismaticos,
   IconoUbicacion,
@@ -51,6 +52,12 @@ const LUZ: Seccion[] = [
     Icono: IconoMarcador,
     activa: (r) => r.startsWith("/luz/alertas"),
     movil: true,
+  },
+  {
+    href: "/luz/alinear",
+    texto: "Luna sobre…",
+    Icono: IconoLunaLlena,
+    activa: (r) => r.startsWith("/luz/alinear"),
   },
   { href: "/luz/metodo", texto: "Método", Icono: IconoInfo, activa: (r) => r.startsWith("/luz/metodo"), movil: true },
 ];

@@ -20,6 +20,7 @@ Revisado el 13-11-2026 (spec 002). «Atribución en la web» está comprobada en
 | Iowa Environmental Mesonet (METAR) | Verificación y validación (uso interno) | Dominio público | Sí | `/fuentes` y Método ✔ |
 | IGN/CNIG (provincias), Natural Earth (países vecinos) | Territorio | CC BY 4.0; dominio público | Sí | `/fuentes` y Método ✔ |
 | EUMETSAT (GeoColour) | Capa «Nubes ahora» | Libre con atribución | Sí | En el mapa ✔ |
+| Astronomy Engine (D. Cross), biblioteca | Posición de la luna en «La luna sobre…» (spec 025) | MIT | Sí | `/fuentes` y Método ✔ |
 
 ## Modo Fauna
 | Fuente | Para qué | Licencia | Uso comercial | Atribución en la web |

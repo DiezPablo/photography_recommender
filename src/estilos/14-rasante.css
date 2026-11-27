@@ -494,3 +494,15 @@
 .cifra.cifra-fauna {
   color: var(--c-fauna);
 }
+
+/* La luna sobre un objeto (spec 025): las horas con la mejor luz, marcadas */
+.alinear .item-plan.destacada {
+  border-left: 3px solid var(--acento);
+  padding-left: 9px;
+}
+.alinear .item-plan .que-plan {
+  font-size: 1rem;
+  letter-spacing: 0;
+  color: var(--texto);
+  min-width: 3.2em;
+}

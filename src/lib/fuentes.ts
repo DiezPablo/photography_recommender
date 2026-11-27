@@ -28,6 +28,13 @@ export const FUENTES: Fuente[] = [
     modos: ["luz", "fauna"],
   },
   {
+    uso: "La luna sobre un objeto",
+    nombre: "Astronomy Engine (D. Cross)",
+    url: "https://github.com/cosinekitty/astronomy",
+    licencia: "MIT",
+    modos: ["luz"],
+  },
+  {
     uso: "Relieve y horizonte",
     nombre: "Terrain Tiles (Mapzen, AWS Open Data)",
     url: "https://github.com/tilezen/joerd/blob/master/docs/attribution.md",

@@ -40,3 +40,4 @@ Consecuencias: qué implica y qué queda descartado.
 - [0023](0023-rutas-solo-acceso.md) — De las rutas, solo el acceso a cada spot
 - [0024](0024-cron-cada-hora.md) — Los workflows diarios, cada hora con ventana (GitHub retrasa los cron horas)
 - [0025](0025-prevision-vencida.md) — Si la última previsión tiene 8 h, se calcula aunque no haya ventana
+- [0026](0026-alinear-la-luna.md) — Un planificador mínimo: la luna llena sobre un objeto (modifica en parte la 0013)
