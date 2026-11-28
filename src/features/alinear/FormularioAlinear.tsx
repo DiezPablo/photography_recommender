@@ -1,9 +1,17 @@
-// El formulario de «La luna sobre un objeto» (spec 025): un GET a /luz/alinear, así que funciona sin JavaScript.
+// El formulario de «La luna o la Vía Láctea sobre un objeto» (specs 025 y 026): un GET a /luz/alinear, así que funciona
+// sin JavaScript.
 import type { ConsultaAlinear } from "@/features/alinear/alinear";
 
 export default function FormularioAlinear({ c }: { c: ConsultaAlinear }) {
   return (
-    <form action="/luz/alinear" method="get" className="consulta" aria-label="La luna sobre un objeto">
+    <form action="/luz/alinear" method="get" className="consulta" aria-label="La luna o la Vía Láctea sobre un objeto">
+      <label>
+        <span>Sobre el objeto</span>
+        <select name="astro" defaultValue={c.astro}>
+          <option value="luna">La luna llena</option>
+          <option value="via">El núcleo de la Vía Láctea</option>
+        </select>
+      </label>
       <label>
         <span>Qué (opcional)</span>
         <input name="nombre" defaultValue={c.nombre} placeholder="Castillo, torre, pico…" maxLength={80} />

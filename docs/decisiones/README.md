@@ -41,3 +41,4 @@ Consecuencias: qué implica y qué queda descartado.
 - [0024](0024-cron-cada-hora.md) — Los workflows diarios, cada hora con ventana (GitHub retrasa los cron horas)
 - [0025](0025-prevision-vencida.md) — Si la última previsión tiene 8 h, se calcula aunque no haya ventana
 - [0026](0026-alinear-la-luna.md) — Un planificador mínimo: la luna llena sobre un objeto (modifica en parte la 0013)
+- [0027](0027-via-lactea-sobre-un-objeto.md) — El núcleo de la Vía Láctea sobre un objeto (amplía la 0026)

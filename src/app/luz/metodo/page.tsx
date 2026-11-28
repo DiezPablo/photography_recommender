@@ -117,14 +117,21 @@ export default function Acerca() {
         ni está validado como tal.
       </p>
 
-      <h2>La luna sobre un objeto</h2>
+      <h2>La luna o la Vía Láctea sobre un objeto</h2>
       <p>
-        <Link href="/luz/alinear">La luna sobre…</Link> busca en los próximos doce meses las salidas y puestas de la
-        luna casi llena (85 % o más) con el sol entre 12° bajo el horizonte y 8° sobre él. Para cada una y cada
-        distancia, calcula a qué altura se ve lo alto del objeto (con la curvatura de la Tierra y la refracción), el
-        minuto en que la luna queda apoyada encima y el punto justo enfrente, en la dirección contraria a la luna. La
+        Con la luna llena, <Link href="/luz/alinear">Sobre un objeto</Link> busca en los próximos doce meses las salidas
+        y puestas de la luna casi llena (85 % o más) con el sol entre 12° bajo el horizonte y 8° sobre él. Para cada una
+        y cada distancia, calcula a qué altura se ve lo alto del objeto (con la curvatura de la Tierra y la refracción),
+        el minuto en que la luna queda apoyada encima y el punto justo enfrente, en la dirección contraria a la luna. La
         posición de la luna es la de Astronomy Engine, contrastada con astropy. Solo es geometría: no sabe si algo tapa
         la vista entre medias.
+      </p>
+      <p>
+        Con el núcleo de la Vía Láctea (Sagitario A*), la cuenta es otra: es un punto fijo del cielo que cada noche pasa
+        por los mismos rumbos a la misma altura, unos cuatro minutos antes. Para cada rumbo por el que pasa a 8° o más,
+        sale la altura, una distancia propuesta (lo alto del objeto a un tercio de la altura del núcleo) y las noches de
+        los próximos doce meses en que, a esa hora, el sol está a 18° o más bajo el horizonte y la luna no está o casi
+        no luce. El cielo de la zona es el del spot más cercano del catálogo.
       </p>
 
       <h2>Cómo se ha validado</h2>

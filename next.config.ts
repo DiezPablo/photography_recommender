@@ -48,6 +48,8 @@ const config: NextConfig = {
   // Las fichas que no se generan en el build se generan al visitarlas (ISR), leyendo en la función los datos
   // comprimidos de datos/*.gz: cada ruta lleva solo los que usa
   outputFileTracingIncludes: {
+    // «La Vía Láctea sobre…» (spec 026): el cielo de la zona sale del spot más cercano
+    "/luz/alinear": ["./datos/spots.geojson.gz"],
     // Modo Luz: la ficha de un spot fuera del top del día se genera al visitarla
     "/luz/spot/[id]": [
       "./datos/acceso.json.gz",
