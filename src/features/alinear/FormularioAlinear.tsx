@@ -8,8 +8,8 @@ export default function FormularioAlinear({ c }: { c: ConsultaAlinear }) {
       <label>
         <span>Sobre el objeto</span>
         <select name="astro" defaultValue={c.astro}>
-          <option value="luna">La luna llena</option>
-          <option value="via">El núcleo de la Vía Láctea</option>
+          <option value="luna">Luna llena</option>
+          <option value="via">Vía Láctea (núcleo)</option>
         </select>
       </label>
       <label>
