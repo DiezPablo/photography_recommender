@@ -1,5 +1,5 @@
 # 0026 — Un planificador mínimo: la luna llena sobre un objeto
-Fecha: 2026-11-27 · Estado: vigente (modifica en parte la 0013)
+Fecha: 2026-11-27 · Estado: vigente (modifica en parte la 0013; ampliada por la 0027)
 Contexto: Pablo quiere la foto clásica de la luna llena sobre algo (las Cuatro Torres) y PhotoPills se le hace
 difícil: hay que saber de antemano dónde ponerse y luego buscar la fecha. Hecho a mano para las Cuatro Torres, el
 cálculo cabe en una página: dado el objeto, salen las fechas y la línea donde ponerse.

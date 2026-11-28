@@ -1,8 +1,11 @@
-// La consulta de «La luna sobre un objeto» (spec 025), siempre en la URL de /luz/alinear: el punto (como se copia de
-// cualquier mapa, «40.4773, -3.6874»), la altura del objeto, el desnivel y desde cuándo. Puro: lo usan la página y
-// las pruebas.
+// La consulta de «La luna o la Vía Láctea sobre un objeto» (specs 025 y 026), siempre en la URL de /luz/alinear: qué
+// astro (`astro=luna|via`), el punto (como se copia de cualquier mapa, «40.4773, -3.6874»), la altura del objeto, el
+// desnivel y desde cuándo. Puro: lo usan la página y las pruebas.
+
+export type Astro = "luna" | "via";
 
 export interface ConsultaAlinear {
+  astro: Astro;
   /** el texto tal cual, para volver a rellenar el formulario */
   punto: string;
   nombre: string;
@@ -20,6 +23,13 @@ type Params = Record<string, string | string[] | undefined>;
 const uno = (v: string | string[] | undefined) => ((Array.isArray(v) ? v[0] : v) ?? "").trim();
 
 export const EJEMPLO = { nombre: "Cuatro Torres (Madrid)", punto: "40.4773, -3.6874", altura: 249, desnivel: 90 };
+/** un cielo de Bortle 2 (reserva Starlight de La Palma) */
+export const EJEMPLO_VIA = {
+  astro: "via" as const,
+  nombre: "el faro de Fuencaliente",
+  punto: "28.45528, -17.84341",
+  altura: 24,
+};
 
 /** Dos números separados por coma, espacio o punto y coma; acepta la coma decimal si van con «;». */
 export function leerPunto(texto: string): { lat: number; lon: number } | null {
@@ -39,7 +49,8 @@ export function leerAlinear(q: Params, hoy = new Date()): ConsultaAlinear {
   const altura = Number(textoAltura);
   const desnivel = Number(uno(q.desnivel).replace(",", ".") || 0);
   const desde = /^\d{4}-\d{2}-\d{2}$/.test(uno(q.desde)) ? uno(q.desde) : hoy.toISOString().slice(0, 10);
-  const base = { punto, nombre, lat: null, lon: null, altura: null, desnivel: 0, desde, error: null };
+  const astro: Astro = uno(q.astro) === "via" ? "via" : "luna";
+  const base = { astro, punto, nombre, lat: null, lon: null, altura: null, desnivel: 0, desde, error: null };
   if (!punto && !textoAltura) return base;
   const p = leerPunto(punto);
   if (!p)
@@ -52,8 +63,16 @@ export function leerAlinear(q: Params, hoy = new Date()): ConsultaAlinear {
   return { ...base, lat: p.lat, lon: p.lon, altura, desnivel: Math.round(desnivel) };
 }
 
-export function urlAlinear(c: { punto: string; altura: number; desnivel?: number; nombre?: string; desde?: string }) {
+export function urlAlinear(c: {
+  astro?: Astro;
+  punto: string;
+  altura: number;
+  desnivel?: number;
+  nombre?: string;
+  desde?: string;
+}) {
   const q = new URLSearchParams();
+  if (c.astro === "via") q.set("astro", "via");
   if (c.nombre) q.set("nombre", c.nombre);
   q.set("punto", c.punto);
   q.set("altura", String(c.altura));

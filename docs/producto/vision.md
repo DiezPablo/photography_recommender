@@ -20,8 +20,8 @@ hace que la web sea de referencia. Todo lo demás se nutre de él.
 
 ## No-objetivos
 - No es un planificador de toma: nada de efemérides finas, realidad aumentada, cálculo de encuadres o
-  alineaciones al minuto (eso es PhotoPills y similares). Una sola excepción: la luna llena sobre un objeto,
-  con fechas y dónde ponerse (decisión 0026).
+  alineaciones al minuto (eso es PhotoPills y similares). Una sola excepción: la luna llena o el núcleo de la Vía
+  Láctea sobre un objeto, con fechas y dónde ponerse (decisiones 0026 y 0027).
 - Sin IA generativa ni LLM en el producto (por ahora).
 - Sin backend propio: GitHub Actions + release de datos + Vercel.
 - Safaris fuera de España: fuera de esta versión (decisión 0021). Se retoman solo si lo vemos necesario.

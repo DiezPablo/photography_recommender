@@ -55,7 +55,7 @@ const LUZ: Seccion[] = [
   },
   {
     href: "/luz/alinear",
-    texto: "Luna sobre…",
+    texto: "Sobre un objeto",
     Icono: IconoLunaLlena,
     activa: (r) => r.startsWith("/luz/alinear"),
   },
