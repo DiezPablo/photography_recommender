@@ -1,6 +1,6 @@
 # 026 — El núcleo de la Vía Láctea sobre un objeto
 
-Estado: en curso
+Estado: hecha
 Modo: Luz
 Situación del fotógrafo: un evento
 
@@ -26,12 +26,12 @@ y qué noches hay núcleo, oscuridad y nada de luna a la vez. Es la otra foto no
   Vía Láctea, focales y encuadres.
 
 ## Criterios de aceptación
-- [ ] La posición del núcleo coincide con astropy en ≤ 0,02° en dos instantes de prueba (test).
-- [ ] En el instante que da cada ventana, el núcleo está en su rumbo (≤ 0,2°), el sol a −18° o menos y la luna bajo
+- [x] La posición del núcleo coincide con astropy en ≤ 0,02° en dos instantes de prueba (test).
+- [x] En el instante que da cada ventana, el núcleo está en su rumbo (≤ 0,2°), el sol a −18° o menos y la luna bajo
       el horizonte o con menos del 15 % (test).
-- [ ] En Madrid el núcleo llega a ~20° hacia el sur y las ventanas van de marzo a octubre (test).
-- [ ] Sin JavaScript, el selector y el ejemplo del faro muestran «Dónde ponerte» y las noches (e2e).
-- [ ] `make check` y la e2e en verde.
+- [x] En Madrid el núcleo llega a ~20° hacia el sur y las ventanas van de marzo a octubre (test).
+- [x] Sin JavaScript, el selector y el ejemplo del faro muestran «Dónde ponerte» y las noches (e2e).
+- [x] `make check` y la e2e en verde.
 
 ## Datos
 Ninguna fuente nueva. El cielo de la zona lee `spots.geojson` (contaminación del atlas de D. Lorenz, ya publicado):
